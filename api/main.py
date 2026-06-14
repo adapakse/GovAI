@@ -1,83 +1,85 @@
-"""
-GovAI Backend API — stub dla Tygodnia 1-2.
-Pełna implementacja w Tygodniu 3 (rejestr agentów, polityki, nadzór, raporty).
-"""
-import asyncpg
-import os
+import logging
 from contextlib import asynccontextmanager
+
+import redis.asyncio as aioredis
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://govai:govai_secret@localhost:5432/govai")
-_pool = None
+from config import settings
+from database import close_pool, init_pool
+from routers import agents, audit, dashboard, oversight, policies
+from routers.dashboard import set_redis
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global _pool
-    _pool = await asyncpg.create_pool(dsn=DATABASE_URL, min_size=2, max_size=10)
+    logger.info("GovAI API uruchamiana...")
+    await init_pool()
+
+    redis = await aioredis.from_url(settings.redis_url, decode_responses=True)
+    set_redis(redis)
+
+    logger.info("GovAI API gotowa")
     yield
-    if _pool:
-        await _pool.close()
+
+    await close_pool()
+    await redis.aclose()
+    logger.info("GovAI API zatrzymana")
 
 
-app = FastAPI(title="GovAI API", version="0.1.0", lifespan=lifespan)
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+app = FastAPI(
+    title="GovAI API",
+    description=(
+        "Backend API platformy GovAI — zarządzanie agentami AI zgodnie z EU AI Act. "
+        "Rejestr agentów, polityki, nadzór człowieka, dziennik audytowy."
+    ),
+    version="0.2.0",
+    lifespan=lifespan,
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(agents.router)
+app.include_router(policies.router)
+app.include_router(oversight.router)
+app.include_router(audit.router)
+app.include_router(dashboard.router)
 
 
 @app.get("/")
 async def root():
-    return {"service": "GovAI API", "version": "0.1.0", "status": "stub — implementacja Tydzień 3"}
+    return {
+        "service": "GovAI API",
+        "version": "0.2.0",
+        "docs": "/docs",
+        "endpoints": {
+            "agents":    "GET/POST /agents",
+            "policies":  "GET/POST /policies",
+            "oversight": "GET /oversight/pending",
+            "audit":     "GET /audit",
+            "dashboard": "GET /dashboard/summary",
+            "ws":        "WS /ws/live-feed",
+        },
+    }
 
 
 @app.get("/health")
 async def health():
+    from database import get_pool
     try:
-        await _pool.fetchval("SELECT 1")
+        await get_pool().fetchval("SELECT 1")
         db = "ok"
     except Exception as e:
         db = f"error: {e}"
-    return {"status": "ok" if db == "ok" else "degraded", "postgres": db}
-
-
-@app.get("/agents")
-async def list_agents():
-    rows = await _pool.fetch(
-        "SELECT id, name, status, risk_level, requires_oversight, team, owner_name FROM agents ORDER BY name"
-    )
-    return [dict(r) for r in rows]
-
-
-@app.get("/agents/{agent_id}")
-async def get_agent(agent_id: str):
-    row = await _pool.fetchrow("SELECT * FROM agents WHERE id = $1", agent_id)
-    if not row:
-        from fastapi import HTTPException
-        raise HTTPException(404, "Agent nie znaleziony")
-    return dict(row)
-
-
-@app.get("/audit")
-async def list_audit(limit: int = 50):
-    rows = await _pool.fetch(
-        """SELECT time, agent_name, event_type, policy_result,
-                  pii_categories, pii_count, latency_ms, block_reason
-           FROM audit_log
-           ORDER BY time DESC
-           LIMIT $1""",
-        limit,
-    )
-    return [dict(r) for r in rows]
-
-
-@app.get("/oversight/pending")
-async def list_pending():
-    rows = await _pool.fetch(
-        """SELECT oq.id, oq.agent_id, a.name as agent_name, oq.task_id,
-                  oq.agent_decision, oq.status, oq.ttl_expires_at, oq.created_at
-           FROM oversight_queue oq
-           JOIN agents a ON a.id = oq.agent_id
-           WHERE oq.status = 'pending'
-           ORDER BY oq.created_at""",
-    )
-    return [dict(r) for r in rows]
+    return {"status": "ok" if db == "ok" else "degraded", "postgres": db, "version": "0.2.0"}

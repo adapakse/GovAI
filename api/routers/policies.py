@@ -1,0 +1,163 @@
+import logging
+from typing import Optional
+from uuid import uuid4
+
+from fastapi import APIRouter, HTTPException, Query
+from pydantic import BaseModel, field_validator
+
+from database import get_pool
+
+logger = logging.getLogger(__name__)
+router = APIRouter(prefix="/policies", tags=["policies"])
+
+
+class PolicyCreate(BaseModel):
+    name: str
+    level: str
+    agent_id: Optional[str] = None
+    team: Optional[str] = None
+    rule_type: str
+    condition_json: dict
+    action_json: dict
+    priority: int = 100
+    created_by: Optional[str] = None
+
+    @field_validator("level")
+    @classmethod
+    def valid_level(cls, v: str) -> str:
+        if v not in {"org", "team", "agent"}:
+            raise ValueError("Poziom musi być: org, team lub agent")
+        return v
+
+    @field_validator("rule_type")
+    @classmethod
+    def valid_rule_type(cls, v: str) -> str:
+        if v not in {"allow", "deny", "require_oversight"}:
+            raise ValueError("Typ reguły musi być: allow, deny lub require_oversight")
+        return v
+
+
+class PolicyUpdate(BaseModel):
+    name: Optional[str] = None
+    condition_json: Optional[dict] = None
+    action_json: Optional[dict] = None
+    priority: Optional[int] = None
+    active: Optional[bool] = None
+
+
+@router.get("/")
+async def list_policies(
+    level: Optional[str] = Query(None),
+    agent_id: Optional[str] = Query(None),
+    active_only: bool = Query(True),
+):
+    """Lista polityk z filtrowaniem."""
+    pool = get_pool()
+    conditions = ["1=1"]
+    params = []
+    idx = 1
+
+    if level:
+        conditions.append(f"level = ${idx}::policy_level")
+        params.append(level); idx += 1
+    if agent_id:
+        conditions.append(f"agent_id = ${idx}")
+        params.append(agent_id); idx += 1
+    if active_only:
+        conditions.append("active = true")
+
+    where = " AND ".join(conditions)
+    rows = await pool.fetch(
+        f"""SELECT id, name, level, agent_id, team, rule_type,
+                   condition_json, action_json, priority, active, version,
+                   created_by, created_at
+            FROM policies
+            WHERE {where}
+            ORDER BY priority ASC, created_at DESC""",
+        *params,
+    )
+    return [_row_to_dict(r) for r in rows]
+
+
+@router.post("/", status_code=201)
+async def create_policy(data: PolicyCreate):
+    """Dodanie nowej polityki."""
+    pool = get_pool()
+
+    if data.level == "agent" and not data.agent_id:
+        raise HTTPException(400, "Polityka agentowa wymaga agent_id")
+    if data.level == "team" and not data.team:
+        raise HTTPException(400, "Polityka zespołu wymaga pola team")
+
+    import json
+    policy_id = str(uuid4())
+    await pool.execute(
+        """INSERT INTO policies (
+               id, name, level, agent_id, team, rule_type,
+               condition_json, action_json, priority, created_by
+           ) VALUES ($1, $2, $3::policy_level, $4, $5, $6::policy_action, $7, $8, $9, $10)""",
+        policy_id, data.name, data.level, data.agent_id, data.team, data.rule_type,
+        json.dumps(data.condition_json), json.dumps(data.action_json),
+        data.priority, data.created_by,
+    )
+    row = await pool.fetchrow("SELECT * FROM policies WHERE id = $1", policy_id)
+    return _row_to_dict(row)
+
+
+@router.put("/{policy_id}")
+async def update_policy(policy_id: str, data: PolicyUpdate):
+    """Aktualizacja polityki (wersjonowanie automatyczne)."""
+    import json
+    pool = get_pool()
+    row = await pool.fetchrow("SELECT * FROM policies WHERE id = $1", policy_id)
+    if not row:
+        raise HTTPException(404, f"Polityka '{policy_id}' nie istnieje")
+
+    updates = []
+    params = []
+    idx = 1
+
+    if data.name is not None:
+        updates.append(f"name = ${idx}"); params.append(data.name); idx += 1
+    if data.condition_json is not None:
+        updates.append(f"condition_json = ${idx}"); params.append(json.dumps(data.condition_json)); idx += 1
+    if data.action_json is not None:
+        updates.append(f"action_json = ${idx}"); params.append(json.dumps(data.action_json)); idx += 1
+    if data.priority is not None:
+        updates.append(f"priority = ${idx}"); params.append(data.priority); idx += 1
+    if data.active is not None:
+        updates.append(f"active = ${idx}"); params.append(data.active); idx += 1
+
+    if not updates:
+        raise HTTPException(400, "Brak pól do aktualizacji")
+
+    updates.append(f"version = version + 1")
+    params.append(policy_id)
+    await pool.execute(
+        f"UPDATE policies SET {', '.join(updates)} WHERE id = ${idx}",
+        *params,
+    )
+    row = await pool.fetchrow("SELECT * FROM policies WHERE id = $1", policy_id)
+    return _row_to_dict(row)
+
+
+@router.delete("/{policy_id}")
+async def deactivate_policy(policy_id: str):
+    """Dezaktywacja polityki (soft delete — nie usuwa z historii)."""
+    pool = get_pool()
+    row = await pool.fetchrow("SELECT id, name, active FROM policies WHERE id = $1", policy_id)
+    if not row:
+        raise HTTPException(404, f"Polityka '{policy_id}' nie istnieje")
+    await pool.execute("UPDATE policies SET active = false WHERE id = $1", policy_id)
+    return {"policy_id": policy_id, "name": row["name"], "status": "deactivated"}
+
+
+def _row_to_dict(row) -> dict:
+    d = dict(row)
+    for k, v in d.items():
+        if hasattr(v, 'isoformat'):
+            d[k] = v.isoformat()
+    for f in ("id", "agent_id"):
+        if d.get(f):
+            d[f] = str(d[f])
+    return d
