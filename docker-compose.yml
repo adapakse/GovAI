@@ -5,8 +5,6 @@ services:
       POSTGRES_DB: govai
       POSTGRES_USER: govai
       POSTGRES_PASSWORD: ${DB_PASSWORD:-govai_secret}
-    ports:
-      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
