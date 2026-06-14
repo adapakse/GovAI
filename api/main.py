@@ -34,6 +34,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
+    redirect_slashes=False,
     title="GovAI API",
     description=(
         "Backend API platformy GovAI — zarządzanie agentami AI zgodnie z EU AI Act. "

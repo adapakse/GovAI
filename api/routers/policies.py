@@ -45,7 +45,7 @@ class PolicyUpdate(BaseModel):
     active: Optional[bool] = None
 
 
-@router.get("/")
+@router.get("")
 async def list_policies(
     level: Optional[str] = Query(None),
     agent_id: Optional[str] = Query(None),
@@ -79,7 +79,7 @@ async def list_policies(
     return [_row_to_dict(r) for r in rows]
 
 
-@router.post("/", status_code=201)
+@router.post("", status_code=201)
 async def create_policy(data: PolicyCreate):
     """Dodanie nowej polityki."""
     pool = get_pool()

@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/audit", tags=["audit"])
 
 
-@router.get("/")
+@router.get("")
 async def list_audit(
     agent_id: Optional[str] = Query(None),
     event_type: Optional[str] = Query(None),

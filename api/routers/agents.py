@@ -48,7 +48,7 @@ class AgentStatusUpdate(BaseModel):
 
 # ── Endpointy ─────────────────────────────────────────────────────────────────
 
-@router.get("/")
+@router.get("")
 async def list_agents(
     risk_level: Optional[str] = Query(None),
     status: Optional[str] = Query(None),
@@ -85,7 +85,7 @@ async def list_agents(
     return [_row_to_dict(r) for r in rows]
 
 
-@router.post("/", status_code=201)
+@router.post("", status_code=201)
 async def register_agent(data: AgentCreate):
     """
     Rejestracja nowego agenta z automatyczną klasyfikacją AI Act.
