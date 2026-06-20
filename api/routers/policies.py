@@ -94,7 +94,6 @@ async def create_policy(data: PolicyCreate, user: CurrentUser = Depends(_WRITE_R
     if data.level == "team" and not data.team:
         raise HTTPException(400, "Polityka zespołu wymaga pola team")
 
-    import json
     policy_id = str(uuid4())
     await pool.execute(
         """INSERT INTO policies (
@@ -102,7 +101,7 @@ async def create_policy(data: PolicyCreate, user: CurrentUser = Depends(_WRITE_R
                condition_json, action_json, priority, created_by
            ) VALUES ($1, $2, $3, $4::policy_level, $5, $6, $7::policy_action, $8, $9, $10, $11)""",
         policy_id, data.name, data.policy_code, data.level, data.agent_id, data.team,
-        data.rule_type, json.dumps(data.condition_json), json.dumps(data.action_json),
+        data.rule_type, data.condition_json, data.action_json,
         data.priority, data.created_by,
     )
     row = await pool.fetchrow("SELECT * FROM policies WHERE id = $1", policy_id)
@@ -112,7 +111,6 @@ async def create_policy(data: PolicyCreate, user: CurrentUser = Depends(_WRITE_R
 @router.put("/{policy_id}")
 async def update_policy(policy_id: str, data: PolicyUpdate, user: CurrentUser = Depends(_WRITE_ROLES)):
     """Aktualizacja polityki (wersjonowanie automatyczne)."""
-    import json
     pool = get_pool()
     row = await pool.fetchrow("SELECT * FROM policies WHERE id = $1", policy_id)
     if not row:
@@ -125,9 +123,9 @@ async def update_policy(policy_id: str, data: PolicyUpdate, user: CurrentUser = 
     if data.name is not None:
         updates.append(f"name = ${idx}"); params.append(data.name); idx += 1
     if data.condition_json is not None:
-        updates.append(f"condition_json = ${idx}"); params.append(json.dumps(data.condition_json)); idx += 1
+        updates.append(f"condition_json = ${idx}"); params.append(data.condition_json); idx += 1
     if data.action_json is not None:
-        updates.append(f"action_json = ${idx}"); params.append(json.dumps(data.action_json)); idx += 1
+        updates.append(f"action_json = ${idx}"); params.append(data.action_json); idx += 1
     if data.priority is not None:
         updates.append(f"priority = ${idx}"); params.append(data.priority); idx += 1
     if data.active is not None:
@@ -152,7 +150,6 @@ async def update_keywords(policy_id: str, body: dict, user: CurrentUser = Depend
     Zastępuje listę słów kluczowych w condition_json.keywords.
     Body: {"keywords": ["słowo1", "słowo2", ...]}
     """
-    import json
     pool = get_pool()
     row = await pool.fetchrow(
         "SELECT id, condition_json FROM policies WHERE id = $1", policy_id
@@ -169,7 +166,7 @@ async def update_keywords(policy_id: str, body: dict, user: CurrentUser = Depend
 
     await pool.execute(
         "UPDATE policies SET condition_json = $1, version = version + 1 WHERE id = $2",
-        json.dumps(existing), policy_id,
+        existing, policy_id,
     )
     row = await pool.fetchrow("SELECT * FROM policies WHERE id = $1", policy_id)
     return _row_to_dict(row)
