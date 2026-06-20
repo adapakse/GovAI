@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from config import settings
 from database import close_pool, init_pool
-from routers import agents, audit, dashboard, oversight, policies
+from routers import agents, audit, auth, compliance, dashboard, demo, oversight, policies, providers, reports
 from routers.dashboard import set_redis
 
 logging.basicConfig(
@@ -40,29 +40,35 @@ app = FastAPI(
         "Backend API platformy GovAI — zarządzanie agentami AI zgodnie z EU AI Act. "
         "Rejestr agentów, polityki, nadzór człowieka, dziennik audytowy."
     ),
-    version="0.2.0",
+    version="0.4.0",
     lifespan=lifespan,
 )
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=settings.allowed_origins,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+app.include_router(auth.router)
 app.include_router(agents.router)
 app.include_router(policies.router)
+app.include_router(compliance.router)
 app.include_router(oversight.router)
 app.include_router(audit.router)
 app.include_router(dashboard.router)
+app.include_router(reports.router)
+app.include_router(providers.router)
+app.include_router(demo.router)
 
 
 @app.get("/")
 async def root():
     return {
         "service": "GovAI API",
-        "version": "0.2.0",
+        "version": "0.3.0",
         "docs": "/docs",
         "endpoints": {
             "agents":    "GET/POST /agents",
@@ -83,4 +89,4 @@ async def health():
         db = "ok"
     except Exception as e:
         db = f"error: {e}"
-    return {"status": "ok" if db == "ok" else "degraded", "postgres": db, "version": "0.2.0"}
+    return {"status": "ok" if db == "ok" else "degraded", "postgres": db, "version": "0.3.0"}
