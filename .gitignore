@@ -10,3 +10,7 @@ dist/
 *.pptx
 *.pdf
 postgres_data/
+
+# Lokalne skrypty deweloperskie (nie commitować)
+reset_pw.py
+test_g001.json
