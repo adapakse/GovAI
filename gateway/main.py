@@ -6,8 +6,9 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from auth_middleware import AuthMiddleware
 from config import settings
-from database import close_pool, init_pool
+from database import close_pool, fetch_active_policies, init_pool
 from oversight import close_redis, init_redis, ttl_monitor_loop
 from pii_scanner import PIIScanner
 from policy_engine import PolicyEngine
@@ -20,6 +21,17 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+async def _policy_refresh_loop(policy_engine: PolicyEngine, interval: int = 60) -> None:
+    """Odświeża reguły polityk z DB co N sekund — bez restartu gateway."""
+    while True:
+        await asyncio.sleep(interval)
+        try:
+            rules = await fetch_active_policies()
+            policy_engine.load_rules(rules)
+        except Exception as exc:
+            logger.error("Błąd odświeżania polityk z DB: %s", exc)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("GovAI Gateway uruchamiana...")
@@ -29,18 +41,29 @@ async def lifespan(app: FastAPI):
 
     pii = PIIScanner()
     policy = PolicyEngine()
+
+    # Załaduj reguły z DB przy starcie
+    try:
+        rules = await fetch_active_policies()
+        policy.load_rules(rules)
+    except Exception as exc:
+        logger.error("Błąd ładowania polityk przy starcie: %s — używam pustych reguł", exc)
+
     init_components(pii, policy)
 
     monitor_task = asyncio.create_task(ttl_monitor_loop())
+    refresh_task = asyncio.create_task(_policy_refresh_loop(policy))
     logger.info("GovAI Gateway gotowa — nasłuchuje na porcie 8001")
 
     yield
 
     monitor_task.cancel()
-    try:
-        await monitor_task
-    except asyncio.CancelledError:
-        pass
+    refresh_task.cancel()
+    for t in (monitor_task, refresh_task):
+        try:
+            await t
+        except asyncio.CancelledError:
+            pass
 
     await close_pool()
     await close_redis()
@@ -60,9 +83,11 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(AuthMiddleware)
 
 
 @app.post("/v1/chat/completions")

@@ -1,4 +1,5 @@
 import asyncio
+import json
 import logging
 from typing import Optional
 
@@ -12,12 +13,14 @@ INSERT INTO audit_log (
     time, agent_id, agent_name, task_id, call_id, event_type,
     policy_result, policy_id, pii_categories, pii_count,
     input_hash, output_hash, model_used, latency_ms,
-    tokens_in, tokens_out, cost_eur, block_reason, metadata
+    tokens_in, tokens_out, cost_eur, block_reason, metadata,
+    data_sensitivity, provider_id
 ) VALUES (
     NOW(), $1, $2, $3, $4, $5,
     $6, $7, $8, $9,
     $10, $11, $12, $13,
-    $14, $15, $16, $17, $18
+    $14, $15, $16, $17, $18,
+    $19::data_sensitivity_level, $20
 )
 """
 
@@ -45,7 +48,9 @@ async def write_audit(entry: AuditEntry) -> None:
             entry.tokens_out,
             entry.cost_eur,
             entry.block_reason,
-            str(entry.metadata),
+            json.dumps(entry.metadata) if entry.metadata is not None else None,
+            entry.data_sensitivity,
+            entry.provider_id,
         )
     except Exception:
         # Błąd audytu nie może blokować odpowiedzi — logujemy i kontynuujemy

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass, field
 from typing import Any, Literal, Optional
 from uuid import UUID
@@ -36,6 +37,23 @@ class PolicyDecision:
 
 
 @dataclass
+class ProviderRecord:
+    id: str
+    name: str
+    provider_type: str
+    model_ids: list[str]
+    max_data_sensitivity: str
+    priority: int
+    base_url: Optional[str] = None
+    api_key_env: Optional[str] = None
+
+    def api_key_from_env(self) -> Optional[str]:
+        if not self.api_key_env:
+            return None
+        return os.environ.get(self.api_key_env)
+
+
+@dataclass
 class AuditEntry:
     agent_id: str
     agent_name: str
@@ -54,4 +72,6 @@ class AuditEntry:
     output_hash: Optional[str] = None
     block_reason: Optional[str] = None
     policy_id: Optional[str] = None
+    data_sensitivity: Optional[str] = None
+    provider_id: Optional[str] = None
     metadata: dict = field(default_factory=dict)
