@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>GovAI — Brand Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark:  #0D1B2A;
+    --navy:  #1B355E;
+    --blue:  #1E6FBF;
+    --teal:  #00B4D8;
+    --mgray: #CBD5E1;
+    --lgray: #F0F4F8;
+    --govred:#C0392B;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--dark); color: var(--lgray);
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 60px 32px 120px; }
+  h1 { font-size: 42px; font-weight: 800; margin: 0 0 6px; }
+  h1 span { color: var(--teal); }
+  .lead { color: var(--mgray); font-size: 16px; margin-bottom: 64px; }
+  section { margin-bottom: 64px; }
+  h2 {
+    font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--teal); font-weight: 700; margin-bottom: 18px;
+    border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 10px;
+  }
+  .card-row { display: flex; flex-wrap: wrap; gap: 20px; }
+  .logo-card {
+    background: var(--navy); border-radius: 14px; padding: 32px;
+    display: flex; flex-direction: column; align-items: center; gap: 18px;
+    flex: 1; min-width: 260px;
+  }
+  .logo-card.light { background: var(--lgray); }
+  .logo-card .cap { font-size: 12px; color: var(--mgray); }
+  .logo-card.light .cap { color: var(--navy); }
+  .swatch-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .swatch {
+    border-radius: 12px; padding: 18px; min-height: 90px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
+  }
+  .swatch .name { font-weight: 700; font-size: 14px; }
+  .swatch .hex  { font-family: monospace; font-size: 12.5px; color: rgba(0,0,0,0.55); }
+  .swatch.on-dark .hex { color: rgba(255,255,255,0.65); }
+  .swatch.on-light .name, .swatch.on-light .hex-light { color: var(--dark); }
+  .type-sample { background: var(--navy); border-radius: 14px; padding: 32px; }
+  .type-sample .h-display { font-size: 38px; font-weight: 800; margin: 0 0 6px; }
+  .type-sample .h-sub { font-size: 18px; font-weight: 700; margin: 18px 0 4px; color: var(--mgray); }
+  .type-sample .body-txt { font-size: 15px; color: var(--mgray); max-width: 640px; }
+  .meta { font-size: 12.5px; color: var(--mgray); margin-top: 4px; }
+  .rules-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .rule-box { background: var(--navy); border-radius: 12px; padding: 22px; }
+  .rule-box.dont { background: rgba(192,57,43,0.12); border: 1px solid rgba(192,57,43,0.4); }
+  .rule-box h3 { margin: 0 0 12px; font-size: 14px; }
+  .rule-box.ok h3 { color: #3DC97A; }
+  .rule-box.dont h3 { color: var(--govred); }
+  .rule-box ul { margin: 0; padding-left: 18px; font-size: 13.5px; color: var(--mgray); }
+  .rule-box ul li { margin-bottom: 6px; }
+  .clearspace-demo {
+    background: var(--navy); border-radius: 14px; padding: 40px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .clearspace-box {
+    border: 2px dashed rgba(0,180,216,0.5); padding: 28px; border-radius: 8px;
+  }
+  .min-size-row { display: flex; align-items: center; gap: 40px; margin-top: 18px; }
+  .min-size-row .item { text-align: center; }
+  .min-size-row .item img { display: block; margin: 0 auto 8px; }
+  .min-size-row .item .lbl { font-size: 12px; color: var(--mgray); }
+  footer { color: var(--mgray); font-size: 12.5px; text-align: center; margin-top: 80px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Gov<span>AI</span> — Brand Guide</h1>
+  <p class="lead">Platforma zgodności z EU AI Act. Identyfikacja wizualna v1.0 — czerwiec 2026.</p>
+
+  <section>
+    <h2>Logo — wersje podstawowe</h2>
+    <div class="card-row">
+      <div class="logo-card">
+        <img src="./logo-lockup-dark-bg.svg" width="220" alt="GovAI logo na tle ciemnym">
+        <span class="cap">Logotyp pełny · tło ciemne (domyślny)</span>
+      </div>
+      <div class="logo-card light">
+        <img src="./logo-lockup-light-bg.svg" width="220" alt="GovAI logo na tle jasnym">
+        <span class="cap">Logotyp pełny · tło jasne (dokumenty, raporty PDF)</span>
+      </div>
+      <div class="logo-card">
+        <img src="./logo-mark.svg" width="80" alt="GovAI znak">
+        <span class="cap">Znak samodzielny (favicon, awatar, social)</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Koncepcja znaku</h2>
+    <p style="color:var(--mgray); font-size:14.5px; max-width:720px;">
+      Znak to stylizowana litera <strong style="color:var(--lgray)">„G”</strong> z przerwą — bramą,
+      przez którą przechodzi każde wywołanie modelu AI. W miejscu przerwy świeci węzeł
+      (punkt kontrolny) symbolizujący inspekcję każdego zapytania przez bramkę GovAI
+      przed dotarciem do modelu. Gradient teal → blue odzwierciedla przejście
+      danych przez warstwę kontroli.
+    </p>
+  </section>
+
+  <section>
+    <h2>Wersje monochromatyczne</h2>
+    <div class="card-row">
+      <div class="logo-card">
+        <img src="./logo-mark-mono-light.svg" width="64" alt="Wersja biała">
+        <span class="cap">Biała — na zdjęciach, kolorowych tłach, materiałach partnerskich</span>
+      </div>
+      <div class="logo-card light">
+        <img src="./logo-mark-mono-dark.svg" width="64" alt="Wersja granatowa">
+        <span class="cap">Granatowa — druk jednokolorowy, watermark dokumentów</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Pole ochronne i minimalny rozmiar</h2>
+    <div class="clearspace-demo">
+      <div class="clearspace-box">
+        <img src="./logo-mark.svg" width="70" alt="Pole ochronne">
+      </div>
+    </div>
+    <p class="meta">Minimalny odstęp wokół znaku = wysokość litery „G” znaku (oznaczona linią przerywaną). Nie umieszczać innych elementów wewnątrz tego pola.</p>
+    <div class="min-size-row">
+      <div class="item"><img src="./logo-mark.svg" width="16"><div class="lbl">16px — favicon</div></div>
+      <div class="item"><img src="./logo-mark.svg" width="24"><div class="lbl">24px — minimum UI</div></div>
+      <div class="item"><img src="./logo-mark.svg" width="40"><div class="lbl">40px — rekomendowane</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Paleta — kolory marki</h2>
+    <div class="swatch-row">
+      <div class="swatch on-dark" style="background:var(--dark)"><div class="name">Dark</div><div class="hex">#0D1B2A</div></div>
+      <div class="swatch on-dark" style="background:var(--navy)"><div class="name">Navy</div><div class="hex">#1B355E</div></div>
+      <div class="swatch on-dark" style="background:var(--blue)"><div class="name">Blue</div><div class="hex">#1E6FBF</div></div>
+      <div class="swatch on-dark" style="background:var(--teal)"><div class="name" style="color:#0D1B2A">Teal</div><div class="hex" style="color:rgba(0,0,0,0.6)">#00B4D8</div></div>
+    </div>
+    <p class="meta">Teal (#00B4D8) jest kolorem głównym akcentu — używać do CTA, aktywnych stanów, linków, podświetleń. Navy/Dark to tła. Blue to drugi akcent (gradient, ikony pomocnicze).</p>
+  </section>
+
+  <section>
+    <h2>Paleta — kolory semantyczne (status / ryzyko)</h2>
+    <div class="swatch-row">
+      <div class="swatch on-dark" style="background:#15803d"><div class="name">Minimalne</div><div class="hex">green-700</div></div>
+      <div class="swatch on-dark" style="background:var(--blue)"><div class="name">Ograniczone</div><div class="hex">blue-700</div></div>
+      <div class="swatch on-dark" style="background:#c2410c"><div class="name">Wysokie</div><div class="hex">orange-700</div></div>
+      <div class="swatch on-dark" style="background:var(--govred)"><div class="name">Niedopuszczalne</div><div class="hex">#C0392B</div></div>
+    </div>
+    <p class="meta">Te kolory odwzorowują wprost poziomy ryzyka EU AI Act w UI (RiskBadge) — nie zmieniać znaczenia kolorów w innych kontekstach (np. zielony zawsze = zgodność/minimalne ryzyko, nigdy „sukces” w innym sensie).</p>
+  </section>
+
+  <section>
+    <h2>Typografia</h2>
+    <div class="type-sample">
+      <div class="h-display">Inter — nagłówki i logotyp</div>
+      <div class="h-sub">Wagi: 700 (Bold) dla nagłówków i UI, 800 (Extrabold) tylko w logotypie i tytułach slajdów</div>
+      <p class="body-txt">
+        Tekst podstawowy (400/regular) używany w treści, opisach agentów, raportach.
+        Inter to font geometryczny, neutralny, dobrze czytelny w gęstych tabelach danych —
+        kluczowe dla interfejsu audytowego z dużą ilością liczb i statusów.
+        Fallback: 'Segoe UI', Arial, sans-serif (gdy Inter niedostępny, np. w generowanych PDF bez wbudowanej czcionki).
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Zasady użycia</h2>
+    <div class="rules-grid">
+      <div class="rule-box ok">
+        <h3>✓ Tak</h3>
+        <ul>
+          <li>Zachowuj pole ochronne wokół znaku</li>
+          <li>Używaj wersji jasnej/ciemnej zgodnie z tłem</li>
+          <li>Zachowuj proporcje znaku przy skalowaniu</li>
+          <li>Stosuj gradient teal→blue tylko w znaku, nie w tekście dłuższym niż wordmark</li>
+        </ul>
+      </div>
+      <div class="rule-box dont">
+        <h3>✕ Nie</h3>
+        <ul>
+          <li>Nie zmieniaj kolorów znaku poza zdefiniowaną paletą</li>
+          <li>Nie obracaj, nie rozciągaj, nie dodawaj efektów (cienie, obrysy)</li>
+          <li>Nie umieszczaj znaku na tle o niskim kontraście</li>
+          <li>Nie rozdzielaj ikony od wordmarku w jednej kompozycji jako dwóch niezależnych elementów</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>GovAI — EU AI Act Compliance Platform · Brand Guide v1.0</footer>
+</div>
+</body>
+</html>

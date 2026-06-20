@@ -1,0 +1,11 @@
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <mask id="gapMask">
+      <rect x="0" y="0" width="100" height="100" fill="white"/>
+      <rect x="58" y="10" width="32" height="32" fill="black"/>
+    </mask>
+  </defs>
+  <circle cx="50" cy="50" r="30" fill="none" stroke="#FFFFFF" stroke-width="13" mask="url(#gapMask)"/>
+  <line x1="74" y1="27" x2="56" y2="27" stroke="#FFFFFF" stroke-width="13" stroke-linecap="round"/>
+  <circle cx="56" cy="27" r="8.5" fill="#FFFFFF" fill-opacity="0.35"/>
+</svg>
