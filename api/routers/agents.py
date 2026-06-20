@@ -2,10 +2,11 @@ import logging
 from typing import Optional
 from uuid import uuid4
 
-from fastapi import APIRouter, HTTPException, Query
-from pydantic import BaseModel, EmailStr, field_validator
+from fastapi import APIRouter, Depends, HTTPException, Query
+from pydantic import BaseModel, field_validator
 
 from database import get_pool
+from dependencies.auth import CurrentUser, get_current_user, require_role
 from services.ai_act_classifier import classify_risk
 from services.compliance import assess_compliance
 
@@ -34,6 +35,41 @@ class AgentCreate(BaseModel):
         return v.strip()
 
 
+class AgentRegistryUpdate(BaseModel):
+    """Pola rejestru — wszystkie opcjonalne, zapisujemy tylko to co podano."""
+    # Wersjonowanie
+    version:                  Optional[str]   = None
+    last_reviewed_at:         Optional[str]   = None   # ISO datetime
+    next_review_date:         Optional[str]   = None   # ISO date
+
+    # Deklaracje AI Act
+    compliance_decl:          Optional[dict]  = None
+
+    # Dane i prywatność
+    processes_personal_data:  Optional[bool]  = None
+    gdpr_legal_basis:         Optional[str]   = None
+    data_retention_days:      Optional[int]   = None
+
+    # Przeznaczenie
+    intended_purpose:         Optional[str]   = None
+    intended_users:           Optional[str]   = None
+    geographic_scope:         Optional[str]   = None
+
+    # Techniczne
+    input_modalities:         Optional[list[str]] = None
+    output_modalities:        Optional[list[str]] = None
+    integration_points:       Optional[list[str]] = None
+    model_version:            Optional[str]   = None
+
+    # Kontakty
+    technical_contact_email:  Optional[str]   = None
+    compliance_officer_email: Optional[str]   = None
+
+    # Budżet
+    monthly_budget_eur:       Optional[float] = None
+    cost_alert_threshold_eur: Optional[float] = None
+
+
 class AgentStatusUpdate(BaseModel):
     status: str
 
@@ -53,6 +89,7 @@ async def list_agents(
     risk_level: Optional[str] = Query(None),
     status: Optional[str] = Query(None),
     team: Optional[str] = Query(None),
+    user: CurrentUser = Depends(get_current_user),
 ):
     """Lista wszystkich agentów z opcjonalnym filtrowaniem."""
     pool = get_pool()
@@ -86,7 +123,10 @@ async def list_agents(
 
 
 @router.post("", status_code=201)
-async def register_agent(data: AgentCreate):
+async def register_agent(
+    data: AgentCreate,
+    user: CurrentUser = Depends(require_role("partner", "it_admin", "associate")),
+):
     """
     Rejestracja nowego agenta z automatyczną klasyfikacją AI Act.
     Claude analizuje opis i przypisuje poziom ryzyka, kategorię i podstawę prawną.
@@ -129,7 +169,7 @@ async def register_agent(data: AgentCreate):
 
 
 @router.get("/{agent_id}")
-async def get_agent(agent_id: str):
+async def get_agent(agent_id: str, user: CurrentUser = Depends(get_current_user)):
     """Szczegóły agenta."""
     pool = get_pool()
     row = await pool.fetchrow("SELECT * FROM agents WHERE id = $1", agent_id)
@@ -139,7 +179,11 @@ async def get_agent(agent_id: str):
 
 
 @router.patch("/{agent_id}/status")
-async def update_status(agent_id: str, body: AgentStatusUpdate):
+async def update_status(
+    agent_id: str,
+    body: AgentStatusUpdate,
+    user: CurrentUser = Depends(require_role("partner", "it_admin")),
+):
     """
     Zmiana statusu agenta (active / suspended / quarantined / retired).
     Natychmiastowy efekt — bramka weryfikuje status przy każdym wywołaniu.
@@ -157,8 +201,65 @@ async def update_status(agent_id: str, body: AgentStatusUpdate):
     return {"agent_id": agent_id, "name": row["name"], "old_status": row["status"], "new_status": body.status}
 
 
+@router.patch("/{agent_id}/registry")
+async def update_registry(
+    agent_id: str,
+    data: AgentRegistryUpdate,
+    user: CurrentUser = Depends(require_role("partner", "it_admin", "associate")),
+):
+    """
+    Aktualizacja danych rejestru agenta — deklaracje compliance, wersja,
+    dane osobowe, kontakty, budżet. Partial update — tylko podane pola.
+    """
+    import json as _json
+    pool = get_pool()
+    row = await pool.fetchrow("SELECT id FROM agents WHERE id = $1", agent_id)
+    if not row:
+        raise HTTPException(404, f"Agent '{agent_id}' nie istnieje")
+
+    updates, params = [], []
+    idx = 1
+
+    simple_fields = [
+        "version", "last_reviewed_at", "next_review_date",
+        "processes_personal_data", "gdpr_legal_basis", "data_retention_days",
+        "intended_purpose", "intended_users", "geographic_scope",
+        "model_version", "technical_contact_email", "compliance_officer_email",
+        "monthly_budget_eur", "cost_alert_threshold_eur",
+    ]
+    array_fields = ["input_modalities", "output_modalities", "integration_points"]
+
+    for field in simple_fields:
+        val = getattr(data, field)
+        if val is not None:
+            updates.append(f"{field} = ${idx}")
+            params.append(val); idx += 1
+
+    for field in array_fields:
+        val = getattr(data, field)
+        if val is not None:
+            updates.append(f"{field} = ${idx}::text[]")
+            params.append(val); idx += 1
+
+    if data.compliance_decl is not None:
+        updates.append(f"compliance_decl = ${idx}::jsonb")
+        params.append(_json.dumps(data.compliance_decl)); idx += 1
+
+    if not updates:
+        raise HTTPException(400, "Brak pól do aktualizacji")
+
+    updates.append("updated_at = NOW()")
+    params.append(agent_id)
+    await pool.execute(
+        f"UPDATE agents SET {', '.join(updates)} WHERE id = ${idx}",
+        *params,
+    )
+    row = await pool.fetchrow("SELECT * FROM agents WHERE id = $1", agent_id)
+    return _row_to_dict(row)
+
+
 @router.get("/{agent_id}/compliance")
-async def get_compliance(agent_id: str):
+async def get_compliance(agent_id: str, user: CurrentUser = Depends(get_current_user)):
     """
     Pełna ocena zgodności agenta z EU AI Act.
     Identyfikuje luki i zwraca plan naprawczy z terminami.
@@ -193,7 +294,11 @@ async def get_compliance(agent_id: str):
 
 
 @router.get("/{agent_id}/stats")
-async def get_stats(agent_id: str, days: int = Query(30, ge=1, le=90)):
+async def get_stats(
+    agent_id: str,
+    days: int = Query(30, ge=1, le=90),
+    user: CurrentUser = Depends(get_current_user),
+):
     """Statystyki wywołań agenta z dziennika audytowego (ostatnie N dni)."""
     pool = get_pool()
 
@@ -245,6 +350,7 @@ async def get_stats(agent_id: str, days: int = Query(30, ge=1, le=90)):
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
 def _row_to_dict(row) -> dict:
+    import json as _json
     d = dict(row)
     for k, v in d.items():
         if hasattr(v, 'isoformat'):
@@ -252,6 +358,12 @@ def _row_to_dict(row) -> dict:
         elif hasattr(v, '__iter__') and not isinstance(v, (str, bytes, dict)):
             d[k] = list(v)
     d["id"] = str(d["id"])
+    # asyncpg zwraca JSONB jako string — odkoduj
+    if isinstance(d.get("compliance_decl"), str):
+        try:
+            d["compliance_decl"] = _json.loads(d["compliance_decl"])
+        except Exception:
+            d["compliance_decl"] = {}
     return d
 
 

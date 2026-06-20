@@ -1,12 +1,15 @@
 import logging
 from typing import Optional
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 
 from database import get_pool
+from dependencies.auth import CurrentUser, get_current_user, require_role
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/audit", tags=["audit"])
+
+_AUDIT_ROLES = require_role("partner", "it_admin", "compliance_officer", "associate")
 
 
 @router.get("")
@@ -18,6 +21,7 @@ async def list_audit(
     days: int = Query(7, ge=1, le=90),
     limit: int = Query(100, ge=1, le=500),
     offset: int = Query(0, ge=0),
+    user: CurrentUser = Depends(_AUDIT_ROLES),
 ):
     """Dziennik audytowy z filtrowaniem."""
     pool = get_pool()
@@ -53,7 +57,10 @@ async def list_audit(
 
 
 @router.get("/summary")
-async def get_summary(days: int = Query(7, ge=1, le=90)):
+async def get_summary(
+    days: int = Query(7, ge=1, le=90),
+    user: CurrentUser = Depends(_AUDIT_ROLES),
+):
     """Podsumowanie dziennika audytowego."""
     pool = get_pool()
     row = await pool.fetchrow(
@@ -73,7 +80,7 @@ async def get_summary(days: int = Query(7, ge=1, le=90)):
 
 
 @router.get("/{call_id}")
-async def get_call(call_id: str):
+async def get_call(call_id: str, user: CurrentUser = Depends(_AUDIT_ROLES)):
     """Szczegóły pojedynczego wywołania."""
     pool = get_pool()
     row = await pool.fetchrow(

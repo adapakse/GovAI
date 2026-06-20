@@ -3,23 +3,25 @@ import logging
 from datetime import datetime, timezone
 from typing import Literal, Optional
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 
 from database import get_pool
+from dependencies.auth import CurrentUser, get_current_user, require_role
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/oversight", tags=["oversight"])
 
+_REVIEW_ROLES = require_role("reviewer", "partner", "associate")
+
 
 class ReviewSubmit(BaseModel):
     action: Literal["approved", "rejected", "escalated"]
-    reviewer_id: str
     comment: Optional[str] = None
 
 
 @router.get("/pending")
-async def list_pending():
+async def list_pending(user: CurrentUser = Depends(get_current_user)):
     """Zadania oczekujące na decyzję recenzenta."""
     pool = get_pool()
     rows = await pool.fetch(
@@ -36,7 +38,7 @@ async def list_pending():
 
 
 @router.post("/{oversight_id}/start-review")
-async def start_review(oversight_id: str):
+async def start_review(oversight_id: str, user: CurrentUser = Depends(_REVIEW_ROLES)):
     """
     Oznacza moment otwarcia zadania przez recenzenta.
     Czas od tego momentu do zatwierdzenia jest mierzony
@@ -59,7 +61,11 @@ async def start_review(oversight_id: str):
 
 
 @router.post("/{oversight_id}/review")
-async def submit_review(oversight_id: str, body: ReviewSubmit):
+async def submit_review(
+    oversight_id: str,
+    body: ReviewSubmit,
+    user: CurrentUser = Depends(_REVIEW_ROLES),
+):
     """
     Zatwierdź / odrzuć / eskaluj decyzję agenta.
 
@@ -92,7 +98,7 @@ async def submit_review(oversight_id: str, body: ReviewSubmit):
             rubber_stamp_alert = True
             logger.warning(
                 "ALERT: Pozorny nadzór wykryty! Recenzent %s zatwierdził w %.1fs (min %ds) — agent: %s",
-                body.reviewer_id, review_duration_s, MIN_REVIEW_SECONDS, row["agent_name"],
+                user.id, review_duration_s, MIN_REVIEW_SECONDS, row["agent_name"],
             )
 
     await pool.execute(
@@ -102,14 +108,14 @@ async def submit_review(oversight_id: str, body: ReviewSubmit):
                reviewer_decision= $3,
                reviewed_at      = NOW()
            WHERE id = $4""",
-        body.action, body.reviewer_id, body.comment, oversight_id,
+        body.action, user.id, body.comment, oversight_id,
     )
 
     result = {
         "oversight_id": oversight_id,
         "agent_name": row["agent_name"],
         "action": body.action,
-        "reviewer_id": body.reviewer_id,
+        "reviewer_id": user.id,
         "review_duration_seconds": review_duration_s,
     }
     if rubber_stamp_alert:
@@ -123,6 +129,7 @@ async def list_history(
     days: int = Query(30, ge=1, le=90),
     status: Optional[str] = Query(None),
     agent_id: Optional[str] = Query(None),
+    user: CurrentUser = Depends(get_current_user),
 ):
     """Historia wszystkich decyzji nadzorczych."""
     pool = get_pool()

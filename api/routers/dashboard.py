@@ -2,8 +2,9 @@ import asyncio
 import json
 import logging
 
-from fastapi import APIRouter, Query, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, Depends, Query, WebSocket, WebSocketDisconnect
 from database import get_pool
+from dependencies.auth import CurrentUser, get_current_user
 
 logger = logging.getLogger(__name__)
 router = APIRouter(tags=["dashboard"])
@@ -17,7 +18,10 @@ def set_redis(r) -> None:
 
 
 @router.get("/dashboard/summary")
-async def dashboard_summary(days: int = Query(7, ge=1, le=30)):
+async def dashboard_summary(
+    days: int = Query(7, ge=1, le=30),
+    user: CurrentUser = Depends(get_current_user),
+):
     """
     Agregaty dla pulpitu operacyjnego.
     Jeden endpoint zamiast N osobnych zapytań z frontendu.
@@ -81,6 +85,38 @@ async def dashboard_summary(days: int = Query(7, ge=1, le=30)):
         "top_agents": [dict(r) for r in top_agents],
         "recent_alerts": [_row_to_dict(r) for r in recent_blocks],
     }
+
+
+@router.get("/dashboard/timeline")
+async def dashboard_timeline(
+    hours: int = Query(24, ge=1, le=72),
+    user: CurrentUser = Depends(get_current_user),
+):
+    """Godzinowe zestawienie wywołań agentów (ostatnie N godzin)."""
+    pool = get_pool()
+    rows = await pool.fetch(
+        """
+        SELECT
+            date_trunc('hour', time)                                        AS hour,
+            COUNT(*)                                                         AS total,
+            COUNT(*) FILTER (WHERE policy_result = 'blocked')               AS blocked,
+            COUNT(*) FILTER (WHERE policy_result = 'oversight_required')    AS oversight
+        FROM audit_log
+        WHERE time > NOW() - ($1 * INTERVAL '1 hour')
+        GROUP BY hour
+        ORDER BY hour
+        """,
+        hours,
+    )
+    return [
+        {
+            "hour":     row["hour"].strftime("%H:%M"),
+            "total":    row["total"],
+            "blocked":  row["blocked"],
+            "oversight": row["oversight"],
+        }
+        for row in rows
+    ]
 
 
 @router.websocket("/ws/live-feed")
