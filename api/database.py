@@ -1,4 +1,5 @@
 import asyncpg
+import json as _json
 import logging
 from typing import Optional
 
@@ -8,6 +9,12 @@ logger = logging.getLogger(__name__)
 _pool: Optional[asyncpg.Pool] = None
 
 
+async def _init_connection(conn: asyncpg.Connection) -> None:
+    """Rejestruje kodeki JSON/JSONB — asyncpg domyślnie zwraca je jako string."""
+    await conn.set_type_codec('json',  encoder=_json.dumps, decoder=_json.loads, schema='pg_catalog')
+    await conn.set_type_codec('jsonb', encoder=_json.dumps, decoder=_json.loads, schema='pg_catalog')
+
+
 async def init_pool() -> None:
     global _pool
     _pool = await asyncpg.create_pool(
@@ -15,6 +22,7 @@ async def init_pool() -> None:
         min_size=2,
         max_size=15,
         command_timeout=10,
+        init=_init_connection,
     )
     logger.info("Pula połączeń API zainicjalizowana")
 
