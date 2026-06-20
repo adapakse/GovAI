@@ -17,6 +17,7 @@ import httpx
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from dependencies.auth import CurrentUser, get_current_user, require_role
+from services.auth_service import create_access_token
 
 from config import settings
 from database import get_pool
@@ -489,6 +490,10 @@ async def run_scenario(req: RunRequest, user: CurrentUser = Depends(get_current_
 
     task_id = str(uuid.uuid4())
 
+    # Gateway wymaga autoryzacji (AuthMiddleware) — mintujemy token serwisowy
+    # z tożsamości zalogowanego użytkownika; API i gateway dzielą JWT_SECRET.
+    gw_token = create_access_token(user.id, user.email, user.role)
+
     async with httpx.AsyncClient(timeout=90.0) as client:
         try:
             r = await client.post(
@@ -499,9 +504,10 @@ async def run_scenario(req: RunRequest, user: CurrentUser = Depends(get_current_
                     "max_tokens": 350,
                 },
                 headers={
-                    "X-Agent-ID":  req.agent_id,
-                    "X-Task-ID":   task_id,
+                    "X-Agent-ID":   req.agent_id,
+                    "X-Task-ID":    task_id,
                     "Content-Type": "application/json",
+                    "Authorization": f"Bearer {gw_token}",
                 },
             )
         except httpx.ConnectError:

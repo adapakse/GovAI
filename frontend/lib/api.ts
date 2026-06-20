@@ -285,4 +285,18 @@ export const api = {
     setHealth: (id: string, healthy: boolean) =>
       patch<Provider>(`/providers/${id}/health?healthy=${healthy}`, {}),
   },
+  demo: {
+    scenarios: () =>
+      get<Record<string, Record<string, { label: string; description: string; expected: string }>>>(
+        '/demo/scenarios'
+      ),
+    seedStatus: () =>
+      get<{ seeded: boolean; audit_entries: number; oversight_items: number }>('/demo/seed/status'),
+    seed: () =>
+      post<{ message?: string; seeded_audit_entries?: number }>('/demo/seed'),
+    reset: () =>
+      del<{ deleted_audit_entries: number; deleted_oversight_entries: number }>('/demo/seed'),
+    run: (agent_id: string, scenario: string) =>
+      post<Record<string, unknown>>('/demo/run', { agent_id, scenario }),
+  },
 };

@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 import PolicyBadge from '@/components/PolicyBadge';
 import { api, Agent, PolicyResult } from '@/lib/api';
+import { ensureFreshToken } from '@/lib/auth';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
 const GW_URL  = process.env.NEXT_PUBLIC_GATEWAY_URL ?? 'http://localhost:8001';
 
 const RISK_STYLE: Record<string, string> = {
@@ -75,14 +75,17 @@ function FreeChat({ agent }: { agent: Agent }) {
     setLastMeta(null);
 
     try {
+      const token = await ensureFreshToken();
       const r = await fetch(`${GW_URL}/v1/chat/completions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'X-Agent-ID': agent.id,
           'X-Task-ID': `chat-${Date.now()}`,
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: JSON.stringify({
+          model: agent.model_id,
           messages: newMessages.map(m => ({ role: m.role, content: m.content })),
         }),
       });
@@ -209,25 +212,19 @@ export default function DemoPage() {
 
   useEffect(() => {
     api.agents.list({ status: 'active' }).then(setAgents).catch(console.error);
-    fetch(`${API_URL}/demo/scenarios`).then(r => r.json()).then(setScenarios).catch(console.error);
+    api.demo.scenarios().then(setScenarios).catch(console.error);
     fetchSeedStatus();
   }, []);
 
   async function fetchSeedStatus() {
-    try {
-      const r = await fetch(`${API_URL}/demo/seed/status`);
-      if (r.ok) setSeedStatus(await r.json());
-    } catch {}
+    try { setSeedStatus(await api.demo.seedStatus()); } catch {}
   }
 
   async function seed() {
     setSeedLoading(true); setSeedMsg(null);
     try {
-      const r = await fetch(`${API_URL}/demo/seed`, { method: 'POST' });
-      const data = await r.json();
-      setSeedMsg(r.ok
-        ? { type: 'ok', text: data.message ?? `Zasiano ${data.seeded_audit_entries} wpisów.` }
-        : { type: 'err', text: data.detail ?? 'Błąd seedera.' });
+      const data = await api.demo.seed();
+      setSeedMsg({ type: 'ok', text: data.message ?? `Zasiano ${data.seeded_audit_entries} wpisów.` });
       await fetchSeedStatus();
     } catch (e) { setSeedMsg({ type: 'err', text: String(e) }); }
     finally { setSeedLoading(false); }
@@ -237,11 +234,8 @@ export default function DemoPage() {
     if (!confirm('Usunąć WSZYSTKIE dane demo?')) return;
     setSeedLoading(true); setSeedMsg(null);
     try {
-      const r = await fetch(`${API_URL}/demo/seed`, { method: 'DELETE' });
-      const data = await r.json();
-      setSeedMsg(r.ok
-        ? { type: 'ok', text: `Usunięto ${data.deleted_audit_entries} audytów i ${data.deleted_oversight_entries} nadzoru.` }
-        : { type: 'err', text: data.detail ?? 'Błąd.' });
+      const data = await api.demo.reset();
+      setSeedMsg({ type: 'ok', text: `Usunięto ${data.deleted_audit_entries} audytów i ${data.deleted_oversight_entries} nadzoru.` });
       await fetchSeedStatus();
     } catch (e) { setSeedMsg({ type: 'err', text: String(e) }); }
     finally { setSeedLoading(false); }
@@ -252,14 +246,9 @@ export default function DemoPage() {
     setRunning(key);
     setErrors(e => { const n = { ...e }; delete n[key]; return n; });
     try {
-      const r = await fetch(`${API_URL}/demo/run`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ agent_id: agentId, scenario: scenarioKey }),
-      });
-      const data = await r.json();
-      if (!r.ok) setErrors(e => ({ ...e, [key]: data.detail ?? `HTTP ${r.status}` }));
-      else { setResults(prev => ({ ...prev, [key]: data })); await fetchSeedStatus(); }
+      const data = await api.demo.run(agentId, scenarioKey) as unknown as RunResult;
+      setResults(prev => ({ ...prev, [key]: data }));
+      await fetchSeedStatus();
     } catch (err) { setErrors(e => ({ ...e, [key]: String(err) })); }
     finally { setRunning(null); }
   }
