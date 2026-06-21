@@ -8,6 +8,7 @@ from pydantic import BaseModel
 
 from database import get_pool
 from dependencies.auth import CurrentUser, get_current_user, require_role
+from services import settings_service
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/oversight", tags=["oversight"])
@@ -93,12 +94,12 @@ async def submit_review(
             datetime.now(timezone.utc) - row["review_start_at"].replace(tzinfo=timezone.utc)
         ).total_seconds()
 
-        MIN_REVIEW_SECONDS = 10
-        if review_duration_s < MIN_REVIEW_SECONDS and body.action == "approved":
+        min_review_seconds = settings_service.get_int("oversight.min_review_seconds", 10)
+        if review_duration_s < min_review_seconds and body.action == "approved":
             rubber_stamp_alert = True
             logger.warning(
                 "ALERT: Pozorny nadzór wykryty! Recenzent %s zatwierdził w %.1fs (min %ds) — agent: %s",
-                user.id, review_duration_s, MIN_REVIEW_SECONDS, row["agent_name"],
+                user.id, review_duration_s, min_review_seconds, row["agent_name"],
             )
 
     await pool.execute(
@@ -119,19 +120,25 @@ async def submit_review(
         "review_duration_seconds": review_duration_s,
     }
     if rubber_stamp_alert:
-        result["alert"] = "Pozorny nadzór — przegląd krótszy niż 10 sekund. Zdarzenie zalogowane."
+        result["alert"] = (
+            f"Pozorny nadzór — przegląd krótszy niż {min_review_seconds} sekund. "
+            "Zdarzenie zalogowane."
+        )
 
     return result
 
 
 @router.get("/history")
 async def list_history(
-    days: int = Query(30, ge=1, le=90),
+    days: Optional[int] = Query(None, ge=1),
     status: Optional[str] = Query(None),
     agent_id: Optional[str] = Query(None),
     user: CurrentUser = Depends(get_current_user),
 ):
     """Historia wszystkich decyzji nadzorczych."""
+    max_days = settings_service.get_int("oversight.history_max_days", 90)
+    days = min(days or max_days, max_days)
+    hist_limit = settings_service.get_int("oversight.history_limit", 200)
     pool = get_pool()
     conditions = ["oq.created_at > NOW() - ($1 || ' days')::INTERVAL"]
     params = [str(days)]
@@ -155,8 +162,8 @@ async def list_history(
             JOIN agents a ON a.id = oq.agent_id
             WHERE {where}
             ORDER BY oq.created_at DESC
-            LIMIT 200""",
-        *params,
+            LIMIT ${idx}""",
+        *params, hist_limit,
     )
     return [_row_to_dict(r) for r in rows]
 

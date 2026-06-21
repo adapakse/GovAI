@@ -17,6 +17,7 @@ from reportlab.platypus import (
 )
 
 from config import settings
+from services import settings_service
 from database import get_pool
 
 # ── Rejestracja fontów z obsługą polskich znaków ──────────────────────────────
@@ -193,8 +194,8 @@ async def generate_narrative(report_data: dict) -> str:
     try:
         client = anthropic.AsyncAnthropic(api_key=settings.anthropic_api_key)
         msg = await client.messages.create(
-            model=settings.classifier_model,
-            max_tokens=450,
+            model=settings_service.get_str("models.classifier_model", settings.classifier_model),
+            max_tokens=settings_service.get_int("compliance.report_max_tokens", 450),
             messages=[{
                 "role": "user",
                 "content": _NARRATIVE_PROMPT.format(

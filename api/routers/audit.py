@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 
 from database import get_pool
 from dependencies.auth import CurrentUser, get_current_user, require_role
+from services import settings_service
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/audit", tags=["audit"])
@@ -18,12 +19,15 @@ async def list_audit(
     event_type: Optional[str] = Query(None),
     policy_result: Optional[str] = Query(None),
     has_pii: Optional[bool] = Query(None),
-    days: int = Query(7, ge=1, le=90),
-    limit: int = Query(100, ge=1, le=500),
+    days: Optional[int] = Query(None, ge=1),
+    limit: Optional[int] = Query(None, ge=1),
     offset: int = Query(0, ge=0),
     user: CurrentUser = Depends(_AUDIT_ROLES),
 ):
     """Dziennik audytowy z filtrowaniem."""
+    days = days or settings_service.get_int("pagination.default_window_days", 7)
+    max_limit = settings_service.get_int("pagination.audit_max_limit", 500)
+    limit = min(limit or settings_service.get_int("pagination.audit_default_limit", 100), max_limit)
     pool = get_pool()
     conditions = ["time > NOW() - ($1 || ' days')::INTERVAL"]
     params = [str(days)]
@@ -58,10 +62,11 @@ async def list_audit(
 
 @router.get("/summary")
 async def get_summary(
-    days: int = Query(7, ge=1, le=90),
+    days: Optional[int] = Query(None, ge=1),
     user: CurrentUser = Depends(_AUDIT_ROLES),
 ):
     """Podsumowanie dziennika audytowego."""
+    days = days or settings_service.get_int("pagination.default_window_days", 7)
     pool = get_pool()
     row = await pool.fetchrow(
         """SELECT

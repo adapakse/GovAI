@@ -21,6 +21,7 @@ from reportlab.platypus import (
 )
 
 from config import settings
+from services import settings_service
 from database import get_pool
 
 # ── Fonty ────────────────────────────────────────────────────────────────────
@@ -256,8 +257,8 @@ async def generate_enterprise_narrative(data: dict) -> str:
     try:
         client = anthropic.AsyncAnthropic(api_key=settings.anthropic_api_key)
         msg = await client.messages.create(
-            model=settings.classifier_model,
-            max_tokens=500,
+            model=settings_service.get_str("models.classifier_model", settings.classifier_model),
+            max_tokens=settings_service.get_int("compliance.enterprise_report_max_tokens", 500),
             messages=[{
                 "role": "user",
                 "content": _ENTERPRISE_PROMPT.format(

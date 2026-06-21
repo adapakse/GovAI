@@ -2,8 +2,10 @@
 Ocena zgodności agenta z EU AI Act.
 Identyfikuje luki i generuje plan naprawczy.
 """
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Any
+
+from services import settings_service
 
 
 @dataclass
@@ -147,10 +149,13 @@ def assess_compliance(agent: dict) -> ComplianceReport:
         ))
 
     elif risk == "high":
+        deadlines = settings_service.get_json("compliance.deadline_days", {})
         for check in _HIGH_RISK_CHECKS:
             field_val = agent.get(check["field"])
             if not check["check"](field_val):
-                gaps.append(check["gap"])
+                gap = check["gap"]
+                dl = deadlines.get(check["field"], gap.deadline_days)
+                gaps.append(replace(gap, deadline_days=int(dl)))
         obligations.extend([
             "Wdrożenie systemu zarządzania ryzykiem (art. 9)",
             "Zapewnienie jakości danych treningowych (art. 10)",

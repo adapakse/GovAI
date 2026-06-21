@@ -2,9 +2,12 @@ import asyncio
 import json
 import logging
 
+from typing import Optional
+
 from fastapi import APIRouter, Depends, Query, WebSocket, WebSocketDisconnect
 from database import get_pool
 from dependencies.auth import CurrentUser, get_current_user
+from services import settings_service
 
 logger = logging.getLogger(__name__)
 router = APIRouter(tags=["dashboard"])
@@ -19,13 +22,16 @@ def set_redis(r) -> None:
 
 @router.get("/dashboard/summary")
 async def dashboard_summary(
-    days: int = Query(7, ge=1, le=30),
+    days: Optional[int] = Query(None, ge=1),
     user: CurrentUser = Depends(get_current_user),
 ):
     """
     Agregaty dla pulpitu operacyjnego.
     Jeden endpoint zamiast N osobnych zapytań z frontendu.
     """
+    days = days or settings_service.get_int("pagination.default_window_days", 7)
+    top_n = settings_service.get_int("pagination.dashboard_top_agents", 5)
+    recent_n = settings_service.get_int("pagination.dashboard_recent_blocks", 10)
     pool = get_pool()
 
     agents_stats = await pool.fetchrow(
@@ -62,8 +68,8 @@ async def dashboard_summary(
            WHERE time > NOW() - ($1 || ' days')::INTERVAL
            GROUP BY agent_name
            ORDER BY calls DESC
-           LIMIT 5""",
-        str(days),
+           LIMIT $2""",
+        str(days), top_n,
     )
 
     recent_blocks = await pool.fetch(
@@ -73,8 +79,8 @@ async def dashboard_summary(
            WHERE policy_result IN ('blocked', 'oversight_required')
              AND time > NOW() - ($1 || ' days')::INTERVAL
            ORDER BY time DESC
-           LIMIT 10""",
-        str(days),
+           LIMIT $2""",
+        str(days), recent_n,
     )
 
     return {
@@ -89,10 +95,12 @@ async def dashboard_summary(
 
 @router.get("/dashboard/timeline")
 async def dashboard_timeline(
-    hours: int = Query(24, ge=1, le=72),
+    hours: Optional[int] = Query(None, ge=1),
     user: CurrentUser = Depends(get_current_user),
 ):
     """Godzinowe zestawienie wywołań agentów (ostatnie N godzin)."""
+    max_hours = settings_service.get_int("pagination.timeline_max_hours", 72)
+    hours = min(hours or settings_service.get_int("pagination.timeline_default_hours", 24), max_hours)
     pool = get_pool()
     rows = await pool.fetch(
         """

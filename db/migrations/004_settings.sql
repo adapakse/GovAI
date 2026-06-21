@@ -98,12 +98,12 @@ INSERT INTO app_settings (key, value, value_type, category, label, description, 
 
 -- COMPLIANCE
 ('compliance.deadline_days',
- '{"oversight":7,"legal_basis":14,"annex_iii_cat":14,"documentation":30,"conformity":30,"eu_database":60}'::jsonb,
+ '{"requires_oversight":7,"legal_basis":14,"annex_iii_cat":14,"_technical_doc":30,"_conformity":30,"_eu_db":60}'::jsonb,
  'json', 'compliance',
- 'Terminy luk compliance (dni)', 'Liczba dni na usunięcie poszczególnych luk zgodności high-risk.', 'dni', NULL, NULL),
+ 'Terminy luk compliance (dni)', 'Liczba dni na usunięcie poszczególnych luk zgodności high-risk (klucz = pole kontroli).', 'dni', NULL, NULL),
 ('compliance.enterprise_report_max_tokens', '500'::jsonb, 'int', 'compliance',
  'Raport enterprise — max tokenów', 'Limit tokenów narracji raportu korporacyjnego.', 'tokeny', 50, 4000),
-('compliance.report_max_tokens', '280'::jsonb, 'int', 'compliance',
+('compliance.report_max_tokens', '450'::jsonb, 'int', 'compliance',
  'Raport agenta — max tokenów', 'Limit tokenów narracji raportu zgodności agenta.', 'tokeny', 50, 4000)
 
 ON CONFLICT (key) DO NOTHING;

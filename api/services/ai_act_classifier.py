@@ -10,6 +10,7 @@ from dataclasses import dataclass, field
 import anthropic
 
 from config import settings
+from services import settings_service
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +63,7 @@ async def classify_risk(description: str) -> ClassificationResult:
 
     try:
         response = await client.messages.create(
-            model=settings.classifier_model,
+            model=settings_service.get_str("models.classifier_model", settings.classifier_model),
             max_tokens=600,
             system=CLASSIFICATION_PROMPT,
             messages=[{

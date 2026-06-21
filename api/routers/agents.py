@@ -7,6 +7,7 @@ from pydantic import BaseModel, field_validator
 
 from database import get_pool
 from dependencies.auth import CurrentUser, get_current_user, require_role
+from services import settings_service
 from services.ai_act_classifier import classify_risk
 from services.compliance import assess_compliance
 
@@ -22,8 +23,8 @@ class AgentCreate(BaseModel):
     owner_name: str
     owner_email: str
     team: Optional[str] = None
-    model_id: str = "claude-haiku-4-5-20251001"
-    monthly_budget_eur: float = 0.0
+    model_id: Optional[str] = None          # domyślny z parametrów (models.default_agent_model)
+    monthly_budget_eur: Optional[float] = None  # domyślny z parametrów (budget.default_monthly_eur)
     allowed_data_cats: list[str] = []
     allowed_tools: list[str] = []
 
@@ -133,6 +134,13 @@ async def register_agent(
     """
     pool = get_pool()
 
+    model_id = data.model_id or settings_service.get_str(
+        "models.default_agent_model", "claude-haiku-4-5-20251001")
+    monthly_budget = (
+        data.monthly_budget_eur if data.monthly_budget_eur is not None
+        else settings_service.get_number("budget.default_monthly_eur", 0.0)
+    )
+
     logger.info("Klasyfikuję agenta: %s", data.name)
     classification = await classify_risk(data.description)
     logger.info(
@@ -155,7 +163,7 @@ async def register_agent(
            )""",
         agent_id, data.name, data.description, data.owner_name, data.owner_email, data.team,
         classification.risk_level, classification.annex_iii_cat, classification.legal_basis,
-        classification.requires_oversight, data.model_id, data.monthly_budget_eur,
+        classification.requires_oversight, model_id, monthly_budget,
         data.allowed_data_cats, data.allowed_tools,
     )
 
@@ -296,10 +304,12 @@ async def get_compliance(agent_id: str, user: CurrentUser = Depends(get_current_
 @router.get("/{agent_id}/stats")
 async def get_stats(
     agent_id: str,
-    days: int = Query(30, ge=1, le=90),
+    days: Optional[int] = Query(None, ge=1),
     user: CurrentUser = Depends(get_current_user),
 ):
     """Statystyki wywołań agenta z dziennika audytowego (ostatnie N dni)."""
+    max_days = settings_service.get_int("pagination.stats_max_days", 90)
+    days = min(days or settings_service.get_int("pagination.stats_default_days", 30), max_days)
     pool = get_pool()
 
     agent = await pool.fetchrow("SELECT id, name FROM agents WHERE id = $1", agent_id)

@@ -14,13 +14,15 @@ from jose import JWTError, jwt
 
 from config import settings
 from database import get_pool
+from services import settings_service
 
 logger = logging.getLogger(__name__)
 
 # ── Hasła ─────────────────────────────────────────────────────────────────────
 
 def hash_password(plain: str) -> str:
-    return _bcrypt.hashpw(plain.encode(), _bcrypt.gensalt(12)).decode()
+    rounds = settings_service.get_int("security.bcrypt_rounds", 12)
+    return _bcrypt.hashpw(plain.encode(), _bcrypt.gensalt(rounds)).decode()
 
 def verify_password(plain: str, hashed: str) -> bool:
     try:
@@ -31,7 +33,8 @@ def verify_password(plain: str, hashed: str) -> bool:
 # ── JWT access token ──────────────────────────────────────────────────────────
 
 def create_access_token(user_id: str, email: str, role: str) -> str:
-    expire = datetime.now(timezone.utc) + timedelta(minutes=settings.access_token_expire_minutes)
+    minutes = settings_service.get_int("security.access_token_expire_minutes", settings.access_token_expire_minutes)
+    expire = datetime.now(timezone.utc) + timedelta(minutes=minutes)
     payload = {
         "sub": str(user_id),
         "email": email,
@@ -65,7 +68,8 @@ async def create_refresh_token(
     """Generuje refresh token, zapisuje hash w DB, zwraca surowy token dla klienta."""
     raw = secrets.token_urlsafe(48)
     token_hash = _hash_token(raw)
-    expires_at = datetime.now(timezone.utc) + timedelta(days=settings.refresh_token_expire_days)
+    days = settings_service.get_int("security.refresh_token_expire_days", settings.refresh_token_expire_days)
+    expires_at = datetime.now(timezone.utc) + timedelta(days=days)
 
     pool = get_pool()
     await pool.execute(
