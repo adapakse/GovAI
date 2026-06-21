@@ -5,8 +5,8 @@ import logging
 from typing import Optional
 
 from fastapi import APIRouter, Depends, Query, WebSocket, WebSocketDisconnect
-from database import get_pool
 from dependencies.auth import CurrentUser, get_current_user
+from repositories import dashboard_repository as dashboard_repo
 from services import settings_service
 
 logger = logging.getLogger(__name__)
@@ -32,56 +32,12 @@ async def dashboard_summary(
     days = days or settings_service.get_int("pagination.default_window_days", 7)
     top_n = settings_service.get_int("pagination.dashboard_top_agents", 5)
     recent_n = settings_service.get_int("pagination.dashboard_recent_blocks", 10)
-    pool = get_pool()
 
-    agents_stats = await pool.fetchrow(
-        """SELECT
-               COUNT(*)                                    AS total,
-               COUNT(*) FILTER (WHERE status = 'active')  AS active,
-               COUNT(*) FILTER (WHERE status = 'suspended' OR status = 'quarantined') AS suspended,
-               COUNT(*) FILTER (WHERE risk_level = 'high' OR risk_level = 'unacceptable') AS high_risk
-           FROM agents"""
-    )
-
-    call_stats = await pool.fetchrow(
-        """SELECT
-               COUNT(*)                                              AS total_calls,
-               COUNT(*) FILTER (WHERE policy_result = 'blocked')    AS blocked,
-               COUNT(*) FILTER (WHERE policy_result = 'oversight_required') AS oversight_required,
-               COUNT(*) FILTER (WHERE pii_count > 0)                AS pii_calls,
-               COALESCE(SUM(cost_eur), 0)                           AS total_cost_eur,
-               ROUND(AVG(latency_ms))                               AS avg_latency_ms
-           FROM audit_log
-           WHERE time > NOW() - ($1 || ' days')::INTERVAL""",
-        str(days),
-    )
-
-    pending_oversight = await pool.fetchval(
-        "SELECT COUNT(*) FROM oversight_queue WHERE status = 'pending' AND ttl_expires_at > NOW()"
-    )
-
-    top_agents = await pool.fetch(
-        """SELECT agent_name, COUNT(*) AS calls,
-                  COUNT(*) FILTER (WHERE policy_result = 'blocked') AS blocked,
-                  COALESCE(SUM(cost_eur), 0) AS cost_eur
-           FROM audit_log
-           WHERE time > NOW() - ($1 || ' days')::INTERVAL
-           GROUP BY agent_name
-           ORDER BY calls DESC
-           LIMIT $2""",
-        str(days), top_n,
-    )
-
-    recent_blocks = await pool.fetch(
-        """SELECT time, agent_name, event_type, policy_result,
-                  pii_categories, block_reason
-           FROM audit_log
-           WHERE policy_result IN ('blocked', 'oversight_required')
-             AND time > NOW() - ($1 || ' days')::INTERVAL
-           ORDER BY time DESC
-           LIMIT $2""",
-        str(days), recent_n,
-    )
+    agents_stats = await dashboard_repo.agents_stats()
+    call_stats = await dashboard_repo.call_stats(days)
+    pending_oversight = await dashboard_repo.pending_oversight_count()
+    top_agents = await dashboard_repo.top_agents(days, top_n)
+    recent_blocks = await dashboard_repo.recent_blocks(days, recent_n)
 
     return {
         "period_days": days,
@@ -101,21 +57,7 @@ async def dashboard_timeline(
     """Godzinowe zestawienie wywołań agentów (ostatnie N godzin)."""
     max_hours = settings_service.get_int("pagination.timeline_max_hours", 72)
     hours = min(hours or settings_service.get_int("pagination.timeline_default_hours", 24), max_hours)
-    pool = get_pool()
-    rows = await pool.fetch(
-        """
-        SELECT
-            date_trunc('hour', time)                                        AS hour,
-            COUNT(*)                                                         AS total,
-            COUNT(*) FILTER (WHERE policy_result = 'blocked')               AS blocked,
-            COUNT(*) FILTER (WHERE policy_result = 'oversight_required')    AS oversight
-        FROM audit_log
-        WHERE time > NOW() - ($1 * INTERVAL '1 hour')
-        GROUP BY hour
-        ORDER BY hour
-        """,
-        hours,
-    )
+    rows = await dashboard_repo.timeline(hours)
     return [
         {
             "hour":     row["hour"].strftime("%H:%M"),

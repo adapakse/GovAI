@@ -10,8 +10,8 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
-from database import get_pool
 from dependencies.auth import CurrentUser, get_current_user, require_role
+from repositories import providers_repository as providers_repo
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/providers", tags=["providers"])
@@ -69,16 +69,7 @@ async def list_providers(
     active_only: bool = False,
     user: CurrentUser = Depends(get_current_user),
 ):
-    pool = get_pool()
-    where = "WHERE active = true" if active_only else ""
-    rows = await pool.fetch(
-        f"""SELECT id, name, provider_type, model_ids, base_url, api_key_env,
-                   max_data_sensitivity, active, priority, is_healthy,
-                   last_health_check_at, notes, created_by, created_at, updated_at
-            FROM providers
-            {where}
-            ORDER BY priority ASC, name ASC"""
-    )
+    rows = await providers_repo.list_providers(active_only=active_only)
     return [_row_to_dict(r) for r in rows]
 
 
@@ -87,14 +78,7 @@ async def get_provider(
     provider_id: str,
     user: CurrentUser = Depends(get_current_user),
 ):
-    pool = get_pool()
-    row = await pool.fetchrow(
-        """SELECT id, name, provider_type, model_ids, base_url, api_key_env,
-                  max_data_sensitivity, active, priority, is_healthy,
-                  last_health_check_at, notes, created_by, created_at, updated_at
-           FROM providers WHERE id = $1""",
-        provider_id,
-    )
+    row = await providers_repo.get_provider(provider_id)
     if not row:
         raise HTTPException(status_code=404, detail="Provider nie znaleziony")
     return _row_to_dict(row)
@@ -110,24 +94,16 @@ async def create_provider(
     if body.max_data_sensitivity not in VALID_SENSITIVITY:
         raise HTTPException(400, f"Nieprawidłowy max_data_sensitivity. Dozwolone: {sorted(VALID_SENSITIVITY)}")
 
-    pool = get_pool()
-    row = await pool.fetchrow(
-        """INSERT INTO providers
-               (name, provider_type, model_ids, base_url, api_key_env,
-                max_data_sensitivity, priority, notes, created_by)
-           VALUES ($1, $2, $3, $4, $5, $6::data_sensitivity_level, $7, $8, $9)
-           RETURNING id, name, provider_type, model_ids, base_url, api_key_env,
-                     max_data_sensitivity, active, priority, is_healthy,
-                     last_health_check_at, notes, created_by, created_at, updated_at""",
-        body.name,
-        body.provider_type,
-        body.model_ids,
-        body.base_url,
-        body.api_key_env,
-        body.max_data_sensitivity,
-        body.priority,
-        body.notes,
-        user.id,
+    row = await providers_repo.insert_provider(
+        name=body.name,
+        provider_type=body.provider_type,
+        model_ids=body.model_ids,
+        base_url=body.base_url,
+        api_key_env=body.api_key_env,
+        max_data_sensitivity=body.max_data_sensitivity,
+        priority=body.priority,
+        notes=body.notes,
+        created_by=user.id,
     )
     logger.info("Provider '%s' utworzony przez %s", body.name, user.email)
     return _row_to_dict(row)
@@ -139,55 +115,28 @@ async def update_provider(
     body: ProviderUpdate,
     user: CurrentUser = Depends(_WRITE_ROLES),
 ):
-    pool = get_pool()
-    existing = await pool.fetchrow("SELECT id FROM providers WHERE id = $1", provider_id)
+    existing = await providers_repo.get_provider_id(provider_id)
     if not existing:
         raise HTTPException(404, "Provider nie znaleziony")
 
     if body.max_data_sensitivity and body.max_data_sensitivity not in VALID_SENSITIVITY:
         raise HTTPException(400, f"Nieprawidłowy max_data_sensitivity. Dozwolone: {sorted(VALID_SENSITIVITY)}")
 
-    updates, params = [], []
-    idx = 1
-
-    simple_fields = [
-        ("name", body.name),
-        ("base_url", body.base_url),
-        ("api_key_env", body.api_key_env),
-        ("priority", body.priority),
-        ("active", body.active),
-        ("is_healthy", body.is_healthy),
-        ("notes", body.notes),
-    ]
-    for field, val in simple_fields:
-        if val is not None:
-            updates.append(f"{field} = ${idx}")
-            params.append(val)
-            idx += 1
-
-    if body.model_ids is not None:
-        updates.append(f"model_ids = ${idx}")
-        params.append(body.model_ids)
-        idx += 1
-
-    if body.max_data_sensitivity is not None:
-        updates.append(f"max_data_sensitivity = ${idx}::data_sensitivity_level")
-        params.append(body.max_data_sensitivity)
-        idx += 1
-
-    if not updates:
+    row = await providers_repo.update_provider(
+        provider_id,
+        name=body.name,
+        base_url=body.base_url,
+        api_key_env=body.api_key_env,
+        priority=body.priority,
+        active=body.active,
+        is_healthy=body.is_healthy,
+        notes=body.notes,
+        model_ids=body.model_ids,
+        max_data_sensitivity=body.max_data_sensitivity,
+    )
+    if row is None:
         return await get_provider(provider_id, user)
 
-    updates.append("updated_at = NOW()")
-    params.append(provider_id)
-
-    row = await pool.fetchrow(
-        f"""UPDATE providers SET {', '.join(updates)} WHERE id = ${idx}
-            RETURNING id, name, provider_type, model_ids, base_url, api_key_env,
-                      max_data_sensitivity, active, priority, is_healthy,
-                      last_health_check_at, notes, created_by, created_at, updated_at""",
-        *params,
-    )
     logger.info("Provider '%s' zaktualizowany przez %s", provider_id, user.email)
     return _row_to_dict(row)
 
@@ -197,10 +146,7 @@ async def delete_provider(
     provider_id: str,
     user: CurrentUser = Depends(_WRITE_ROLES),
 ):
-    pool = get_pool()
-    row = await pool.fetchrow(
-        "DELETE FROM providers WHERE id = $1 RETURNING id, name", provider_id
-    )
+    row = await providers_repo.delete_provider(provider_id)
     if not row:
         raise HTTPException(404, "Provider nie znaleziony")
     logger.info("Provider '%s' usunięty przez %s", row["name"], user.email)
@@ -214,14 +160,7 @@ async def update_health(
     user: CurrentUser = Depends(_WRITE_ROLES),
 ):
     """Ręczna aktualizacja stanu zdrowia providera (np. po teście połączenia)."""
-    pool = get_pool()
-    row = await pool.fetchrow(
-        """UPDATE providers
-           SET is_healthy = $1, last_health_check_at = NOW(), updated_at = NOW()
-           WHERE id = $2
-           RETURNING id, name, is_healthy, last_health_check_at""",
-        healthy, provider_id,
-    )
+    row = await providers_repo.set_health(provider_id, healthy)
     if not row:
         raise HTTPException(404, "Provider nie znaleziony")
     return _row_to_dict(row)

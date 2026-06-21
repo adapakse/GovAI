@@ -20,7 +20,7 @@ from dependencies.auth import CurrentUser, get_current_user, require_role
 from services.auth_service import create_access_token
 
 from config import settings
-from database import get_pool
+from repositories import demo_repository as demo_repo
 
 router = APIRouter(prefix="/demo", tags=["demo"])
 
@@ -117,33 +117,7 @@ SCENARIOS: dict[str, dict[str, dict]] = {
     },
 }
 
-# ── INSERT SQL ─────────────────────────────────────────────────────────────────
-
-_AUDIT_INSERT = """
-INSERT INTO audit_log (
-    time, agent_id, agent_name, task_id, call_id, event_type,
-    policy_result, policy_id, pii_categories, pii_count,
-    input_hash, output_hash, model_used, latency_ms,
-    tokens_in, tokens_out, cost_eur, block_reason, metadata
-) VALUES (
-    $1, $2::uuid, $3, $4, $5::uuid, $6,
-    $7::audit_result, $8, $9::text[], $10,
-    $11, $12, $13, $14,
-    $15, $16, $17, $18, $19::jsonb
-)
-"""
-
-_OVERSIGHT_INSERT = """
-INSERT INTO oversight_queue (
-    agent_id, task_id, decision_type, agent_decision, agent_reasoning,
-    input_hash, confidence, status, reviewer_id, reviewer_decision,
-    review_start_at, reviewed_at, ttl_expires_at, created_at
-) VALUES (
-    $1::uuid, $2, $3, $4, $5,
-    $6, $7, $8::oversight_status, $9, $10,
-    $11, $12, $13, $14
-)
-"""
+# ── Stałe seedera ──────────────────────────────────────────────────────────────
 
 _SEED_META = json.dumps({"seeded": True})
 _PII_CATS  = ["PESEL", "PHONE_NUMBER", "NIP", "IBAN", "PL_PHONE", "EMAIL_ADDRESS"]
@@ -387,15 +361,11 @@ def _gen_oversight_entries(now: datetime) -> list[tuple]:
 async def seed_demo_data(user: CurrentUser = Depends(require_role("partner", "it_admin"))):
     """Wypełnia bazę 30 dniami realistycznych danych historycznych."""
     now   = datetime.now(timezone.utc)
-    pool  = get_pool()
 
     audit_entries    = _gen_audit_entries(now)
     oversight_entries = _gen_oversight_entries(now)
 
-    async with pool.acquire() as conn:
-        async with conn.transaction():
-            await conn.executemany(_AUDIT_INSERT, audit_entries)
-            await conn.executemany(_OVERSIGHT_INSERT, oversight_entries)
+    await demo_repo.seed_entries(audit_entries, oversight_entries)
 
     return {
         "status":                    "seeded",
@@ -411,23 +381,9 @@ async def seed_demo_data(user: CurrentUser = Depends(require_role("partner", "it
 @router.delete("/seed")
 async def reset_demo_data(user: CurrentUser = Depends(require_role("partner", "it_admin"))):
     """Usuwa WSZYSTKIE dane z audit_log i oversight_queue dla 3 agentów demo."""
-    pool = get_pool()
     ids  = [_A1, _A2, _A3]
 
-    async with pool.acquire() as conn:
-        async with conn.transaction():
-            n_audit = await conn.fetchval(
-                "SELECT COUNT(*) FROM audit_log WHERE agent_id = ANY($1::uuid[])", ids
-            )
-            await conn.execute(
-                "DELETE FROM audit_log WHERE agent_id = ANY($1::uuid[])", ids
-            )
-            n_oq = await conn.fetchval(
-                "SELECT COUNT(*) FROM oversight_queue WHERE agent_id = ANY($1::uuid[])", ids
-            )
-            await conn.execute(
-                "DELETE FROM oversight_queue WHERE agent_id = ANY($1::uuid[])", ids
-            )
+    n_audit, n_oq = await demo_repo.reset_demo(ids)
 
     return {
         "status":                   "reset",
@@ -439,15 +395,10 @@ async def reset_demo_data(user: CurrentUser = Depends(require_role("partner", "i
 @router.get("/seed/status")
 async def seed_status(user: CurrentUser = Depends(get_current_user)):
     """Sprawdza czy dane demo są zasiane."""
-    pool = get_pool()
     ids  = [_A1, _A2, _A3]
 
-    n_audit = await pool.fetchval(
-        "SELECT COUNT(*) FROM audit_log WHERE agent_id = ANY($1::uuid[])", ids
-    )
-    n_oq = await pool.fetchval(
-        "SELECT COUNT(*) FROM oversight_queue WHERE agent_id = ANY($1::uuid[])", ids
-    )
+    n_audit, n_oq = await demo_repo.seed_status(ids)
+
     return {
         "seeded":          n_audit > 50,
         "audit_entries":   n_audit,

@@ -3,8 +3,8 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 
-from database import get_pool
 from dependencies.auth import CurrentUser, get_current_user, require_role
+from repositories import audit_repository as audit_repo
 from services import settings_service
 
 logger = logging.getLogger(__name__)
@@ -28,34 +28,14 @@ async def list_audit(
     days = days or settings_service.get_int("pagination.default_window_days", 7)
     max_limit = settings_service.get_int("pagination.audit_max_limit", 500)
     limit = min(limit or settings_service.get_int("pagination.audit_default_limit", 100), max_limit)
-    pool = get_pool()
-    conditions = ["time > NOW() - ($1 || ' days')::INTERVAL"]
-    params = [str(days)]
-    idx = 2
-
-    if agent_id:
-        conditions.append(f"agent_id = ${idx}"); params.append(agent_id); idx += 1
-    if event_type:
-        conditions.append(f"event_type = ${idx}"); params.append(event_type); idx += 1
-    if policy_result:
-        conditions.append(f"policy_result = ${idx}::audit_result"); params.append(policy_result); idx += 1
-    if has_pii is True:
-        conditions.append("pii_count > 0")
-    elif has_pii is False:
-        conditions.append("pii_count = 0")
-
-    where = " AND ".join(conditions)
-    rows = await pool.fetch(
-        f"""SELECT time, id, agent_id, agent_name, task_id, call_id,
-                   event_type, policy_result, policy_id,
-                   pii_categories, pii_count,
-                   input_hash, output_hash, model_used,
-                   latency_ms, tokens_in, tokens_out, cost_eur, block_reason
-            FROM audit_log
-            WHERE {where}
-            ORDER BY time DESC
-            LIMIT ${idx} OFFSET ${idx+1}""",
-        *params, limit, offset,
+    rows = await audit_repo.list_audit(
+        days=days,
+        limit=limit,
+        offset=offset,
+        agent_id=agent_id,
+        event_type=event_type,
+        policy_result=policy_result,
+        has_pii=has_pii,
     )
     return [_row_to_dict(r) for r in rows]
 
@@ -67,31 +47,14 @@ async def get_summary(
 ):
     """Podsumowanie dziennika audytowego."""
     days = days or settings_service.get_int("pagination.default_window_days", 7)
-    pool = get_pool()
-    row = await pool.fetchrow(
-        """SELECT
-               COUNT(*)                                              AS total_calls,
-               COUNT(DISTINCT agent_id)                             AS unique_agents,
-               COUNT(*) FILTER (WHERE policy_result = 'blocked')    AS blocked,
-               COUNT(*) FILTER (WHERE policy_result = 'oversight_required') AS oversight,
-               COUNT(*) FILTER (WHERE pii_count > 0)                AS pii_detected,
-               COALESCE(SUM(cost_eur), 0)                           AS total_cost_eur,
-               ROUND(AVG(latency_ms))                               AS avg_latency_ms
-           FROM audit_log
-           WHERE time > NOW() - ($1 || ' days')::INTERVAL""",
-        str(days),
-    )
+    row = await audit_repo.summary(days)
     return {**dict(row), "period_days": days}
 
 
 @router.get("/{call_id}")
 async def get_call(call_id: str, user: CurrentUser = Depends(_AUDIT_ROLES)):
     """Szczegóły pojedynczego wywołania."""
-    pool = get_pool()
-    row = await pool.fetchrow(
-        "SELECT * FROM audit_log WHERE call_id = $1 ORDER BY time DESC LIMIT 1",
-        call_id,
-    )
+    row = await audit_repo.get_call(call_id)
     if not row:
         raise HTTPException(404, f"Wywołanie '{call_id}' nie znalezione w dzienniku")
     return _row_to_dict(row)

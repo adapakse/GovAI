@@ -29,11 +29,12 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from pydantic import BaseModel, field_validator
 
 from dependencies.auth import CurrentUser, get_current_user, require_role
+from repositories import auth_repository as auth_repo
 from services.auth_service import (
     change_password, create_api_key, create_refresh_token, create_user,
     get_user_by_email, get_user_by_id, list_users, revoke_refresh_token,
     update_last_login, update_user, verify_api_key, verify_refresh_token,
-    create_access_token, get_pool,
+    create_access_token,
 )
 
 logger = logging.getLogger(__name__)
@@ -281,14 +282,7 @@ async def list_api_keys(
     user: CurrentUser = Depends(require_role("partner", "it_admin")),
 ):
     """Lista kluczy API (bez surowych wartości)."""
-    pool = get_pool()
-    rows = await pool.fetch(
-        """SELECT k.id, k.name, k.key_prefix, k.agent_id, a.name AS agent_name,
-                  k.expires_at, k.last_used_at, k.active, k.created_at
-           FROM api_keys k
-           LEFT JOIN agents a ON a.id = k.agent_id
-           ORDER BY k.created_at DESC""",
-    )
+    rows = await auth_repo.list_api_keys()
     return [_key_row(r) for r in rows]
 
 
@@ -317,10 +311,7 @@ async def revoke_api_key(
     user: CurrentUser = Depends(require_role("partner", "it_admin")),
 ):
     """Dezaktywuje klucz API."""
-    pool = get_pool()
-    result = await pool.execute(
-        "UPDATE api_keys SET active = false WHERE id = $1", key_id,
-    )
+    result = await auth_repo.deactivate_api_key(key_id)
     if result == "UPDATE 0":
         raise HTTPException(404, "Klucz API nie znaleziony.")
     return {"message": f"Klucz API {key_id} dezaktywowany."}

@@ -5,8 +5,8 @@ from uuid import uuid4
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, field_validator
 
-from database import get_pool
 from dependencies.auth import CurrentUser, get_current_user, require_role
+from repositories import agents_repository as agents_repo
 from services import settings_service
 from services.ai_act_classifier import classify_risk
 from services.compliance import assess_compliance
@@ -93,33 +93,7 @@ async def list_agents(
     user: CurrentUser = Depends(get_current_user),
 ):
     """Lista wszystkich agentów z opcjonalnym filtrowaniem."""
-    pool = get_pool()
-
-    conditions = ["1=1"]
-    params = []
-    idx = 1
-
-    if risk_level:
-        conditions.append(f"risk_level = ${idx}::risk_level")
-        params.append(risk_level); idx += 1
-    if status:
-        conditions.append(f"status = ${idx}::agent_status")
-        params.append(status); idx += 1
-    if team:
-        conditions.append(f"team ILIKE ${idx}")
-        params.append(f"%{team}%"); idx += 1
-
-    where = " AND ".join(conditions)
-    rows = await pool.fetch(
-        f"""SELECT id, name, description, owner_name, owner_email, team,
-                   risk_level, annex_iii_cat, legal_basis, status,
-                   requires_oversight, model_id, monthly_budget_eur,
-                   allowed_data_cats, created_at, updated_at
-            FROM agents
-            WHERE {where}
-            ORDER BY name""",
-        *params,
-    )
+    rows = await agents_repo.list_agents(risk_level, status, team)
     return [_row_to_dict(r) for r in rows]
 
 
@@ -132,8 +106,6 @@ async def register_agent(
     Rejestracja nowego agenta z automatyczną klasyfikacją AI Act.
     Claude analizuje opis i przypisuje poziom ryzyka, kategorię i podstawę prawną.
     """
-    pool = get_pool()
-
     model_id = data.model_id or settings_service.get_str(
         "models.default_agent_model", "claude-haiku-4-5-20251001")
     monthly_budget = (
@@ -149,25 +121,14 @@ async def register_agent(
     )
 
     agent_id = str(uuid4())
-    await pool.execute(
-        """INSERT INTO agents (
-               id, name, description, owner_name, owner_email, team,
-               risk_level, annex_iii_cat, legal_basis, status,
-               requires_oversight, model_id, monthly_budget_eur,
-               allowed_data_cats, allowed_tools
-           ) VALUES (
-               $1, $2, $3, $4, $5, $6,
-               $7::risk_level, $8, $9, 'active'::agent_status,
-               $10, $11, $12,
-               $13, $14
-           )""",
+    await agents_repo.insert_agent(
         agent_id, data.name, data.description, data.owner_name, data.owner_email, data.team,
         classification.risk_level, classification.annex_iii_cat, classification.legal_basis,
         classification.requires_oversight, model_id, monthly_budget,
         data.allowed_data_cats, data.allowed_tools,
     )
 
-    row = await pool.fetchrow("SELECT * FROM agents WHERE id = $1", agent_id)
+    row = await agents_repo.get_agent_by_id(agent_id)
     result = _row_to_dict(row)
     result["classification_details"] = {
         "key_obligations": classification.key_obligations,
@@ -179,8 +140,7 @@ async def register_agent(
 @router.get("/{agent_id}")
 async def get_agent(agent_id: str, user: CurrentUser = Depends(get_current_user)):
     """Szczegóły agenta."""
-    pool = get_pool()
-    row = await pool.fetchrow("SELECT * FROM agents WHERE id = $1", agent_id)
+    row = await agents_repo.get_agent_by_id(agent_id)
     if not row:
         raise HTTPException(404, f"Agent '{agent_id}' nie istnieje")
     return _row_to_dict(row)
@@ -196,15 +156,11 @@ async def update_status(
     Zmiana statusu agenta (active / suspended / quarantined / retired).
     Natychmiastowy efekt — bramka weryfikuje status przy każdym wywołaniu.
     """
-    pool = get_pool()
-    row = await pool.fetchrow("SELECT id, name, status FROM agents WHERE id = $1", agent_id)
+    row = await agents_repo.get_agent_status(agent_id)
     if not row:
         raise HTTPException(404, f"Agent '{agent_id}' nie istnieje")
 
-    await pool.execute(
-        "UPDATE agents SET status = $1::agent_status, updated_at = NOW() WHERE id = $2",
-        body.status, agent_id,
-    )
+    await agents_repo.update_status(agent_id, body.status)
     logger.info("Status agenta %s zmieniony: %s → %s", row["name"], row["status"], body.status)
     return {"agent_id": agent_id, "name": row["name"], "old_status": row["status"], "new_status": body.status}
 
@@ -220,13 +176,9 @@ async def update_registry(
     dane osobowe, kontakty, budżet. Partial update — tylko podane pola.
     """
     import json as _json
-    pool = get_pool()
-    row = await pool.fetchrow("SELECT id FROM agents WHERE id = $1", agent_id)
+    row = await agents_repo.get_agent_id_only(agent_id)
     if not row:
         raise HTTPException(404, f"Agent '{agent_id}' nie istnieje")
-
-    updates, params = [], []
-    idx = 1
 
     simple_fields = [
         "version", "last_reviewed_at", "next_review_date",
@@ -237,32 +189,29 @@ async def update_registry(
     ]
     array_fields = ["input_modalities", "output_modalities", "integration_points"]
 
+    simple_values = {}
     for field in simple_fields:
         val = getattr(data, field)
         if val is not None:
-            updates.append(f"{field} = ${idx}")
-            params.append(val); idx += 1
+            simple_values[field] = val
 
+    array_values = {}
     for field in array_fields:
         val = getattr(data, field)
         if val is not None:
-            updates.append(f"{field} = ${idx}::text[]")
-            params.append(val); idx += 1
+            array_values[field] = val
 
-    if data.compliance_decl is not None:
-        updates.append(f"compliance_decl = ${idx}::jsonb")
-        params.append(_json.dumps(data.compliance_decl)); idx += 1
+    compliance_decl_json = (
+        _json.dumps(data.compliance_decl) if data.compliance_decl is not None else None
+    )
 
-    if not updates:
+    if not simple_values and not array_values and compliance_decl_json is None:
         raise HTTPException(400, "Brak pól do aktualizacji")
 
-    updates.append("updated_at = NOW()")
-    params.append(agent_id)
-    await pool.execute(
-        f"UPDATE agents SET {', '.join(updates)} WHERE id = ${idx}",
-        *params,
+    await agents_repo.update_registry(
+        agent_id, simple_values, array_values, compliance_decl_json,
     )
-    row = await pool.fetchrow("SELECT * FROM agents WHERE id = $1", agent_id)
+    row = await agents_repo.get_agent_by_id(agent_id)
     return _row_to_dict(row)
 
 
@@ -272,8 +221,7 @@ async def get_compliance(agent_id: str, user: CurrentUser = Depends(get_current_
     Pełna ocena zgodności agenta z EU AI Act.
     Identyfikuje luki i zwraca plan naprawczy z terminami.
     """
-    pool = get_pool()
-    row = await pool.fetchrow("SELECT * FROM agents WHERE id = $1", agent_id)
+    row = await agents_repo.get_agent_by_id(agent_id)
     if not row:
         raise HTTPException(404, f"Agent '{agent_id}' nie istnieje")
 
@@ -310,43 +258,14 @@ async def get_stats(
     """Statystyki wywołań agenta z dziennika audytowego (ostatnie N dni)."""
     max_days = settings_service.get_int("pagination.stats_max_days", 90)
     days = min(days or settings_service.get_int("pagination.stats_default_days", 30), max_days)
-    pool = get_pool()
 
-    agent = await pool.fetchrow("SELECT id, name FROM agents WHERE id = $1", agent_id)
+    agent = await agents_repo.get_agent_name(agent_id)
     if not agent:
         raise HTTPException(404, f"Agent '{agent_id}' nie istnieje")
 
-    stats = await pool.fetchrow(
-        """SELECT
-               COUNT(*)                                              AS total_calls,
-               COUNT(*) FILTER (WHERE policy_result = 'blocked')    AS blocked_calls,
-               COUNT(*) FILTER (WHERE policy_result = 'oversight_required') AS oversight_calls,
-               COUNT(*) FILTER (WHERE pii_count > 0)                AS pii_calls,
-               ROUND(AVG(latency_ms))                               AS avg_latency_ms,
-               MAX(latency_ms)                                       AS max_latency_ms,
-               COALESCE(SUM(cost_eur), 0)                           AS total_cost_eur,
-               COALESCE(SUM(tokens_in), 0)                          AS total_tokens_in,
-               COALESCE(SUM(tokens_out), 0)                         AS total_tokens_out,
-               COALESCE(SUM(pii_count), 0)                          AS total_pii_detected
-           FROM audit_log
-           WHERE agent_id = $1
-             AND time > NOW() - ($2 || ' days')::INTERVAL""",
-        agent_id, str(days),
-    )
+    stats = await agents_repo.fetch_stats_totals(agent_id, str(days))
 
-    daily = await pool.fetch(
-        """SELECT
-               DATE_TRUNC('day', time) AS day,
-               COUNT(*)                AS calls,
-               COUNT(*) FILTER (WHERE policy_result = 'blocked') AS blocked,
-               COALESCE(SUM(cost_eur), 0) AS cost_eur
-           FROM audit_log
-           WHERE agent_id = $1
-             AND time > NOW() - ($2 || ' days')::INTERVAL
-           GROUP BY 1
-           ORDER BY 1""",
-        agent_id, str(days),
-    )
+    daily = await agents_repo.fetch_stats_daily(agent_id, str(days))
 
     return {
         "agent_id": agent_id,
