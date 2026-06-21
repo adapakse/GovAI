@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from contextlib import asynccontextmanager
 
@@ -7,8 +8,12 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from config import settings
 from database import close_pool, init_pool
-from routers import agents, audit, auth, compliance, dashboard, demo, oversight, policies, providers, reports
+from routers import (
+    agents, audit, auth, compliance, dashboard, demo, oversight,
+    policies, providers, reports, settings as settings_router,
+)
 from routers.dashboard import set_redis
+from services import settings_service
 
 logging.basicConfig(
     level=logging.INFO,
@@ -17,16 +22,31 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+async def _settings_refresh_loop(interval: int = 60) -> None:
+    """Odświeża cache parametrów z DB co N sekund — bez restartu."""
+    while True:
+        await asyncio.sleep(interval)
+        await settings_service.load()
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("GovAI API uruchamiana...")
     await init_pool()
+    await settings_service.load()
 
     redis = await aioredis.from_url(settings.redis_url, decode_responses=True)
     set_redis(redis)
 
+    refresh_task = asyncio.create_task(_settings_refresh_loop())
     logger.info("GovAI API gotowa")
     yield
+
+    refresh_task.cancel()
+    try:
+        await refresh_task
+    except asyncio.CancelledError:
+        pass
 
     await close_pool()
     await redis.aclose()
@@ -62,6 +82,7 @@ app.include_router(dashboard.router)
 app.include_router(reports.router)
 app.include_router(providers.router)
 app.include_router(demo.router)
+app.include_router(settings_router.router)
 
 
 @app.get("/")
