@@ -299,4 +299,27 @@ export const api = {
     run: (agent_id: string, scenario: string) =>
       post<Record<string, unknown>>('/demo/run', { agent_id, scenario }),
   },
+  settings: {
+    list: () => get<Record<string, Setting[]>>('/settings'),
+    update: (key: string, value: unknown) =>
+      put<Setting>(`/settings/${encodeURIComponent(key)}`, { value }),
+    reload: () => post<{ status: string }>('/settings/reload'),
+  },
 };
+
+export type SettingType = 'number' | 'int' | 'bool' | 'string' | 'json';
+
+export interface Setting {
+  key: string;
+  value: unknown;
+  value_type: SettingType;
+  category: string;
+  label: string;
+  description: string | null;
+  unit: string | null;
+  min_value: number | null;
+  max_value: number | null;
+  editable: boolean;
+  updated_by: string | null;
+  updated_at: string;
+}

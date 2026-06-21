@@ -14,6 +14,7 @@ const NAV = [
   { href: '/providers', label: 'Providerzy', icon: <ProvidersIcon /> },
   { href: '/reports',   label: 'Raporty',    icon: <ReportsIcon /> },
   { href: '/demo',      label: 'Symulator',  icon: <DemoIcon /> },
+  { href: '/settings',  label: 'Parametry',  icon: <SettingsIcon /> },
 ];
 
 export default function Sidebar() {
@@ -199,6 +200,15 @@ function DemoIcon() {
   return (
     <svg viewBox="0 0 16 16" fill="currentColor">
       <path d="M5 3l8 5-8 5V3z"/>
+    </svg>
+  );
+}
+
+function SettingsIcon() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <circle cx="8" cy="8" r="2.5"/>
+      <path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.5 1.5M11.5 11.5L13 13M13 3l-1.5 1.5M4.5 11.5L3 13" strokeLinecap="round"/>
     </svg>
   );
 }
