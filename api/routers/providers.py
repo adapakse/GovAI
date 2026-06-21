@@ -64,7 +64,7 @@ def _row_to_dict(row) -> dict:
 
 # ── Endpoints ─────────────────────────────────────────────────────────────────
 
-@router.get("/")
+@router.get("")
 async def list_providers(
     active_only: bool = False,
     user: CurrentUser = Depends(get_current_user),
@@ -84,7 +84,7 @@ async def get_provider(
     return _row_to_dict(row)
 
 
-@router.post("/", status_code=201)
+@router.post("", status_code=201)
 async def create_provider(
     body: ProviderCreate,
     user: CurrentUser = Depends(_WRITE_ROLES),
