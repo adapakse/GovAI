@@ -7,6 +7,7 @@ from uuid import uuid4
 
 import redis.asyncio as aioredis
 
+import app_settings
 from config import settings
 from database import get_pool
 from models import AgentRecord
@@ -45,7 +46,8 @@ async def push_oversight_task(
     Zwraca oversight_id.
     """
     oversight_id = str(uuid4())
-    ttl_expires_at = datetime.now(timezone.utc) + timedelta(seconds=settings.oversight_ttl_seconds)
+    ttl_seconds = app_settings.get_int("oversight.ttl_seconds", settings.oversight_ttl_seconds)
+    ttl_expires_at = datetime.now(timezone.utc) + timedelta(seconds=ttl_seconds)
 
     # Rekonstrukcja kontekstu decyzji — ostatnia wiadomość agenta/użytkownika
     user_content = ""
@@ -130,4 +132,4 @@ async def ttl_monitor_loop() -> None:
         except Exception:
             logger.exception("Błąd pętli monitorowania TTL")
 
-        await asyncio.sleep(60)
+        await asyncio.sleep(app_settings.get_int("intervals.ttl_monitor_seconds", 60))

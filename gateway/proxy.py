@@ -7,6 +7,7 @@ from uuid import uuid4
 import litellm
 from fastapi import HTTPException, Request
 
+import app_settings
 from audit_logger import write_audit_fire_and_forget
 from config import settings
 from database import get_agent
@@ -100,19 +101,25 @@ def _hash(text: str) -> str:
     return hashlib.sha256(text.encode()).hexdigest()[:16]
 
 
+_DEFAULT_RATES = {
+    "claude-haiku-4-5-20251001": [0.00025, 0.00125],
+    "claude-sonnet-4-6":         [0.003,   0.015],
+    "claude-opus-4-8":           [0.015,   0.075],
+    "gpt-4o":                    [0.005,   0.015],
+    "gpt-4o-mini":               [0.00015, 0.0006],
+    "deepseek-chat":             [0.00014, 0.00028],
+}
+
+
 def _estimate_cost(model: str, tokens_in: int, tokens_out: int) -> float:
-    """Przybliżony koszt w EUR na podstawie liczby tokenów."""
-    rates = {
-        "claude-haiku-4-5-20251001": (0.00025, 0.00125),
-        "claude-sonnet-4-6":         (0.003,   0.015),
-        "claude-opus-4-8":           (0.015,   0.075),
-        "gpt-4o":                    (0.005,   0.015),
-        "gpt-4o-mini":               (0.00015, 0.0006),
-        "deepseek-chat":             (0.00014, 0.00028),
-    }
-    rate_in, rate_out = rates.get(model, (0.003, 0.015))
+    """Przybliżony koszt w EUR — stawki i kurs z parametrów (app_settings)."""
+    rates = app_settings.get_json("pricing.model_rates", _DEFAULT_RATES)
+    default_rate = app_settings.get_json("pricing.default_rate", [0.003, 0.015])
+    usd_to_eur = app_settings.get_number("pricing.usd_to_eur", 0.93)
+
+    rate_in, rate_out = rates.get(model, default_rate)
     usd = (tokens_in / 1000) * rate_in + (tokens_out / 1000) * rate_out
-    return round(usd * 0.93, 8)  # USD → EUR (kurs uproszczony)
+    return round(usd * usd_to_eur, 8)
 
 
 def _build_litellm_model(provider: ProviderRecord, preferred_model: str) -> str:
@@ -351,8 +358,8 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
         response = await litellm.acompletion(
             model=model_to_call,
             messages=clean_messages,
-            temperature=body.get("temperature", 0.7),
-            max_tokens=body.get("max_tokens", 1024),
+            temperature=body.get("temperature", app_settings.get_number("models.default_temperature", 0.7)),
+            max_tokens=body.get("max_tokens", app_settings.get_int("models.default_max_tokens", 1024)),
             **extra_kwargs,
         )
     except Exception as exc:

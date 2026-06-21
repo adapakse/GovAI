@@ -6,6 +6,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+import app_settings
 from auth_middleware import AuthMiddleware
 from config import settings
 from database import close_pool, fetch_active_policies, init_pool
@@ -21,10 +22,11 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-async def _policy_refresh_loop(policy_engine: PolicyEngine, interval: int = 60) -> None:
-    """Odświeża reguły polityk z DB co N sekund — bez restartu gateway."""
+async def _policy_refresh_loop(policy_engine: PolicyEngine) -> None:
+    """Odświeża parametry i reguły polityk z DB — bez restartu gateway."""
     while True:
-        await asyncio.sleep(interval)
+        await asyncio.sleep(app_settings.get_int("intervals.policy_refresh_seconds", 60))
+        await app_settings.load()
         try:
             rules = await fetch_active_policies()
             policy_engine.load_rules(rules)
@@ -38,6 +40,7 @@ async def lifespan(app: FastAPI):
 
     await init_pool()
     await init_redis()
+    await app_settings.load()
 
     pii = PIIScanner()
     policy = PolicyEngine()

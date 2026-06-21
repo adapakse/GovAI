@@ -8,6 +8,7 @@ from presidio_analyzer.nlp_engine import NlpEngineProvider
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import OperatorConfig
 
+import app_settings
 from config import settings
 from models import PIIScanResult
 
@@ -99,7 +100,7 @@ class PIIScanner:
             text=combined,
             language=lang,
             entities=self.SUPPORTED_ENTITIES,
-            score_threshold=settings.pii_confidence_threshold,
+            score_threshold=app_settings.get_number("security.pii_confidence_threshold", settings.pii_confidence_threshold),
         )
 
         if not findings:
@@ -119,7 +120,7 @@ class PIIScanner:
                 text=content,
                 language=lang,
                 entities=self.SUPPORTED_ENTITIES,
-                score_threshold=settings.pii_confidence_threshold,
+                score_threshold=app_settings.get_number("security.pii_confidence_threshold", settings.pii_confidence_threshold),
             )
             if msg_findings:
                 anonymized = self._anonymizer.anonymize(
@@ -147,6 +148,6 @@ class PIIScanner:
             text=text,
             language=lang,
             entities=self.SUPPORTED_ENTITIES,
-            score_threshold=settings.pii_confidence_threshold,
+            score_threshold=app_settings.get_number("security.pii_confidence_threshold", settings.pii_confidence_threshold),
         )
         return list({f.entity_type for f in findings})
