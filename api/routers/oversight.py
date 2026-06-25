@@ -28,6 +28,15 @@ async def list_pending(user: CurrentUser = Depends(get_current_user)):
     return [_row_to_dict(r) for r in rows]
 
 
+@router.get("/{oversight_id}")
+async def get_oversight(oversight_id: str, user: CurrentUser = Depends(get_current_user)):
+    """Status pojedynczego zadania nadzoru — używane przez govai-sdk do pollingu."""
+    row = await oversight_repo.fetch_with_agent(oversight_id)
+    if not row:
+        raise HTTPException(404, "Zadanie nadzoru nie istnieje")
+    return _row_to_dict(row)
+
+
 @router.post("/{oversight_id}/start-review")
 async def start_review(oversight_id: str, user: CurrentUser = Depends(_REVIEW_ROLES)):
     """
