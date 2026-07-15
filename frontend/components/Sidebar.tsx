@@ -13,14 +13,19 @@ const NAV = [
   { href: '/policies',  label: 'Polityki',   icon: <PoliciesIcon /> },
   { href: '/providers', label: 'Providerzy', icon: <ProvidersIcon /> },
   { href: '/reports',   label: 'Raporty',    icon: <ReportsIcon /> },
-  { href: '/demo',      label: 'Symulator',  icon: <DemoIcon /> },
-  { href: '/settings',  label: 'Parametry',  icon: <SettingsIcon /> },
+];
+
+const ADMIN_NAV = [
+  { href: '/demo',     label: 'Symulator', icon: <DemoIcon /> },
+  { href: '/settings', label: 'Parametry', icon: <SettingsIcon /> },
 ];
 
 export default function Sidebar() {
   const path = usePathname();
   const [pendingCount, setPendingCount] = useState(0);
   const { user, logout } = useAuth();
+  const isAdminPath = ADMIN_NAV.some(({ href }) => path === href || path.startsWith(href + '/'));
+  const [adminOpen, setAdminOpen] = useState(isAdminPath);
 
   useEffect(() => {
     if (path === '/login') return;
@@ -101,6 +106,41 @@ export default function Sidebar() {
                   {pendingCount > 9 ? '9+' : pendingCount}
                 </span>
               )}
+            </Link>
+          );
+        })}
+
+        {/* Admin — symulator i parametry, schowane pod jednym rozwijanym menu */}
+        <button
+          onClick={() => setAdminOpen(v => !v)}
+          className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${
+            isAdminPath ? 'text-teal' : 'text-mgray hover:bg-blue/20 hover:text-white'
+          }`}
+        >
+          <span className={`w-4 h-4 flex-shrink-0 ${isAdminPath ? 'text-teal' : 'text-mgray/70'}`}>
+            <AdminIcon />
+          </span>
+          <span className="flex-1 font-medium text-left">Admin</span>
+          <span className={`w-3 h-3 flex-shrink-0 transition-transform ${adminOpen ? 'rotate-90' : ''}`}>
+            <ChevronIcon />
+          </span>
+        </button>
+        {adminOpen && ADMIN_NAV.map(({ href, icon, label }) => {
+          const active = path === href || path.startsWith(href + '/');
+          return (
+            <Link
+              key={href}
+              href={href}
+              className={`flex items-center gap-3 pl-8 pr-4 py-2.5 text-sm transition-colors ${
+                active
+                  ? 'bg-blue/30 text-teal border-r-2 border-teal'
+                  : 'text-mgray hover:bg-blue/20 hover:text-white'
+              }`}
+            >
+              <span className={`w-4 h-4 flex-shrink-0 ${active ? 'text-teal' : 'text-mgray/70'}`}>
+                {icon}
+              </span>
+              <span className="flex-1 font-medium">{label}</span>
             </Link>
           );
         })}
@@ -200,6 +240,23 @@ function DemoIcon() {
   return (
     <svg viewBox="0 0 16 16" fill="currentColor">
       <path d="M5 3l8 5-8 5V3z"/>
+    </svg>
+  );
+}
+
+function AdminIcon() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <path d="M8 1l5.5 2.2v3.5c0 3.6-2.3 6.7-5.5 7.8-3.2-1.1-5.5-4.2-5.5-7.8V3.2L8 1z" strokeLinejoin="round"/>
+      <path d="M5.5 8l1.8 1.8L10.5 6" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+function ChevronIcon() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M6 3l5 5-5 5" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   );
 }

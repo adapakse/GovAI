@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { authHeaders, handle401 } from '@/lib/api';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
 
@@ -48,7 +49,11 @@ export default function ReportsPage() {
     setLoading(true);
     setError('');
     try {
-      const r = await fetch(`${API}/reports/enterprise?days=${days}`, { cache: 'no-store' });
+      const r = await fetch(`${API}/reports/enterprise?days=${days}`, {
+        cache: 'no-store',
+        headers: await authHeaders(),
+      });
+      if (r.status === 401) { handle401(); throw new Error('Sesja wygasła'); }
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       setSummary(await r.json());
     } catch (e) {
@@ -61,7 +66,10 @@ export default function ReportsPage() {
   async function downloadPdf() {
     setGenerating(true);
     try {
-      const r = await fetch(`${API}/reports/enterprise/pdf?days=${days}`);
+      const r = await fetch(`${API}/reports/enterprise/pdf?days=${days}`, {
+        headers: await authHeaders(),
+      });
+      if (r.status === 401) { handle401(); throw new Error('Sesja wygasła'); }
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       const blob = await r.blob();
       const url  = URL.createObjectURL(blob);

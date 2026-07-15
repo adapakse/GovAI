@@ -1,7 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { api, Provider, DataSensitivityLevel, ProviderType } from '@/lib/api';
+import SearchBox from '@/components/SearchBox';
+import { matchesQuery } from '@/lib/search';
 
 // ── Stałe ─────────────────────────────────────────────────────────────────────
 
@@ -490,6 +492,7 @@ function ProviderCard({ provider, onChanged }: { provider: Provider; onChanged: 
 export default function ProvidersPage() {
   const [providers, setProviders] = useState<Provider[]>([]);
   const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState('');
 
   async function load() {
     setLoading(true);
@@ -504,11 +507,16 @@ export default function ProvidersPage() {
 
   useEffect(() => { load(); }, []);
 
+  const visible = useMemo(() => providers.filter(p => matchesQuery(
+    [p.name, p.provider_type, p.base_url, p.max_data_sensitivity, p.notes, ...(p.model_ids ?? [])],
+    query,
+  )), [providers, query]);
+
   const byLevel: Record<DataSensitivityLevel, Provider[]> = {
-    privileged:   providers.filter(p => p.max_data_sensitivity === 'privileged'),
-    confidential: providers.filter(p => p.max_data_sensitivity === 'confidential'),
-    internal:     providers.filter(p => p.max_data_sensitivity === 'internal'),
-    public:       providers.filter(p => p.max_data_sensitivity === 'public'),
+    privileged:   visible.filter(p => p.max_data_sensitivity === 'privileged'),
+    confidential: visible.filter(p => p.max_data_sensitivity === 'confidential'),
+    internal:     visible.filter(p => p.max_data_sensitivity === 'internal'),
+    public:       visible.filter(p => p.max_data_sensitivity === 'public'),
   };
 
   const activeCount  = providers.filter(p => p.active).length;
@@ -550,11 +558,28 @@ export default function ProvidersPage() {
       {/* Formularz dodawania */}
       <AddProviderForm onSaved={load} />
 
+      {/* Wyszukiwarka */}
+      {providers.length > 0 && (
+        <div className="flex items-center gap-3">
+          <SearchBox
+            value={query}
+            onChange={setQuery}
+            placeholder="Szukaj providera — nazwa, typ, model, base_url..."
+            count={visible.length}
+            total={providers.length}
+          />
+        </div>
+      )}
+
       {loading ? (
         <div className="text-mgray animate-pulse py-8">Ładowanie providerów...</div>
       ) : providers.length === 0 ? (
         <div className="text-center py-12 text-mgray/40">
           Brak zdefiniowanych providerów. Dodaj pierwszego powyżej.
+        </div>
+      ) : visible.length === 0 ? (
+        <div className="text-center py-12 text-mgray/50">
+          Brak providerów pasujących do „{query}”.
         </div>
       ) : (
         /* Grupowanie wg max_data_sensitivity */

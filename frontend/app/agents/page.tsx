@@ -1,9 +1,11 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { api, Agent, AgentStatus, RiskLevel } from '@/lib/api';
+import { api, Agent, AgentStatus, RiskLevel, Provider } from '@/lib/api';
 import RiskBadge from '@/components/RiskBadge';
+import SearchBox from '@/components/SearchBox';
+import { matchesQuery, providerFieldsForModel } from '@/lib/search';
 
 const STATUS_STYLE: Record<AgentStatus, string> = {
   active:      'text-green-400',
@@ -22,9 +24,11 @@ const RISK_OPTS: { value: RiskLevel | ''; label: string }[] = [
 
 export default function AgentsPage() {
   const [agents, setAgents] = useState<Agent[]>([]);
+  const [providers, setProviders] = useState<Provider[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterRisk, setFilterRisk] = useState<RiskLevel | ''>('');
   const [filterStatus, setFilterStatus] = useState<AgentStatus | ''>('');
+  const [query, setQuery] = useState('');
   const [showForm, setShowForm] = useState(false);
 
   const load = useCallback(() => {
@@ -38,6 +42,12 @@ export default function AgentsPage() {
   }, [filterRisk, filterStatus]);
 
   useEffect(() => { load(); }, [load]);
+  useEffect(() => { api.providers.list().then(setProviders).catch(() => {}); }, []);
+
+  const visibleAgents = useMemo(() => agents.filter(a => matchesQuery(
+    [a.name, a.model_id, a.owner_name, a.team, a.annex_iii_cat, ...providerFieldsForModel(a.model_id, providers)],
+    query,
+  )), [agents, providers, query]);
 
   async function changeStatus(id: string, status: AgentStatus) {
     await api.agents.updateStatus(id, status);
@@ -49,7 +59,9 @@ export default function AgentsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white">Rejestr Agentów</h1>
-          <p className="text-mgray text-sm mt-0.5">{agents.length} agentów</p>
+          <p className="text-mgray text-sm mt-0.5">
+            {query ? `${visibleAgents.length} z ${agents.length}` : `${agents.length}`} agentów
+          </p>
         </div>
         <button
           onClick={() => setShowForm(true)}
@@ -60,7 +72,14 @@ export default function AgentsPage() {
       </div>
 
       {/* Filtry */}
-      <div className="flex gap-3">
+      <div className="flex gap-3 flex-wrap items-center">
+        <SearchBox
+          value={query}
+          onChange={setQuery}
+          placeholder="Szukaj — nazwa, model, provider, właściciel, zespół..."
+          count={visibleAgents.length}
+          total={agents.length}
+        />
         <select
           value={filterRisk}
           onChange={e => setFilterRisk(e.target.value as RiskLevel | '')}
@@ -100,7 +119,10 @@ export default function AgentsPage() {
             {!loading && agents.length === 0 && (
               <tr><td colSpan={7} className="px-4 py-8 text-center text-mgray/50">Brak agentów</td></tr>
             )}
-            {agents.map(a => (
+            {!loading && agents.length > 0 && visibleAgents.length === 0 && (
+              <tr><td colSpan={7} className="px-4 py-8 text-center text-mgray/50">Brak agentów pasujących do „{query}”</td></tr>
+            )}
+            {visibleAgents.map(a => (
               <tr key={a.id} className="hover:bg-blue/10 transition-colors">
                 <td className="px-4 py-3">
                   <Link href={`/agents/${a.id}`} className="text-white font-medium hover:text-teal transition-colors">
