@@ -57,6 +57,15 @@ async def get_setting(key: str, user: CurrentUser = Depends(get_current_user)):
     return _row_to_dict(row)
 
 
+@router.get("/{key}/history")
+async def get_setting_history(
+    key: str, limit: int = 20, user: CurrentUser = Depends(get_current_user)
+):
+    """Ostatnie zmiany wartości parametru (stara → nowa, kto, kiedy)."""
+    rows = await repo.fetch_history(key, limit)
+    return [_row_to_dict(r) for r in rows]
+
+
 @router.put("/{key}")
 async def update_setting(
     key: str,

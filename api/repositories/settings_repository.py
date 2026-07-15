@@ -36,13 +36,36 @@ async def fetch_values() -> dict[str, Any]:
 
 
 async def update_value(key: str, value: Any, updated_by: str) -> Optional[dict]:
-    """Nadpisuje wartość (kodek jsonb serializuje natywny obiekt Pythona)."""
+    """Nadpisuje wartość (kodek jsonb serializuje natywny obiekt Pythona) i loguje zmianę do historii."""
     pool = get_pool()
-    row = await pool.fetchrow(
-        f"""UPDATE app_settings
-            SET value = $1, updated_by = $2, updated_at = NOW()
-            WHERE key = $3
-            RETURNING {_SELECT_COLS}""",
-        value, updated_by, key,
-    )
+    async with pool.acquire() as conn:
+        async with conn.transaction():
+            old = await conn.fetchrow("SELECT value FROM app_settings WHERE key = $1", key)
+            if old is None:
+                return None
+            row = await conn.fetchrow(
+                f"""UPDATE app_settings
+                    SET value = $1, updated_by = $2, updated_at = NOW()
+                    WHERE key = $3
+                    RETURNING {_SELECT_COLS}""",
+                value, updated_by, key,
+            )
+            await conn.execute(
+                """INSERT INTO app_settings_audit (key, old_value, new_value, updated_by)
+                   VALUES ($1, $2, $3, $4)""",
+                key, old["value"], value, updated_by,
+            )
     return dict(row) if row else None
+
+
+async def fetch_history(key: str, limit: int = 20) -> list[dict]:
+    pool = get_pool()
+    rows = await pool.fetch(
+        """SELECT id, key, old_value, new_value, updated_by, updated_at
+           FROM app_settings_audit
+           WHERE key = $1
+           ORDER BY updated_at DESC
+           LIMIT $2""",
+        key, limit,
+    )
+    return [dict(r) for r in rows]
