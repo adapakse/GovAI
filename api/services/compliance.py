@@ -1,21 +1,47 @@
 """
-Ocena zgodności agenta z EU AI Act.
-Identyfikuje luki i generuje plan naprawczy.
-"""
-from dataclasses import dataclass, field, replace
-from typing import Any
+Ocena zgodności agenta z EU AI Act — silnik w pełni dynamiczny.
 
-from services import settings_service
+Brak jakiejkolwiek zaszytej w kodzie listy wymagań, wag czy terminów.
+Wszystko pochodzi z dwóch źródeł danych:
+
+  1. Katalog wymagań — tabela `ai_act_requirements` (edytowalna w UI:
+     Polityki → Wymagania EU AI Act), filtrowana wg risk_level agenta.
+  2. Rejestr agenta — `agents.requires_oversight` (fakt systemowy) oraz
+     `agents.compliance_decl` (samo-deklaracja per wymaganie, zakładka Rejestr).
+
+Dla każdego wymagania silnik sprawdza najpierw, czy istnieje obiektywny
+automatyczny check (pole rejestru, nie oświadczenie) — obecnie tylko nadzór
+człowieka (art. 14). W przeciwnym razie czyta samo-deklarację po `decl_key`.
+Brak jednego i drugiego = wymaganie nieocenione ("undeclared") — realna luka,
+nie fikcyjna wartość domyślna.
+"""
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from typing import Optional
+
+# decl_key → funkcja sprawdzająca fakt w rejestrze agenta (nie samo-deklarację).
+# To JEDYNE miejsce z "twardą" regułą — bo to obiektywny stan systemu, a nie
+# oświadczenie, które mogłoby być błędne lub aspiracyjne.
+_AUTO_CHECKS = {
+    "art14_human_oversight": lambda agent: "yes" if agent.get("requires_oversight") else "no",
+}
 
 
 @dataclass
-class ComplianceGap:
+class RequirementStatus:
     article: str
     title: str
     description: str
-    severity: str  # "critical" | "major" | "minor"
-    action: str
+    status: str            # "yes" | "no" | "partial" | "na" | "undeclared"
+    severity: str           # critical | major | minor (z ai_act_requirements.default_severity)
     deadline_days: int
+    source: str              # "auto" | "declared" | "undeclared"
+    notes: str = ""
+
+    @property
+    def is_gap(self) -> bool:
+        return self.status in ("no", "partial", "undeclared")
 
 
 @dataclass
@@ -24,165 +50,58 @@ class ComplianceReport:
     agent_name: str
     risk_level: str
     status: str  # "compliant" | "gaps_found" | "critical"
-    gaps: list[ComplianceGap] = field(default_factory=list)
-    obligations: list[str] = field(default_factory=list)
+    requirements: list[RequirementStatus] = field(default_factory=list)
+
+    @property
+    def gaps(self) -> list[RequirementStatus]:
+        return [r for r in self.requirements if r.is_gap]
 
 
-# Wymagania dla agentów wysokiego ryzyka (Aneks III)
-_HIGH_RISK_CHECKS = [
-    {
-        "field": "requires_oversight",
-        "check": lambda v: v is True,
-        "gap": ComplianceGap(
-            article="Art. 14",
-            title="Brak nadzoru człowieka",
-            description=(
-                "Systemy AI wysokiego ryzyka muszą umożliwiać skuteczny nadzór człowieka. "
-                "Agent nie ma włączonego wymogu zatwierdzenia przez recenzenta."
-            ),
-            severity="critical",
-            action="Włącz flagę requires_oversight i wyznacz recenzenta odpowiedzialnego za zatwierdzanie decyzji",
-            deadline_days=7,
-        ),
-    },
-    {
-        "field": "legal_basis",
-        "check": lambda v: bool(v),
-        "gap": ComplianceGap(
-            article="Art. 10",
-            title="Brak podstawy prawnej klasyfikacji",
-            description=(
-                "Agent nie ma udokumentowanej podstawy prawnej klasyfikacji ryzyka. "
-                "Wymagane dla wszystkich systemów wysokiego ryzyka."
-            ),
-            severity="major",
-            action="Uzupełnij pole legal_basis z numerem artykułu i kategorii Aneksu III",
-            deadline_days=14,
-        ),
-    },
-    {
-        "field": "annex_iii_cat",
-        "check": lambda v: bool(v),
-        "gap": ComplianceGap(
-            article="Aneks III",
-            title="Brak kategorii Aneksu III",
-            description=(
-                "Agent nie ma przypisanej kategorii z Aneksu III EU AI Act. "
-                "Wymagane dla wszystkich systemów wysokiego ryzyka."
-            ),
-            severity="major",
-            action="Przypisz właściwą kategorię z Aneksu III podczas rejestracji lub edycji agenta",
-            deadline_days=14,
-        ),
-    },
-    {
-        "field": "_technical_doc",
-        "check": lambda v: False,  # Zawsze luka — brak pola w DB w prototypie
-        "gap": ComplianceGap(
-            article="Art. 11",
-            title="Brak dokumentacji technicznej",
-            description=(
-                "Systemy wysokiego ryzyka wymagają kompletnej dokumentacji technicznej "
-                "przed wprowadzeniem na rynek lub do użytku."
-            ),
-            severity="critical",
-            action="Przygotuj dokumentację techniczną zgodną z Aneksem IV EU AI Act",
-            deadline_days=30,
-        ),
-    },
-    {
-        "field": "_conformity",
-        "check": lambda v: False,  # Zawsze luka — brak pola w DB w prototypie
-        "gap": ComplianceGap(
-            article="Art. 43",
-            title="Brak oceny zgodności",
-            description=(
-                "Systemy wysokiego ryzyka z Aneksu III wymagają przeprowadzenia "
-                "oceny zgodności przed wdrożeniem."
-            ),
-            severity="critical",
-            action="Przeprowadź ocenę zgodności — dla większości kategorii możliwa samoocena (art. 43 ust. 2)",
-            deadline_days=30,
-        ),
-    },
-    {
-        "field": "_eu_db",
-        "check": lambda v: False,  # Zawsze luka — brak pola w DB w prototypie
-        "gap": ComplianceGap(
-            article="Art. 49",
-            title="Brak rejestracji w EU AI Database",
-            description=(
-                "Systemy wysokiego ryzyka muszą być zarejestrowane w unijnej bazie danych AI "
-                "przed wprowadzeniem do użytku (eu.ai.database)."
-            ),
-            severity="major",
-            action="Zarejestruj system w EU AI Database pod adresem ec.europa.eu/digital-strategy/ai-database",
-            deadline_days=60,
-        ),
-    },
-]
-
-# Obowiązki dla agentów o ograniczonym ryzyku
-_LIMITED_RISK_OBLIGATIONS = [
-    "Poinformuj użytkownika, że komunikuje się z systemem AI (art. 50 ust. 1)",
-    "Oznacz treści generowane przez AI jeśli mogą być mylone z treściami ludzkimi (art. 50 ust. 2)",
-]
-
-
-def assess_compliance(agent: dict) -> ComplianceReport:
+def assess_compliance(agent: dict, requirements: list[dict]) -> ComplianceReport:
     """
-    Ocenia stan zgodności agenta z EU AI Act.
-    Zwraca raport z listą luk i obowiązków.
+    Konfrontuje katalog wymagań (requirements, już przefiltrowany wg risk_level
+    agenta przez wołającego) z danymi rejestru agenta.
     """
-    risk = agent.get("risk_level", "minimal")
-    gaps: list[ComplianceGap] = []
-    obligations: list[str] = []
+    decl: dict = agent.get("compliance_decl") or {}
+    items: list[RequirementStatus] = []
 
-    if risk == "unacceptable":
-        gaps.append(ComplianceGap(
-            article="Art. 5",
-            title="System zakazany — niedopuszczalne ryzyko",
-            description="Agent sklasyfikowany jako niedopuszczalne ryzyko. Stosowanie zabronione przez EU AI Act.",
-            severity="critical",
-            action="Natychmiast wyłącz agenta i przeprowadź przegląd prawny",
-            deadline_days=0,
+    for req in requirements:
+        key = req.get("decl_key")
+        auto_check = _AUTO_CHECKS.get(key) if key else None
+
+        if auto_check is not None:
+            status, source, notes = auto_check(agent), "auto", ""
+        else:
+            entry = decl.get(key) or {} if key else {}
+            declared_status = entry.get("status")
+            if declared_status:
+                status, source, notes = declared_status, "declared", entry.get("notes", "")
+            else:
+                status, source, notes = "undeclared", "undeclared", ""
+
+        items.append(RequirementStatus(
+            article=req["article_ref"],
+            title=req["requirement_title"],
+            description=req["requirement_text"],
+            status=status,
+            severity=req["default_severity"],
+            deadline_days=req["default_deadline_days"],
+            source=source,
+            notes=notes,
         ))
 
-    elif risk == "high":
-        deadlines = settings_service.get_json("compliance.deadline_days", {})
-        for check in _HIGH_RISK_CHECKS:
-            field_val = agent.get(check["field"])
-            if not check["check"](field_val):
-                gap = check["gap"]
-                dl = deadlines.get(check["field"], gap.deadline_days)
-                gaps.append(replace(gap, deadline_days=int(dl)))
-        obligations.extend([
-            "Wdrożenie systemu zarządzania ryzykiem (art. 9)",
-            "Zapewnienie jakości danych treningowych (art. 10)",
-            "Prowadzenie dziennika logów przez co najmniej 6 miesięcy (art. 12)",
-            "Przejrzystość wobec użytkowników (art. 13)",
-            "Nadzór człowieka przy każdej decyzji (art. 14)",
-            "Zgłaszanie poważnych incydentów do organu nadzorczego (art. 73)",
-        ])
-
-    elif risk == "limited":
-        obligations.extend(_LIMITED_RISK_OBLIGATIONS)
-
-    else:
-        obligations.append("Brak szczególnych obowiązków (ryzyko minimalne)")
-
+    gaps = [i for i in items if i.is_gap]
     if not gaps:
-        status = "compliant"
-    elif any(g.severity == "critical" for g in gaps):
-        status = "critical"
+        overall = "compliant"
+    elif any(i.severity == "critical" for i in gaps):
+        overall = "critical"
     else:
-        status = "gaps_found"
+        overall = "gaps_found"
 
     return ComplianceReport(
         agent_id=str(agent.get("id", "")),
         agent_name=agent.get("name", ""),
-        risk_level=risk,
-        status=status,
-        gaps=gaps,
-        obligations=obligations,
+        risk_level=agent.get("risk_level", "minimal"),
+        status=overall,
+        requirements=items,
     )

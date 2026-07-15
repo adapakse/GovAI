@@ -1,25 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { api, Agent, ComplianceReport, ComplianceDecl, DeclStatus } from '@/lib/api';
+import { api, Agent, AiActRequirement, ComplianceReport, ComplianceDecl, DeclStatus } from '@/lib/api';
 import RiskBadge from '@/components/RiskBadge';
 
 type Tab = 'compliance' | 'stats' | 'registry';
 
-// ── Deklaracje EU AI Act ───────────────────────────────────────────────────────
-
-const AI_ACT_DECLS = [
-  { key: 'art9_risk_management',   art: 'Art. 9',   title: 'System zarządzania ryzykiem',           desc: 'Udokumentowany proces identyfikacji, analizy i mitygacji ryzyk przez cały cykl życia.' },
-  { key: 'art10_data_governance',  art: 'Art. 10',  title: 'Zarządzanie danymi treningowymi',       desc: 'Dane treningowe/testowe spełniają kryteria jakości, reprezentatywności i braku błędów.' },
-  { key: 'art11_technical_docs',   art: 'Art. 11',  title: 'Dokumentacja techniczna',              desc: 'Kompletna dokumentacja techniczna zgodna z Aneksem IV EU AI Act, aktualizowana na bieżąco.' },
-  { key: 'art13_transparency',     art: 'Art. 13',  title: 'Transparentność dla użytkowników',     desc: 'Użytkownicy są informowani o interakcji z AI i rozumieją możliwości/ograniczenia systemu.' },
-  { key: 'art14_human_oversight',  art: 'Art. 14',  title: 'Nadzór człowieka',                     desc: 'Wdrożone środki umożliwiające rozumienie, monitorowanie i interwencję w działanie systemu.' },
-  { key: 'art15_accuracy',         art: 'Art. 15',  title: 'Dokładność i cyberbezpieczeństwo',     desc: 'Przeprowadzone testy dokładności, solidności i odporności na cyberataki.' },
-  { key: 'conformity_assessment',  art: 'Ocena',    title: 'Ocena zgodności (conformity assessment)', desc: 'Przeprowadzona ocena zgodności — własna lub przez jednostkę notyfikowaną.' },
-  { key: 'eu_database_registered', art: 'Rejestr EU', title: 'Rejestracja w unijnej bazie AI',    desc: 'System zarejestrowany w unijnej bazie danych wysokiego ryzyka (wymagane dla Aneks III).' },
-];
+// Wymagania z auto-checkiem — status liczony z faktu w rejestrze agenta, nie
+// z samo-deklaracji. Musi być spójne z api/services/compliance.py:_AUTO_CHECKS.
+const AUTO_CHECK_KEYS = new Set(['art14_human_oversight']);
 
 const DECL_STATUS_OPTS: { value: DeclStatus; label: string; color: string }[] = [
   { value: '',        label: '— nie oceniono —', color: 'text-mgray' },
@@ -30,11 +21,16 @@ const DECL_STATUS_OPTS: { value: DeclStatus; label: string; color: string }[] = 
 ];
 
 const STATUS_COLOR: Record<string, string> = {
-  yes:     'bg-green-900/20 border-green-700 text-green-400',
-  partial: 'bg-yellow-900/20 border-yellow-700 text-yellow-400',
-  no:      'bg-red-900/20 border-red-700 text-red-400',
-  na:      'bg-dark/40 border-blue/20 text-mgray/60',
-  '':      'bg-dark/40 border-blue/20 text-mgray/40',
+  yes:        'bg-green-900/20 border-green-700 text-green-400',
+  partial:    'bg-yellow-900/20 border-yellow-700 text-yellow-400',
+  no:         'bg-red-900/20 border-red-700 text-red-400',
+  na:         'bg-dark/40 border-blue/20 text-mgray/60',
+  undeclared: 'bg-dark/40 border-orange-700/40 text-orange-300/90',
+  '':         'bg-dark/40 border-blue/20 text-mgray/40',
+};
+
+const STATUS_LABEL: Record<string, string> = {
+  yes: 'Spełnione', partial: 'Częściowo', no: 'Luka', na: 'Nie dotyczy', undeclared: 'Nie ocenione',
 };
 
 const GDPR_BASES = [
@@ -45,6 +41,10 @@ const GDPR_BASES = [
   { value: 'public_task',         label: 'Zadanie publiczne (art. 6 ust. 1 lit. e)' },
   { value: 'legitimate_interest', label: 'Prawnie uzasadniony interes (lit. f)' },
 ];
+
+const GDPR_BASIS_LABEL: Record<string, string> = Object.fromEntries(
+  GDPR_BASES.map(b => [b.value, b.label])
+);
 
 // ── Zakładka Rejestr ──────────────────────────────────────────────────────────
 
@@ -73,14 +73,20 @@ function RegistryTab({ agent, onSaved }: { agent: Agent; onSaved: (updated: Agen
     cost_alert_threshold_eur: String(agent.cost_alert_threshold_eur ?? ''),
   });
 
-  const [decl, setDecl] = useState<ComplianceDecl>(() => {
-    const base = agent.compliance_decl ?? {};
-    const result: ComplianceDecl = {};
-    for (const d of AI_ACT_DECLS) {
-      result[d.key] = base[d.key] ?? { status: '', notes: '' };
-    }
-    return result;
-  });
+  const [decl, setDecl] = useState<ComplianceDecl>(agent.compliance_decl ?? {});
+  const [requirements, setRequirements] = useState<AiActRequirement[]>([]);
+  const [reqLoading, setReqLoading] = useState(true);
+
+  // Katalog wymagań — z bazy (ai_act_requirements), filtrowany wg risk_level
+  // TEGO agenta. Edytowalny w Polityki → Wymagania EU AI Act; zmiana tam
+  // natychmiast zmienia listę deklaracji tutaj, bez zmian w kodzie.
+  useEffect(() => {
+    setReqLoading(true);
+    api.compliance.list(agent.risk_level, true)
+      .then(setRequirements)
+      .catch(console.error)
+      .finally(() => setReqLoading(false));
+  }, [agent.risk_level]);
 
   function setDeclField(key: string, field: 'status' | 'notes', value: string) {
     setDecl(prev => ({
@@ -156,46 +162,96 @@ function RegistryTab({ agent, onSaved }: { agent: Agent; onSaved: (updated: Agen
       {/* Sekcja: Deklaracje EU AI Act */}
       <Section title="Deklaracje zgodności EU AI Act">
         <p className="text-xs text-mgray -mt-1 mb-3">
-          Ocena każdego artykułu przez odpowiedzialną osobę — widoczna w raportach PDF i ocenie zgodności.
+          Ocena każdego wymagania przez odpowiedzialną osobę — widoczna w raportach PDF i ocenie zgodności.
+          Lista pochodzi z katalogu wymagań EU AI Act (Polityki → Wymagania EU AI Act) dla poziomu ryzyka „{agent.risk_level}”.
         </p>
-        <div className="space-y-3">
-          {AI_ACT_DECLS.map(d => {
-            const current = decl[d.key] ?? { status: '', notes: '' };
-            const statusOpt = DECL_STATUS_OPTS.find(o => o.value === current.status);
-            return (
-              <div key={d.key} className={`border rounded-lg px-4 py-3 ${STATUS_COLOR[current.status] ?? STATUS_COLOR['']}`}>
-                <div className="flex items-start gap-4 flex-wrap">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-0.5 flex-wrap">
-                      <span className="text-xs font-mono font-bold opacity-70">{d.art}</span>
-                      <span className="text-sm font-semibold">{d.title}</span>
+        {reqLoading ? (
+          <p className="text-xs text-mgray/50 italic">Ładowanie wymagań...</p>
+        ) : requirements.length === 0 ? (
+          <p className="text-xs text-mgray/50 italic">
+            Brak zdefiniowanych wymagań dla poziomu ryzyka „{agent.risk_level}” w katalogu.
+          </p>
+        ) : (
+          <div className="space-y-3">
+            {requirements.map(req => {
+              const isAuto = !!req.decl_key && AUTO_CHECK_KEYS.has(req.decl_key);
+              const noDecl = !req.decl_key;
+
+              // Auto-check: status pochodzi z faktu rejestru (requires_oversight),
+              // nie z samo-deklaracji — pokazujemy tylko do odczytu.
+              if (isAuto) {
+                const autoStatus = agent.requires_oversight ? 'yes' : 'no';
+                return (
+                  <div key={req.id} className={`border rounded-lg px-4 py-3 ${STATUS_COLOR[autoStatus]}`}>
+                    <div className="flex items-start gap-4 flex-wrap">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+                          <span className="text-xs font-mono font-bold opacity-70">{req.article_ref}</span>
+                          <span className="text-sm font-semibold">{req.requirement_title}</span>
+                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue/20 text-blue-300">automatyczne</span>
+                        </div>
+                        <p className="text-xs opacity-60 leading-relaxed">{req.requirement_text}</p>
+                      </div>
+                      <div className="flex-shrink-0 min-w-[180px] text-xs font-semibold">
+                        {autoStatus === 'yes' ? '✓ Spełnione' : '✗ Luka'} — sprawdzane z pola „Wymaga nadzoru”
+                      </div>
                     </div>
-                    <p className="text-xs opacity-60 leading-relaxed">{d.desc}</p>
                   </div>
-                  <div className="flex flex-col gap-2 flex-shrink-0 min-w-[180px]">
-                    <select
-                      className="bg-dark/60 border border-current/20 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-teal"
-                      value={current.status}
-                      onChange={e => setDeclField(d.key, 'status', e.target.value)}
-                    >
-                      {DECL_STATUS_OPTS.map(o => (
-                        <option key={o.value} value={o.value}>{o.label}</option>
-                      ))}
-                    </select>
+                );
+              }
+
+              // Bez decl_key (np. Art. 5 dla niedopuszczalnego ryzyka) — nie da
+              // się tego "samo-zadeklarować", tylko usunąć realny problem.
+              if (noDecl) {
+                return (
+                  <div key={req.id} className="border rounded-lg px-4 py-3 bg-red-900/20 border-red-700 text-red-300">
+                    <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+                      <span className="text-xs font-mono font-bold opacity-70">{req.article_ref}</span>
+                      <span className="text-sm font-semibold">{req.requirement_title}</span>
+                    </div>
+                    <p className="text-xs opacity-80 leading-relaxed">{req.requirement_text}</p>
+                    <p className="text-xs mt-1 italic opacity-70">Nie podlega samo-deklaracji — wymaga realnego usunięcia problemu.</p>
+                  </div>
+                );
+              }
+
+              const key = req.decl_key as string;
+              const current = decl[key] ?? { status: '', notes: '' };
+              return (
+                <div key={req.id} className={`border rounded-lg px-4 py-3 ${STATUS_COLOR[current.status] ?? STATUS_COLOR['']}`}>
+                  <div className="flex items-start gap-4 flex-wrap">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+                        <span className="text-xs font-mono font-bold opacity-70">{req.article_ref}</span>
+                        <span className="text-sm font-semibold">{req.requirement_title}</span>
+                      </div>
+                      <p className="text-xs opacity-60 leading-relaxed">{req.requirement_text}</p>
+                    </div>
+                    <div className="flex flex-col gap-2 flex-shrink-0 min-w-[180px]">
+                      <select
+                        className="bg-dark/60 border border-current/20 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-teal"
+                        value={current.status}
+                        onChange={e => setDeclField(key, 'status', e.target.value)}
+                      >
+                        {DECL_STATUS_OPTS.map(o => (
+                          <option key={o.value} value={o.value}>{o.label}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  <div className="mt-2">
+                    <input
+                      className="w-full bg-dark/40 border border-current/10 rounded px-2 py-1 text-xs text-white/80 placeholder:text-mgray/40 focus:outline-none focus:border-teal"
+                      placeholder="Notatka (opcjonalnie) — np. 'Dokumentacja w Confluence, space AI-GOV'"
+                      value={current.notes}
+                      onChange={e => setDeclField(key, 'notes', e.target.value)}
+                    />
                   </div>
                 </div>
-                <div className="mt-2">
-                  <input
-                    className="w-full bg-dark/40 border border-current/10 rounded px-2 py-1 text-xs text-white/80 placeholder:text-mgray/40 focus:outline-none focus:border-teal"
-                    placeholder="Notatka (opcjonalnie) — np. 'Dokumentacja w Confluence, space AI-GOV'"
-                    value={current.notes}
-                    onChange={e => setDeclField(d.key, 'notes', e.target.value)}
-                  />
-                </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </Section>
 
       {/* Sekcja: Dane i RODO */}
@@ -292,12 +348,25 @@ export default function AgentDetailPage() {
   const [compliance, setCompliance] = useState<ComplianceReport | null>(null);
   const [stats, setStats] = useState<Record<string, unknown> | null>(null);
   const [tab, setTab] = useState<Tab>('compliance');
+  const prevTab = useRef<Tab>('compliance');
 
-  useEffect(() => {
+  function loadAll() {
     api.agents.get(id).then(setAgent).catch(console.error);
     api.agents.compliance(id).then(setCompliance).catch(console.error);
     api.agents.stats(id, 30).then(setStats).catch(console.error);
-  }, [id]);
+  }
+
+  useEffect(loadAll, [id]);
+
+  // Zakładka Rejestr zapisuje dane, które zmieniają wynik oceny zgodności
+  // (compliance_decl, requires_oversight itd.) — przy wyjściu z niej do innej
+  // zakładki odśwież wszystko, żeby nie pokazywać stanu sprzed zapisu.
+  useEffect(() => {
+    if (prevTab.current === 'registry' && tab !== 'registry') {
+      loadAll();
+    }
+    prevTab.current = tab;
+  }, [tab]);
 
   if (!agent) return <div className="text-mgray animate-pulse">Ładowanie...</div>;
 
@@ -404,7 +473,7 @@ export default function AgentDetailPage() {
         {([
           { key: 'compliance', label: 'Zgodność AI Act' },
           { key: 'stats',      label: 'Statystyki 30 dni' },
-          { key: 'registry',   label: `Rejestr${declFilled > 0 ? ` (${declFilled}/${AI_ACT_DECLS.length})` : ''}` },
+          { key: 'registry',   label: `Rejestr${declFilled > 0 ? ` (${declFilled} zadeklarowanych)` : ''}` },
         ] as { key: Tab; label: string }[]).map(({ key, label }) => (
           <button
             key={key}
@@ -431,34 +500,91 @@ export default function AgentDetailPage() {
             {compliance.summary}
           </div>
 
-          {compliance.gaps.length > 0 && (
-            <div className="space-y-3">
-              <h3 className="text-sm font-semibold text-white">Wykryte luki ({compliance.gaps.length})</h3>
-              {compliance.gaps.map((gap, i) => (
-                <div key={i} className={`rounded-lg border px-4 py-3 ${severityColor[gap.severity]}`}>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-bold bg-current/20 px-2 py-0.5 rounded">{gap.article}</span>
-                    <span className="text-sm font-semibold">{gap.title}</span>
-                    <span className="ml-auto text-xs opacity-70">Termin: {gap.deadline_days} dni</span>
-                  </div>
-                  <p className="text-xs opacity-80 mb-2">{gap.description}</p>
-                  <div className="text-xs font-medium">→ {gap.action}</div>
+          {/* Profil systemu — widoczny niezależnie od poziomu ryzyka */}
+          <div className="bg-navy border border-blue/30 rounded-lg p-4 space-y-3">
+            <h3 className="text-sm font-semibold text-white">Profil systemu</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="col-span-2">
+                <div className="text-xs text-mgray mb-0.5">Cel i zakres systemu</div>
+                <div className="text-sm text-white/90">
+                  {agent.intended_purpose || <span className="text-mgray/50 italic">Nie uzupełniono — zob. zakładka Rejestr</span>}
                 </div>
-              ))}
+              </div>
+              <div>
+                <div className="text-xs text-mgray mb-0.5">Użytkownicy docelowi</div>
+                <div className="text-sm text-white/90">{agent.intended_users || '—'}</div>
+              </div>
+              <div>
+                <div className="text-xs text-mgray mb-0.5">Zakres geograficzny</div>
+                <div className="text-sm text-white/90">{agent.geographic_scope || '—'}</div>
+              </div>
+              <div>
+                <div className="text-xs text-mgray mb-0.5">Przetwarzanie danych osobowych</div>
+                <div className="text-sm text-white/90">
+                  {agent.processes_personal_data
+                    ? <>Tak — {agent.gdpr_legal_basis ? GDPR_BASIS_LABEL[agent.gdpr_legal_basis] ?? agent.gdpr_legal_basis : <span className="text-yellow-400">brak podstawy prawnej</span>}</>
+                    : 'Nie'}
+                </div>
+              </div>
+              <div>
+                <div className="text-xs text-mgray mb-0.5">Retencja danych</div>
+                <div className="text-sm text-white/90">
+                  {agent.data_retention_days ? `${agent.data_retention_days} dni` : '—'}
+                </div>
+              </div>
+              {agent.integration_points && agent.integration_points.length > 0 && (
+                <div className="col-span-2">
+                  <div className="text-xs text-mgray mb-1">Punkty integracji</div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {agent.integration_points.map((p, i) => (
+                      <span key={i} className="text-xs bg-dark/60 border border-blue/20 rounded px-2 py-0.5 text-mgray">{p}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div>
+                <div className="text-xs text-mgray mb-0.5">Kontakt techniczny</div>
+                <div className="text-sm text-white/90">{agent.technical_contact_email || '—'}</div>
+              </div>
+              <div>
+                <div className="text-xs text-mgray mb-0.5">Oficer compliance</div>
+                <div className="text-sm text-white/90">{agent.compliance_officer_email || '—'}</div>
+              </div>
             </div>
-          )}
+          </div>
 
-          {compliance.obligations.length > 0 && (
-            <div className="bg-navy border border-blue/30 rounded-lg p-4">
-              <h3 className="text-sm font-semibold text-white mb-3">Obowiązki prawne</h3>
-              <ul className="space-y-1.5">
-                {compliance.obligations.map((ob, i) => (
-                  <li key={i} className="flex items-start gap-2 text-xs text-mgray">
-                    <span className="text-teal mt-0.5 flex-shrink-0">●</span>
-                    {ob}
-                  </li>
-                ))}
-              </ul>
+          {compliance.requirements.length > 0 && (
+            <div className="space-y-3">
+              <h3 className="text-sm font-semibold text-white">
+                Wymagania EU AI Act ({compliance.requirements.length - compliance.gaps_count}/{compliance.requirements.length} spełnione)
+              </h3>
+              {compliance.requirements.map((req, i) => {
+                const isGap = req.status === 'no' || req.status === 'partial' || req.status === 'undeclared';
+                return (
+                  <div key={i} className={`rounded-lg border px-4 py-3 ${
+                    isGap ? (severityColor[req.severity] ?? severityColor.minor) : STATUS_COLOR.yes
+                  }`}>
+                    <div className="flex items-center gap-2 mb-1 flex-wrap">
+                      <span className="text-xs font-bold bg-current/20 px-2 py-0.5 rounded">{req.article}</span>
+                      <span className="text-sm font-semibold">{req.title}</span>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-current/10">{STATUS_LABEL[req.status] ?? req.status}</span>
+                      {req.source === 'auto' && (
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue/20 text-blue-300">automatyczne</span>
+                      )}
+                      {isGap && (
+                        <span className="ml-auto text-xs opacity-70">
+                          {req.deadline_days === 0 ? 'NATYCHMIAST' : `Termin: ${req.deadline_days} dni`}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs opacity-80 mb-1">{req.description}</p>
+                    {req.notes && <p className="text-xs opacity-60 italic">Notatka: {req.notes}</p>}
+                    {req.status === 'undeclared' && (
+                      <div className="text-xs font-medium mt-1">→ Uzupełnij samo-deklarację w zakładce Rejestr.</div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>

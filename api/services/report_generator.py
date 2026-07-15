@@ -2,6 +2,7 @@ import io
 import json
 import re
 import uuid
+from dataclasses import asdict
 from datetime import datetime, timezone
 from decimal import Decimal
 
@@ -18,6 +19,8 @@ from reportlab.platypus import (
 
 from config import settings
 from services import settings_service
+from services.compliance import assess_compliance
+from repositories import compliance_repository as compliance_repo
 from database import get_pool
 
 # ── Rejestracja fontów z obsługą polskich znaków ──────────────────────────────
@@ -66,50 +69,19 @@ Streszczenie powinno:
 Pisz profesjonalnie i konkretnie.\
 """
 
-_GAPS = {
-    "high": [
-        ("Art. 9",  "System zarządzania ryzykiem",    "Krytyczna", "90 dni"),
-        ("Art. 11", "Dokumentacja techniczna",         "Poważna",   "60 dni"),
-        ("Art. 13", "Przejrzystość i informowanie",    "Poważna",   "60 dni"),
-        ("Art. 14", "Nadzór człowieka",                "Krytyczna", "30 dni"),
-        ("Art. 17", "System zarządzania jakością",     "Poważna",   "90 dni"),
-        ("Art. 49", "Rejestracja w bazie EU",          "Poważna",   "Przed wdrożeniem"),
-    ],
-    "unacceptable": [
-        ("Art. 5",  "Zakazane praktyki AI",            "Krytyczna", "NATYCHMIAST"),
-    ],
-    "limited": [
-        ("Art. 52", "Obowiązki przejrzystości",        "Drobna",    "180 dni"),
-    ],
-    "minimal": [
-        ("Art. 52", "Obowiązki przejrzystości",        "Drobna",    "180 dni"),
-    ],
-}
+# Tłumaczenie enuma severity (z ai_act_requirements.default_severity) na etykietę
+# PL do wyświetlenia — czysta prezentacja, nie treść merytoryczna compliance.
+_SEV_LABEL = {"critical": "Krytyczna", "major": "Poważna", "minor": "Drobna"}
 
-_RECS = {
-    "high": [
-        "Przeprowadzić pełną ocenę ryzyka (art. 9) z udziałem zewnętrznego audytora w ciągu 30 dni.",
-        "Opracować dokumentację techniczną zgodną z Załącznikiem IV EU AI Act (art. 11) w ciągu 60 dni.",
-        "Wdrożyć mierzalne procedury nadzoru człowieka (art. 14) — weryfikowane w systemie GovAI.",
-        "Zarejestrować system w europejskiej bazie danych AI (art. 49) przed startem produkcyjnym.",
-        "Przeprowadzić wewnętrzny audyt zgodności w ciągu 90 dni.",
-    ],
-    "unacceptable": [
-        "PRIORYTET ABSOLUTNY: Wstrzymać działanie systemu natychmiast.",
-        "Skonsultować się z radcą prawnym — system może podlegać zakazom z art. 5 EU AI Act.",
-        "Poinformować właściwy organ nadzorczy w kraju wdrożenia.",
-    ],
-    "limited": [
-        "Monitorować aktualizacje wytycznych EU AI Act wydawanych przez EU AI Office.",
-        "Zapewnić informowanie użytkowników o interakcji z systemem AI (art. 52).",
-        "Dokumentować przypadki użycia systemu przez 5 lat na potrzeby ewentualnego audytu.",
-    ],
-    "minimal": [
-        "Monitorować zmiany w wytycznych EU AI Act.",
-        "Zapewnić informowanie użytkowników o interakcji z systemem AI (art. 52).",
-        "Dokumentować przypadki użycia systemu na potrzeby ewentualnego audytu.",
-    ],
-}
+
+def _gap_action(g: dict) -> str:
+    """Generyczna podpowiedź działania na podstawie statusu/źródła wymagania —
+    nie odwołuje się do treści konkretnego artykułu (ta jest w opisie luki)."""
+    if g["source"] == "auto":
+        return f"Zaktualizuj konfigurację agenta odpowiadającą za: {g['title']} ({g['article']})."
+    if g["status"] == "undeclared":
+        return f"Uzupełnij samo-deklarację w zakładce Rejestr: {g['title']} ({g['article']})."
+    return f"Zamknij lukę i zaktualizuj status w Rejestrze: {g['title']} ({g['article']})."
 
 
 def _serialize(val):
@@ -125,7 +97,15 @@ def _serialize(val):
 
 
 def _row_to_dict(row) -> dict:
-    return {k: _serialize(v) for k, v in dict(row).items()}
+    d = {k: _serialize(v) for k, v in dict(row).items()}
+    # asyncpg zwykle zwraca jsonb jako natywny dict — ale dla wierszy sprzed
+    # naprawy kodeka mogła zostać zapisana podwójnie zakodowana wartość (string).
+    if isinstance(d.get("compliance_decl"), str):
+        try:
+            d["compliance_decl"] = json.loads(d["compliance_decl"])
+        except Exception:
+            d["compliance_decl"] = {}
+    return d
 
 
 async def get_agent_report_data(agent_id: str) -> dict | None:
@@ -165,11 +145,18 @@ async def get_agent_report_data(agent_id: str) -> dict | None:
         agent_id,
     )
 
+    requirement_rows = await compliance_repo.list_requirements(
+        risk_level=agent["risk_level"], active_only=True,
+    )
+    compliance_report = assess_compliance(agent, [dict(r) for r in requirement_rows])
+
     return {
         "agent": agent,
         "stats": stats,
         "oversight_history": [_row_to_dict(r) for r in oversight_rows],
         "generated_at": datetime.now(timezone.utc).isoformat(),
+        "compliance_status": compliance_report.status,
+        "requirements": [asdict(r) for r in compliance_report.requirements],
     }
 
 
@@ -367,26 +354,38 @@ def render_pdf(report_data: dict, narrative: str) -> bytes:
     ]
     sec += 1
 
-    gaps = _GAPS.get(risk, _GAPS["minimal"])
-    story += [
-        Paragraph(f"{sec}. Ocena Zgodności z EU AI Act", S["h2"]),
-        hr(),
-        _table(
+    requirements = report_data.get("requirements", [])
+    gaps = [r for r in requirements if r["status"] in ("no", "partial", "undeclared")]
+
+    story += [Paragraph(f"{sec}. Ocena Zgodności z EU AI Act", S["h2"]), hr()]
+    if gaps:
+        story.append(_table(
             [["Artykuł", "Wymaganie", "Waga", "Termin"]] +
-            [[g[0], g[1], g[2], g[3]] for g in gaps],
+            [[g["article"], g["title"], _SEV_LABEL.get(g["severity"], g["severity"]),
+              "Przed wdrożeniem" if g["deadline_days"] == 0 else f"{g['deadline_days']} dni"]
+             for g in gaps],
             [3*cm, 7*cm, 3*cm, 3*cm],
-        ),
-        Spacer(1, 0.4*cm),
-    ]
+        ))
+    else:
+        story.append(Paragraph(
+            "Brak zidentyfikowanych luk — wymagania potwierdzone jako spełnione "
+            "lub nie dotyczące w deklaracjach zgodności (zakładka Rejestr).",
+            S["body"],
+        ))
+    story.append(Spacer(1, 0.4*cm))
     sec += 1
 
-    recs = _RECS.get(risk, _RECS["minimal"])
     story += [
         Paragraph(f"{sec}. Zalecenia Priorytetowe", S["h2"]),
         hr(),
     ]
-    for i, r in enumerate(recs, 1):
-        story.append(Paragraph(f"{i}. {r}", S["body"]))
+    if gaps:
+        sev_order = {"critical": 0, "major": 1, "minor": 2}
+        ranked = sorted(gaps, key=lambda g: (sev_order.get(g["severity"], 9), g["deadline_days"]))
+        for i, g in enumerate(ranked, 1):
+            story.append(Paragraph(f"{i}. {_gap_action(g)}", S["body"]))
+    else:
+        story.append(Paragraph("Brak zaległych działań — wszystkie wymagania potwierdzone.", S["body"]))
 
     story += [
         Spacer(1, 0.6*cm),

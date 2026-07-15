@@ -1,4 +1,5 @@
 import logging
+from datetime import date, datetime
 from typing import Optional
 from uuid import uuid4
 
@@ -7,6 +8,7 @@ from pydantic import BaseModel, field_validator
 
 from dependencies.auth import CurrentUser, get_current_user, require_role
 from repositories import agents_repository as agents_repo
+from repositories import compliance_repository as compliance_repo
 from services import settings_service
 from services.ai_act_classifier import classify_risk
 from services.compliance import assess_compliance
@@ -192,8 +194,16 @@ async def update_registry(
     simple_values = {}
     for field in simple_fields:
         val = getattr(data, field)
-        if val is not None:
-            simple_values[field] = val
+        if val is None:
+            continue
+        # asyncpg wymaga natywnego date/datetime dla kolumn date/timestamptz —
+        # sam cast ::date/::timestamptz w SQL tego nie zastępuje (kodek binarny
+        # wciąż oczekuje obiektu, nie stringa).
+        if field == "next_review_date":
+            val = date.fromisoformat(val)
+        elif field == "last_reviewed_at":
+            val = datetime.fromisoformat(val)
+        simple_values[field] = val
 
     array_values = {}
     for field in array_fields:
@@ -201,15 +211,15 @@ async def update_registry(
         if val is not None:
             array_values[field] = val
 
-    compliance_decl_json = (
-        _json.dumps(data.compliance_decl) if data.compliance_decl is not None else None
-    )
+    # Natywny dict — pula asyncpg API ma kodek jsonb (nie serializować przez
+    # json.dumps, bo podwójnie zakoduje wartość jako string JSON).
+    compliance_decl_native = data.compliance_decl
 
-    if not simple_values and not array_values and compliance_decl_json is None:
+    if not simple_values and not array_values and compliance_decl_native is None:
         raise HTTPException(400, "Brak pól do aktualizacji")
 
     await agents_repo.update_registry(
-        agent_id, simple_values, array_values, compliance_decl_json,
+        agent_id, simple_values, array_values, compliance_decl_native,
     )
     row = await agents_repo.get_agent_by_id(agent_id)
     return _row_to_dict(row)
@@ -218,33 +228,45 @@ async def update_registry(
 @router.get("/{agent_id}/compliance")
 async def get_compliance(agent_id: str, user: CurrentUser = Depends(get_current_user)):
     """
-    Pełna ocena zgodności agenta z EU AI Act.
-    Identyfikuje luki i zwraca plan naprawczy z terminami.
+    Ocena zgodności agenta z EU AI Act — w pełni dynamiczna.
+
+    Katalog wymagań pochodzi z ai_act_requirements (filtrowany wg risk_level
+    agenta), a status każdego wymagania z rejestru agenta (automatyczny check
+    pola lub samo-deklaracja z compliance_decl). Zero zaszytej w kodzie treści.
     """
-    row = await agents_repo.get_agent_by_id(agent_id)
+    row = await agents_repo.get_agent_id_only(agent_id)
     if not row:
         raise HTTPException(404, f"Agent '{agent_id}' nie istnieje")
 
-    report = assess_compliance(dict(row))
+    full_row = await agents_repo.get_agent_by_id(agent_id)
+    agent = _row_to_dict(full_row)
+
+    requirement_rows = await compliance_repo.list_requirements(
+        risk_level=agent["risk_level"], active_only=True,
+    )
+    requirements = [dict(r) for r in requirement_rows]
+
+    report = assess_compliance(agent, requirements)
 
     return {
         "agent_id": agent_id,
         "agent_name": report.agent_name,
         "risk_level": report.risk_level,
         "status": report.status,
-        "gaps_count": len(report.gaps),
-        "gaps": [
+        "requirements": [
             {
-                "article": g.article,
-                "title": g.title,
-                "description": g.description,
-                "severity": g.severity,
-                "action": g.action,
-                "deadline_days": g.deadline_days,
+                "article": r.article,
+                "title": r.title,
+                "description": r.description,
+                "status": r.status,
+                "severity": r.severity,
+                "deadline_days": r.deadline_days,
+                "source": r.source,
+                "notes": r.notes,
             }
-            for g in report.gaps
+            for r in report.requirements
         ],
-        "obligations": report.obligations,
+        "gaps_count": len(report.gaps),
         "summary": _compliance_summary(report),
     }
 
@@ -298,7 +320,7 @@ def _row_to_dict(row) -> dict:
 
 def _compliance_summary(report) -> str:
     if report.status == "compliant":
-        return f"Agent '{report.name}' spełnia wymagania EU AI Act."
+        return f"Agent '{report.agent_name}' spełnia wymagania EU AI Act."
     critical = [g for g in report.gaps if g.severity == "critical"]
     major = [g for g in report.gaps if g.severity == "major"]
     parts = []

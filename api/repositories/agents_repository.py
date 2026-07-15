@@ -114,18 +114,28 @@ async def get_agent_id_only(agent_id: str):
     return await pool.fetchrow("SELECT id FROM agents WHERE id = $1", agent_id)
 
 
+# Pola tekstowe (ISO string z frontendu), które muszą trafić do kolumn
+# date/timestamptz — bez jawnego castu asyncpg odmawia zakodowania str jako
+# datetime (TypeError: expected a datetime.date or datetime.datetime instance).
+_SIMPLE_CASTS = {
+    "last_reviewed_at": "::timestamptz",
+    "next_review_date": "::date",
+}
+
+
 async def update_registry(
     agent_id: str,
     simple_values: dict,
     array_values: dict,
-    compliance_decl_json: Optional[str],
+    compliance_decl: Optional[dict],
 ) -> str:
     """
     Partial update danych rejestru agenta.
 
-    simple_values  — {kolumna: wartość} dla pól skalarnych (przypisanie bez castu),
-    array_values   — {kolumna: wartość} dla pól tablicowych (cast ::text[]),
-    compliance_decl_json — zserializowany JSON deklaracji lub None (cast ::jsonb).
+    simple_values   — {kolumna: wartość} dla pól skalarnych (przypisanie bez castu,
+                      poza polami dat — zob. _SIMPLE_CASTS),
+    array_values    — {kolumna: wartość} dla pól tablicowych (cast ::text[]),
+    compliance_decl — natywny dict deklaracji lub None (kodek jsonb puli, cast ::jsonb).
 
     Buduje dynamiczny SET w tej samej kolejności co dotychczas:
     pola skalarne -> pola tablicowe -> compliance_decl -> updated_at.
@@ -138,16 +148,17 @@ async def update_registry(
     idx = 1
 
     for field, val in simple_values.items():
-        updates.append(f"{field} = ${idx}")
+        cast = _SIMPLE_CASTS.get(field, "")
+        updates.append(f"{field} = ${idx}{cast}")
         params.append(val); idx += 1
 
     for field, val in array_values.items():
         updates.append(f"{field} = ${idx}::text[]")
         params.append(val); idx += 1
 
-    if compliance_decl_json is not None:
+    if compliance_decl is not None:
         updates.append(f"compliance_decl = ${idx}::jsonb")
-        params.append(compliance_decl_json); idx += 1
+        params.append(compliance_decl); idx += 1
 
     updates.append("updated_at = NOW()")
     params.append(agent_id)

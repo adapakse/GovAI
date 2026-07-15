@@ -1,7 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { api, Policy, AiActRequirement, RiskLevel } from '@/lib/api';
+import SearchBox from '@/components/SearchBox';
+import { matchesQuery } from '@/lib/search';
 
 type Tab = 'rules' | 'aiact';
 
@@ -19,6 +21,13 @@ const RISK_STYLE: Record<RiskLevel, string> = {
   high:         'text-orange-300 border-orange-800 bg-orange-900/20',
   limited:      'text-blue-300 border-blue-800 bg-blue-900/20',
   minimal:      'text-green-400 border-green-800 bg-green-900/20',
+};
+
+const SEVERITY_LABEL: Record<string, string> = { critical: 'Krytyczna', major: 'Poważna', minor: 'Drobna' };
+const SEVERITY_BADGE: Record<string, string> = {
+  critical: 'bg-red-900/30 text-red-300',
+  major:    'bg-orange-900/30 text-orange-300',
+  minor:    'bg-yellow-900/30 text-yellow-300',
 };
 
 // ── Formularz nowej polityki ──────────────────────────────────────────────────
@@ -296,6 +305,9 @@ function NewRequirementForm({ onSaved }: { onSaved: () => void }) {
     requirement_title: '',
     requirement_text: '',
     sort_order: '100',
+    default_severity: 'major' as 'critical' | 'major' | 'minor',
+    default_deadline_days: '30',
+    decl_key: '',
   });
 
   async function save() {
@@ -305,9 +317,14 @@ function NewRequirementForm({ onSaved }: { onSaved: () => void }) {
       await api.compliance.create({
         ...form,
         sort_order: parseInt(form.sort_order) || 100,
+        default_deadline_days: parseInt(form.default_deadline_days) || 30,
+        decl_key: form.decl_key.trim() || null,
       });
       setOpen(false);
-      setForm({ risk_level: 'high', article_ref: '', requirement_title: '', requirement_text: '', sort_order: '100' });
+      setForm({
+        risk_level: 'high', article_ref: '', requirement_title: '', requirement_text: '',
+        sort_order: '100', default_severity: 'major', default_deadline_days: '30', decl_key: '',
+      });
       onSaved();
     } catch (e) {
       alert(String(e));
@@ -381,6 +398,42 @@ function NewRequirementForm({ onSaved }: { onSaved: () => void }) {
           onChange={e => setForm(f => ({ ...f, requirement_text: e.target.value }))}
         />
       </div>
+      <div className="grid grid-cols-3 gap-3">
+        <div>
+          <label className="text-xs text-mgray mb-1 block">Waga domyślna</label>
+          <select
+            className="w-full bg-navy border border-blue/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-teal"
+            value={form.default_severity}
+            onChange={e => setForm(f => ({ ...f, default_severity: e.target.value as typeof f.default_severity }))}
+          >
+            <option value="critical">Krytyczna</option>
+            <option value="major">Poważna</option>
+            <option value="minor">Drobna</option>
+          </select>
+        </div>
+        <div>
+          <label className="text-xs text-mgray mb-1 block">Termin (dni)</label>
+          <input
+            type="number"
+            className="w-full bg-navy border border-blue/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-teal"
+            value={form.default_deadline_days}
+            onChange={e => setForm(f => ({ ...f, default_deadline_days: e.target.value }))}
+          />
+        </div>
+        <div>
+          <label className="text-xs text-mgray mb-1 block">Klucz samo-deklaracji</label>
+          <input
+            className="w-full bg-navy border border-blue/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-teal font-mono"
+            placeholder="np. art9_risk_management"
+            value={form.decl_key}
+            onChange={e => setForm(f => ({ ...f, decl_key: e.target.value }))}
+          />
+        </div>
+      </div>
+      <p className="text-[11px] text-mgray/50 -mt-1">
+        Klucz samo-deklaracji łączy to wymaganie z polem w zakładce Rejestr agenta.
+        Puste = wymaganie nie do samo-zadeklarowania (np. zakaz z art. 5).
+      </p>
       <div className="flex gap-3">
         <button
           onClick={save}
@@ -403,15 +456,22 @@ function RequirementRow({ req, onChanged }: { req: AiActRequirement; onChanged: 
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
-    article_ref:       req.article_ref,
-    requirement_title: req.requirement_title,
-    requirement_text:  req.requirement_text,
+    article_ref:            req.article_ref,
+    requirement_title:      req.requirement_title,
+    requirement_text:       req.requirement_text,
+    default_severity:       req.default_severity,
+    default_deadline_days:  String(req.default_deadline_days),
+    decl_key:               req.decl_key ?? '',
   });
 
   async function save() {
     setSaving(true);
     try {
-      await api.compliance.update(req.id, form);
+      await api.compliance.update(req.id, {
+        ...form,
+        default_deadline_days: parseInt(form.default_deadline_days) || 0,
+        decl_key: form.decl_key.trim() || null,
+      });
       setEditing(false);
       onChanged();
     } catch (e) {
@@ -463,6 +523,30 @@ function RequirementRow({ req, onChanged }: { req: AiActRequirement; onChanged: 
           value={form.requirement_text}
           onChange={e => setForm(f => ({ ...f, requirement_text: e.target.value }))}
         />
+        <div className="grid grid-cols-3 gap-3">
+          <select
+            className="bg-navy border border-blue/30 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-teal"
+            value={form.default_severity}
+            onChange={e => setForm(f => ({ ...f, default_severity: e.target.value as typeof f.default_severity }))}
+          >
+            <option value="critical">Krytyczna</option>
+            <option value="major">Poważna</option>
+            <option value="minor">Drobna</option>
+          </select>
+          <input
+            type="number"
+            className="bg-navy border border-blue/30 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-teal"
+            value={form.default_deadline_days}
+            onChange={e => setForm(f => ({ ...f, default_deadline_days: e.target.value }))}
+            placeholder="Termin (dni)"
+          />
+          <input
+            className="bg-navy border border-blue/30 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-teal font-mono"
+            value={form.decl_key}
+            onChange={e => setForm(f => ({ ...f, decl_key: e.target.value }))}
+            placeholder="Klucz samo-deklaracji"
+          />
+        </div>
         <div className="flex gap-2">
           <button onClick={save} disabled={saving}
             className="px-3 py-1 bg-teal text-dark text-xs font-semibold rounded-lg disabled:opacity-40">
@@ -485,6 +569,15 @@ function RequirementRow({ req, onChanged }: { req: AiActRequirement; onChanged: 
         <div className="flex items-baseline gap-2 flex-wrap">
           <span className="text-xs font-mono font-bold text-teal">{req.article_ref}</span>
           <span className="text-sm font-semibold text-white">{req.requirement_title}</span>
+          <span className={`text-[10px] px-1.5 py-0.5 rounded ${SEVERITY_BADGE[req.default_severity]}`}>
+            {SEVERITY_LABEL[req.default_severity]}
+          </span>
+          <span className="text-[10px] text-mgray/50">{req.default_deadline_days} dni</span>
+          {req.decl_key ? (
+            <span className="text-[10px] font-mono text-mgray/40">{req.decl_key}</span>
+          ) : (
+            <span className="text-[10px] text-orange-400/70">brak samo-deklaracji</span>
+          )}
         </div>
         <p className="text-xs text-mgray mt-0.5 leading-relaxed">{req.requirement_text}</p>
       </div>
@@ -507,6 +600,7 @@ export default function PoliciesPage() {
   const [policies, setPolicies] = useState<Policy[]>([]);
   const [requirements, setRequirements] = useState<AiActRequirement[]>([]);
   const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState('');
 
   async function load() {
     setLoading(true);
@@ -522,6 +616,12 @@ export default function PoliciesPage() {
   }
 
   useEffect(() => { load(); }, []);
+
+  const visiblePolicies = useMemo(() => policies.filter(p => matchesQuery(
+    [p.name, p.policy_code, p.rule_type, p.level, p.action_json?.reason,
+     ...(p.condition_json?.keywords ?? [])],
+    query,
+  )), [policies, query]);
 
   const reqByRisk = RISK_ORDER.reduce<Record<RiskLevel, AiActRequirement[]>>(
     (acc, level) => {
@@ -582,11 +682,25 @@ export default function PoliciesPage() {
             Pierwsze dopasowanie słowa kluczowego aktywuje blokadę przed wywołaniem modelu.
           </p>
 
+          {policies.length > 0 && (
+            <SearchBox
+              value={query}
+              onChange={setQuery}
+              placeholder="Szukaj reguły — nazwa, kod, słowo kluczowe, powód..."
+              count={visiblePolicies.length}
+              total={policies.length}
+            />
+          )}
+
           {policies.length === 0 && (
             <div className="text-center py-10 text-mgray/50">Brak zdefiniowanych reguł.</div>
           )}
 
-          {policies.map(p => (
+          {policies.length > 0 && visiblePolicies.length === 0 && (
+            <div className="text-center py-10 text-mgray/50">Brak reguł pasujących do „{query}”.</div>
+          )}
+
+          {visiblePolicies.map(p => (
             <PolicyCard key={p.id} policy={p} onChanged={load} />
           ))}
 

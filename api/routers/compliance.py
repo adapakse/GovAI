@@ -21,6 +21,9 @@ class RequirementCreate(BaseModel):
     requirement_title: str
     requirement_text: str
     sort_order: int = 100
+    default_severity: str = "major"           # critical | major | minor
+    default_deadline_days: int = 30
+    decl_key: Optional[str] = None            # klucz w agents.compliance_decl / auto-check
 
     def validate_risk_level(self) -> None:
         if self.risk_level not in {"minimal", "limited", "high", "unacceptable"}:
@@ -33,6 +36,9 @@ class RequirementUpdate(BaseModel):
     requirement_text: Optional[str] = None
     sort_order: Optional[int] = None
     active: Optional[bool] = None
+    default_severity: Optional[str] = None
+    default_deadline_days: Optional[int] = None
+    decl_key: Optional[str] = None
 
 
 @router.get("")
@@ -53,6 +59,7 @@ async def create_requirement(data: RequirementCreate, user: CurrentUser = Depend
     row = await compliance_repo.insert_requirement(
         req_id, data.risk_level, data.article_ref,
         data.requirement_title, data.requirement_text, data.sort_order,
+        data.default_severity, data.default_deadline_days, data.decl_key,
     )
     return _to_dict(row)
 
@@ -65,11 +72,14 @@ async def update_requirement(req_id: str, data: RequirementUpdate, user: Current
         raise HTTPException(404, f"Wymaganie '{req_id}' nie istnieje")
 
     fields = {
-        "article_ref":        data.article_ref,
-        "requirement_title":  data.requirement_title,
-        "requirement_text":   data.requirement_text,
-        "sort_order":         data.sort_order,
-        "active":             data.active,
+        "article_ref":            data.article_ref,
+        "requirement_title":      data.requirement_title,
+        "requirement_text":       data.requirement_text,
+        "sort_order":             data.sort_order,
+        "active":                 data.active,
+        "default_severity":       data.default_severity,
+        "default_deadline_days":  data.default_deadline_days,
+        "decl_key":               data.decl_key,
     }
     if all(v is None for v in fields.values()):
         raise HTTPException(400, "Brak pól do aktualizacji")

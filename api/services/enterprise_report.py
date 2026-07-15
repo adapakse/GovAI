@@ -22,6 +22,7 @@ from reportlab.platypus import (
 
 from config import settings
 from services import settings_service
+from repositories import compliance_repository as compliance_repo
 from database import get_pool
 
 # ── Fonty ────────────────────────────────────────────────────────────────────
@@ -212,7 +213,17 @@ async def collect_enterprise_data(days: int = 30) -> dict:
         rl = a.get("risk_level", "minimal")
         risk_dist[rl] = risk_dist.get(rl, 0) + 1
 
+    # ── Katalog wymagań wysokiego ryzyka (dla macierzy deklaracji, sekcja 7) ───
+    # Z bazy (ai_act_requirements), nie z listy zaszytej w kodzie — edytowalny
+    # w Polityki → Wymagania EU AI Act i od razu odzwierciedlony w tym raporcie.
+    high_risk_requirements = [
+        dict(r) for r in await compliance_repo.list_requirements(
+            risk_level="high", active_only=True,
+        )
+    ]
+
     return {
+        "high_risk_requirements": high_risk_requirements,
         "period_days": days,
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "agents": agents_list,
@@ -632,18 +643,15 @@ def render_enterprise_pdf(data: dict, narrative: str) -> bytes:
     # 7. ZGODNOŚĆ EU AI ACT — deklaracje
     # ══════════════════════════════════════════════════════════════════════════
     high_risk_agents = [a for a in agents if a.get("risk_level") in ("high", "unacceptable")]
-    if high_risk_agents:
+    # Kolumny macierzy — z katalogu wymagań (ai_act_requirements), nie z listy
+    # zaszytej w kodzie. Wymaganie bez decl_key (np. Art. 5 dla unacceptable)
+    # nie ma odpowiednika w samo-deklaracji, więc pomijamy je w tej macierzy.
+    ARTS = [
+        (r["decl_key"], f'{r["article_ref"]}\n{r["requirement_title"]}')
+        for r in data.get("high_risk_requirements", []) if r.get("decl_key")
+    ]
+    if high_risk_agents and ARTS:
         story += [_p("7. Deklaracje Zgodności EU AI Act — Agenci Wysokiego Ryzyka", S["h2"]), _hr()]
-
-        ARTS = [
-            ("art9_risk_management",  "Art. 9\nZarządzanie ryzykiem"),
-            ("art10_data_governance", "Art. 10\nDane treningowe"),
-            ("art11_technical_docs",  "Art. 11\nDokumentacja"),
-            ("art13_transparency",    "Art. 13\nPrzejrzystość"),
-            ("art14_human_oversight", "Art. 14\nNadzór"),
-            ("art15_accuracy",        "Art. 15\nDokładność"),
-            ("conformity_assessment", "Ocena\nzgodności"),
-        ]
 
         STATUS_ICON = {"yes": "✓", "partial": "◑", "no": "✗", "na": "N/A", "": "—"}
         STATUS_COL  = {"yes": "#166534", "partial": "#92400e", "no": "#991b1b",

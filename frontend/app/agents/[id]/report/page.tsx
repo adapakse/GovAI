@@ -3,8 +3,18 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import { authHeaders, handle401 } from '@/lib/api';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
+
+interface RequirementAssessment {
+  article: string; title: string; description: string;
+  status: 'yes' | 'no' | 'partial' | 'na' | 'undeclared';
+  severity: 'critical' | 'major' | 'minor';
+  deadline_days: number;
+  source: 'auto' | 'declared' | 'undeclared';
+  notes: string;
+}
 
 interface ReportData {
   agent: {
@@ -20,6 +30,8 @@ interface ReportData {
   };
   narrative: string;
   generated_at: string;
+  compliance_status: string;
+  requirements: RequirementAssessment[];
 }
 
 const RISK_STYLE: Record<string, string> = {
@@ -34,26 +46,14 @@ const RISK_LABEL: Record<string, string> = {
   high: 'Wysokie', unacceptable: 'Niedopuszczalne',
 };
 
-const GAPS: Record<string, Array<[string, string, string, string]>> = {
-  high: [
-    ['Art. 9',  'System zarządzania ryzykiem',  'Krytyczna', '90 dni'],
-    ['Art. 11', 'Dokumentacja techniczna',       'Poważna',   '60 dni'],
-    ['Art. 13', 'Przejrzystość i informowanie', 'Poważna',   '60 dni'],
-    ['Art. 14', 'Nadzór człowieka',              'Krytyczna', '30 dni'],
-    ['Art. 17', 'System zarządzania jakością',  'Poważna',   '90 dni'],
-    ['Art. 49', 'Rejestracja w bazie EU',        'Poważna',   'Przed wdrożeniem'],
-  ],
-  unacceptable: [
-    ['Art. 5',  'Zakazane praktyki AI',          'Krytyczna', 'NATYCHMIAST'],
-  ],
-  limited:  [['Art. 52', 'Obowiązki przejrzystości', 'Drobna', '180 dni']],
-  minimal:  [['Art. 52', 'Obowiązki przejrzystości', 'Drobna', '180 dni']],
-};
-
+// Tłumaczenie enuma severity (z ai_act_requirements.default_severity, przez
+// backend) na etykietę/kolor PL — czysta prezentacja, nie treść compliance.
+const SEV_LABEL: Record<string, string> = { critical: 'Krytyczna', major: 'Poważna', minor: 'Drobna' };
 const SEV_COLOR: Record<string, string> = {
-  'Krytyczna': 'text-red-400',
-  'Poważna':   'text-orange-400',
-  'Drobna':    'text-yellow-400',
+  critical: 'text-red-400', major: 'text-orange-400', minor: 'text-yellow-400',
+};
+const STATUS_LABEL: Record<string, string> = {
+  yes: 'Spełnione', partial: 'Częściowo', no: 'Luka', na: 'Nie dotyczy', undeclared: 'Nie ocenione',
 };
 
 export default function ReportPage() {
@@ -64,8 +64,13 @@ export default function ReportPage() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    fetch(`${API}/agents/${id}/report`, { cache: 'no-store' })
-      .then(r => { if (!r.ok) throw new Error(`${r.status}`); return r.json(); })
+    authHeaders()
+      .then(headers => fetch(`${API}/agents/${id}/report`, { cache: 'no-store', headers }))
+      .then(r => {
+        if (r.status === 401) { handle401(); throw new Error('Sesja wygasła'); }
+        if (!r.ok) throw new Error(`${r.status}`);
+        return r.json();
+      })
       .then(setReport)
       .catch(e => setError(e.message))
       .finally(() => setLoading(false));
@@ -74,7 +79,8 @@ export default function ReportPage() {
   async function downloadPdf() {
     setGenerating(true);
     try {
-      const r = await fetch(`${API}/agents/${id}/report/pdf`);
+      const r = await fetch(`${API}/agents/${id}/report/pdf`, { headers: await authHeaders() });
+      if (r.status === 401) { handle401(); throw new Error('Sesja wygasła'); }
       if (!r.ok) throw new Error(`${r.status}`);
       const blob = await r.blob();
       const url = URL.createObjectURL(blob);
@@ -94,7 +100,7 @@ export default function ReportPage() {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-4">
         <div className="w-10 h-10 border-4 border-teal border-t-transparent rounded-full animate-spin" />
-        <div className="text-mgray text-sm">Generowanie raportu AI Act przez Claude...</div>
+        <div className="text-mgray text-sm">Generowanie raportu zgodności z AI Act...</div>
       </div>
     );
   }
@@ -108,9 +114,9 @@ export default function ReportPage() {
     );
   }
 
-  const { agent, stats, narrative, generated_at } = report;
+  const { agent, stats, narrative, generated_at, requirements } = report;
   const risk = agent.risk_level;
-  const gaps = GAPS[risk] ?? GAPS.minimal;
+  const gaps = requirements.filter(r => r.status === 'no' || r.status === 'partial' || r.status === 'undeclared');
   const blockRate = stats.total_calls > 0
     ? ((stats.blocked / stats.total_calls) * 100).toFixed(1)
     : '0.0';
@@ -236,25 +242,39 @@ export default function ReportPage() {
       <div className="bg-navy border border-blue/30 rounded-xl p-6">
         <h2 className="text-sm font-bold text-white uppercase tracking-wider mb-1">4. Ocena Zgodności z EU AI Act</h2>
         <div className="w-8 h-0.5 bg-teal mb-4" />
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-blue/30">
-              {['Artykuł', 'Wymaganie', 'Waga', 'Termin'].map(h => (
-                <th key={h} className="pb-3 text-left text-xs text-mgray/60 uppercase tracking-wider font-semibold">{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-blue/20">
-            {gaps.map(([art, title, sev, deadline], i) => (
-              <tr key={i}>
-                <td className="py-2.5 font-mono text-xs text-teal font-semibold">{art}</td>
-                <td className="py-2.5 text-white">{title}</td>
-                <td className={`py-2.5 text-xs font-semibold ${SEV_COLOR[sev] ?? 'text-mgray'}`}>{sev}</td>
-                <td className="py-2.5 text-mgray text-xs">{deadline}</td>
+        {gaps.length === 0 ? (
+          <p className="text-sm text-green-400">
+            Brak zidentyfikowanych luk — wymagania potwierdzone jako spełnione lub nie dotyczące
+            w deklaracjach zgodności (zakładka Rejestr).
+          </p>
+        ) : (
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-blue/30">
+                {['Artykuł', 'Wymaganie', 'Waga', 'Termin'].map(h => (
+                  <th key={h} className="pb-3 text-left text-xs text-mgray/60 uppercase tracking-wider font-semibold">{h}</th>
+                ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-blue/20">
+              {gaps.map((g, i) => (
+                <tr key={i}>
+                  <td className="py-2.5 font-mono text-xs text-teal font-semibold">{g.article}</td>
+                  <td className="py-2.5 text-white">
+                    {g.title}
+                    <span className="ml-2 text-[10px] text-mgray/50">({STATUS_LABEL[g.status] ?? g.status})</span>
+                  </td>
+                  <td className={`py-2.5 text-xs font-semibold ${SEV_COLOR[g.severity] ?? 'text-mgray'}`}>
+                    {SEV_LABEL[g.severity] ?? g.severity}
+                  </td>
+                  <td className="py-2.5 text-mgray text-xs">
+                    {g.deadline_days === 0 ? 'NATYCHMIAST' : `${g.deadline_days} dni`}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
 
       {/* Stopka */}
