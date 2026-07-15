@@ -122,23 +122,37 @@ def _estimate_cost(model: str, tokens_in: int, tokens_out: int) -> float:
     return round(usd * usd_to_eur, 8)
 
 
+
+# provider_type → prefiks wymagany przez LiteLLM (custom_llm_provider), żeby
+# jawnie wskazać dostawcę zamiast polegać na jego statycznym rejestrze nazw
+# modeli — ten rejestr NIE zna np. "claude-haiku-4-5-20251001"/"claude-sonnet-4-6"
+# (modele nowsze niż wydanie zainstalowanej wersji litellm), więc bez prefiksu
+# rzuca "LLM Provider NOT provided".
+_LITELLM_PREFIX = {
+    "anthropic": "anthropic",
+    "openai":    "openai",
+    "deepseek":  "deepseek",
+    "google":    "gemini",
+    "bielik":    "ollama",
+}
+
+
 def _build_litellm_model(provider: ProviderRecord, preferred_model: str) -> str:
     """
     Buduje identyfikator modelu dla LiteLLM z uwzględnieniem providera.
-    LiteLLM wymaga prefiksu dla niestandardowych providerów:
-    - ollama: "ollama/model-name"
-    - openai-compat (vllm, custom): "openai/model-name"
+    Zawsze jawny prefiks custom_llm_provider — nigdy bez, nawet dla dostawców
+    "standardowych" (Anthropic/OpenAI/DeepSeek/Google), bo LiteLLM inaczej
+    próbuje zgadywać dostawcę po nazwie modelu z własnego statycznego rejestru.
     """
-    if provider.provider_type in ('ollama',):
-        model_name = preferred_model if preferred_model in provider.model_ids else (provider.model_ids[0] if provider.model_ids else preferred_model)
+    model_name = preferred_model if preferred_model in provider.model_ids else (
+        provider.model_ids[0] if provider.model_ids else preferred_model
+    )
+    if provider.provider_type in ('ollama', 'bielik'):
         return f"ollama/{model_name}"
     if provider.provider_type in ('vllm', 'custom') and provider.base_url:
-        model_name = preferred_model if preferred_model in provider.model_ids else (provider.model_ids[0] if provider.model_ids else preferred_model)
         return f"openai/{model_name}"
-    # Dla Anthropic, OpenAI, DeepSeek, Google — LiteLLM rozumie model_id bezpośrednio
-    if preferred_model in provider.model_ids:
-        return preferred_model
-    return provider.model_ids[0] if provider.model_ids else preferred_model
+    prefix = _LITELLM_PREFIX.get(provider.provider_type)
+    return f"{prefix}/{model_name}" if prefix else model_name
 
 
 async def handle_chat_completion(request: Request) -> dict[str, Any]:
@@ -173,6 +187,19 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
 
     if agent is None:
         logger.warning("Nieznany agent: %s", agent_id)
+        write_audit_fire_and_forget(AuditEntry(
+            agent_id=agent_id,
+            agent_name="(nieznany agent)",
+            task_id=task_id,
+            call_id=call_id,
+            event_type="unknown_agent",
+            policy_result="blocked",
+            pii_categories=[],
+            pii_count=0,
+            input_hash=None,
+            model_used=None,
+            block_reason=f"Nieznany agent_id: {agent_id} — brak w rejestrze GovAI",
+        ))
         raise HTTPException(
             status_code=403,
             detail=f"Agent '{agent_id}' nie jest zarejestrowany w GovAI. "
@@ -181,6 +208,19 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
 
     if agent.status != "active":
         logger.warning("Agent %s ma status: %s", agent.name, agent.status)
+        write_audit_fire_and_forget(AuditEntry(
+            agent_id=agent.id,
+            agent_name=agent.name,
+            task_id=task_id,
+            call_id=call_id,
+            event_type="agent_inactive",
+            policy_result="blocked",
+            pii_categories=[],
+            pii_count=0,
+            input_hash=None,
+            model_used=agent.model_id,
+            block_reason=f"Agent ma status '{agent.status}' — wywołanie odrzucone przed przetworzeniem",
+        ))
         raise HTTPException(
             status_code=403,
             detail=f"Agent '{agent.name}' ma status '{agent.status}' i nie może wykonywać wywołań.",
@@ -214,17 +254,36 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
     if not settings.demo_mode:
         selected_provider = await select_provider(agent.model_id, sensitivity.level)
         if selected_provider is None:
+            reason = (
+                f"Brak providera zdolnego obsłużyć model '{agent.model_id}' agenta przy "
+                f"wymaganym poziomie wrażliwości danych '{sensitivity.level}'. "
+                "Albo żaden aktywny provider nie obsługuje tego poziomu wrażliwości, "
+                "albo żaden z kwalifikujących się providerów nie ma tego modelu na liście "
+                "(gateway celowo nie podmienia po cichu na inny model). "
+                "Skontaktuj się z administratorem — aktywuj providera obsługującego ten "
+                "model i poziom wrażliwości, albo obniż wrażliwość danych w zapytaniu."
+            )
+            write_audit_fire_and_forget(AuditEntry(
+                agent_id=agent.id,
+                agent_name=agent.name,
+                task_id=task_id,
+                call_id=call_id,
+                event_type="no_eligible_provider",
+                policy_result="error",
+                pii_categories=pii_result.pii_categories,
+                pii_count=pii_result.pii_count,
+                input_hash=input_hash,
+                model_used=agent.model_id,
+                block_reason=reason,
+                data_sensitivity=sensitivity.level,
+            ))
             raise HTTPException(
                 status_code=503,
                 detail={
                     "error": "no_eligible_provider",
                     "sensitivity_level": sensitivity.level,
-                    "message": (
-                        f"Brak aktywnego providera zdolnego obsłużyć dane o poziomie "
-                        f"wrażliwości '{sensitivity.level}'. "
-                        "Skontaktuj się z administratorem — aktywuj odpowiedniego providera "
-                        "lub obniż poziom wrażliwości danych w zapytaniu."
-                    ),
+                    "requested_model": agent.model_id,
+                    "message": reason,
                 },
             )
         logger.info(
@@ -364,6 +423,21 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
         )
     except Exception as exc:
         logger.exception("Błąd wywołania LLM dla agenta %s (provider: %s)", agent.name, selected_provider.name)
+        write_audit_fire_and_forget(AuditEntry(
+            agent_id=agent.id,
+            agent_name=agent.name,
+            task_id=task_id,
+            call_id=call_id,
+            event_type="llm_error",
+            policy_result="error",
+            pii_categories=pii_result.pii_categories,
+            pii_count=pii_result.pii_count,
+            input_hash=input_hash,
+            model_used=model_to_call,
+            block_reason=f"Błąd modelu językowego ({selected_provider.name}): {exc}",
+            data_sensitivity=sensitivity.level,
+            provider_id=selected_provider.id,
+        ))
         raise HTTPException(status_code=502, detail=f"Błąd modelu językowego: {exc}") from exc
 
     latency_ms = int((time.monotonic() - t0) * 1000)
@@ -382,7 +456,7 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
     usage = getattr(response, "usage", None)
     tokens_in  = getattr(usage, "prompt_tokens", None)
     tokens_out = getattr(usage, "completion_tokens", None)
-    cost_eur   = _estimate_cost(model_to_call, tokens_in or 0, tokens_out or 0)
+    cost_eur   = _estimate_cost(agent.model_id, tokens_in or 0, tokens_out or 0)
 
     # ── 6. Dziennik audytowy ────────────────────────────────────────────────────
     write_audit_fire_and_forget(AuditEntry(
@@ -396,7 +470,7 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
         pii_count=pii_result.pii_count,
         input_hash=input_hash,
         output_hash=output_hash,
-        model_used=model_to_call,
+        model_used=agent.model_id,
         latency_ms=latency_ms,
         tokens_in=tokens_in,
         tokens_out=tokens_out,

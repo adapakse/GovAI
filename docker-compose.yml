@@ -13,6 +13,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 15
+    restart: always
 
   redis:
     image: redis:7-alpine
@@ -21,6 +22,63 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+    restart: always
+
+  # ── Lokalny model on-prem (Bielik przez Ollama) ─────────────────────────────
+  # Obsługuje dane 'privileged' — nigdy nie opuszczają infrastruktury klienta.
+  ollama:
+    image: ollama/ollama:latest
+    volumes:
+      - ollama_models:/root/.ollama
+    ports:
+      - "11434:11434"   # opcjonalnie — do debugowania (ollama list / API)
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+    restart: unless-stopped
+
+  # Jednorazowy job: pobiera Bielik-4.5B z HuggingFace i nadaje alias
+  # zgodny z model_ids w tabeli providers ('bielik-11b-v2.3-instruct').
+  # 4.5B — szybki na CPU (2–4 s/odpowiedź), idealny na demo na żywo.
+  # Po pobraniu kontener kończy pracę (restart: "no").
+  ollama-init:
+    image: ollama/ollama:latest
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        set -e
+        ALIAS=bielik-11b-v2.3-instruct
+        # Repozytorium GGUF ma tylko fp16 i Q8_0 (brak Q4_K_M) — bierzemy Q8_0.
+        SRC=hf.co/speakleash/Bielik-4.5B-v3.0-Instruct-GGUF:Q8_0
+        if ollama list | grep -q "$$ALIAS"; then
+          echo "Model $$ALIAS już istnieje — pomijam pobieranie."
+          exit 0
+        fi
+        echo "Pobieram Bielik-4.5B Q8_0 z HuggingFace (~4.8 GB, może potrwać kilka minut)..."
+        # HF CDN (cas-bridge.xethub.hf.co) bywa przejściowo niedostępne przez DNS
+        # embedded resolvera Dockera — ollama pull wznawia częściowy blob, więc
+        # ponawiamy automatycznie zamiast wymagać ręcznej interwencji.
+        i=1
+        until ollama pull "$$SRC"; do
+          if [ "$$i" -ge 15 ]; then
+            echo "Przekroczono limit prób ($$i) — przerywam."
+            exit 1
+          fi
+          echo "Próba $$i nie powiodła się (przejściowy błąd sieci/DNS) — ponawiam za 10s..."
+          i=$$((i + 1))
+          sleep 10
+        done
+        echo "Tworzę alias $$ALIAS zgodny z rejestrem providerów..."
+        ollama cp "$$SRC" "$$ALIAS"
+        echo "Gotowe — Bielik dostępny jako $$ALIAS."
+    restart: "no"
 
   gateway:
     build: ./gateway
@@ -40,6 +98,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      ollama:
+        condition: service_started
     restart: unless-stopped
 
   api:
@@ -73,3 +133,4 @@ services:
 
 volumes:
   postgres_data:
+  ollama_models:

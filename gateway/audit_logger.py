@@ -5,8 +5,17 @@ from typing import Optional
 
 from database import get_pool
 from models import AuditEntry
+from oversight import get_redis
 
 logger = logging.getLogger(__name__)
+
+# event_type → kanał Redis pub/sub, którego słucha dashboard (GET /ws/live-feed).
+# 'oversight_required' pomijamy — to zdarzenie publikuje już push_oversight_task
+# na kanale 'oversight:pending', drugi wpis byłby duplikatem w live-feedzie.
+_LIVE_FEED_CHANNEL = {
+    "blocked": "audit:blocked",
+    "call_completed": "audit:new_call",
+}
 
 _INSERT_SQL = """
 INSERT INTO audit_log (
@@ -52,6 +61,23 @@ async def write_audit(entry: AuditEntry) -> None:
             entry.data_sensitivity,
             entry.provider_id,
         )
+
+        channel = _LIVE_FEED_CHANNEL.get(entry.event_type)
+        if channel:
+            await get_redis().publish(
+                channel,
+                json.dumps({
+                    "agent_id": entry.agent_id,
+                    "agent_name": entry.agent_name,
+                    "task_id": entry.task_id,
+                    "call_id": entry.call_id,
+                    "policy_id": entry.policy_id,
+                    "block_reason": entry.block_reason,
+                    "model_used": entry.model_used,
+                    "cost_eur": entry.cost_eur,
+                    "latency_ms": entry.latency_ms,
+                }),
+            )
     except Exception:
         # Błąd audytu nie może blokować odpowiedzi — logujemy i kontynuujemy
         logger.exception("Błąd zapisu do dziennika audytowego dla call_id=%s", entry.call_id)

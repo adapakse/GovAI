@@ -3,13 +3,13 @@ import { clearSession, ensureFreshToken } from './auth';
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
 export const WS  = process.env.NEXT_PUBLIC_WS_URL  ?? 'ws://localhost:8000';
 
-async function authHeaders(): Promise<Record<string, string>> {
+export async function authHeaders(): Promise<Record<string, string>> {
   const token = await ensureFreshToken();
   if (!token) return { 'Content-Type': 'application/json' };
   return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
 }
 
-function handle401() {
+export function handle401() {
   clearSession();
   if (typeof window !== 'undefined') window.location.href = '/login';
 }
@@ -77,7 +77,7 @@ async function del<T>(path: string): Promise<T> {
 
 export type RiskLevel = 'minimal' | 'limited' | 'high' | 'unacceptable';
 export type AgentStatus = 'active' | 'suspended' | 'quarantined' | 'retired';
-export type PolicyResult = 'allowed' | 'blocked' | 'oversight_required';
+export type PolicyResult = 'allowed' | 'blocked' | 'oversight_required' | 'error';
 export type OversightStatus = 'pending' | 'approved' | 'rejected' | 'escalated';
 
 export type DeclStatus = 'yes' | 'no' | 'partial' | 'na' | '';
@@ -158,7 +158,7 @@ export interface DashboardSummary {
   period_days: number;
   agents: { total: number; active: number; suspended: number; high_risk: number };
   calls: {
-    total_calls: number; blocked: number; oversight_required: number;
+    total_calls: number; blocked: number; oversight_required: number; errors: number;
     pii_calls: number; total_cost_eur: number; avg_latency_ms: number | null;
   };
   pending_oversight: number;
@@ -189,6 +189,9 @@ export interface AiActRequirement {
   requirement_text: string;
   active: boolean;
   sort_order: number;
+  default_severity: 'critical' | 'major' | 'minor';
+  default_deadline_days: number;
+  decl_key: string | null;
   created_at: string;
 }
 
@@ -213,14 +216,26 @@ export interface Provider {
   updated_at: string;
 }
 
+export type RequirementDeclStatus = 'yes' | 'no' | 'partial' | 'na' | 'undeclared';
+
+export interface RequirementAssessment {
+  article: string;
+  title: string;
+  description: string;
+  status: RequirementDeclStatus;
+  severity: 'critical' | 'major' | 'minor';
+  deadline_days: number;
+  source: 'auto' | 'declared' | 'undeclared';
+  notes: string;
+}
+
 export interface ComplianceReport {
   agent_id: string;
   agent_name: string;
   risk_level: RiskLevel;
   status: 'compliant' | 'gaps_found' | 'critical';
   gaps_count: number;
-  gaps: { article: string; title: string; description: string; severity: string; action: string; deadline_days: number }[];
-  obligations: string[];
+  requirements: RequirementAssessment[];
   summary: string;
 }
 
@@ -271,7 +286,13 @@ export const api = {
     create: (body: unknown) => post<Policy>('/policies', body),
   },
   compliance: {
-    list: () => get<AiActRequirement[]>('/compliance'),
+    list: (riskLevel?: RiskLevel, activeOnly?: boolean) => {
+      const params = new URLSearchParams();
+      if (riskLevel) params.set('risk_level', riskLevel);
+      if (activeOnly) params.set('active_only', 'true');
+      const q = params.toString();
+      return get<AiActRequirement[]>(`/compliance${q ? `?${q}` : ''}`);
+    },
     create: (body: unknown) => post<AiActRequirement>('/compliance', body),
     update: (id: string, body: unknown) => put<AiActRequirement>(`/compliance/${id}`, body),
     delete: (id: string) => del<{ deleted: string }>(`/compliance/${id}`),
@@ -291,11 +312,16 @@ export const api = {
         '/demo/scenarios'
       ),
     seedStatus: () =>
-      get<{ seeded: boolean; audit_entries: number; oversight_items: number }>('/demo/seed/status'),
+      get<{ seeded: boolean; audit_entries: number; oversight_items: number; fleet_agents: number }>('/demo/seed/status'),
     seed: () =>
       post<{ message?: string; seeded_audit_entries?: number }>('/demo/seed'),
     reset: () =>
-      del<{ deleted_audit_entries: number; deleted_oversight_entries: number }>('/demo/seed'),
+      del<{ deleted_audit_entries: number; deleted_oversight_entries: number; deleted_fleet_agents: number }>('/demo/seed'),
+    seedFleet: () =>
+      post<{ message?: string; seeded_agents?: number; high_risk?: number; unacceptable?: number;
+             gaps?: { high_risk_bez_nadzoru: number; high_risk_bez_podstawy_prawnej: number; zalegle_przeglady: number } }>('/demo/seed-fleet'),
+    resetFleet: () =>
+      del<{ deleted_agents: number }>('/demo/seed-fleet'),
     run: (agent_id: string, scenario: string) =>
       post<Record<string, unknown>>('/demo/run', { agent_id, scenario }),
   },
@@ -304,6 +330,8 @@ export const api = {
     update: (key: string, value: unknown) =>
       put<Setting>(`/settings/${encodeURIComponent(key)}`, { value }),
     reload: () => post<{ status: string }>('/settings/reload'),
+    history: (key: string) =>
+      get<SettingHistoryEntry[]>(`/settings/${encodeURIComponent(key)}/history`),
   },
 };
 
@@ -320,6 +348,15 @@ export interface Setting {
   min_value: number | null;
   max_value: number | null;
   editable: boolean;
+  updated_by: string | null;
+  updated_at: string;
+}
+
+export interface SettingHistoryEntry {
+  id: number;
+  key: string;
+  old_value: unknown;
+  new_value: unknown;
   updated_by: string | null;
   updated_at: string;
 }

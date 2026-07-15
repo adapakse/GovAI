@@ -57,10 +57,13 @@ async def select_provider(
     if primary:
         return primary[0]  # już posortowane wg priority
 
-    # Fallback — dowolny eligble provider (gateway użyje jego domyślnego modelu)
-    logger.info(
-        "Model '%s' nieobsługiwany przez żadnego providera dla wrażliwości '%s' — "
-        "wybieram fallback provider '%s'",
-        model_id, sensitivity_level, providers[0].name,
+    # Żaden kwalifikujący się provider nie obsługuje zadeklarowanego modelu agenta.
+    # Świadomie NIE podmieniamy po cichu na inny model innego providera — agent
+    # zadeklarował konkretny model, a cicha podmiana dawałaby nieprzewidywalną
+    # jakość odpowiedzi bez żadnego śladu poza polem model_used w audycie.
+    logger.warning(
+        "Model '%s' nieobsługiwany przez żadnego providera zdolnego obsłużyć "
+        "wrażliwość '%s' (kandydaci: %s) — odmawiam cichej podmiany modelu.",
+        model_id, sensitivity_level, ', '.join(p.name for p in providers),
     )
-    return providers[0]
+    return None

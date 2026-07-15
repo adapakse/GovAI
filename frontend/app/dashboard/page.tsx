@@ -60,7 +60,7 @@ export default function DashboardPage() {
       </div>
 
       {/* KPI */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         <KpiCard
           label="Aktywni agenci"
           value={agents.active}
@@ -78,6 +78,12 @@ export default function DashboardPage() {
           value={calls.blocked}
           sub={`${blockRate}% wszystkich wywołań`}
           accent="red"
+        />
+        <KpiCard
+          label="Błędy infrastruktury"
+          value={calls.errors}
+          sub="brak providera / błąd LLM"
+          accent={calls.errors > 0 ? 'orange' : 'green'}
         />
         <KpiCard
           label="Oczekuje nadzoru"
@@ -170,7 +176,8 @@ export default function DashboardPage() {
           {recent_alerts.map((a, i) => (
             <div key={i} className="px-5 py-3 flex items-center gap-4 hover:bg-blue/10">
               <span className={`w-2 h-2 rounded-full flex-shrink-0 ${
-                a.policy_result === 'blocked' ? 'bg-red-500' : 'bg-orange-400'
+                a.policy_result === 'blocked' ? 'bg-red-500' :
+                a.policy_result === 'error'   ? 'bg-purple-400' : 'bg-orange-400'
               }`} />
               <div className="flex-1 min-w-0">
                 <div className="text-sm text-white font-medium">{a.agent_name}</div>

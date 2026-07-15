@@ -29,6 +29,7 @@ async def call_stats(days: int):
                COUNT(*)                                              AS total_calls,
                COUNT(*) FILTER (WHERE policy_result = 'blocked')    AS blocked,
                COUNT(*) FILTER (WHERE policy_result = 'oversight_required') AS oversight_required,
+               COUNT(*) FILTER (WHERE policy_result = 'error')      AS errors,
                COUNT(*) FILTER (WHERE pii_count > 0)                AS pii_calls,
                COALESCE(SUM(cost_eur), 0)                           AS total_cost_eur,
                ROUND(AVG(latency_ms))                               AS avg_latency_ms
@@ -66,7 +67,7 @@ async def recent_blocks(days: int, recent_n: int):
         """SELECT time, agent_name, event_type, policy_result,
                   pii_categories, block_reason
            FROM audit_log
-           WHERE policy_result IN ('blocked', 'oversight_required')
+           WHERE policy_result IN ('blocked', 'oversight_required', 'error')
              AND time > NOW() - ($1 || ' days')::INTERVAL
            ORDER BY time DESC
            LIMIT $2""",

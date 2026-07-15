@@ -50,6 +50,7 @@ export default function AuditPage() {
           <option value="allowed">Dozwolone</option>
           <option value="blocked">Zablokowane</option>
           <option value="oversight_required">Do nadzoru</option>
+          <option value="error">Błąd</option>
         </select>
         <select
           value={filterPii}
@@ -93,7 +94,8 @@ export default function AuditPage() {
             {entries.map((e, i) => (
               <tr key={i} className={`hover:bg-blue/10 transition-colors ${
                 e.policy_result === 'blocked' ? 'bg-red-900/10' :
-                e.policy_result === 'oversight_required' ? 'bg-orange-900/10' : ''
+                e.policy_result === 'oversight_required' ? 'bg-orange-900/10' :
+                e.policy_result === 'error' ? 'bg-purple-900/10' : ''
               }`}>
                 <td className="px-4 py-2.5">
                   <div className="text-xs text-white font-mono">
@@ -160,8 +162,12 @@ export default function AuditPage() {
                 </div>
               ))}
               {selected.block_reason && (
-                <div className="mt-3 bg-red-900/20 border border-red-700/50 rounded-lg px-3 py-2 text-red-300 text-xs">
-                  Powód blokady: {selected.block_reason}
+                <div className={`mt-3 rounded-lg px-3 py-2 text-xs border ${
+                  selected.policy_result === 'error'
+                    ? 'bg-purple-900/20 border-purple-700/50 text-purple-300'
+                    : 'bg-red-900/20 border-red-700/50 text-red-300'
+                }`}>
+                  {selected.policy_result === 'error' ? 'Szczegóły błędu' : 'Powód blokady'}: {selected.block_reason}
                 </div>
               )}
             </div>
