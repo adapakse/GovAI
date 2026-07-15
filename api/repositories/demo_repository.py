@@ -38,6 +38,53 @@ INSERT INTO oversight_queue (
 """
 
 
+# Kolejność MUSI zgadzać się z placeholderami $1.. w _FLEET_INSERT poniżej —
+# jedyne miejsce, które zna to mapowanie (routery przekazują zwykłe dicty).
+_FLEET_COLUMNS = [
+    "id", "name", "description", "owner_name", "owner_email", "team",
+    "risk_level", "annex_iii_cat", "legal_basis",
+    "requires_oversight", "model_id", "monthly_budget_eur", "cost_alert_threshold_eur",
+    "next_review_date", "last_reviewed_at", "processes_personal_data", "gdpr_legal_basis",
+    "data_retention_days",
+    "intended_purpose", "intended_users", "geographic_scope",
+    "input_modalities", "output_modalities", "integration_points",
+    "model_version", "technical_contact_email", "compliance_officer_email",
+    "compliance_decl",
+]
+
+_FLEET_INSERT = """
+INSERT INTO agents (
+    id, name, description, owner_name, owner_email, team,
+    risk_level, annex_iii_cat, legal_basis, status,
+    requires_oversight, model_id, monthly_budget_eur, cost_alert_threshold_eur,
+    next_review_date, last_reviewed_at, processes_personal_data, gdpr_legal_basis,
+    data_retention_days,
+    intended_purpose, intended_users, geographic_scope,
+    input_modalities, output_modalities, integration_points,
+    model_version, technical_contact_email, compliance_officer_email,
+    compliance_decl
+) VALUES (
+    $1::uuid, $2, $3, $4, $5, $6,
+    $7::risk_level, $8, $9, 'active'::agent_status,
+    $10, $11, $12, $13,
+    $14, $15, $16, $17,
+    $18,
+    $19, $20, $21,
+    $22::text[], $23::text[], $24::text[],
+    $25, $26, $27,
+    $28
+)
+"""
+
+# Predykat odporny na obie formy zapisu markera (natywny obiekt jsonb oraz —
+# dla ewentualnych starych wierszy — podwójnie zakodowany string JSON).
+_FLEET_PREDICATE = "compliance_decl::text LIKE '%seeded_fleet%'"
+
+
+def _fleet_row_to_tuple(row: dict) -> tuple:
+    return tuple(row[c] for c in _FLEET_COLUMNS)
+
+
 async def seed_entries(audit_entries: list[tuple], oversight_entries: list[tuple]) -> None:
     """Wstawia wpisy audytowe i nadzoru w jednej transakcji."""
     pool = get_pool()
@@ -45,6 +92,38 @@ async def seed_entries(audit_entries: list[tuple], oversight_entries: list[tuple
         async with conn.transaction():
             await conn.executemany(_AUDIT_INSERT, audit_entries)
             await conn.executemany(_OVERSIGHT_INSERT, oversight_entries)
+
+
+async def seed_fleet(agent_rows: list[dict]) -> int:
+    """Wstawia flotę agentów demonstracyjnych (oznaczonych compliance_decl.seeded_fleet).
+
+    agent_rows — lista dictów kluczowanych nazwami kolumn (zob. _FLEET_COLUMNS).
+    Idempotentne: najpierw czyści poprzednią flotę, potem wstawia nową.
+    Zwraca liczbę wstawionych agentów.
+    """
+    pool = get_pool()
+    tuples = [_fleet_row_to_tuple(r) for r in agent_rows]
+    async with pool.acquire() as conn:
+        async with conn.transaction():
+            await conn.execute(f"DELETE FROM agents WHERE {_FLEET_PREDICATE}")
+            await conn.executemany(_FLEET_INSERT, tuples)
+    return len(tuples)
+
+
+async def reset_fleet() -> int:
+    """Usuwa flotę demonstracyjną. Zwraca liczbę usuniętych agentów."""
+    pool = get_pool()
+    async with pool.acquire() as conn:
+        async with conn.transaction():
+            n = await conn.fetchval(f"SELECT COUNT(*) FROM agents WHERE {_FLEET_PREDICATE}")
+            await conn.execute(f"DELETE FROM agents WHERE {_FLEET_PREDICATE}")
+    return n
+
+
+async def fleet_count() -> int:
+    """Liczba agentów należących do floty demonstracyjnej."""
+    pool = get_pool()
+    return await pool.fetchval(f"SELECT COUNT(*) FROM agents WHERE {_FLEET_PREDICATE}")
 
 
 async def reset_demo(ids: list[str]) -> tuple[int, int]:

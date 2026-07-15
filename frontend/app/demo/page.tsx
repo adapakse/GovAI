@@ -1,8 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import PolicyBadge from '@/components/PolicyBadge';
-import { api, Agent, PolicyResult } from '@/lib/api';
+import SearchBox from '@/components/SearchBox';
+import { api, Agent, Provider, PolicyResult } from '@/lib/api';
+import { matchesQuery, providerFieldsForModel } from '@/lib/search';
 import { ensureFreshToken } from '@/lib/auth';
 
 const GW_URL  = process.env.NEXT_PUBLIC_GATEWAY_URL ?? 'http://localhost:8001';
@@ -50,7 +52,7 @@ const PLAYBOOK_STEPS = [
 ];
 
 interface ScenarioMeta { label: string; description: string; expected: string; }
-interface SeedStatus { seeded: boolean; audit_entries: number; oversight_items: number; }
+interface SeedStatus { seeded: boolean; audit_entries: number; oversight_items: number; fleet_agents: number; }
 interface RunResult {
   scenario_label: string; scenario_description: string; expected: string;
   agent_id: string; task_id: string; http_status: number;
@@ -208,11 +210,15 @@ export default function DemoPage() {
   const [seedStatus, setSeedStatus] = useState<SeedStatus | null>(null);
   const [seedLoading, setSeedLoading] = useState(false);
   const [seedMsg, setSeedMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
+  const [fleetLoading, setFleetLoading] = useState(false);
   const [playbookOpen, setPlaybookOpen] = useState(false);
+  const [providers, setProviders] = useState<Provider[]>([]);
+  const [query, setQuery] = useState('');
 
   useEffect(() => {
     api.agents.list({ status: 'active' }).then(setAgents).catch(console.error);
     api.demo.scenarios().then(setScenarios).catch(console.error);
+    api.providers.list().then(setProviders).catch(() => {});
     fetchSeedStatus();
   }, []);
 
@@ -231,14 +237,25 @@ export default function DemoPage() {
   }
 
   async function reset() {
-    if (!confirm('Usunąć WSZYSTKIE dane demo?')) return;
+    if (!confirm('Usunąć WSZYSTKIE dane demo (audyt, nadzór, flota agentów)?')) return;
     setSeedLoading(true); setSeedMsg(null);
     try {
       const data = await api.demo.reset();
-      setSeedMsg({ type: 'ok', text: `Usunięto ${data.deleted_audit_entries} audytów i ${data.deleted_oversight_entries} nadzoru.` });
+      setSeedMsg({ type: 'ok', text: `Usunięto ${data.deleted_audit_entries} audytów, ${data.deleted_oversight_entries} nadzoru i ${data.deleted_fleet_agents} agentów floty.` });
       await fetchSeedStatus();
     } catch (e) { setSeedMsg({ type: 'err', text: String(e) }); }
     finally { setSeedLoading(false); }
+  }
+
+  async function seedFleet() {
+    setFleetLoading(true); setSeedMsg(null);
+    try {
+      const data = await api.demo.seedFleet();
+      setSeedMsg({ type: 'ok', text: data.message ?? `Zasiano ${data.seeded_agents} agentów.` });
+      await fetchSeedStatus();
+      await api.agents.list({ status: 'active' }).then(setAgents).catch(() => {});
+    } catch (e) { setSeedMsg({ type: 'err', text: String(e) }); }
+    finally { setFleetLoading(false); }
   }
 
   async function run(agentId: string, scenarioKey: string) {
@@ -261,14 +278,29 @@ export default function DemoPage() {
     }
     if (result.policy_result === 'oversight_required')
       return `Decyzja skierowana do nadzoru.\nOversight ID: ${gw.oversight_id ?? '—'}\n\n${gw.message ?? ''}`;
+    if (result.policy_result === 'error') {
+      const detail = gw.detail;
+      if (typeof detail === 'string') return detail;
+      const d = detail as Record<string, unknown> | undefined;
+      return (d?.message as string) ?? JSON.stringify(gw, null, 2);
+    }
     const choices = gw.choices as Array<{ message?: { content?: string } }> | undefined;
     return choices?.[0]?.message?.content ?? JSON.stringify(gw, null, 2);
   }
 
+  // Filtr tekstowy: nazwa agenta, model, zespół, właściciel + nazwa/typ providera
+  const agentMatches = useMemo(() => {
+    return (a: Agent) => matchesQuery(
+      [a.name, a.model_id, a.team, a.owner_name, ...providerFieldsForModel(a.model_id, providers)],
+      query,
+    );
+  }, [query, providers]);
+
   // Oddziel agentów z scenariuszami od pozostałych (wolny czat)
   const scenarioAgentIds = new Set(Object.keys(scenarios));
-  const scenarioAgents = agents.filter(a => scenarioAgentIds.has(a.id));
-  const chatAgents     = agents.filter(a => !scenarioAgentIds.has(a.id));
+  const scenarioAgents = agents.filter(a => scenarioAgentIds.has(a.id) && agentMatches(a));
+  const chatAgents     = agents.filter(a => !scenarioAgentIds.has(a.id) && agentMatches(a));
+  const shownCount     = scenarioAgents.length + chatAgents.length;
 
   return (
     <div className="space-y-6">
@@ -319,6 +351,29 @@ export default function DemoPage() {
             seedMsg.type === 'ok' ? 'bg-green-900/20 border-green-700 text-green-300' : 'bg-red-900/20 border-red-700 text-red-300'
           }`}>{seedMsg.text}</div>
         )}
+
+        {/* Flota demonstracyjna — skala rejestru */}
+        <div className="border-t border-blue/20 pt-4 flex items-center justify-between flex-wrap gap-3">
+          <div className="max-w-md">
+            <h3 className="text-white font-semibold text-sm">Flota demonstracyjna (skala)</h3>
+            <p className="text-xs text-mgray mt-0.5">
+              Dodaje 50 agentów rozproszonych po działach, z celowymi lukami zgodności
+              (high-risk bez nadzoru, zaległe przeglądy, praktyki niedopuszczalne art. 5).
+              Pokazuje, że przy skali ręczne panowanie nad AI Act jest niewykonalne.
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            {seedStatus && seedStatus.fleet_agents > 0 && (
+              <span className="text-xs font-semibold px-2 py-0.5 rounded border text-orange-400 border-orange-700 bg-orange-900/20">
+                {seedStatus.fleet_agents} agentów floty
+              </span>
+            )}
+            <button onClick={seedFleet} disabled={fleetLoading || seedLoading}
+              className="px-4 py-2 bg-teal text-dark text-sm font-semibold rounded-lg hover:bg-teal/90 disabled:opacity-40">
+              {fleetLoading ? '⏳ Ładowanie...' : '▦ Zasil flotę (50 agentów)'}
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Przewodnik */}
@@ -348,6 +403,26 @@ export default function DemoPage() {
           </div>
         )}
       </div>
+
+      {/* Wyszukiwarka agentów */}
+      <div className="flex items-center gap-3 flex-wrap">
+        <SearchBox
+          value={query}
+          onChange={setQuery}
+          placeholder="Szukaj agenta — nazwa, model, provider (np. bielik, ollama), zespół..."
+          count={shownCount}
+          total={agents.length}
+        />
+      </div>
+
+      {shownCount === 0 && !query && (
+        <div className="text-mgray/50 text-sm py-4">Brak aktywnych agentów.</div>
+      )}
+      {shownCount === 0 && query && (
+        <div className="text-mgray text-sm py-4">
+          Brak agentów pasujących do „{query}”.
+        </div>
+      )}
 
       {/* Agenci ze scenariuszami */}
       {scenarioAgents.map(agent => (
