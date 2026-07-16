@@ -101,6 +101,7 @@ _CONF_KW = [
     "adres zamieszkania",
     "adres zameldowania",
     "numer dowodu",
+    "nr dowodu",
     "dowód osobisty",
     "numer paszportu",
     "numer rachunku",
@@ -136,6 +137,8 @@ _CONF_RE = [
     re.compile(r'\bKRS\s*[:=]?\s*\d{10}\b', re.IGNORECASE),
     re.compile(r'\b(?:NIP|REGON|KRS)\b', re.IGNORECASE),  # sama wzmianka o identyfikatorze spółki
     re.compile(r'\b\d{2}[01]\d[0-3]\d\d{5}\b'),  # PESEL-like 11-digit sequence
+    re.compile(r'\b[A-Z]{3}\d{6}\b'),  # numer dowodu osobistego (seria + 6 cyfr), przed maskowaniem PII
+    re.compile(r'\[PL_ID_CARD\]', re.IGNORECASE),  # ten sam numer po maskowaniu przez PIIScanner
 ]
 
 # ── INTERNAL — dokumenty robocze kancelarii, wiedza ogólna ────────────────────

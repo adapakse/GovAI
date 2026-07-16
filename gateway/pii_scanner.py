@@ -43,6 +43,27 @@ def _make_pl_nip_recognizer() -> PatternRecognizer:
     )
 
 
+def _make_pl_id_card_recognizer() -> PatternRecognizer:
+    """Numer dowodu osobistego — seria (3 litery) + 6 cyfr, np. ABC123456.
+
+    Format obowiązuje od 2001 r. (wcześniej też 3 litery + 6 cyfr). Regex sam
+    w sobie jest niespecyficzny (dowolne 3 wielkie litery + 6 cyfr), więc score
+    startowe jest umiarkowane — podbijane przez `context`, gdy w pobliżu padnie
+    słowo „dowód/dowodu/seria”.
+    """
+    pattern = Pattern(
+        name="PL_ID_CARD",
+        regex=r"\b[A-Z]{3}\d{6}\b",
+        score=0.55,
+    )
+    return PatternRecognizer(
+        supported_entity="PL_ID_CARD",
+        patterns=[pattern],
+        supported_language="pl",
+        context=["dowód", "dowodu", "dowodem", "seria", "id card"],
+    )
+
+
 def _make_pl_phone_recognizer() -> PatternRecognizer:
     """Polskie numery telefonów."""
     pattern = Pattern(
@@ -63,7 +84,7 @@ class PIIScanner:
     SUPPORTED_ENTITIES = [
         "PERSON", "EMAIL_ADDRESS", "PHONE_NUMBER", "LOCATION",
         "CREDIT_CARD", "IBAN_CODE", "DATE_TIME",
-        "PL_PESEL", "PL_NIP",
+        "PL_PESEL", "PL_NIP", "PL_ID_CARD",
     ]
 
     def __init__(self) -> None:
@@ -83,6 +104,7 @@ class PIIScanner:
         )
         self._analyzer.registry.add_recognizer(_make_pl_pesel_recognizer())
         self._analyzer.registry.add_recognizer(_make_pl_nip_recognizer())
+        self._analyzer.registry.add_recognizer(_make_pl_id_card_recognizer())
         self._analyzer.registry.add_recognizer(_make_pl_phone_recognizer())
 
         self._anonymizer = AnonymizerEngine()
