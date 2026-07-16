@@ -31,7 +31,7 @@ services:
     volumes:
       - ollama_models:/root/.ollama
     ports:
-      - "11434:11434"   # opcjonalnie — do debugowania (ollama list / API)
+      - "${OLLAMA_PORT:-11434}:11434"   # opcjonalnie — do debugowania (ollama list / API)
     healthcheck:
       test: ["CMD", "ollama", "list"]
       interval: 10s
@@ -83,7 +83,7 @@ services:
   gateway:
     build: ./gateway
     ports:
-      - "8001:8001"
+      - "${GATEWAY_PORT:-8001}:8001"
     environment:
       DATABASE_URL: postgresql://govai:${DB_PASSWORD:-govai_secret}@postgres:5432/govai
       REDIS_URL: redis://redis:6379
@@ -105,7 +105,7 @@ services:
   api:
     build: ./api
     ports:
-      - "8000:8000"
+      - "${API_PORT:-8000}:8000"
     environment:
       DATABASE_URL: postgresql://govai:${DB_PASSWORD:-govai_secret}@postgres:5432/govai
       REDIS_URL: redis://redis:6379
@@ -122,11 +122,11 @@ services:
   frontend:
     build: ./frontend
     ports:
-      - "4000:3000"
+      - "${FRONTEND_PORT:-4000}:3000"
     environment:
-      NEXT_PUBLIC_API_URL: http://localhost:8000
-      NEXT_PUBLIC_WS_URL: ws://localhost:8000
-      NEXT_PUBLIC_GATEWAY_URL: http://localhost:8001
+      NEXT_PUBLIC_API_URL: http://localhost:${API_PORT:-8000}
+      NEXT_PUBLIC_WS_URL: ws://localhost:${API_PORT:-8000}
+      NEXT_PUBLIC_GATEWAY_URL: http://localhost:${GATEWAY_PORT:-8001}
     depends_on:
       - api
     restart: unless-stopped
