@@ -49,10 +49,14 @@ Ustaw w `.env`:
 ### B2. Uruchomienie i migracje
 ```
 docker compose up -d --build           # WAŻNE: --build, by bramka miała aktualny kod
-# zastosuj migracje (NIE są auto-stosowane):
-Get-Content db/migrations/002_auth.sql      -Raw | docker compose exec -T postgres psql -U govai -d govai
-Get-Content db/migrations/003_providers.sql -Raw | docker compose exec -T postgres psql -U govai -d govai
-Get-Content db/migrations/004_settings.sql  -Raw | docker compose exec -T postgres psql -U govai -d govai
+# zastosuj migracje (NIE są auto-stosowane). NIGDY przez Get-Content -Raw | ... psql —
+# w Windows PowerShell 5.1 pipe do procesu natywnego psuje polskie znaki (zob. memoria
+# deploy-migrations-gotchas). Zawsze przez docker cp + psql -f:
+$env:MSYS_NO_PATHCONV = "1"   # tylko jeśli używasz Git Bash zamiast PowerShell
+foreach ($f in "002_auth","003_providers","004_settings","005_settings_audit","006_requirements_dynamic","007_audit_error_result","008_fix_text_encoding") {
+  docker cp "db/migrations/$f.sql" govai-postgres-1:/tmp/m.sql
+  docker compose exec -T postgres psql -U govai -d govai -f /tmp/m.sql
+}
 ```
 Sprawdź zdrowie: `http://localhost:8000/health` i `http://localhost:8001/health` → `200`.
 
