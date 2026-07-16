@@ -73,7 +73,8 @@ async def dashboard_timeline(
 async def live_feed(websocket: WebSocket):
     """
     WebSocket stream zdarzeń real-time dla pulpitu operacyjnego.
-    Subskrybuje kanały Redis: audit:new_call, audit:blocked, oversight:pending.
+    Subskrybuje kanały Redis: audit:new_call, audit:blocked, audit:error,
+    oversight:pending, oversight:escalated.
     """
     await websocket.accept()
 
@@ -83,7 +84,10 @@ async def live_feed(websocket: WebSocket):
         return
 
     pubsub = _redis.pubsub()
-    await pubsub.subscribe("audit:new_call", "audit:blocked", "oversight:pending", "oversight:escalated")
+    await pubsub.subscribe(
+        "audit:new_call", "audit:blocked", "audit:error",
+        "oversight:pending", "oversight:escalated",
+    )
 
     try:
         async for message in pubsub.listen():

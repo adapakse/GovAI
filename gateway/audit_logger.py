@@ -9,12 +9,17 @@ from oversight import get_redis
 
 logger = logging.getLogger(__name__)
 
-# event_type → kanał Redis pub/sub, którego słucha dashboard (GET /ws/live-feed).
+# policy_result → kanał Redis pub/sub, którego słucha dashboard (GET /ws/live-feed).
+# Mapowane po policy_result (allowed/blocked/error), NIE po event_type — event_type ma
+# kilka wariantów per wynik (np. "blocked" to zarówno naruszenie polityki, jak i
+# unknown_agent/agent_inactive; "error" to zarówno no_eligible_provider, jak i llm_error)
+# i osobne mapowanie po event_type po cichu gubiło nowe warianty w live-feedzie.
 # 'oversight_required' pomijamy — to zdarzenie publikuje już push_oversight_task
 # na kanale 'oversight:pending', drugi wpis byłby duplikatem w live-feedzie.
 _LIVE_FEED_CHANNEL = {
+    "allowed": "audit:new_call",
     "blocked": "audit:blocked",
-    "call_completed": "audit:new_call",
+    "error":   "audit:error",
 }
 
 _INSERT_SQL = """
@@ -62,7 +67,7 @@ async def write_audit(entry: AuditEntry) -> None:
             entry.provider_id,
         )
 
-        channel = _LIVE_FEED_CHANNEL.get(entry.event_type)
+        channel = _LIVE_FEED_CHANNEL.get(entry.policy_result)
         if channel:
             await get_redis().publish(
                 channel,

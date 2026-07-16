@@ -14,6 +14,7 @@ interface FeedEvent {
 
 const TYPE_STYLE: Record<string, { label: string; dot: string }> = {
   'audit:blocked':            { label: 'BLOKADA',  dot: 'bg-red-500' },
+  'audit:error':              { label: 'BŁĄD',     dot: 'bg-purple-500' },
   'oversight:pending':        { label: 'NADZÓR',   dot: 'bg-orange-400' },
   'oversight:escalated':      { label: 'ESKALACJA',dot: 'bg-red-700' },
   'audit:new_call':           { label: 'WYWOŁANIE',dot: 'bg-green-500' },
@@ -26,21 +27,39 @@ export default function LiveFeed() {
   useEffect(() => {
     let ws: WebSocket;
     let retry: ReturnType<typeof setTimeout>;
+    // React 18 StrictMode (dev) montuje efekt dwukrotnie (mount → cleanup → mount).
+    // Bez tej flagi pierwszy WebSocket potrafi jeszcze dostarczyć wiadomość (onmessage)
+    // między cleanupem a faktycznym zamknięciem połączenia — każde zdarzenie z Redis
+    // renderowało się wtedy dwa razy. `cancelled` gwarantuje, że "martwe" połączenie
+    // z pierwszego mountu nic już nie dopisze do stanu.
+    let cancelled = false;
 
     function connect() {
+      if (cancelled) return;
       ws = new WebSocket(`${WS}/ws/live-feed`);
-      ws.onopen  = () => setConnected(true);
-      ws.onclose = () => { setConnected(false); retry = setTimeout(connect, 3000); };
+      ws.onopen  = () => { if (!cancelled) setConnected(true); };
+      ws.onclose = () => { if (!cancelled) { setConnected(false); retry = setTimeout(connect, 3000); } };
       ws.onerror = () => ws.close();
       ws.onmessage = (e) => {
+        if (cancelled) return;
         try {
           const evt = JSON.parse(e.data) as Omit<FeedEvent, 'receivedAt'>;
-          setEvents(prev => [{ ...evt, receivedAt: Date.now() }, ...prev].slice(0, 60));
+          setEvents(prev => {
+            // Deduplikacja po (type, call_id) — druga warstwa obok `cancelled`, na
+            // wypadek gdyby przeglądarka nie zamknęła "martwego" WS wystarczająco
+            // szybko (StrictMode dev mount) i oba połączenia zdążyły dostarczyć tę
+            // samą wiadomość z Redis.
+            const callId = (evt.payload as Record<string, unknown>)?.call_id;
+            if (callId && prev.some(p => p.type === evt.type && (p.payload as Record<string, unknown>)?.call_id === callId)) {
+              return prev;
+            }
+            return [{ ...evt, receivedAt: Date.now() }, ...prev].slice(0, 60);
+          });
         } catch {}
       };
     }
     connect();
-    return () => { clearTimeout(retry); ws?.close(); };
+    return () => { cancelled = true; clearTimeout(retry); ws?.close(); };
   }, []);
 
   return (
