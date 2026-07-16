@@ -162,9 +162,10 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
     Kolejność sprawdzeń:
     1. Weryfikacja agenta (rejestr)
     2. Skan PII wejścia (Presidio)
-    3. Ocena polityk (reguły)
+    3. Ocena polityk (reguły) — blocked/oversight_required kończą tu, PRZED wyborem
+       providera (decyzja polityki musi wygrywać z awarią routingu, nie odwrotnie)
     3.5. Klasyfikacja wrażliwości danych
-    3.6. Wybór providera LLM
+    3.6. Wybór providera LLM — tylko dla zapytań "allowed"
     4. Wywołanie modelu LLM (LiteLLM) lub kolejka nadzoru
     5. Skan PII wyjścia
     6. Zapis do dziennika audytowego (asynchroniczny)
@@ -249,7 +250,75 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
         ', '.join(sensitivity.reasons[:3]) if sensitivity.reasons else 'brak',
     )
 
-    # ── 3.6. Wybór providera ────────────────────────────────────────────────────
+    # ── Obsługa zablokowania ─────────────────────────────────────────────────────
+    # Sprawdzane PRZED wyborem providera (3.6) celowo: decyzja polityki musi zawsze
+    # wygrywać z awarią routingu. Wcześniej wybór providera wykonywał się jako pierwszy
+    # i przy braku providera dla danego poziomu wrażliwości rzucał 503 ZANIM w ogóle
+    # sprawdzono decision.result — więc zapytanie, które powinno dostać 403 "Zablokowane",
+    # czasem kończyło się myląco jako 503 "brak providera" (albo, dla zapytań które nie
+    # trafiały w żadną regułę, w ogóle nie było zatrzymywane). Blokada/nadzór nie
+    # potrzebują wybranego providera, więc provider_id w audycie zostaje puste — do
+    # tego etapu bramka nawet nie próbowała szukać providera.
+    if decision.result == "blocked":
+        write_audit_fire_and_forget(AuditEntry(
+            agent_id=agent.id,
+            agent_name=agent.name,
+            task_id=task_id,
+            call_id=call_id,
+            event_type="blocked",
+            policy_result="blocked",
+            policy_id=decision.policy_id,
+            pii_categories=pii_result.pii_categories,
+            pii_count=pii_result.pii_count,
+            input_hash=input_hash,
+            model_used=agent.model_id,
+            block_reason=decision.reason,
+            data_sensitivity=sensitivity.level,
+            provider_id=None,
+        ))
+        raise HTTPException(
+            status_code=403,
+            detail={
+                "error": "call_blocked",
+                "reason": decision.reason,
+                "policy_id": decision.policy_id,
+                "agent": agent.name,
+                "call_id": call_id,
+            },
+        )
+
+    if decision.result == "oversight_required":
+        oversight_id = await push_oversight_task(agent, clean_messages, task_id, input_hash)
+
+        write_audit_fire_and_forget(AuditEntry(
+            agent_id=agent.id,
+            agent_name=agent.name,
+            task_id=task_id,
+            call_id=call_id,
+            event_type="oversight_required",
+            policy_result="oversight_required",
+            policy_id=decision.policy_id,
+            pii_categories=pii_result.pii_categories,
+            pii_count=pii_result.pii_count,
+            input_hash=input_hash,
+            model_used=agent.model_id,
+            data_sensitivity=sensitivity.level,
+            provider_id=None,
+            metadata={"oversight_id": oversight_id},
+        ))
+
+        return {
+            "status": "awaiting_oversight",
+            "oversight_id": oversight_id,
+            "message": (
+                f"Wywołanie agenta '{agent.name}' zostało wstrzymane — "
+                "wymagane zatwierdzenie przez recenzenta zgodnie z EU AI Act."
+            ),
+            "call_id": call_id,
+            "task_id": task_id,
+        }
+
+    # ── 3.6. Wybór providera (tylko dla zapytań "allowed") ──────────────────────
     selected_provider: Optional[ProviderRecord] = None
     if not settings.demo_mode:
         selected_provider = await select_provider(agent.model_id, sensitivity.level)
@@ -290,66 +359,6 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
             "Wybrany provider: %s (max_sensitivity=%s, priority=%d)",
             selected_provider.name, selected_provider.max_data_sensitivity, selected_provider.priority,
         )
-
-    # ── Obsługa zablokowania ────────────────────────────────────────────────────
-    if decision.result == "blocked":
-        write_audit_fire_and_forget(AuditEntry(
-            agent_id=agent.id,
-            agent_name=agent.name,
-            task_id=task_id,
-            call_id=call_id,
-            event_type="blocked",
-            policy_result="blocked",
-            policy_id=decision.policy_id,
-            pii_categories=pii_result.pii_categories,
-            pii_count=pii_result.pii_count,
-            input_hash=input_hash,
-            model_used=agent.model_id,
-            block_reason=decision.reason,
-            data_sensitivity=sensitivity.level,
-            provider_id=selected_provider.id if selected_provider else None,
-        ))
-        raise HTTPException(
-            status_code=403,
-            detail={
-                "error": "call_blocked",
-                "reason": decision.reason,
-                "policy_id": decision.policy_id,
-                "agent": agent.name,
-                "call_id": call_id,
-            },
-        )
-
-    if decision.result == "oversight_required":
-        oversight_id = await push_oversight_task(agent, clean_messages, task_id, input_hash)
-
-        write_audit_fire_and_forget(AuditEntry(
-            agent_id=agent.id,
-            agent_name=agent.name,
-            task_id=task_id,
-            call_id=call_id,
-            event_type="oversight_required",
-            policy_result="oversight_required",
-            policy_id=decision.policy_id,
-            pii_categories=pii_result.pii_categories,
-            pii_count=pii_result.pii_count,
-            input_hash=input_hash,
-            model_used=agent.model_id,
-            data_sensitivity=sensitivity.level,
-            provider_id=selected_provider.id if selected_provider else None,
-            metadata={"oversight_id": oversight_id},
-        ))
-
-        return {
-            "status": "awaiting_oversight",
-            "oversight_id": oversight_id,
-            "message": (
-                f"Wywołanie agenta '{agent.name}' zostało wstrzymane — "
-                "wymagane zatwierdzenie przez recenzenta zgodnie z EU AI Act."
-            ),
-            "call_id": call_id,
-            "task_id": task_id,
-        }
 
     # ── 4. Wywołanie modelu LLM ─────────────────────────────────────────────────
     t0 = time.monotonic()
