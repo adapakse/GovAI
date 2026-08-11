@@ -1,5 +1,14 @@
-{{ADDRESS}} {
-	{{TLS_DIRECTIVE}}
+{
+	on_demand_tls {
+		interval 2m
+		burst    5
+	}
+}
+
+:443 {
+	tls internal {
+		on_demand
+	}
 	encode gzip
 
 	handle_path /api/* {

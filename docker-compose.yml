@@ -142,7 +142,8 @@ services:
     environment:
       DOMAIN_NAME: ${DOMAIN_NAME:-}
     volumes:
-      - ./caddy/Caddyfile.template:/etc/caddy/Caddyfile.template:ro
+      - ./caddy/Caddyfile.internal.template:/etc/caddy/Caddyfile.internal.template:ro
+      - ./caddy/Caddyfile.domain.template:/etc/caddy/Caddyfile.domain.template:ro
       - ./caddy/entrypoint.sh:/entrypoint.sh:ro
       - caddy_data:/data
       - caddy_config:/config

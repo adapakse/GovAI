@@ -2,14 +2,9 @@
 set -e
 
 if [ -n "$DOMAIN_NAME" ]; then
-  ADDRESS="$DOMAIN_NAME"
-  TLS_DIRECTIVE=""
+  sed "s|{{ADDRESS}}|$DOMAIN_NAME|" /etc/caddy/Caddyfile.domain.template > /etc/caddy/Caddyfile
 else
-  ADDRESS=":443"
-  TLS_DIRECTIVE="tls internal"
+  cp /etc/caddy/Caddyfile.internal.template /etc/caddy/Caddyfile
 fi
-
-sed -e "s|{{ADDRESS}}|$ADDRESS|" -e "s|{{TLS_DIRECTIVE}}|$TLS_DIRECTIVE|" \
-  /etc/caddy/Caddyfile.template > /etc/caddy/Caddyfile
 
 exec caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
