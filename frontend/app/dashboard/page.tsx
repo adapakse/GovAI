@@ -108,7 +108,7 @@ export default function DashboardPage() {
                 <Tooltip
                   contentStyle={{ background: '#0D1B2A', border: '1px solid #1E6FBF', borderRadius: 8, fontSize: 12 }}
                   labelStyle={{ color: '#CBD5E1' }}
-                  formatter={(v, name) => [v, name === 'ok' ? 'Dozwolone' : 'Zablokowane']}
+                  formatter={(v: any, name: string): [any, string] => [v, name === 'ok' ? 'Dozwolone' : 'Zablokowane']}
                   labelFormatter={(_, payload) => payload?.[0]?.payload?.full ?? ''}
                 />
                 <Bar dataKey="ok" stackId="a" fill="#2D9C61" radius={[0, 0, 4, 4]} name="ok" />

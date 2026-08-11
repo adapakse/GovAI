@@ -192,7 +192,7 @@ function RegisterModal({ onClose, onDone }: { onClose: () => void; onDone: () =>
     team: '', model_id: 'claude-haiku-4-5-20251001', monthly_budget_eur: '50',
   });
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<Record<string, unknown> | null>(null);
+  const [result, setResult] = useState<Agent | null>(null);
   const [error, setError] = useState('');
 
   async function submit(e: React.FormEvent) {
@@ -200,7 +200,7 @@ function RegisterModal({ onClose, onDone }: { onClose: () => void; onDone: () =>
     setLoading(true); setError('');
     try {
       const res = await api.agents.create({ ...form, monthly_budget_eur: parseFloat(form.monthly_budget_eur) });
-      setResult(res as Record<string, unknown>);
+      setResult(res);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Błąd rejestracji');
     } finally {

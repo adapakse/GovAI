@@ -385,7 +385,7 @@ export default function AgentDetailPage() {
 
   // Liczba deklaracji wypełnionych do wyświetlenia w zakładce
   const declFilled = Object.values(agent.compliance_decl ?? {})
-    .filter(v => v?.status && v.status !== '').length;
+    .filter(v => v?.status).length;
 
   return (
     <div className="space-y-6 max-w-5xl">
