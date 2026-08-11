@@ -1,10 +1,11 @@
-{
-	on_demand_tls {
-		interval 2m
-		burst    5
-	}
-}
-
+# Bez DOMAIN_NAME (self-signed, on_demand) — nowoczesny Caddy usunął proste
+# rate-limity (interval/burst) z on_demand_tls, jedyna wbudowana ochrona to
+# endpoint `ask`. Dla środowisk bez ustalonej domeny nie ma z góry listy
+# dozwolonych SNI do zweryfikowania w `ask`, więc świadomie tego pomijamy —
+# ryzyko (ktoś wymusza generowanie certów losowym SNI) ogranicz na poziomie
+# sieci (NSG/firewall), nie tutaj. Realne wdrożenia klienckie zawsze mają
+# DOMAIN_NAME ustawiony i idą przez Caddyfile.domain.template (zwykłe ACME,
+# ten problem tam nie występuje).
 :443 {
 	tls internal {
 		on_demand
