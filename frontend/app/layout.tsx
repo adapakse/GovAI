@@ -1,14 +1,7 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import './globals.css';
 import Sidebar from '@/components/Sidebar';
 import AuthProvider from '@/components/AuthProvider';
-
-const inter = Inter({
-  subsets: ['latin'],
-  weight: ['400', '600', '700', '800'],
-  display: 'swap',
-});
 
 export const metadata: Metadata = {
   title: 'GovAI — Platforma Zarządzania Agentami AI',
@@ -17,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pl" className={inter.className}>
+    <html lang="pl">
       <body className="flex h-screen overflow-hidden bg-dark text-white">
         <AuthProvider>
           <Sidebar />
