@@ -14,27 +14,38 @@ sztucznej inteligencji (AI Act).
 
 ```
    Agent AI
-      │  POST /v1/chat/completions  (zgodne z OpenAI API)
+      │  POST /gateway/v1/chat/completions  (zgodne z OpenAI API)
       ▼
+┌─────────────────┐
+│  Caddy :443     │  TLS termination (ACME z DOMAIN_NAME albo self-signed)
+└────────┬────────┘
+         │  /  → frontend   /api/* → api   /gateway/* → gateway
+         ▼
 ┌─────────────────┐     skan PII → silnik polityk → wybór dostawcy → audyt
-│  Gateway :8001  │ ──────────────────────────────────────────────────────►  Anthropic / DeepSeek
+│    Gateway      │ ──────────────────────────────────────────────────────►  Anthropic / DeepSeek
 └─────────────────┘
       │                                   ▲
       ▼                                   │ polityki, rejestr, nadzór
 ┌─────────────────┐                ┌──────┴──────────┐
-│ PostgreSQL +    │ ◄──────────────│   API  :8000    │ ◄──── Frontend :4000 (Next.js)
+│ PostgreSQL +    │ ◄──────────────│      API        │ ◄──── Frontend (Next.js)
 │ TimescaleDB     │                └─────────────────┘
 │ Redis           │
 └─────────────────┘
 ```
 
-| Usługa | Port | Opis |
-|--------|------|------|
-| **gateway** | 8001 | Bramka bezpieczeństwa — proxy zgodne z OpenAI Chat Completions. Skan PII, egzekwowanie polityk, routing dostawców, audyt. |
-| **api** | 8000 | Panel zarządzania — rejestr agentów, polityki, nadzór człowieka, dziennik audytowy, raporty zgodności, uwierzytelnianie. |
-| **frontend** | 4000 | Konsola webowa (Next.js): logowanie, dashboard, rejestr, polityki, audyt, nadzór, raporty. |
-| **postgres** | — | TimescaleDB (PG16) — dane aplikacji + szereg czasowy dziennika audytowego. |
-| **redis** | — | Live-feed dashboardu oraz kolejka/TTL zadań nadzoru człowieka. |
+| Usługa | Dostęp | Opis |
+|--------|--------|------|
+| **caddy** | `:443`/`:80` (host) | Reverse proxy TLS — jedyny punkt wejścia z zewnątrz. |
+| **gateway** | `/gateway/*` za Caddy | Bramka bezpieczeństwa — proxy zgodne z OpenAI Chat Completions. Skan PII, egzekwowanie polityk, routing dostawców, audyt. |
+| **api** | `/api/*` za Caddy | Panel zarządzania — rejestr agentów, polityki, nadzór człowieka, dziennik audytowy, raporty zgodności, uwierzytelnianie. |
+| **frontend** | `/` za Caddy | Konsola webowa (Next.js): logowanie, dashboard, rejestr, polityki, audyt, nadzór, raporty. |
+| **postgres** | — (wewnętrzny) | TimescaleDB (PG16) — dane aplikacji + szereg czasowy dziennika audytowego. |
+| **redis** | — (wewnętrzny) | Live-feed dashboardu oraz kolejka/TTL zadań nadzoru człowieka. |
+
+`gateway`/`api`/`frontend` nie wystawiają już portów bezpośrednio na hosta —
+cały ruch z zewnątrz przechodzi przez `caddy`. Do debugowania z hosta użyj
+`docker compose exec <serwis> ...` albo tymczasowo dodaj `ports:` w lokalnym
+override.
 
 ---
 
@@ -72,11 +83,12 @@ cp .env.example .env
 docker compose up --build
 ```
 
-Po starcie:
+Po starcie (self-signed cert — przeglądarka pokaże ostrzeżenie, zaakceptuj je
+dla lokalnego dev/INT; `curl` wymaga `-k`):
 
-- Konsola: <http://localhost:4000>
-- API + dokumentacja: <http://localhost:8000/docs>
-- Bramka + dokumentacja: <http://localhost:8001/docs>
+- Konsola: <https://localhost>
+- API + dokumentacja: <https://localhost/api/docs>
+- Bramka + dokumentacja: <https://localhost/gateway/docs>
 
 ### Zmienne środowiskowe
 
@@ -88,13 +100,16 @@ Po starcie:
 | `DEEPSEEK_API_KEY` | nie | Klucz alternatywnego dostawcy (routing wielodostawcowy). |
 | `DEMO_MODE` | nie | `true` → bramka zwraca gotowe odpowiedzi bez wywoływania dostawcy. |
 | `LOG_LEVEL` | nie | Poziom logowania (domyślnie `INFO`). |
+| `ALLOWED_ORIGINS` | nie | Dozwolone originy CORS dla API — lista rozdzielona przecinkiem lub JSON (domyślnie `https://localhost`). W produkcji ogranicz do domeny konsoli klienta. |
+| `DOMAIN_NAME` | nie | Domena publiczna dla Caddy — ustawiona włącza automatyczny cert ACME zamiast samopodpisanego. |
+| `CADDY_HTTPS_PORT` / `CADDY_HTTP_PORT` | nie | Porty hosta dla Caddy (domyślnie 443/80) — przydatne przy kilku środowiskach na tej samej maszynie. |
 
 ---
 
 ## Przykład wywołania przez bramkę
 
 ```bash
-curl http://localhost:8001/v1/chat/completions \
+curl -k https://localhost/gateway/v1/chat/completions \
   -H "Content-Type: application/json" \
   -H "X-Agent-ID: <UUID agenta z rejestru>" \
   -H "Authorization: Bearer <token JWT>" \

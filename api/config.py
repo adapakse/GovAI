@@ -1,3 +1,6 @@
+import json
+
+from pydantic import field_validator
 from pydantic_settings import BaseSettings
 
 
@@ -16,6 +19,17 @@ class Settings(BaseSettings):
 
     # CORS — lista dozwolonych origins (prod: tylko domena kancelarii)
     allowed_origins: list[str] = ["http://localhost:4000", "http://localhost:3000"]
+
+    @field_validator("allowed_origins", mode="before")
+    @classmethod
+    def _parse_allowed_origins(cls, v):
+        """Akceptuje JSON-listę albo string z originami rozdzielonymi przecinkiem."""
+        if isinstance(v, str):
+            v = v.strip()
+            if v.startswith("["):
+                return json.loads(v)
+            return [origin.strip() for origin in v.split(",") if origin.strip()]
+        return v
 
     class Config:
         env_file = ".env"
