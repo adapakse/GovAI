@@ -222,6 +222,7 @@ packages:
   - curl
   - gnupg
   - git
+  - jq
 write_files:
   - path: /opt/govai-azure.env
     content: |
