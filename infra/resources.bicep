@@ -195,7 +195,7 @@ resource seedSecrets 'Microsoft.Resources/deploymentScripts@2023-08-01' = {
       set -e
       for name in jwt-secret db-password; do
         if ! az keyvault secret show --vault-name "$VAULT_NAME" --name "$name" >/dev/null 2>&1; then
-          az keyvault secret set --vault-name "$VAULT_NAME" --name "$name" --value "$(openssl rand -hex 32)" >/dev/null
+          az keyvault secret set --vault-name "$VAULT_NAME" --name "$name" --value "$(python3 -c 'import secrets; print(secrets.token_hex(32))')" >/dev/null
         fi
       done
       for name in anthropic-api-key deepseek-api-key; do
