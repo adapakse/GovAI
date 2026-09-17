@@ -4,6 +4,10 @@
 # nigdy nie dzielą tego samego hosta/canonical URL (lekcja z crmtree.pl:
 # landing statyczny + blog SSR na innym hoście się rozjechały, miesiąc pracy
 # nad SEO poszedł na marne, zanim to wykryto).
+www.{{ADDRESS}} {
+	redir https://{{ADDRESS}}{uri} permanent
+}
+
 {{ADDRESS}} {
 	encode gzip
 	root * /srv/website
