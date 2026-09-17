@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Polityka prywatności — GovAI</title>
+<meta name="description" content="Polityka prywatności strony govai.pl — jakie dane zbieramy przez formularz kontaktowy, na jakiej podstawie i jak długo je przechowujemy.">
+<link rel="canonical" href="https://{{ADDRESS}}/polityka-prywatnosci.html">
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --bg:#F3F6FA; --surface:#FFFFFF; --surface-2:#E9EFF6; --raised:#FFFFFF;
+    --text:#0D1B2A; --text-muted:#4C5D74; --line:#D8E1EC;
+    --navy:#1B355E; --blue:#1E6FBF; --accent:#00A9CC; --accent-ink:#066A85; --accent-soft:#E1F5FA;
+    --shadow:0 1px 2px rgba(13,27,42,.05), 0 10px 28px -14px rgba(13,27,42,.20);
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#0A1220; --surface:#101C2E; --surface-2:#152742; --raised:#14233A;
+      --text:#EAF1F8; --text-muted:#93A7C2; --line:rgba(255,255,255,.10);
+      --navy:#2C4E86; --blue:#4A93DE; --accent:#2FD3EF; --accent-ink:#7CE8FA; --accent-soft:rgba(47,211,239,.12);
+      --shadow:0 1px 2px rgba(0,0,0,.35), 0 14px 34px -16px rgba(0,0,0,.6);
+      color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0A1220; --surface:#101C2E; --surface-2:#152742; --raised:#14233A;
+    --text:#EAF1F8; --text-muted:#93A7C2; --line:rgba(255,255,255,.10);
+    --navy:#2C4E86; --blue:#4A93DE; --accent:#2FD3EF; --accent-ink:#7CE8FA; --accent-soft:rgba(47,211,239,.12);
+    --shadow:0 1px 2px rgba(0,0,0,.35), 0 14px 34px -16px rgba(0,0,0,.6);
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0; background:var(--bg); color:var(--text); font-family:'Inter',-apple-system,'Segoe UI',Arial,sans-serif; font-size:16px; line-height:1.5; -webkit-font-smoothing:antialiased; overflow-x:hidden;}
+  h1,h2{font-family:'Inter',sans-serif; font-weight:800; line-height:1.2; margin:0; color:var(--text);}
+  p,li{line-height:1.7; color:var(--text-muted);}
+  a{color:var(--accent-ink); text-decoration:none;}
+  a:hover{text-decoration:underline;}
+  .mono{font-family:'JetBrains Mono',ui-monospace,Consolas,monospace;}
+  .container{max-width:1180px; margin:0 auto; padding-inline:20px;}
+  @media (min-width:640px){ .container{padding-inline:28px;} }
+
+  header{position:sticky; top:env(safe-area-inset-top,0px); z-index:200; background:color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter:blur(10px); border-bottom:1px solid var(--line);}
+  .topbar{display:flex; align-items:center; justify-content:space-between; height:66px; gap:16px;}
+  .brand{display:flex; align-items:center; gap:10px; font-weight:800; font-size:18px; letter-spacing:-.01em; flex:none;}
+  .brand .mark{width:30px; height:30px; flex:none;}
+  .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; font-family:'Inter',sans-serif; font-weight:700; font-size:14px; padding:10px 18px; border-radius:9px; border:1px solid var(--line); color:var(--text); text-decoration:none;}
+  .btn:hover{border-color:var(--blue); color:var(--blue); text-decoration:none;}
+
+  .legal-wrap{max-width:760px; margin:0 auto; padding-block:52px 80px;}
+  .legal-wrap h1{font-size:clamp(26px,4.6vw,36px); margin-bottom:10px;}
+  .legal-wrap .updated{font-size:13px; color:var(--text-muted); margin-bottom:36px;}
+  .legal-wrap h2{font-size:19px; margin-top:34px; margin-bottom:12px;}
+  .legal-wrap p, .legal-wrap li{font-size:15px;}
+  .legal-wrap ul{padding-left:20px; margin:10px 0;}
+  .legal-wrap li{margin-bottom:6px;}
+  .legal-card{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:18px 20px; margin-bottom:8px;}
+
+  footer{border-top:1px solid var(--line); padding-block:44px 34px; margin-top:20px;}
+  .foot-bottom{display:flex; flex-direction:column; gap:12px; font-size:12.5px; color:var(--text-muted); max-width:1180px; margin:0 auto; padding-inline:20px;}
+  @media (min-width:640px){ .foot-bottom{flex-direction:row; justify-content:space-between; align-items:center; padding-inline:28px;} }
+  .foot-bottom a{color:var(--text-muted);}
+  .foot-bottom a:hover{color:var(--text);}
+  .foot-owner{margin-top:4px; font-size:11.5px; opacity:.8;}
+</style>
+</head>
+<body>
+<!-- TODO(legal): treść tej polityki opisuje wyłącznie przetwarzanie danych przez samą stronę marketingową (govai.pl) — formularz kontaktowy i localStorage. NIE obejmuje przetwarzania danych klientów w produkcie GovAI (rejestr agentów, dziennik audytowy) — to wymaga osobnej, pełnej dokumentacji RODO/DPA po stronie prawnej, dziś nieukończonej. Przed publikacją potwierdzić z prawnikiem, zwłaszcza okres przechowywania danych z formularza. -->
+<header>
+  <div class="container topbar">
+    <a href="index.html" class="brand">
+      <svg class="mark" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00B4D8"/><stop offset="100%" stop-color="#1E6FBF"/></linearGradient>
+        <mask id="gm"><rect x="0" y="0" width="100" height="100" fill="#fff"/><rect x="58" y="10" width="32" height="32" fill="#000"/></mask></defs>
+        <circle cx="50" cy="50" r="30" fill="none" stroke="url(#rg)" stroke-width="13" mask="url(#gm)"/>
+        <line x1="74" y1="27" x2="56" y2="27" stroke="url(#rg)" stroke-width="13" stroke-linecap="round"/>
+        <circle cx="56" cy="27" r="8.5" fill="var(--bg)"/>
+      </svg>
+      Gov<span style="color:var(--accent-ink)">AI</span>
+    </a>
+    <a class="btn" href="index.html">← Strona główna</a>
+  </div>
+</header>
+
+<main class="container">
+  <div class="legal-wrap">
+    <h1>Polityka prywatności</h1>
+    <p class="updated">Dotyczy strony <span class="mono">govai.pl</span> i <span class="mono">govai.pl/blog.html</span>.</p>
+
+    <div class="legal-card">
+      <h2 style="margin-top:0;">Administrator danych</h2>
+      <p>Administratorem danych osobowych przetwarzanych w związku z korzystaniem z tej strony jest:<br>
+      <strong style="color:var(--text)">Comparme Sp. z o.o.</strong><br>
+      ul. Herbu Janina 5, 02-972 Warszawa<br>
+      NIP: 5213664910 · REGON: 147067912<br>
+      Kontakt w sprawach ochrony danych: <a href="mailto:kontakt@govai.pl">kontakt@govai.pl</a></p>
+    </div>
+
+    <h2>Jakie dane zbieramy</h2>
+    <p>Ta strona zbiera dane osobowe wyłącznie wtedy, gdy sam/-a je podasz — poprzez formularz kontaktowy. Formularz prosi o: imię i nazwisko, nazwę firmy, służbowy adres e-mail, opcjonalnie numer telefonu, oraz treść wiadomości.</p>
+    <p>Nie prowadzimy na tej stronie śledzenia ani profilowania odwiedzających — nie ma tu narzędzi analitycznych ani reklamowych.</p>
+
+    <h2>Cel i podstawa prawna przetwarzania</h2>
+    <p>Dane z formularza przetwarzamy wyłącznie w celu odpowiedzi na zapytanie i ewentualnego przygotowania oferty handlowej — podstawą prawną jest art. 6 ust. 1 lit. b RODO (działania przed zawarciem umowy, na Twoje żądanie) oraz art. 6 ust. 1 lit. f RODO (nasz prawnie uzasadniony interes w prowadzeniu korespondencji biznesowej).</p>
+
+    <h2>Komu przekazujemy dane</h2>
+    <p>Do obsługi formularza kontaktowego korzystamy z zewnętrznego dostawcy <strong style="color:var(--text)">Web3Forms</strong>, który pośredniczy w przekazaniu wiadomości z formularza na naszą skrzynkę <span class="mono">kontakt@govai.pl</span>. Web3Forms działa tu jako podmiot przetwarzający dane w naszym imieniu. Poza tym dostawcą nie przekazujemy danych z formularza żadnym innym podmiotom, chyba że wymaga tego prawo.</p>
+
+    <h2>Okres przechowywania</h2>
+    <p>Dane z formularza kontaktowego przechowujemy przez czas niezbędny do obsługi zapytania i prowadzonej korespondencji, a następnie — jeśli nie dojdzie do dalszej współpracy — przez okres uzasadniony ewentualnymi roszczeniami. Jeśli chcesz, żebyśmy usunęli Twoje dane wcześniej, napisz na <a href="mailto:kontakt@govai.pl">kontakt@govai.pl</a>.</p>
+
+    <h2>Twoje prawa</h2>
+    <ul>
+      <li>Prawo dostępu do swoich danych i uzyskania ich kopii</li>
+      <li>Prawo do sprostowania (poprawienia) danych</li>
+      <li>Prawo do usunięcia danych ("prawo do bycia zapomnianym")</li>
+      <li>Prawo do ograniczenia przetwarzania</li>
+      <li>Prawo do wniesienia sprzeciwu wobec przetwarzania</li>
+      <li>Prawo do przenoszenia danych</li>
+      <li>Prawo do wniesienia skargi do Prezesa Urzędu Ochrony Danych Osobowych (PUODO)</li>
+    </ul>
+    <p>Aby skorzystać z powyższych praw, napisz na <a href="mailto:kontakt@govai.pl">kontakt@govai.pl</a>.</p>
+
+    <h2>Pliki cookies i localStorage</h2>
+    <p>Ta strona nie używa plików cookies do śledzenia ani reklam. Jedyna informacja zapisywana lokalnie w Twojej przeglądarce to wybrany motyw kolorystyczny (jasny/ciemny), przechowywany w <span class="mono">localStorage</span> — nie opuszcza Twojego urządzenia i nie jest nam w żaden sposób przekazywany.</p>
+
+    <h2>Zmiany polityki</h2>
+    <p>Możemy aktualizować tę politykę, jeśli zmieni się sposób działania strony lub wymogi prawne. Aktualna wersja jest zawsze dostępna pod tym adresem.</p>
+  </div>
+</main>
+
+<footer>
+  <div class="foot-bottom">
+    <div>
+      <div>© 2026 GovAI. Wszelkie prawa zastrzeżone.</div>
+      <div class="foot-owner">Właściciel platformy: Comparme Sp. z o.o. · ul. Herbu Janina 5, 02-972 Warszawa · NIP 5213664910 · REGON 147067912</div>
+    </div>
+    <div style="display:flex; gap:16px;"><a href="index.html">Strona główna</a><a href="blog.html">Blog</a></div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('govai_theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch(e){}
+})();
+</script>
+</body>
+</html>

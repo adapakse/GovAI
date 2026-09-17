@@ -415,6 +415,7 @@
   .foot-bottom .legal{display:flex; gap:16px;}
   .foot-bottom .legal a{color:var(--text-muted);}
   .foot-bottom .legal a:hover{color:var(--text);}
+  .foot-owner{margin-top:4px; font-size:11.5px; opacity:.8;}
 
   @media (prefers-reduced-motion:reduce){ *{transition:none !important; scroll-behavior:auto !important;} }
 </style>
@@ -1167,8 +1168,11 @@
       </div>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 GovAI. Wszelkie prawa zastrzeżone.</span>
-      <div class="legal"><a href="#">Regulamin</a><a href="#">Prywatność</a><a href="#">DPA</a></div>
+      <div>
+        <div>© 2026 GovAI. Wszelkie prawa zastrzeżone.</div>
+        <div class="foot-owner">Właściciel platformy: Comparme Sp. z o.o. · ul. Herbu Janina 5, 02-972 Warszawa · NIP 5213664910 · REGON 147067912</div>
+      </div>
+      <div class="legal"><a href="#">Regulamin</a><a href="polityka-prywatnosci.html">Prywatność</a><a href="#">DPA</a></div>
     </div>
   </div>
 </footer>

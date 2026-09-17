@@ -139,6 +139,7 @@
   @media (min-width:640px){ .foot-bottom{flex-direction:row; justify-content:space-between; align-items:center;} }
   .foot-bottom a{color:var(--text-muted);}
   .foot-bottom a:hover{color:var(--text);}
+  .foot-owner{margin-top:4px; font-size:11.5px; opacity:.8;}
 
   [hidden]{display:none !important;}
   @media (prefers-reduced-motion:reduce){ *{transition:none !important; scroll-behavior:auto !important;} }
@@ -225,8 +226,11 @@
 
 <footer>
   <div class="container foot-bottom">
-    <span>© 2026 GovAI. Wszelkie prawa zastrzeżone.</span>
-    <div style="display:flex; gap:16px;"><a href="index.html">Strona główna</a><a href="index.html#cta">Umów demo</a></div>
+    <div>
+      <div>© 2026 GovAI. Wszelkie prawa zastrzeżone.</div>
+      <div class="foot-owner">Właściciel platformy: Comparme Sp. z o.o. · ul. Herbu Janina 5, 02-972 Warszawa · NIP 5213664910 · REGON 147067912</div>
+    </div>
+    <div style="display:flex; gap:16px;"><a href="index.html">Strona główna</a><a href="polityka-prywatnosci.html">Prywatność</a><a href="index.html#cta">Umów demo</a></div>
   </div>
 </footer>
 
