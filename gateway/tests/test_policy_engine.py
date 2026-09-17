@@ -27,9 +27,30 @@ def make_pii(has_pii=False) -> PIIScanResult:
     return PIIScanResult(has_pii=has_pii, redacted_messages=[])
 
 
+# Odzwierciedla dokładnie seed z db/init.sql (polityki globalne G-001/G-002) —
+# w produkcji silnik ładuje reguły z bazy, tu ładujemy ten sam zestaw ręcznie,
+# żeby testy nie zależały od połączenia z DB.
+_SEED_DENY_RULES = [
+    {
+        "rule_type": "deny",
+        "policy_code": "G-001",
+        "condition_json": {"keywords": ["zmień saldo", "modify balance", "transfer funds", "delete account", "usuń konto"]},
+        "action_json": {"reason": "Modyfikacja danych finansowych poza zakresem agenta"},
+    },
+    {
+        "rule_type": "deny",
+        "policy_code": "G-002",
+        "condition_json": {"keywords": ["ignore previous", "ignoruj poprzednie", "forget instructions", "zapomnij instrukcje"]},
+        "action_json": {"reason": "Wykryto próbę wstrzyknięcia instrukcji (prompt injection)"},
+    },
+]
+
+
 @pytest.fixture
 def engine():
-    return PolicyEngine()
+    e = PolicyEngine()
+    e.load_rules(_SEED_DENY_RULES)
+    return e
 
 
 def test_allows_normal_call(engine):
