@@ -254,6 +254,7 @@
   .iso-box .t{font-size:11px; font-weight:700; color:#fff;}
   .iso-box .stack{margin-top:8px; display:flex; flex-direction:column; gap:4px;}
   .iso-box .stack span{background:rgba(255,255,255,.06); border-radius:5px; padding:4px; font-size:9.5px; color:var(--term-text);}
+  .iso-box.shared{border-style:solid; border-color:var(--term-accent);}
 
   /* feature mock: registry record */
   .reg-card{background:rgba(255,255,255,.05); border:1px solid var(--term-line); border-radius:10px; padding:13px;}
@@ -364,6 +365,44 @@
   .finalcta p{color:rgba(255,255,255,.75); margin-top:8px; font-size:15px;}
   .finalcta .btn{flex:none;}
 
+  /* ---------- Contact form ---------- */
+  .contact-card{background:var(--surface); border:1px solid var(--line); border-radius:22px; padding:36px 28px; margin-top:28px;}
+  @media (min-width:780px){ .contact-card{padding:46px 52px;} }
+  .contact-card .section-head p{margin-top:8px;}
+  .contact-email-link{color:var(--accent-ink); font-weight:700;}
+  .contact-form{max-width:640px;}
+  .form-row{display:grid; grid-template-columns:1fr; gap:16px; margin-bottom:16px;}
+  @media (min-width:600px){ .form-row{grid-template-columns:1fr 1fr;} }
+  .form-group label{display:block; font-size:12.5px; font-weight:700; color:var(--text-muted); margin-bottom:6px;}
+  .form-group .optional{font-weight:500; text-transform:none; color:var(--text-muted); font-size:11.5px;}
+  .form-group input, .form-group textarea{width:100%; padding:11px 13px; border-radius:9px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; font-size:14.5px; resize:vertical;}
+  .form-group input:focus, .form-group textarea:focus{outline:none; border-color:var(--blue);}
+  .contact-form > .form-group{margin-bottom:18px;}
+  .form-success, .form-error{padding:12px 15px; border-radius:9px; font-size:13.5px; font-weight:600; margin-bottom:16px;}
+  .form-success{background:rgba(21,128,61,.1); border:1px solid rgba(21,128,61,.35); color:#15803D;}
+  .form-error{background:var(--danger-soft); border:1px solid var(--danger-line); color:var(--danger-ink);}
+
+  /* ---------- Chat widget ---------- */
+  .chat-widget{position:fixed; right:18px; bottom:18px; z-index:210; display:flex; flex-direction:column; align-items:flex-end; gap:12px;}
+  .chat-pill{display:flex; align-items:center; gap:10px; background:var(--navy); color:#fff; border:none; border-radius:100px; padding:12px 18px 12px 12px; cursor:pointer; box-shadow:0 14px 34px -12px rgba(13,27,42,.5); font-family:'Inter',sans-serif; font-weight:700; font-size:14px;}
+  .chat-pill:hover{background:var(--blue);}
+  .chat-pill .avatar{width:32px; height:32px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; flex:none;}
+  .chat-pill .badge{position:absolute; top:-4px; right:-4px; width:16px; height:16px; border-radius:50%; background:#E0564A; border:2px solid var(--navy); font-size:0;}
+  .chat-pill .avatar{position:relative;}
+  .chat-panel{display:none; width:290px; max-width:calc(100vw - 36px); background:var(--surface); border:1px solid var(--line); border-radius:18px; box-shadow:0 24px 60px -20px rgba(4,10,20,.4); overflow:hidden;}
+  .chat-panel.open{display:block;}
+  .chat-panel__head{background:var(--navy); color:#fff; padding:16px 18px; display:flex; align-items:center; justify-content:space-between; gap:10px;}
+  .chat-panel__head .who{display:flex; align-items:center; gap:10px;}
+  .chat-panel__head .avatar{width:34px; height:34px; border-radius:50%; background:var(--accent); flex:none; display:flex; align-items:center; justify-content:center;}
+  .chat-panel__head .name{font-weight:700; font-size:14px;}
+  .chat-panel__head .status{font-size:11.5px; color:rgba(255,255,255,.7); display:flex; align-items:center; gap:5px;}
+  .chat-panel__head .status::before{content:""; width:6px; height:6px; border-radius:50%; background:#3ED18C;}
+  .chat-panel__close{background:none; border:none; color:rgba(255,255,255,.7); cursor:pointer; font-size:18px; line-height:1; padding:4px;}
+  .chat-panel__close:hover{color:#fff;}
+  .chat-panel__body{padding:18px;}
+  .chat-panel__body p{font-size:13.5px; color:var(--text-muted); line-height:1.6;}
+  .chat-panel__body .btn{margin-top:14px;}
+
   footer{border-top:1px solid var(--line); padding-block:56px 34px;}
   .foot-grid{display:grid; grid-template-columns:1fr; gap:34px;}
   @media (min-width:640px){ .foot-grid{grid-template-columns:1.4fr 1fr 1fr 1fr;} }
@@ -436,14 +475,14 @@
     <div class="container hero-grid">
       <div>
         <div class="eyebrow">Egzekwowanie EU AI Act · Art. 5, Załącznik III, Art. 50</div>
-        <h1>Zgodność, która dzieje się zanim model odpowie.</h1>
+        <h1>Zgodność z AI Act dzięki platformie GovAI.</h1>
         <p class="subhead">GovAI to rejestr agentów AI z automatyczną klasyfikacją ryzyka i oceną luk wobec każdego wymogu AI Act — oraz bramka bezpieczeństwa, która tę samą klasyfikację egzekwuje na żywo: skanuje dane osobowe, sprawdza wobec polityki, kieruje do właściwego dostawcy i loguje każde wywołanie, zanim odpowiedź wróci do agenta.</p>
         <div class="hero-ctas">
           <a class="btn btn-primary" href="#cta">Umów demo</a>
           <a class="btn btn-ghost" href="#act">Zobacz, co się zmieniło w AI Act</a>
         </div>
         <div class="badges">
-          <span class="badge"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 1l5.5 2v4.2c0 3.4-2.2 6.2-5.5 7.3-3.3-1.1-5.5-3.9-5.5-7.3V3l5.5-2z" stroke="currentColor" stroke-width="1.4"/></svg>Dedykowana instancja — zero multitenancy</span>
+          <span class="badge"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 1l5.5 2v4.2c0 3.4-2.2 6.2-5.5 7.3-3.3-1.1-5.5-3.9-5.5-7.3V3l5.5-2z" stroke="currentColor" stroke-width="1.4"/></svg>Dedykowana lub multi-tenant — dopasowane do skali firmy</span>
           <span class="badge"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M2 8h12M2 4h12M2 12h8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>API zgodne z OpenAI</span>
           <span class="badge"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M2 6.5h12" stroke="currentColor" stroke-width="1.4"/></svg>Niezmienny dziennik audytowy</span>
           <span class="badge"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M4 2h6l3 3v9a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.4"/><path d="M6 8h4M6 10.5h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>Rejestr agentów + ocena luk</span>
@@ -566,7 +605,7 @@
 
   <div class="truststrip">
     <div class="container">
-      <div class="tstat"><div class="k mono">0</div><div class="l">współdzielonych najemców — jedna instancja na klienta</div></div>
+      <div class="tstat"><div class="k mono">2</div><div class="l">modele wdrożenia — dedykowany i multi-tenant, dopasowane do budżetu</div></div>
       <div class="tstat"><div class="k mono">60s</div><div class="l">odświeżenie polityk, bez restartu</div></div>
       <div class="tstat"><div class="k mono">5</div><div class="l">ról RBAC: partner → reviewer</div></div>
       <div class="tstat"><div class="k mono">100%</div><div class="l">wywołań logowanych przed odpowiedzią</div></div>
@@ -859,18 +898,18 @@
     <div class="container product-section__inner">
       <div class="product-section__text">
         <span class="num mono">10 / 10</span>
-        <h3>Dedykowana instancja</h3>
-        <div class="product-block"><span class="product-label">Jaki problem rozwiązuje</span><p>Współdzielone SaaS multi-tenant oznacza, że Twój dziennik audytowy leży w tej samej bazie co dziennik innej firmy — fakt, o którym większość dostawców nie mówi wprost.</p></div>
-        <div class="product-block"><span class="product-label">W jaki sposób</span><p>Każdy klient GovAI dostaje osobne wdrożenie — jedna VM, własna baza, własny dziennik audytowy, nic nie jest współdzielone.</p></div>
-        <div class="product-block example"><span class="product-label">Przykład</span><p class="mono">Dwaj klienci GovAI nigdy nie dzielą instancji Postgres, Redis ani jednego wiersza cudzej historii audytowej — weryfikowalne na poziomie infrastruktury, nie tylko umowy.</p></div>
+        <h3>Model wdrożenia dopasowany do skali firmy</h3>
+        <div class="product-block"><span class="product-label">Jaki problem rozwiązuje</span><p>Duża regulowana instytucja i mały zespół prawniczy z pięcioma agentami nie powinny płacić tej samej stawki za infrastrukturę — ale obie potrzebują tego samego silnika oceny zgodności i egzekwowania polityk.</p></div>
+        <div class="product-block"><span class="product-label">W jaki sposób</span><p>GovAI oferuje dwa modele wdrożenia: dedykowaną instancję (własna VM, własna baza, własny dziennik audytowy — pełna izolacja fizyczna) dla firm z wyższym wolumenem lub rygorystycznymi wymogami, oraz tańszą instancję multi-tenant z izolacją logiczną per organizacja dla mniejszych zespołów. Ty wybierasz kompromis koszt/izolacja, nie my za Ciebie.</p></div>
+        <div class="product-block example"><span class="product-label">Przykład</span><p class="mono">Mały zespół startuje na multi-tenant za ułamek kosztu dedykowanej instancji; gdy rośnie wolumen albo wymogi regulacyjne, migruje na dedykowaną VM bez zmiany integracji po stronie agenta.</p></div>
       </div>
       <div class="product-section__visual">
         <div class="mockpanel">
-          <div class="titlebar"><div class="dot-row"><span></span><span></span><span></span></div><div class="mp-title mono">deployment isolation</div></div>
+          <div class="titlebar"><div class="dot-row"><span></span><span></span><span></span></div><div class="mp-title mono">modele wdrożenia</div></div>
           <div class="mp-body">
             <div class="iso-grid">
-              <div class="iso-box"><div class="t">Klient A · VM</div><div class="stack"><span>Postgres</span><span>Redis</span><span>Audit log</span></div></div>
-              <div class="iso-box"><div class="t">Klient B · VM</div><div class="stack"><span>Postgres</span><span>Redis</span><span>Audit log</span></div></div>
+              <div class="iso-box"><div class="t">Dedykowana · własna VM</div><div class="stack"><span>Postgres</span><span>Redis</span><span>Audit log</span></div></div>
+              <div class="iso-box shared"><div class="t">Multi-tenant · 1 VM</div><div class="stack"><span>Postgres — izolacja per tenant</span><span>Redis — izolacja per tenant</span><span>Audit log — izolacja per tenant</span></div></div>
             </div>
           </div>
         </div>
@@ -935,7 +974,7 @@
             <tr><td class="label">Blokuje naruszenie na żywo</td><td>Nie</td><td>Nie</td><td class="win">Tak</td></tr>
             <tr><td class="label">Ocena luk vs. egzekwowanie</td><td>Rozłączone — arkusz nikogo nie blokuje</td><td>Panel pokazuje luki, ruch płynie dalej bez zmian</td><td class="win">Ten sam status luki steruje kolejką nadzoru i routingiem na żywo</td></tr>
             <tr><td class="label">Kolejka nadzoru człowieka</td><td>Ad hoc, mailem</td><td>Śledzona jako zadanie</td><td class="win">Wbudowana w ścieżkę wywołania</td></tr>
-            <tr><td class="label">Izolacja danych</td><td>To, co już masz</td><td>Współdzielony SaaS multi-tenant</td><td class="win">Jedna dedykowana instancja na klienta</td></tr>
+            <tr><td class="label">Izolacja danych</td><td>To, co już masz</td><td>Zawsze współdzielony SaaS, bez wyboru</td><td class="win">Ty wybierasz: dedykowana instancja albo multi-tenant z izolacją logiczną</td></tr>
             <tr><td class="label">Dowód na audyt</td><td>To, co ktoś zapisał</td><td>Wygenerowane dokumenty</td><td class="win">Niezmienny dziennik decyzji ze znacznikiem czasu</td></tr>
           </tbody>
         </table>
@@ -948,7 +987,7 @@
       <div class="section-head">
         <div class="eyebrow">Cennik</div>
         <h2>Cennik skalujący się z rejestrem agentów, nie z liczbą etatów.</h2>
-        <p>Każdy plan to dedykowana instancja — nie wspólne konto.</p>
+        <p>Dedykowana instancja albo multi-tenant z izolacją logiczną — dopasowane do wielkości i budżetu firmy.</p>
       </div>
       <div class="pricing-note">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex:none; margin-top:2px;"><path d="M8 1L1 14h14L8 1z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M8 6v3.5M8 11.5v.1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
@@ -965,7 +1004,7 @@
           </div>
           <ul>
             <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Do 5 agentów w rejestrze</li>
-            <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Dedykowana instancja (1 VM)</li>
+            <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Dostępny też jako multi-tenant — niższy próg wejścia, zapytaj o wycenę</li>
             <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Skaner PII i silnik polityk</li>
             <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Wsparcie standardowe</li>
           </ul>
@@ -1018,7 +1057,7 @@
         <details class="faq-item"><summary class="faq-q">Czy GovAI to tylko bramka nasłuchująca ruch, bez rejestru i oceny ryzyka?<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></summary><div class="faq-a">Nie — to dwie warstwy tego samego systemu. Najpierw agent trafia do rejestru i dostaje klasyfikację ryzyka oraz ocenę luk wobec konkretnych artykułów AI Act (jak w narzędziach dokumentacyjnych). Dopiero ta sama klasyfikacja jest egzekwowana na żywo na bramce — więc status "wymaga nadzoru" nie jest tylko czerwoną kropką na dashboardzie, tylko realnie wstrzymuje odpowiedź agenta.</div></details>
         <details class="faq-item"><summary class="faq-q">Czy GovAI to kolejne narzędzie-checklista do zgodności?<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></summary><div class="faq-a">Nie. Narzędzia typu checklista i dokumentacja mówią, co powinieneś był zrobić. GovAI egzekwuje politykę na faktycznym wywołaniu API, zanim dostawca modelu je zobaczy — dziennik audytowy jest efektem ubocznym, nie głównym produktem.</div></details>
         <details class="faq-item"><summary class="faq-q">Które terminy AI Act faktycznie nas dziś dotyczą?<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></summary><div class="faq-a">Zakaz praktyk niedopuszczalnych z Art. 5 obowiązuje od lutego 2025, obowiązki GPAI od sierpnia 2025, przejrzystość z Art. 50 od sierpnia 2026 — te terminy są dziś aktualne. Pełne obowiązki wysokiego ryzyka z Załącznika III zostały przesunięte przez Digital Omnibus (Rozporządzenie 2026/1744) z sierpnia 2026 na grudzień 2027 — to nadal nadchodzi, nie jest już "teraz".</div></details>
-        <details class="faq-item"><summary class="faq-q">Czy dzielimy infrastrukturę z innymi klientami GovAI?<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></summary><div class="faq-a">Nie. Każdy klient dostaje dedykowaną instancję — własną bazę danych, własny dziennik audytowy. Nic nie jest łączone między najemcami.</div></details>
+        <details class="faq-item"><summary class="faq-q">Czy dzielimy infrastrukturę z innymi klientami GovAI?<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></summary><div class="faq-a">To zależy od wybranego modelu — Ty decydujesz. Dla firm z wyższym wolumenem lub bardziej rygorystycznymi wymogami oferujemy dedykowaną instancję: własną bazę danych, własny dziennik audytowy, nic współdzielonego. Dla mniejszych zespołów, którym zależy na niższym koszcie wejścia, dostępna jest opcja multi-tenant z izolacją logiczną per organizacja. Oba modele korzystają z tego samego silnika oceny zgodności i egzekwowania polityk.</div></details>
         <details class="faq-item"><summary class="faq-q">Jakich dostawców modeli obsługuje GovAI?<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></summary><div class="faq-a">Anthropic i DeepSeek od razu po instalacji, plus opcja self-hosted (Bielik) dla danych, które nie powinny opuszczać Twojej infrastruktury. Routing jest automatyczny, na podstawie wrażliwości danych.</div></details>
         <details class="faq-item"><summary class="faq-q">Czy możemy uruchomić GovAI na własnej infrastrukturze?<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></summary><div class="faq-a">Tak. GovAI wdraża się tak samo na Twojej infrastrukturze albo na dedykowanej instancji, którą hostujemy dla Ciebie — model zgodności się nie zmienia.</div></details>
         <details class="faq-item"><summary class="faq-q">Czy możemy przetestować GovAI przed zapłatą?<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></summary><div class="faq-a">Umów demo, a pokażemy klasyfikację jednego z Twoich realnych agentów na żywo. Warunki pilotażu (długość, zakres, ewentualny rabat referencyjny) ustalamy indywidualnie na tym etapie.</div></details>
@@ -1033,11 +1072,72 @@
           <h2>Zobacz swojego pierwszego agenta pod egzekwowaniem — w tym tygodniu.</h2>
           <p>30-minutowa rozmowa. Sklasyfikujemy jednego realnego agenta na żywo.</p>
         </div>
-        <a class="btn btn-accent" href="mailto:hello@govai.pl">Umów demo</a>
+        <a class="btn btn-accent" href="#contact-form">Umów demo</a>
+      </div>
+
+      <div class="contact-card" id="contact-form">
+        <div class="section-head" style="margin-bottom:24px;">
+          <div class="eyebrow">Kontakt</div>
+          <h2>Napisz do nas</h2>
+          <p>Odpowiadamy w ciągu jednego dnia roboczego. Wolisz napisać bezpośrednio? <a href="mailto:kontakt@govai.pl" class="contact-email-link">kontakt@govai.pl</a></p>
+        </div>
+        <!-- TODO(marketing): access_key trzeba założyć na web3forms.com dla kontakt@govai.pl i wkleić tu prawdziwy klucz — bez tego formularz nie dostarczy wiadomości. -->
+        <form class="contact-form" id="contactForm">
+          <input type="hidden" name="access_key" value="TWÓJ_KLUCZ_Z_WEB3FORMS" />
+          <input type="hidden" name="subject" value="Zapytanie z govai.pl" />
+          <input type="hidden" name="from_name" value="GovAI Landing" />
+          <div class="form-row">
+            <div class="form-group">
+              <label for="name">Imię i nazwisko</label>
+              <input type="text" id="name" name="name" placeholder="Jan Kowalski" required />
+            </div>
+            <div class="form-group">
+              <label for="company">Firma</label>
+              <input type="text" id="company" name="company" placeholder="Nazwa firmy" required />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="email">Email służbowy</label>
+              <input type="email" id="email" name="email" placeholder="jan@firma.pl" required />
+            </div>
+            <div class="form-group">
+              <label for="phone">Telefon <span class="optional">(opcjonalnie)</span></label>
+              <input type="tel" id="phone" name="phone" placeholder="+48 500 000 000" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="message">Wiadomość</label>
+            <textarea id="message" name="message" rows="4" placeholder="Opisz krótko swoje potrzeby lub zadaj pytanie…"></textarea>
+          </div>
+          <div id="formSuccess" class="form-success" hidden>✓ Dziękujemy! Odezwiemy się wkrótce.</div>
+          <div id="formError" class="form-error" hidden>✕ Coś poszło nie tak. Spróbuj ponownie lub napisz bezpośrednio na kontakt@govai.pl</div>
+          <button type="submit" id="formSubmit" class="btn btn-primary btn-block">Wyślij zapytanie</button>
+        </form>
       </div>
     </div>
   </section>
 </main>
+
+<div class="chat-widget" id="chatWidget">
+  <div class="chat-panel" id="chatPanel">
+    <div class="chat-panel__head">
+      <div class="who">
+        <div class="avatar"><svg width="16" height="16" viewBox="0 0 100 100"><circle cx="50" cy="50" r="30" fill="none" stroke="#0D1B2A" stroke-width="13"/><line x1="74" y1="27" x2="56" y2="27" stroke="#0D1B2A" stroke-width="13" stroke-linecap="round"/><circle cx="56" cy="27" r="8.5" fill="#fff"/></svg></div>
+        <div><div class="name">Zespół GovAI</div><div class="status">Zwykle odpowiada w kilka godzin</div></div>
+      </div>
+      <button class="chat-panel__close" id="chatClose" aria-label="Zamknij">×</button>
+    </div>
+    <div class="chat-panel__body">
+      <p>Masz pytanie o zgodność z AI Act, wdrożenie albo cennik? Napisz do nas — odpowiadamy w ciągu jednego dnia roboczego.</p>
+      <a href="#contact-form" class="btn btn-primary btn-block" id="chatCta">Napisz do nas</a>
+    </div>
+  </div>
+  <button class="chat-pill" id="chatToggle">
+    <span class="avatar"><svg width="16" height="16" viewBox="0 0 100 100"><circle cx="50" cy="50" r="30" fill="none" stroke="#0D1B2A" stroke-width="13"/><line x1="74" y1="27" x2="56" y2="27" stroke="#0D1B2A" stroke-width="13" stroke-linecap="round"/><circle cx="56" cy="27" r="8.5" fill="#fff"/></svg><span class="badge"></span></span>
+    Masz pytanie?
+  </button>
+</div>
 
 <footer>
   <div class="container">
@@ -1063,7 +1163,7 @@
       </div>
       <div class="foot-col">
         <h4>Firma</h4>
-        <a href="mailto:hello@govai.pl">Kontakt</a>
+        <a href="#contact-form">Kontakt</a>
         <a href="#cta">Umów demo</a>
       </div>
     </div>
@@ -1144,6 +1244,42 @@
 
     render();
     restart();
+  })();
+
+  // ---- Contact form (Web3Forms) ----
+  (function(){
+    var form = document.getElementById('contactForm');
+    if (!form) return;
+    var btn = document.getElementById('formSubmit');
+    var ok  = document.getElementById('formSuccess');
+    var err = document.getElementById('formError');
+    form.addEventListener('submit', async function(e){
+      e.preventDefault();
+      btn.disabled = true;
+      btn.textContent = 'Wysyłanie…';
+      ok.hidden = true; err.hidden = true;
+      try {
+        var res = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: new FormData(form) });
+        var data = await res.json();
+        if (data.success) { ok.hidden = false; form.reset(); }
+        else { err.hidden = false; }
+      } catch (e2) { err.hidden = false; }
+      finally { btn.disabled = false; btn.textContent = 'Wyślij zapytanie'; }
+    });
+  })();
+
+  // ---- Chat widget ----
+  (function(){
+    var toggle = document.getElementById('chatToggle');
+    var panel = document.getElementById('chatPanel');
+    var close = document.getElementById('chatClose');
+    var cta = document.getElementById('chatCta');
+    if (!toggle || !panel) return;
+    function open(){ panel.classList.add('open'); }
+    function shut(){ panel.classList.remove('open'); }
+    toggle.addEventListener('click', function(){ panel.classList.contains('open') ? shut() : open(); });
+    close.addEventListener('click', shut);
+    cta.addEventListener('click', shut);
   })();
 })();
 </script>
