@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GovAI — egzekwowanie EU AI Act w czasie rzeczywistym</title>
+<meta name="description" content="GovAI to rejestr agentów AI z automatyczną klasyfikacją ryzyka i oceną luk wobec EU AI Act oraz bramka bezpieczeństwa, która tę samą klasyfikację egzekwuje na żywo na każdym wywołaniu.">
+<link rel="canonical" href="https://{{ADDRESS}}/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="GovAI">
+<meta property="og:title" content="GovAI — egzekwowanie EU AI Act w czasie rzeczywistym">
+<meta property="og:description" content="Rejestr agentów AI, automatyczna klasyfikacja ryzyka, ocena luk wobec EU AI Act i bramka bezpieczeństwa egzekwująca politykę na żywo.">
+<meta property="og:url" content="https://{{ADDRESS}}/">
+<meta property="og:locale" content="pl_PL">
+<meta name="twitter:card" content="summary">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --bg:#F3F6FA; --surface:#FFFFFF; --surface-2:#E9EFF6; --raised:#FFFFFF;
+    --text:#0D1B2A; --text-muted:#4C5D74; --line:#D8E1EC;
+    --navy:#1B355E; --blue:#1E6FBF; --accent:#00A9CC; --accent-ink:#066A85; --accent-soft:#E1F5FA;
+    --risk-min:#15803D; --risk-limited:#1E6FBF; --risk-high:#C2410C; --risk-unacc:#C0392B;
+    --term-bg:#0B1520; --term-text:#B9C6D6; --term-accent:#4DD8F0; --term-line:rgba(255,255,255,.10);
+    --shadow:0 1px 2px rgba(13,27,42,.05), 0 10px 28px -14px rgba(13,27,42,.20);
+    --danger-soft:#FBEAE8; --danger-ink:#9A2E22; --danger-line:#F0C6C0;
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#0A1220; --surface:#101C2E; --surface-2:#152742; --raised:#14233A;
+      --text:#EAF1F8; --text-muted:#93A7C2; --line:rgba(255,255,255,.10);
+      --navy:#2C4E86; --blue:#4A93DE; --accent:#2FD3EF; --accent-ink:#7CE8FA; --accent-soft:rgba(47,211,239,.12);
+      --risk-min:#22A35A; --risk-limited:#4A93DE; --risk-high:#E2662C; --risk-unacc:#E0564A;
+      --term-bg:#060B13; --term-text:#AAB9CC; --term-accent:#5FE0F5; --term-line:rgba(255,255,255,.08);
+      --shadow:0 1px 2px rgba(0,0,0,.35), 0 14px 34px -16px rgba(0,0,0,.6);
+      --danger-soft:rgba(224,86,74,.12); --danger-ink:#F5A79E; --danger-line:rgba(224,86,74,.35);
+      color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0A1220; --surface:#101C2E; --surface-2:#152742; --raised:#14233A;
+    --text:#EAF1F8; --text-muted:#93A7C2; --line:rgba(255,255,255,.10);
+    --navy:#2C4E86; --blue:#4A93DE; --accent:#2FD3EF; --accent-ink:#7CE8FA; --accent-soft:rgba(47,211,239,.12);
+    --risk-min:#22A35A; --risk-limited:#4A93DE; --risk-high:#E2662C; --risk-unacc:#E0564A;
+    --term-bg:#060B13; --term-text:#AAB9CC; --term-accent:#5FE0F5; --term-line:rgba(255,255,255,.08);
+    --shadow:0 1px 2px rgba(0,0,0,.35), 0 14px 34px -16px rgba(0,0,0,.6);
+    --danger-soft:rgba(224,86,74,.12); --danger-ink:#F5A79E; --danger-line:rgba(224,86,74,.35);
+    color-scheme:dark;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0; background:var(--bg); color:var(--text); font-family:'Inter',-apple-system,'Segoe UI',Arial,sans-serif; font-size:16px; line-height:1.5; -webkit-font-smoothing:antialiased; overflow-x:hidden;}
+  h1,h2,h3,h4{font-family:'Inter',sans-serif; font-weight:800; line-height:1.14; text-wrap:balance; margin:0; color:var(--text);}
+  p{margin:0; line-height:1.65; color:var(--text);}
+  a{color:inherit; text-decoration:none;}
+  img,svg{max-width:100%;}
+  .mono{font-family:'JetBrains Mono',ui-monospace,Consolas,monospace; font-variant-numeric:tabular-nums;}
+  .container{max-width:1180px; margin:0 auto; padding-inline:20px;}
+  @media (min-width:640px){ .container{padding-inline:28px;} }
+  section{padding-block:64px;}
+  @media (min-width:820px){ section{padding-block:92px;} }
+  .section-head{max-width:640px; margin-bottom:40px;}
+  .section-head h2{font-size:clamp(25px,4.2vw,36px); margin-bottom:14px;}
+  .section-head p{color:var(--text-muted); font-size:16.5px; max-width:58ch;}
+  .eyebrow{font-family:'JetBrains Mono',monospace; font-size:11.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--accent-ink); display:flex; align-items:center; gap:8px; margin-bottom:14px;}
+  .eyebrow::before{content:""; width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); flex:none;}
+
+  .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; font-family:'Inter',sans-serif; font-weight:700; font-size:14.5px; padding:13px 22px; border-radius:9px; border:1px solid transparent; cursor:pointer; white-space:nowrap; transition:transform .12s ease, box-shadow .12s ease, background .15s ease, border-color .15s ease;}
+  .btn-primary{background:var(--navy); color:#fff; box-shadow:var(--shadow);}
+  .btn-primary:hover{transform:translateY(-1px); background:var(--blue);}
+  .btn-ghost{background:transparent; color:var(--text); border-color:var(--line);}
+  .btn-ghost:hover{border-color:var(--blue); color:var(--blue);}
+  .btn-accent{background:var(--accent); color:#04222b;}
+  .btn-accent:hover{transform:translateY(-1px); filter:brightness(1.04);}
+  .btn-block{width:100%;}
+
+  /* ---------- Header / nav ---------- */
+  header{position:sticky; top:env(safe-area-inset-top,0px); z-index:200; background:color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter:blur(10px); border-bottom:1px solid var(--line);}
+  .topbar{display:flex; align-items:center; justify-content:space-between; height:66px; gap:16px;}
+  .brand{display:flex; align-items:center; gap:10px; font-weight:800; font-size:18px; letter-spacing:-.01em; flex:none;}
+  .brand .mark{width:30px; height:30px; flex:none;}
+  .brand small{font-weight:600; color:var(--text-muted); font-size:12px; margin-left:2px;}
+  .navright{display:flex; align-items:center; gap:22px;}
+  .mainnav{display:none; align-items:center; gap:26px; font-size:14.5px; font-weight:600; color:var(--text-muted);}
+  .mainnav a:hover{color:var(--text);}
+  @media (min-width:960px){ .mainnav{display:flex;} .navdemo-desktop{display:inline-flex !important;} .hamburger{display:none !important;} }
+  .navdemo-desktop{display:none;}
+  .themebtn{background:none; border:1px solid var(--line); border-radius:8px; width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-muted); flex:none;}
+  .themebtn:hover{color:var(--text); border-color:var(--blue);}
+  .hamburger{background:none; border:1px solid var(--line); border-radius:8px; width:40px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex:none;}
+  .hamburger span, .hamburger span::before, .hamburger span::after{content:""; display:block; width:18px; height:2px; background:var(--text); border-radius:2px; position:relative; transition:transform .2s ease, opacity .2s ease;}
+  .hamburger span::before{position:absolute; top:-6px;} .hamburger span::after{position:absolute; top:6px;}
+  .hamburger[aria-expanded="true"] span{background:transparent;}
+  .hamburger[aria-expanded="true"] span::before{transform:translateY(6px) rotate(45deg);}
+  .hamburger[aria-expanded="true"] span::after{transform:translateY(-6px) rotate(-45deg);}
+
+  .mobilenav{position:fixed; inset:0; top:66px; background:var(--bg); z-index:190; padding:22px 20px 40px; display:flex; flex-direction:column; gap:4px; transform:translateY(-8px); opacity:0; pointer-events:none; transition:opacity .18s ease, transform .18s ease;}
+  .mobilenav.open{opacity:1; transform:translateY(0); pointer-events:auto;}
+  .mobilenav a{padding:15px 4px; font-size:19px; font-weight:700; border-bottom:1px solid var(--line);}
+  .mobilenav .btn{margin-top:18px;}
+  @media (min-width:960px){ .mobilenav{display:none;} }
+
+  /* ---------- Hero ---------- */
+  .hero{padding-top:52px; padding-bottom:56px;}
+  @media (min-width:820px){ .hero{padding-top:76px;} }
+  .hero-grid{display:grid; grid-template-columns:1fr; gap:44px; align-items:center;}
+  @media (min-width:1020px){ .hero-grid{grid-template-columns:1.05fr .95fr; gap:56px;} }
+  .hero h1{font-size:clamp(32px,6.4vw,52px); letter-spacing:-.015em;}
+  .hero .subhead{margin-top:18px; font-size:17.5px; color:var(--text-muted); max-width:52ch;}
+  .hero-ctas{display:flex; flex-wrap:wrap; gap:12px; margin-top:28px;}
+  .badges{display:flex; flex-wrap:wrap; gap:9px; margin-top:26px;}
+  .badge{display:flex; align-items:center; gap:7px; font-size:12.5px; font-weight:600; color:var(--text-muted); background:var(--surface); border:1px solid var(--line); padding:7px 11px; border-radius:100px;}
+  .badge svg{flex:none; color:var(--accent);}
+
+  .pipeline-card{background:var(--term-bg); border-radius:16px; box-shadow:0 24px 60px -20px rgba(4,10,20,.5), 0 0 0 1px var(--term-line); overflow:hidden;}
+  .titlebar{display:flex; align-items:center; gap:10px; padding:13px 16px; border-bottom:1px solid var(--term-line);}
+  .dot-row{display:flex; gap:6px;}
+  .dot-row span{width:9px; height:9px; border-radius:50%; background:rgba(255,255,255,.16);}
+  .titlebar .path{color:var(--term-text); font-size:11.5px; margin-left:2px; overflow-x:auto; white-space:nowrap;}
+  .pipeline{display:flex; flex-wrap:wrap; gap:8px; padding:18px 16px 6px;}
+  .pnode{flex:1 1 128px; background:rgba(255,255,255,.04); border:1px solid var(--term-line); border-radius:10px; padding:11px 12px;}
+  .pnode .k{color:var(--term-accent); font-size:10.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase;}
+  .pnode .v{color:var(--term-text); font-size:12px; margin-top:4px;}
+  .term{padding:14px 16px 18px; font-size:12px; color:var(--term-text); display:flex; flex-direction:column; gap:7px;}
+  .term .line{display:flex; gap:8px; align-items:baseline;}
+  .term .line .ok{color:#3ED18C;}
+  .term .line .warn{color:#F2B84B;}
+  .term .line span:last-child{overflow-x:auto; white-space:nowrap;}
+
+  /* ---------- AI Act ---------- */
+  .act-timeline{display:grid; grid-template-columns:1fr; gap:14px; margin-bottom:20px;}
+  @media (min-width:640px){ .act-timeline{grid-template-columns:1fr 1fr;} }
+  @media (min-width:1000px){ .act-timeline{grid-template-columns:repeat(3,1fr);} }
+  .omnibus-note{display:flex; gap:10px; align-items:flex-start; background:var(--accent-soft); border:1px solid color-mix(in srgb, var(--accent) 40%, var(--line)); color:var(--text); border-radius:12px; padding:14px 16px; font-size:13.5px; line-height:1.55; margin-bottom:44px;}
+  .omnibus-note strong{color:var(--text);}
+  .omnibus-note svg{flex:none; margin-top:2px; color:var(--accent-ink);}
+  .act-item{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:20px; position:relative;}
+  .act-item.now{border-color:var(--accent); box-shadow:0 0 0 1px var(--accent);}
+  .act-item .date{font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; color:var(--accent-ink); margin-bottom:8px;}
+  .act-item h4{font-size:15.5px; margin-bottom:6px;}
+  .act-item p{font-size:13.5px; color:var(--text-muted);}
+  .now-pill{position:absolute; top:-10px; right:16px; background:var(--accent); color:#04222b; font-size:10.5px; font-weight:800; letter-spacing:.04em; padding:3px 9px; border-radius:100px; text-transform:uppercase;}
+
+  .mapping-title{font-size:20px; margin-bottom:20px;}
+  .penalty-grid{display:grid; grid-template-columns:1fr; gap:14px; margin-bottom:14px;}
+  @media (min-width:820px){ .penalty-grid{grid-template-columns:repeat(3,1fr);} }
+  .penalty{background:var(--navy); color:#fff; border-radius:14px; padding:22px;}
+  .penalty .amount{font-family:'JetBrains Mono',monospace; font-size:25px; font-weight:700; color:#fff;}
+  .penalty p{color:rgba(255,255,255,.78); font-size:13.5px; margin-top:8px;}
+  .penalty-note{font-size:13px; color:var(--text-muted); margin-bottom:52px; max-width:70ch;}
+
+  /* ---------- Obligation matrix ---------- */
+  .oblig-intro{font-size:14.5px; color:var(--text-muted); max-width:74ch; margin-bottom:26px;}
+  .oblig-tier{margin-bottom:28px;}
+  .oblig-tier__head{display:flex; align-items:center; gap:10px; margin-bottom:12px;}
+  .oblig-tier__dot{width:10px; height:10px; border-radius:50%; flex:none;}
+  .oblig-tier__head h4{font-size:15px;}
+  .oblig-tier__head span{font-size:12px; color:var(--text-muted); font-family:'JetBrains Mono',monospace;}
+  .oblig-wrap{overflow-x:auto; border-radius:14px; border:1px solid var(--line);}
+  table.oblig{width:100%; border-collapse:collapse; min-width:760px; background:var(--surface);}
+  table.oblig th{background:var(--surface-2); text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-muted); font-weight:700; padding:10px 14px;}
+  table.oblig td{padding:12px 14px; border-top:1px solid var(--line); font-size:13px; vertical-align:top;}
+  table.oblig td.art{font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--text); white-space:nowrap;}
+  table.oblig td.req{color:var(--text-muted); max-width:280px;}
+  table.oblig td.mech{color:var(--text); font-weight:600; max-width:240px;}
+  .src-badge{display:inline-flex; align-items:center; gap:5px; font-size:10.5px; font-weight:700; padding:3px 9px; border-radius:100px; white-space:nowrap;}
+  .src-auto{background:var(--accent-soft); color:var(--accent-ink);}
+  .src-declared{background:var(--surface-2); color:var(--text-muted); border:1px solid var(--line);}
+  .sev-badge{display:inline-block; font-size:10px; font-weight:800; letter-spacing:.03em; text-transform:uppercase; white-space:nowrap;}
+  .sev-critical{color:var(--risk-unacc);}
+  .sev-major{color:var(--risk-high);}
+  .sev-minor{color:var(--text-muted);}
+  .oblig-note{display:flex; gap:10px; align-items:flex-start; font-size:13px; color:var(--text-muted); background:var(--surface-2); border:1px solid var(--line); border-radius:12px; padding:13px 15px; margin-top:18px; max-width:78ch;}
+  .oblig-note strong{color:var(--text);}
+
+  /* ---------- Trust strip ---------- */
+  .truststrip{background:var(--navy); padding-block:34px;}
+  .truststrip .container{display:grid; grid-template-columns:repeat(2,1fr); gap:22px; text-align:center;}
+  @media (min-width:700px){ .truststrip .container{grid-template-columns:repeat(3,1fr);} }
+  @media (min-width:980px){ .truststrip .container{grid-template-columns:repeat(5,1fr);} }
+  .tstat .k{font-family:'JetBrains Mono',monospace; font-size:clamp(24px,4vw,32px); font-weight:700; color:#fff;}
+  .tstat .l{font-size:12.5px; color:rgba(255,255,255,.68); margin-top:4px; line-height:1.4;}
+
+  /* ---------- Product sections ---------- */
+  .product-section{padding-block:60px; border-top:1px solid var(--line);}
+  @media (min-width:820px){ .product-section{padding-block:80px;} }
+  .product-section--alt{background:var(--surface-2);}
+  .product-section__inner{display:grid; grid-template-columns:1fr; gap:34px; align-items:center;}
+  @media (min-width:960px){ .product-section__inner{grid-template-columns:1fr 1fr; gap:56px;} .product-section--alt .product-section__visual{order:-1;} }
+  .product-section__text .num{font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; color:var(--accent-ink); margin-bottom:10px; display:block;}
+  .product-section__text h3{font-size:clamp(22px,3.4vw,30px); margin-bottom:18px;}
+  .product-block{margin-bottom:16px; border-left:2px solid var(--line); padding-left:14px;}
+  .product-label{display:block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--accent-ink); margin-bottom:5px;}
+  .product-block p{font-size:14.5px; color:var(--text-muted);}
+  .product-block.example{border-left-color:var(--accent);}
+  .product-block.example .mono{font-size:12.5px; color:var(--text);}
+
+  .mockpanel{background:var(--term-bg); border-radius:14px; box-shadow:0 20px 48px -18px rgba(4,10,20,.45), 0 0 0 1px var(--term-line); overflow:hidden;}
+  .mockpanel .mp-body{padding:18px;}
+  .mockpanel .mp-title{color:var(--term-text); font-size:11px;}
+
+  /* feature mock: routing */
+  .route-diagram{display:flex; flex-direction:column; gap:10px;}
+  .route-src{background:rgba(255,255,255,.05); border:1px solid var(--term-line); border-radius:9px; padding:9px 12px; color:var(--term-text); font-size:12px; text-align:center;}
+  .route-arrows{display:flex; justify-content:center; color:var(--term-accent); font-size:11px;}
+  .route-targets{display:grid; grid-template-columns:1fr; gap:8px;}
+  @media (min-width:420px){ .route-targets{grid-template-columns:repeat(3,1fr);} }
+  .route-target{border-radius:9px; padding:10px; text-align:center; font-size:11.5px; border:1px solid var(--term-line);}
+  .route-target .n{font-weight:700; color:#fff; display:block;}
+  .route-target .s{color:var(--term-text); font-size:10.5px; display:block; margin-top:3px;}
+  .route-target.on{border-color:var(--term-accent); box-shadow:0 0 0 1px var(--term-accent);}
+
+  /* feature mock: risk badges */
+  .risk-grid{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
+  .risk-chip{border-radius:9px; padding:9px 11px; font-size:11.5px; font-weight:700; text-align:center; color:#fff;}
+  .risk-card{margin-top:12px; background:rgba(255,255,255,.05); border:1px solid var(--term-line); border-radius:10px; padding:12px;}
+  .risk-card .top{display:flex; justify-content:space-between; align-items:center; color:var(--term-text); font-size:11.5px;}
+  .risk-card .pill{font-size:10px; font-weight:800; padding:3px 8px; border-radius:100px; background:var(--risk-high); color:#fff;}
+
+  /* feature mock: queue */
+  .queue-list{display:flex; flex-direction:column; gap:8px;}
+  .queue-row{display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,.05); border:1px solid var(--term-line); border-radius:9px; padding:10px 12px; font-size:11.5px; color:var(--term-text);}
+  .queue-row .who{font-size:10px; color:var(--term-accent); text-transform:uppercase; letter-spacing:.04em;}
+  .queue-row .st{font-size:10px; font-weight:800; padding:3px 8px; border-radius:100px;}
+  .st-wait{background:#4a3a12; color:#F2B84B;}
+  .st-ok{background:#12331f; color:#3ED18C;}
+
+  /* feature mock: audit table */
+  .audit-tbl{width:100%; border-collapse:collapse; font-size:11px; color:var(--term-text);}
+  .audit-tbl th{text-align:left; font-weight:600; color:var(--term-accent); padding:6px 8px; border-bottom:1px solid var(--term-line); font-size:10px; text-transform:uppercase; letter-spacing:.04em;}
+  .audit-tbl td{padding:7px 8px; border-bottom:1px solid var(--term-line); white-space:nowrap;}
+  .audit-tbl tr:last-child td{border-bottom:none;}
+  .audit-scroll{overflow-x:auto;}
+
+  /* feature mock: report card */
+  .report-card{background:rgba(255,255,255,.05); border:1px solid var(--term-line); border-radius:10px; padding:14px;}
+  .report-row{display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--term-line); font-size:12px; color:var(--term-text);}
+  .report-row:last-child{border-bottom:none;}
+  .report-row .v{color:#fff; font-weight:700;}
+
+  /* feature mock: role matrix */
+  .role-tbl{width:100%; border-collapse:collapse; font-size:10.5px; color:var(--term-text);}
+  .role-tbl th,.role-tbl td{padding:7px; text-align:center; border-bottom:1px solid var(--term-line);}
+  .role-tbl th:first-child, .role-tbl td:first-child{text-align:left; color:#fff; font-weight:600;}
+  .role-tbl th{color:var(--term-accent); font-weight:600; font-size:9.5px; text-transform:uppercase;}
+  .role-tbl .y{color:#3ED18C;} .role-tbl .n{color:rgba(255,255,255,.22);}
+
+  /* feature mock: isolation */
+  .iso-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .iso-box{border:1px dashed var(--term-line); border-radius:10px; padding:12px; text-align:center;}
+  .iso-box .t{font-size:11px; font-weight:700; color:#fff;}
+  .iso-box .stack{margin-top:8px; display:flex; flex-direction:column; gap:4px;}
+  .iso-box .stack span{background:rgba(255,255,255,.06); border-radius:5px; padding:4px; font-size:9.5px; color:var(--term-text);}
+
+  /* feature mock: registry record */
+  .reg-card{background:rgba(255,255,255,.05); border:1px solid var(--term-line); border-radius:10px; padding:13px;}
+  .reg-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;}
+  .reg-head .name{color:#fff; font-weight:700; font-size:12.5px;}
+  .reg-pill{font-size:9.5px; font-weight:800; text-transform:uppercase; padding:3px 8px; border-radius:100px;}
+  .reg-field{display:flex; justify-content:space-between; padding:5px 0; border-top:1px solid var(--term-line); font-size:11px; color:var(--term-text);}
+  .reg-field .v{color:#fff; font-weight:600;}
+
+  /* feature mock: compliance dashboard (rejestr + silnik luk, flagowy mockup) */
+  .dash-top{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; flex-wrap:wrap; margin-bottom:16px;}
+  .dash-crumb{color:var(--term-text); font-size:11px;}
+  .dash-crumb b{color:#fff;}
+  .dash-badges{display:flex; gap:6px; flex-wrap:wrap;}
+  .dash-pill{font-size:10px; font-weight:800; padding:4px 9px; border-radius:100px; white-space:nowrap;}
+  .dash-pill.risk{background:rgba(226,102,44,.18); color:#F2A268;}
+  .dash-pill.deadline{background:rgba(255,255,255,.08); color:var(--term-text);}
+  .dash-score{display:flex; align-items:center; gap:16px; margin-bottom:18px;}
+  .score-ring{--pct:70; width:74px; height:74px; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center; background:conic-gradient(#3ED18C calc(var(--pct)*1%), rgba(255,255,255,.09) 0); position:relative;}
+  .score-ring::before{content:""; position:absolute; inset:7px; border-radius:50%; background:var(--term-bg);}
+  .score-ring span{position:relative; color:#fff; font-family:'JetBrains Mono',monospace; font-weight:700; font-size:15px;}
+  .score-label{color:var(--term-text); font-size:12.5px; line-height:1.5;}
+  .score-label b{color:#fff;}
+  .dash-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:16px;}
+  .dash-tile{border-radius:8px; padding:8px 9px; font-size:10px; line-height:1.35;}
+  .dash-tile .a{display:block; font-family:'JetBrains Mono',monospace; font-weight:700; margin-bottom:2px;}
+  .dash-tile.yes{background:rgba(62,209,140,.14); color:#8FE8BC;}
+  .dash-tile.partial{background:rgba(242,184,75,.14); color:#F5CD8C;}
+  .dash-tile.no{background:rgba(224,86,74,.16); color:#F0A499;}
+  .dash-next{border-top:1px solid var(--term-line); padding-top:12px;}
+  .dash-next__head{font-size:9.5px; font-weight:700; letter-spacing:.06em; color:var(--term-text); text-transform:uppercase; margin-bottom:8px;}
+  .dash-next__row{display:flex; justify-content:space-between; font-size:11px; color:var(--term-text); padding:5px 0;}
+  .dash-next__row b{color:#fff; font-weight:600;}
+  .dash-next__row .d{font-family:'JetBrains Mono',monospace; color:var(--term-accent); font-size:10.5px;}
+
+  /* ---------- Onboarding ---------- */
+  .onboard-grid{display:grid; grid-template-columns:1fr; gap:28px; align-items:start; margin-bottom:8px;}
+  @media (min-width:960px){ .onboard-grid{grid-template-columns:.9fr 1.1fr; gap:40px;} }
+  .onboard-demo{position:relative;}
+  .onboard-demo__body{padding:20px 18px 18px; min-height:190px; position:relative;}
+  .od-slide{display:none; flex-direction:column; gap:12px;}
+  .od-slide.active{display:flex;}
+  .od-code{background:rgba(255,255,255,.05); border:1px solid var(--term-line); border-radius:9px; padding:11px 13px; font-size:11.5px; color:var(--term-text); line-height:1.7; overflow-x:auto;}
+  .od-code .k{color:var(--term-accent);}
+  .od-caption{font-size:12px; color:var(--term-text); line-height:1.5;}
+  .od-progress{display:flex; gap:5px; padding:0 18px 16px;}
+  .od-progress i{flex:1; height:3px; border-radius:3px; background:rgba(255,255,255,.1); overflow:hidden; list-style:none; position:relative; font-style:normal;}
+  .od-progress i b{position:absolute; inset:0; width:0%; background:var(--term-accent); display:block; border-radius:3px;}
+  .od-progress i.done b{width:100%; transition:none;}
+  .od-progress i.active b{width:0%; animation:odfill 4s linear forwards;}
+  @keyframes odfill{ from{width:0%;} to{width:100%;} }
+  @media (prefers-reduced-motion:reduce){ .od-progress i.active b{animation:none; width:60%;} }
+
+  .steps{display:grid; grid-template-columns:1fr; gap:12px;}
+  @media (min-width:640px){ .onboard-grid .steps{grid-template-columns:1fr;} }
+  .step{display:block; width:100%; text-align:left; background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:18px 20px; cursor:pointer; font-family:inherit; transition:border-color .15s ease, background .15s ease;}
+  .step:hover{border-color:var(--blue);}
+  .step.active{border-color:var(--accent); background:var(--accent-soft);}
+  .step .tag{font-family:'JetBrains Mono',monospace; color:var(--accent-ink); font-weight:700; font-size:13px;}
+  .step h4{margin-top:8px; font-size:15.5px;}
+  .step p{margin-top:6px; font-size:13.5px; color:var(--text-muted);}
+
+  /* ---------- Compare ---------- */
+  .cmp-wrap{overflow-x:auto; border-radius:14px; border:1px solid var(--line);}
+  table.cmp{width:100%; border-collapse:collapse; min-width:620px; background:var(--surface);}
+  table.cmp th, table.cmp td{padding:14px 16px; text-align:left; border-bottom:1px solid var(--line); font-size:13.5px; vertical-align:top;}
+  table.cmp thead th{background:var(--surface-2); font-size:12px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-muted); font-weight:700;}
+  table.cmp thead th.win{color:var(--accent-ink);}
+  table.cmp td.label{font-weight:700; color:var(--text); width:220px;}
+  table.cmp td.win{color:var(--accent-ink); font-weight:700; background:var(--accent-soft);}
+  table.cmp tr:last-child td{border-bottom:none;}
+
+  /* ---------- Pricing ---------- */
+  .pricing-note{display:flex; gap:10px; align-items:flex-start; background:var(--surface-2); border:1px solid var(--line); border-radius:12px; padding:13px 15px; font-size:13px; color:var(--text-muted); margin-bottom:34px; max-width:74ch;}
+  .pricing-note strong{color:var(--text);}
+  .pricing-grid{display:grid; grid-template-columns:1fr; gap:18px;}
+  @media (min-width:780px){ .pricing-grid{grid-template-columns:repeat(3,1fr);} }
+  .ptier{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:26px; display:flex; flex-direction:column; position:relative;}
+  .ptier.featured{border-color:var(--navy); box-shadow:0 20px 44px -22px rgba(13,27,42,.3);}
+  .ptier .pbadge{position:absolute; top:-12px; left:24px; background:var(--navy); color:#fff; font-size:11px; font-weight:700; padding:4px 11px; border-radius:100px;}
+  .ptier h3{font-size:20px;}
+  .ptier .tagline{font-size:13.5px; color:var(--text-muted); margin-top:6px; min-height:36px;}
+  .ptier .price-block{margin-top:18px; padding-top:18px; border-top:1px solid var(--line);}
+  .ptier .setup{font-size:12.5px; color:var(--text-muted);}
+  .ptier .setup b{color:var(--text);}
+  .ptier .monthly{margin-top:10px; font-size:30px; font-weight:800; font-family:'JetBrains Mono',monospace;}
+  .ptier .monthly small{font-size:14px; font-weight:600; color:var(--text-muted);}
+  .ptier .eur{font-size:12.5px; color:var(--text-muted); margin-top:2px;}
+  .ptier ul{list-style:none; margin:18px 0 0; padding:0; display:flex; flex-direction:column; gap:10px; flex:1;}
+  .ptier li{font-size:13.5px; color:var(--text-muted); display:flex; gap:9px; align-items:flex-start;}
+  .ptier li svg{flex:none; margin-top:3px; color:var(--accent);}
+  .ptier .btn{margin-top:22px;}
+
+  /* ---------- FAQ ---------- */
+  .faq-list{display:flex; flex-direction:column; gap:1px; background:var(--line); border-radius:14px; overflow:hidden; border:1px solid var(--line); max-width:820px;}
+  .faq-item{background:var(--surface);}
+  .faq-q{width:100%; text-align:left; padding:18px 20px; display:flex; justify-content:space-between; align-items:center; gap:14px; background:none; border:none; cursor:pointer; font-family:'Inter',sans-serif; font-weight:700; font-size:15px; color:var(--text);}
+  .faq-q svg{flex:none; transition:transform .18s ease; color:var(--text-muted);}
+  .faq-item[open] .faq-q svg{transform:rotate(45deg); color:var(--accent-ink);}
+  .faq-a{padding:0 20px 18px; font-size:14px; color:var(--text-muted); max-width:68ch;}
+  .faq-item summary::-webkit-details-marker{display:none;}
+  .faq-item summary{list-style:none;}
+
+  /* ---------- CTA / footer ---------- */
+  .finalcta{background:var(--navy); border-radius:22px; padding:40px 28px; display:flex; flex-direction:column; gap:22px; align-items:flex-start;}
+  @media (min-width:780px){ .finalcta{flex-direction:row; align-items:center; justify-content:space-between; padding:48px 46px;} }
+  .finalcta h2{color:#fff; font-size:clamp(23px,3.6vw,30px);}
+  .finalcta p{color:rgba(255,255,255,.75); margin-top:8px; font-size:15px;}
+  .finalcta .btn{flex:none;}
+
+  footer{border-top:1px solid var(--line); padding-block:56px 34px;}
+  .foot-grid{display:grid; grid-template-columns:1fr; gap:34px;}
+  @media (min-width:640px){ .foot-grid{grid-template-columns:1.4fr 1fr 1fr 1fr;} }
+  .foot-brand p{color:var(--text-muted); font-size:13.5px; margin-top:12px; max-width:32ch;}
+  .foot-col h4{font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:var(--text-muted); margin-bottom:14px;}
+  .foot-col a{display:block; font-size:13.5px; color:var(--text); padding:5px 0;}
+  .foot-col a:hover{color:var(--accent-ink);}
+  .foot-bottom{display:flex; flex-direction:column; gap:12px; margin-top:44px; padding-top:22px; border-top:1px solid var(--line); font-size:12.5px; color:var(--text-muted);}
+  @media (min-width:640px){ .foot-bottom{flex-direction:row; justify-content:space-between; align-items:center;} }
+  .foot-bottom .legal{display:flex; gap:16px;}
+  .foot-bottom .legal a{color:var(--text-muted);}
+  .foot-bottom .legal a:hover{color:var(--text);}
+
+  @media (prefers-reduced-motion:reduce){ *{transition:none !important; scroll-behavior:auto !important;} }
+</style>
+</head>
+<body>
+<!--
+  TODO(legal): przed pełnym zaufaniem publicznym ta strona wymaga niezależnego
+  przeglądu prawnego (Faza 5.3 backlogu produktowego, dziś niewykonana).
+  Terminy i kwoty kar w sekcji #act pochodzą z tekstu Rozporządzenia UE
+  2024/1689 i Digital Omnibus (UE) 2026/1744 — publicznie znane i zweryfikowane
+  z pierwotnego źródła (EUR-Lex) we wrześniu 2026 — ale mapowanie
+  "ten obowiązek = ta funkcja GovAI" oraz każde zdanie sugerujące, że GovAI
+  samo w sobie zapewnia zgodność, musi przejść audyt prawny przed powołaniem
+  się na nie wobec klienta. Cennik w #pricing to punkt wyjścia do negocjacji
+  z sekcji 5.1 wewnętrznego modelu biznesowego, nie formalnie ogłoszony
+  cennik — nie cytować jako wiążącej oferty bez potwierdzenia z zespołem
+  sprzedaży.
+-->
+<header>
+  <div class="container topbar">
+    <a href="#hero" class="brand">
+      <svg class="mark" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00B4D8"/><stop offset="100%" stop-color="#1E6FBF"/></linearGradient>
+        <mask id="gm"><rect x="0" y="0" width="100" height="100" fill="#fff"/><rect x="58" y="10" width="32" height="32" fill="#000"/></mask></defs>
+        <circle cx="50" cy="50" r="30" fill="none" stroke="url(#rg)" stroke-width="13" mask="url(#gm)"/>
+        <line x1="74" y1="27" x2="56" y2="27" stroke="url(#rg)" stroke-width="13" stroke-linecap="round"/>
+        <circle cx="56" cy="27" r="8.5" fill="var(--bg)"/>
+      </svg>
+      Gov<span style="color:var(--accent-ink)">AI</span>
+    </a>
+    <div class="navright">
+      <nav class="mainnav">
+        <a href="#act">AI Act</a>
+        <a href="#features">Platforma</a>
+        <a href="#pricing">Cennik</a>
+        <a href="#faq">FAQ</a>
+        <a href="blog.html">Blog</a>
+      </nav>
+      <button class="themebtn" id="themeToggle" aria-label="Przełącz motyw">
+        <svg id="themeIcon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      </button>
+      <a class="btn btn-primary navdemo-desktop" href="#cta">Umów demo</a>
+      <button class="hamburger" id="navToggle" aria-label="Menu" aria-expanded="false"><span></span></button>
+    </div>
+  </div>
+  <div class="mobilenav" id="mobileNav">
+    <a href="#act">AI Act</a>
+    <a href="#features">Platforma</a>
+    <a href="#pricing">Cennik</a>
+    <a href="#faq">FAQ</a>
+    <a href="blog.html">Blog</a>
+    <a class="btn btn-primary btn-block" href="#cta">Umów demo</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero" id="hero">
+    <div class="container hero-grid">
+      <div>
+        <div class="eyebrow">Egzekwowanie EU AI Act · Art. 5, Załącznik III, Art. 50</div>
+        <h1>Zgodność, która dzieje się zanim model odpowie.</h1>
+        <p class="subhead">GovAI to rejestr agentów AI z automatyczną klasyfikacją ryzyka i oceną luk wobec każdego wymogu AI Act — oraz bramka bezpieczeństwa, która tę samą klasyfikację egzekwuje na żywo: skanuje dane osobowe, sprawdza wobec polityki, kieruje do właściwego dostawcy i loguje każde wywołanie, zanim odpowiedź wróci do agenta.</p>
+        <div class="hero-ctas">
+          <a class="btn btn-primary" href="#cta">Umów demo</a>
+          <a class="btn btn-ghost" href="#act">Zobacz, co się zmieniło w AI Act</a>
+        </div>
+        <div class="badges">
+          <span class="badge"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 1l5.5 2v4.2c0 3.4-2.2 6.2-5.5 7.3-3.3-1.1-5.5-3.9-5.5-7.3V3l5.5-2z" stroke="currentColor" stroke-width="1.4"/></svg>Dedykowana instancja — zero multitenancy</span>
+          <span class="badge"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M2 8h12M2 4h12M2 12h8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>API zgodne z OpenAI</span>
+          <span class="badge"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M2 6.5h12" stroke="currentColor" stroke-width="1.4"/></svg>Niezmienny dziennik audytowy</span>
+          <span class="badge"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M4 2h6l3 3v9a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.4"/><path d="M6 8h4M6 10.5h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>Rejestr agentów + ocena luk</span>
+        </div>
+      </div>
+
+      <div class="pipeline-card">
+        <div class="titlebar">
+          <div class="dot-row"><span></span><span></span><span></span></div>
+          <div class="path mono">POST /gateway/v1/chat/completions</div>
+        </div>
+        <div class="pipeline">
+          <div class="pnode"><div class="k">01 Agent</div><div class="v mono">agent=hiring-copilot</div></div>
+          <div class="pnode"><div class="k">02 Skan PII</div><div class="v mono">pii=none</div></div>
+          <div class="pnode"><div class="k">03 Silnik polityk</div><div class="v mono">policy=allow</div></div>
+          <div class="pnode"><div class="k">04 Routing</div><div class="v mono">provider=anthropic</div></div>
+          <div class="pnode"><div class="k">05 Audyt</div><div class="v mono">logged=true</div></div>
+        </div>
+        <div class="term mono">
+          <div class="line"><span class="ok">✓</span><span>agent=hiring-copilot pii=none policy=allow</span></div>
+          <div class="line"><span class="warn">◐</span><span>agent=support-bot pii=email policy=oversight_required</span></div>
+          <div class="line"><span class="ok">✓</span><span>agent=credit-scoring policy=allow provider=anthropic risk=high</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="act">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">Regulacja</div>
+        <h2>Termin przesunięty przez Digital Omnibus. Obowiązek nie zniknął.</h2>
+        <p>Część terminów już obowiązuje, część została przesunięta latem 2026 — poniżej stan faktyczny, nie ten sprzed nowelizacji.</p>
+      </div>
+
+      <div class="omnibus-note">
+        <svg width="17" height="17" viewBox="0 0 16 16" fill="none"><path d="M8 1l5.5 2v4.2c0 3.4-2.2 6.2-5.5 7.3-3.3-1.1-5.5-3.9-5.5-7.3V3l5.5-2z" stroke="currentColor" stroke-width="1.3"/></svg>
+        <div><strong>Digital Omnibus AI (Rozporządzenie UE 2026/1744, w mocy od 27.07.2026) przesunął pełne obowiązki wysokiego ryzyka z 2 sierpnia 2026 na 2 grudnia 2027</strong> (systemy samodzielne z Załącznika III) i na 2 sierpnia 2028 dla AI wbudowanej w regulowane produkty. Art. 5 (zakazy), Art. 50 (przejrzystość) i obowiązki GPAI zostały terminowo bez zmian.</div>
+      </div>
+
+      <div class="act-timeline">
+        <div class="act-item"><div class="date mono">LUT 2025</div><h4>Zakaz praktyk niedopuszczalnych</h4><p>Art. 5 — manipulacyjne, wykorzystujące i punktujące społecznie zastosowania AI są już nielegalne.</p></div>
+        <div class="act-item"><div class="date mono">SIE 2025</div><h4>Obowiązki modeli ogólnego przeznaczenia</h4><p>Dostawcy modeli GPAI muszą spełniać wymogi przejrzystości i zarządzania ryzykiem.</p></div>
+        <div class="act-item now"><span class="now-pill">Teraz</span><div class="date mono">SIE 2026</div><h4>Przejrzystość (Art. 50) w mocy</h4><p>Chatboty, treści syntetyczne i deepfake muszą być oznaczone — termin utrzymany mimo nowelizacji.</p></div>
+        <div class="act-item"><div class="date mono">GRU 2026</div><h4>Nowy zakaz + koniec okresu przejściowego</h4><p>Zakaz generowania treści intymnych bez zgody i CSAM (nowy w Art. 5) oraz koniec 4-miesięcznego okresu przejściowego na znakowanie wodne z Art. 50 ust. 2.</p></div>
+        <div class="act-item"><div class="date mono">GRU 2027</div><h4>Systemy wysokiego ryzyka w mocy — przesunięte</h4><p>Pełne obowiązki z Załącznika III: zarządzanie ryzykiem, nadzór człowieka, logowanie, dokumentacja. Pierwotnie sierpień 2026 — przesunięte Digital Omnibus o 16 miesięcy.</p></div>
+        <div class="act-item"><div class="date mono">SIE 2028</div><h4>Wbudowane systemy wysokiego ryzyka</h4><p>AI wysokiego ryzyka wbudowana w regulowane produkty (wyroby medyczne, pojazdy) — pierwotnie sierpień 2027, przesunięte o 12 miesięcy. AI w maszynach w większości wyjęta spod tego reżimu na rzecz Rozporządzenia o Maszynach.</p></div>
+      </div>
+
+      <h3 class="mapping-title">Kary są warstwowe — i realne.</h3>
+      <div class="penalty-grid">
+        <div class="penalty"><div class="amount mono">35 mln € / 7%</div><p>globalnego rocznego obrotu, w zależności co wyższe — za praktyki zakazane (Art. 5).</p></div>
+        <div class="penalty"><div class="amount mono">15 mln € / 3%</div><p>za większość pozostałych obowiązków wysokiego ryzyka: zarządzanie ryzykiem, dane, nadzór, logowanie.</p></div>
+        <div class="penalty"><div class="amount mono">7,5 mln € / 1%</div><p>za dostarczenie nieprawidłowych, niepełnych lub wprowadzających w błąd informacji organom.</p></div>
+      </div>
+      <p class="penalty-note">Dla MŚP i startupów kary są ograniczone do niższej z dwóch wartości (kwota stała lub procent) — ale same obowiązki się nie zmniejszają.</p>
+
+      <h3 class="mapping-title">Mapa obowiązków: który artykuł, jaki mechanizm w GovAI, skąd wiadomo, że jest spełniony.</h3>
+      <p class="oblig-intro">To nie jest statyczna lista sprzedażowa — większość wierszy poniżej to ten sam katalog wymagań, który silnik oceny zgodności GovAI konfrontuje z rejestrem każdego agenta, wiersz po wierszu. Kolumna "Weryfikacja" pokazuje, czy status pochodzi z obiektywnego faktu systemowego (<span class="mono">auto</span>), czy z jawnej samo-deklaracji (<span class="mono">deklaracja</span>) — bez deklaracji wymaganie liczy się jako luka, nie jako domyślny "zielony ptaszek". Rozdzieliliśmy obowiązki dostawcy systemu AI (Art. 9-17) od obowiązków podmiotu wdrażającego / deployera (Art. 26-27) — większość organizacji korzystających z GovAI wdraża agenty zbudowane na modelach zewnętrznych, więc prawnie jest bliżej roli deployera niż dostawcy. Który status faktycznie ma dana organizacja, zależy od konkretnego przypadku.</p>
+
+      <div class="oblig-tier">
+        <div class="oblig-tier__head"><span class="oblig-tier__dot" style="background:var(--risk-unacc)"></span><h4>Ryzyko niedopuszczalne</h4><span>Art. 5 — systemy zakazane w całości</span></div>
+        <div class="oblig-wrap"><table class="oblig">
+          <thead><tr><th>Artykuł</th><th>Wymóg</th><th>Mechanizm w GovAI</th><th>Weryfikacja</th><th>Priorytet</th></tr></thead>
+          <tbody>
+            <tr><td class="art">Art. 5</td><td class="req">Bezwzględny zakaz stosowania — manipulacja podprogowa, scoring społeczny, biometria w czasie rzeczywistym.</td><td class="mech">Klasyfikator ryzyka flaguje "unacceptable" przy rejestracji agenta, przed wdrożeniem.</td><td><span class="src-badge src-auto">auto · klasyfikacja</span></td><td><span class="sev-badge sev-critical">Krytyczny</span></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+
+      <div class="oblig-tier">
+        <div class="oblig-tier__head"><span class="oblig-tier__dot" style="background:var(--risk-high)"></span><h4>Wysokie ryzyko — dostawca systemu</h4><span>Art. 9-17 — termin: grudzień 2027</span></div>
+        <div class="oblig-wrap"><table class="oblig">
+          <thead><tr><th>Artykuł</th><th>Wymóg</th><th>Mechanizm w GovAI</th><th>Weryfikacja</th><th>Priorytet</th></tr></thead>
+          <tbody>
+            <tr><td class="art">Art. 9</td><td class="req">System zarządzania ryzykiem przez cały cykl życia agenta.</td><td class="mech">Pole rejestru + samo-deklaracja stanu zarządzania ryzykiem.</td><td><span class="src-badge src-declared">deklaracja w rejestrze</span></td><td><span class="sev-badge sev-critical">Krytyczny · 90 dni</span></td></tr>
+            <tr><td class="art">Art. 10</td><td class="req">Jakość i zarządzanie danymi treningowymi/wejściowymi.</td><td class="mech">Rejestr: kategorie danych, podstawa prawna GDPR, okres retencji.</td><td><span class="src-badge src-declared">deklaracja w rejestrze</span></td><td><span class="sev-badge sev-major">Ważny · 60 dni</span></td></tr>
+            <tr><td class="art">Art. 11</td><td class="req">Kompletna dokumentacja techniczna zgodna z Załącznikiem IV.</td><td class="mech">Generator raportów PDF per agent — narracja pisana z danych rejestru i audytu.</td><td><span class="src-badge src-declared">deklaracja w rejestrze</span></td><td><span class="sev-badge sev-critical">Krytyczny · 60 dni</span></td></tr>
+            <tr><td class="art">Art. 13</td><td class="req">Przejrzystość operacyjna wobec użytkowników systemu.</td><td class="mech">Rejestr: przeznaczenie, odbiorcy, zakres geograficzny agenta.</td><td><span class="src-badge src-declared">deklaracja w rejestrze</span></td><td><span class="sev-badge sev-major">Ważny · 60 dni</span></td></tr>
+            <tr><td class="art">Art. 14</td><td class="req">Nadzór człowieka — możliwość zatrzymania lub cofnięcia decyzji.</td><td class="mech">Kolejka nadzoru w ścieżce wywołania — nie tylko deklaracja, tu GovAI sam to egzekwuje.</td><td><span class="src-badge src-auto">auto · pole systemowe</span></td><td><span class="sev-badge sev-critical">Krytyczny · 30 dni</span></td></tr>
+            <tr><td class="art">Art. 15</td><td class="req">Dokładność i odporność systemu przez cały cykl życia.</td><td class="mech">Samo-deklaracja + statystyki wywołań agenta z dziennika audytowego.</td><td><span class="src-badge src-declared">deklaracja w rejestrze</span></td><td><span class="sev-badge sev-major">Ważny · 90 dni</span></td></tr>
+            <tr><td class="art">Art. 17</td><td class="req">System zarządzania jakością u dostawcy.</td><td class="mech">Samo-deklaracja w rejestrze agenta.</td><td><span class="src-badge src-declared">deklaracja w rejestrze</span></td><td><span class="sev-badge sev-major">Ważny · 90 dni</span></td></tr>
+            <tr><td class="art">Art. 43</td><td class="req">Ocena zgodności przed wprowadzeniem do użytku.</td><td class="mech">Samo-deklaracja w rejestrze agenta.</td><td><span class="src-badge src-declared">deklaracja w rejestrze</span></td><td><span class="sev-badge sev-critical">Krytyczny · 30 dni</span></td></tr>
+            <tr><td class="art">Art. 49</td><td class="req">Rejestracja w unijnej bazie danych systemów AI.</td><td class="mech">Samo-deklaracja w rejestrze agenta.</td><td><span class="src-badge src-declared">deklaracja w rejestrze</span></td><td><span class="sev-badge sev-major">Ważny · 60 dni</span></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+
+      <div class="oblig-tier">
+        <div class="oblig-tier__head"><span class="oblig-tier__dot" style="background:var(--risk-high)"></span><h4>Wysokie ryzyko — podmiot wdrażający (deployer)</h4><span>Art. 26-27 — też grudzień 2027, ta sama nowelizacja</span></div>
+        <div class="oblig-wrap"><table class="oblig">
+          <thead><tr><th>Artykuł</th><th>Wymóg</th><th>Mechanizm w GovAI</th><th>Weryfikacja</th><th>Priorytet</th></tr></thead>
+          <tbody>
+            <tr><td class="art">Art. 26 ust. 2</td><td class="req">Nadzór człowieka przypisany do kompetentnej, uprawnionej osoby.</td><td class="mech">Kolejka nadzoru z rolą "reviewer" — nie deklaracja, tu GovAI to egzekwuje.</td><td><span class="src-badge src-auto">auto · pole systemowe</span></td><td><span class="sev-badge sev-critical">Krytyczny · 30 dni</span></td></tr>
+            <tr><td class="art">Art. 26 ust. 5</td><td class="req">Monitorowanie działania systemu i informowanie dostawcy o ryzykach/incydentach.</td><td class="mech">Statystyki wywołań agenta dostępne w panelu — sam obowiązek informowania dostawcy to dziś samo-deklaracja, nie automat.</td><td><span class="src-badge src-declared">deklaracja w rejestrze</span></td><td><span class="sev-badge sev-major">Ważny · 60 dni</span></td></tr>
+            <tr><td class="art">Art. 26 ust. 6</td><td class="req">Przechowywanie automatycznych logów min. 6 miesięcy.</td><td class="mech">Niezmienny dziennik audytowy bez mechanizmu auto-kasowania — stała gwarancja architektoniczna, nie deklaracja per agent.</td><td><span class="src-badge src-auto">auto · architektura</span></td><td><span class="sev-badge sev-major">Ważny · 30 dni</span></td></tr>
+            <tr><td class="art">Art. 26 ust. 8</td><td class="req">Weryfikacja rejestracji systemu w unijnej bazie (dot. podmiotów publicznych).</td><td class="mech">Pole rejestru agenta (to samo, co przy Art. 49).</td><td><span class="src-badge src-declared">deklaracja w rejestrze</span></td><td><span class="sev-badge sev-major">Ważny · 60 dni</span></td></tr>
+            <tr><td class="art">Art. 27</td><td class="req">Ocena wpływu na prawa podstawowe (FRIA) — dotyczy podmiotów publicznych oraz oceny zdolności kredytowej i ryzyka ubezpieczeniowego.</td><td class="mech">Dziś tylko pole do samo-deklaracji — brak dedykowanego kreatora FRIA.</td><td><span class="src-badge src-declared">częściowe — do rozbudowy</span></td><td><span class="sev-badge sev-major">Ważny · 90 dni, wąski zakres</span></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+
+      <div class="oblig-tier">
+        <div class="oblig-tier__head"><span class="oblig-tier__dot" style="background:var(--risk-limited)"></span><h4>Ograniczone ryzyko</h4><span>Art. 50 — obowiązki przejrzystości</span></div>
+        <div class="oblig-wrap"><table class="oblig">
+          <thead><tr><th>Artykuł</th><th>Wymóg</th><th>Mechanizm w GovAI</th><th>Weryfikacja</th><th>Priorytet</th></tr></thead>
+          <tbody>
+            <tr><td class="art">Art. 50 ust. 1</td><td class="req">Informowanie użytkownika o interakcji z AI.</td><td class="mech">Samo-deklaracja w rejestrze agenta.</td><td><span class="src-badge src-declared">deklaracja w rejestrze</span></td><td><span class="sev-badge sev-minor">Drobny · 180 dni</span></td></tr>
+            <tr><td class="art">Art. 50 ust. 4</td><td class="req">Maszynowo czytelne oznaczanie treści generowanych przez AI.</td><td class="mech">Samo-deklaracja w rejestrze agenta.</td><td><span class="src-badge src-declared">deklaracja w rejestrze</span></td><td><span class="sev-badge sev-minor">Drobny · 180 dni</span></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+
+      <div class="oblig-note">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex:none; margin-top:2px; color:var(--accent-ink)"><path d="M8 1l5.5 2v4.2c0 3.4-2.2 6.2-5.5 7.3-3.3-1.1-5.5-3.9-5.5-7.3V3l5.5-2z" stroke="currentColor" stroke-width="1.3"/></svg>
+        <div><strong>Katalog jest edytowalny, nie zaszyty na stałe.</strong> Konsultant compliance może dodać nowy wymóg, zmienić termin albo priorytet z poziomu panelu — gdy zmieni się interpretacja przepisu albo pojawi wytyczna Komisji, katalog się aktualizuje bez zmiany kodu. Art. 26 ust. 2 i ust. 6 są sprawdzane automatycznie z rejestru, reszta to samo-deklaracja. Świadomie pomijamy dziś: Art. 12 (rejestrowanie zdarzeń — funkcjonalnie pokryte przez dziennik audytowy, ale bez osobnego wiersza w katalogu luk), Art. 16 (ogólny obowiązek zgodności dostawcy), Art. 4 (kompetencje AI — złagodzony przez Digital Omnibus z "zapewnienia" na "wspieranie"), Art. 53 (obowiązki GPAI — dotyczą dostawców modeli, nie użytkowników GovAI) oraz Art. 72 (monitorowanie po wprowadzeniu do obrotu — obowiązek dostawcy modelu/systemu, nie operatora agenta).</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="truststrip">
+    <div class="container">
+      <div class="tstat"><div class="k mono">0</div><div class="l">współdzielonych najemców — jedna instancja na klienta</div></div>
+      <div class="tstat"><div class="k mono">60s</div><div class="l">odświeżenie polityk, bez restartu</div></div>
+      <div class="tstat"><div class="k mono">5</div><div class="l">ról RBAC: partner → reviewer</div></div>
+      <div class="tstat"><div class="k mono">100%</div><div class="l">wywołań logowanych przed odpowiedzią</div></div>
+      <div class="tstat"><div class="k mono">17</div><div class="l">wymogów AI Act w edytowalnym katalogu oceny luk</div></div>
+    </div>
+  </div>
+
+  <section id="features">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">Platforma</div>
+        <h2>Dziesięć elementów jednego systemu — od rejestru po dziennik audytowy.</h2>
+        <p>GovAI to nie tylko bramka nasłuchująca ruch. To najpierw rejestr i ocena zgodności — a dopiero ta sama klasyfikacja jest egzekwowana na żywo na każdym wywołaniu.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 1: Registry -->
+  <div class="product-section">
+    <div class="container product-section__inner">
+      <div class="product-section__text">
+        <span class="num mono">01 / 10</span>
+        <h3>Rejestr agentów AI</h3>
+        <div class="product-block"><span class="product-label">Jaki problem rozwiązuje</span><p>"Ile mamy agentów AI w firmie i co dokładnie robią" to pytanie, na które w większości organizacji nikt nie potrafi odpowiedzieć bez obdzwonienia zespołów.</p></div>
+        <div class="product-block"><span class="product-label">W jaki sposób</span><p>Każdy agent jest rejestrowany z właścicielem, przeznaczeniem, zakresem danych osobowych, podstawą prawną GDPR, kontaktem technicznym i terminem następnego przeglądu — a status (aktywny / zawieszony / kwarantanna / wycofany) jest egzekwowany natychmiast na bramce, nie tylko zapisany w tabeli.</p></div>
+        <div class="product-block example"><span class="product-label">Przykład</span><p class="mono">agent=credit-scoring → status=quarantined → bramka odrzuca kolejne wywołania w ciągu sekund, bez wdrożenia nowej wersji kodu.</p></div>
+      </div>
+      <div class="product-section__visual">
+        <div class="mockpanel">
+          <div class="titlebar"><div class="dot-row"><span></span><span></span><span></span></div><div class="mp-title mono">agents registry</div></div>
+          <div class="mp-body">
+            <div class="reg-card">
+              <div class="reg-head"><span class="name mono">credit-scoring</span><span class="reg-pill" style="background:rgba(224,86,74,.18); color:#F5A79E;">Kwarantanna</span></div>
+              <div class="reg-field"><span>Właściciel</span><span class="v">Zespół Ryzyka</span></div>
+              <div class="reg-field"><span>Podstawa GDPR</span><span class="v">Art. 6 ust. 1 lit. f</span></div>
+              <div class="reg-field"><span>Wersja / przegląd</span><span class="v">v2.3 · 12.10.2026</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2: Gap engine -->
+  <div class="product-section product-section--alt">
+    <div class="container product-section__inner">
+      <div class="product-section__text">
+        <span class="num mono">02 / 10</span>
+        <h3>Silnik oceny zgodności i luk</h3>
+        <div class="product-block"><span class="product-label">Jaki problem rozwiązuje</span><p>Dashboardy "% zgodności" zwykle zakładają zgodność tam, gdzie nikt jeszcze nic nie sprawdził — zielony ptaszek z domysłu, nie z faktu.</p></div>
+        <div class="product-block"><span class="product-label">W jaki sposób</span><p>Katalog wymogów (edytowalny przez konsultanta, nie zaszyty w kodzie) jest konfrontowany z rejestrem każdego agenta wymóg po wymogu — status pochodzi albo z obiektywnego faktu systemowego (np. czy nadzór człowieka jest faktycznie włączony), albo z jawnej samo-deklaracji. Brak jednego i drugiego liczy się jako realna luka.</p></div>
+        <div class="product-block example"><span class="product-label">Przykład</span><p class="mono">agent=credit-scoring → 9 wymogów wysokiego ryzyka → 6 zadeklarowanych, 1 auto-potwierdzony (Art. 14), 2 niezadeklarowane = 2 luki krytyczne do zamknięcia.</p></div>
+      </div>
+      <div class="product-section__visual">
+        <div class="mockpanel">
+          <div class="titlebar"><div class="dot-row"><span></span><span></span><span></span></div><div class="mp-title mono">agents / credit-scoring / compliance</div></div>
+          <div class="mp-body">
+            <div class="dash-top">
+              <div class="dash-crumb">GovAI › <b>credit-scoring</b></div>
+              <div class="dash-badges">
+                <span class="dash-pill risk">Wysokie ryzyko · Zał. III.5b</span>
+                <span class="dash-pill deadline">termin: gru 2027</span>
+              </div>
+            </div>
+            <div class="dash-score">
+              <div class="score-ring" style="--pct:78"><span>78%</span></div>
+              <div class="score-label"><b>7 / 9</b> wymogów wysokiego ryzyka<br>spełnionych — Art. 26/27 liczone osobno</div>
+            </div>
+            <div class="dash-grid">
+              <div class="dash-tile yes"><span class="a">Art. 9</span>Zarządzanie ryzykiem</div>
+              <div class="dash-tile yes"><span class="a">Art. 10</span>Dane i ich zarządzanie</div>
+              <div class="dash-tile partial"><span class="a">Art. 11</span>Dokumentacja</div>
+              <div class="dash-tile yes"><span class="a">Art. 13</span>Przejrzystość</div>
+              <div class="dash-tile yes"><span class="a">Art. 14</span>Nadzór człowieka</div>
+              <div class="dash-tile yes"><span class="a">Art. 15</span>Dokładność</div>
+              <div class="dash-tile yes"><span class="a">Art. 17</span>Zarządzanie jakością</div>
+              <div class="dash-tile no"><span class="a">Art. 43</span>Ocena zgodności</div>
+              <div class="dash-tile no"><span class="a">Art. 49</span>Rejestracja UE</div>
+            </div>
+            <div class="dash-next">
+              <div class="dash-next__head">Następne priorytety</div>
+              <div class="dash-next__row"><span><b>Art. 43</b> ocena zgodności</span><span class="d">30 dni</span></div>
+              <div class="dash-next__row"><span><b>Art. 49</b> rejestracja w bazie UE</span><span class="d">60 dni</span></div>
+              <div class="dash-next__row"><span><b>Art. 11</b> uzupełnij dokumentację</span><span class="d">60 dni</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3 -->
+  <div class="product-section">
+    <div class="container product-section__inner">
+      <div class="product-section__text">
+        <span class="num mono">03 / 10</span>
+        <h3>Bramka bezpieczeństwa</h3>
+        <div class="product-block"><span class="product-label">Jaki problem rozwiązuje</span><p>Zespoły najczęściej podłączają agenty wprost do klucza API dostawcy modelu. Nikt nie widzi, co faktycznie wychodzi z organizacji, dopóki już nie wyszło.</p></div>
+        <div class="product-block"><span class="product-label">W jaki sposób</span><p>GovAI wchodzi w ścieżkę requestu jako endpoint zgodny z OpenAI Chat Completions — zmiana jednego base URL, i każde wywołanie jest sprawdzane zanim dotrze do dostawcy.</p></div>
+        <div class="product-block example"><span class="product-label">Przykład</span><p class="mono">agent=hiring-copilot → POST /v1/chat/completions → skan → klasyfikacja → routing — zanim Anthropic w ogóle zobaczy treść zapytania.</p></div>
+      </div>
+      <div class="product-section__visual">
+        <div class="mockpanel">
+          <div class="titlebar"><div class="dot-row"><span></span><span></span><span></span></div><div class="mp-title mono">gateway · request path</div></div>
+          <div class="mp-body">
+            <div class="route-diagram">
+              <div class="route-src mono">Agent AI → POST /v1/chat/completions</div>
+              <div class="route-arrows">↓ przechwycone przez GovAI ↓</div>
+              <div class="queue-row"><span>Skan PII</span><span class="st st-ok">OK</span></div>
+              <div class="queue-row"><span>Silnik polityk</span><span class="st st-ok">ALLOW</span></div>
+              <div class="queue-row"><span>Provider docelowy</span><span class="st st-ok">anthropic</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 -->
+  <div class="product-section product-section--alt">
+    <div class="container product-section__inner">
+      <div class="product-section__text">
+        <span class="num mono">04 / 10</span>
+        <h3>Klasyfikator ryzyka AI Act</h3>
+        <div class="product-block"><span class="product-label">Jaki problem rozwiązuje</span><p>"Które obowiązki AI Act dotyczą akurat tego agenta?" to zwykle pytanie zadane raz, w arkuszu, i nigdy nie zrewidowane, gdy zmienia się sposób użycia agenta.</p></div>
+        <div class="product-block"><span class="product-label">W jaki sposób</span><p>Opis agenta trafia do Claude jako klasyfikatora prawnego — wraca poziom ryzyka, kategoria Załącznika III (np. rekrutacja, ocena zdolności kredytowej, infrastruktura krytyczna) i lista kluczowych obowiązków. To dzieje się przy rejestracji, nie jako jednorazowy formularz do wypełnienia raz.</p></div>
+        <div class="product-block example"><span class="product-label">Przykład</span><p class="mono">agent=credit-scoring → risk=high (Zał. III) → automatycznie włączone: nadzór człowieka + pełne logowanie.</p></div>
+      </div>
+      <div class="product-section__visual">
+        <div class="mockpanel">
+          <div class="titlebar"><div class="dot-row"><span></span><span></span><span></span></div><div class="mp-title mono">risk classifier</div></div>
+          <div class="mp-body">
+            <div class="risk-grid">
+              <div class="risk-chip" style="background:var(--risk-unacc)">Niedopuszczalne</div>
+              <div class="risk-chip" style="background:var(--risk-high)">Wysokie</div>
+              <div class="risk-chip" style="background:var(--risk-limited)">Ograniczone</div>
+              <div class="risk-chip" style="background:var(--risk-min)">Minimalne</div>
+            </div>
+            <div class="risk-card">
+              <div class="top"><span class="mono">agent=credit-scoring</span><span class="pill">WYSOKIE</span></div>
+              <div class="top" style="margin-top:6px;"><span>Art. 14 nadzór</span><span style="color:#3ED18C">wymagany</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5 -->
+  <div class="product-section">
+    <div class="container product-section__inner">
+      <div class="product-section__text">
+        <span class="num mono">05 / 10</span>
+        <h3>Routing wielu dostawców</h3>
+        <div class="product-block"><span class="product-label">Jaki problem rozwiązuje</span><p>Wysyłanie wrażliwych danych do dowolnie skonfigurowanego modelu to incydent zarządzania danymi, który czeka, żeby się zdarzyć.</p></div>
+        <div class="product-block"><span class="product-label">W jaki sposób</span><p>Decyzję o routingu podejmuje wrażliwość danych, nie przyzwyczajenie developera — GovAI wybiera Anthropic, DeepSeek albo instancję self-hosted (Bielik) per wywołanie.</p></div>
+        <div class="product-block example"><span class="product-label">Przykład</span><p class="mono">pii=email → routing na model self-hosted; wywołanie bez danych osobowych → Anthropic. Kod agenta się nie zmienia.</p></div>
+      </div>
+      <div class="product-section__visual">
+        <div class="mockpanel">
+          <div class="titlebar"><div class="dot-row"><span></span><span></span><span></span></div><div class="mp-title mono">provider router</div></div>
+          <div class="mp-body">
+            <div class="route-diagram">
+              <div class="route-src mono">pii=email · sensitivity=high</div>
+              <div class="route-arrows">↓</div>
+              <div class="route-targets">
+                <div class="route-target"><span class="n">Anthropic</span><span class="s">brak PII</span></div>
+                <div class="route-target"><span class="n">DeepSeek</span><span class="s">niska wrażliwość</span></div>
+                <div class="route-target on"><span class="n">Bielik (self-hosted)</span><span class="s">PII → wybrany</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6 -->
+  <div class="product-section product-section--alt">
+    <div class="container product-section__inner">
+      <div class="product-section__text">
+        <span class="num mono">06 / 10</span>
+        <h3>Kolejka nadzoru człowieka</h3>
+        <div class="product-block"><span class="product-label">Jaki problem rozwiązuje</span><p>Art. 14 wymaga nadzoru człowieka nad decyzjami wysokiego ryzyka — ale "wyślij komuś maila" to nie jest proces gotowy na audyt.</p></div>
+        <div class="product-block"><span class="product-label">W jaki sposób</span><p>Wywołania oznaczone <span class="mono">oversight_required</span> czekają w kolejce na recenzenta z rolą "reviewer", zanim agent dostanie odpowiedź.</p></div>
+        <div class="product-block example"><span class="product-label">Przykład</span><p class="mono">agent=support-bot pii=email → policy=oversight_required — odpowiedź czeka na akceptację recenzenta.</p></div>
+      </div>
+      <div class="product-section__visual">
+        <div class="mockpanel">
+          <div class="titlebar"><div class="dot-row"><span></span><span></span><span></span></div><div class="mp-title mono">oversight queue</div></div>
+          <div class="mp-body">
+            <div class="queue-list">
+              <div class="queue-row"><div><span class="who">support-bot</span><br>pii=email</div><span class="st st-wait">CZEKA</span></div>
+              <div class="queue-row"><div><span class="who">credit-scoring</span><br>risk=high</div><span class="st st-wait">CZEKA</span></div>
+              <div class="queue-row"><div><span class="who">hiring-copilot</span><br>reviewer=A. Nowak</div><span class="st st-ok">ZATWIERDZONO</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7 -->
+  <div class="product-section">
+    <div class="container product-section__inner">
+      <div class="product-section__text">
+        <span class="num mono">07 / 10</span>
+        <h3>Niezmienny dziennik audytowy</h3>
+        <div class="product-block"><span class="product-label">Jaki problem rozwiązuje</span><p>"Udowodnij, co się stało 3 marca" jest niemożliwe, jeśli zapis to modyfikowalna tabela logów, którą ktoś może edytować.</p></div>
+        <div class="product-block"><span class="product-label">W jaki sposób</span><p>Każda decyzja — dopuszczono, zablokowano, eskalowano — jest zapisywana raz w TimescaleDB i nigdy nie aktualizowana ani usuwana.</p></div>
+        <div class="product-block example"><span class="product-label">Przykład</span><p class="mono">Audytor pyta o każdą decyzję dla danego agenta w danym tygodniu — to zapytanie z timestampem, nie projekt rekonstrukcyjny.</p></div>
+      </div>
+      <div class="product-section__visual">
+        <div class="mockpanel">
+          <div class="titlebar"><div class="dot-row"><span></span><span></span><span></span></div><div class="mp-title mono">audit_log — immutable</div></div>
+          <div class="mp-body audit-scroll">
+            <table class="audit-tbl">
+              <thead><tr><th>ts</th><th>agent</th><th>decision</th><th>provider</th></tr></thead>
+              <tbody>
+                <tr><td>09:14:02</td><td>hiring-copilot</td><td style="color:#3ED18C">allow</td><td>anthropic</td></tr>
+                <tr><td>09:14:37</td><td>support-bot</td><td style="color:#F2B84B">oversight</td><td>—</td></tr>
+                <tr><td>09:15:01</td><td>credit-scoring</td><td style="color:#3ED18C">allow</td><td>anthropic</td></tr>
+                <tr><td>09:15:44</td><td>internal-crawler</td><td style="color:#E0564A">block</td><td>—</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8 -->
+  <div class="product-section product-section--alt">
+    <div class="container product-section__inner">
+      <div class="product-section__text">
+        <span class="num mono">08 / 10</span>
+        <h3>Raportowanie zgodności</h3>
+        <div class="product-block"><span class="product-label">Jaki problem rozwiązuje</span><p>Przygotowanie "dokumentacji technicznej" dla audytora zwykle oznacza, że ktoś składa dokument z pamięci na tydzień przed terminem.</p></div>
+        <div class="product-block"><span class="product-label">W jaki sposób</span><p>Raport PDF — per agent albo dla całej organizacji — łączy dane rejestru, ocenę luk, statystyki wywołań, alerty budżetowe i historię nadzoru, z narracją pisaną automatycznie na podstawie tych danych. Nie pisany osobno po fakcie.</p></div>
+        <div class="product-block example"><span class="product-label">Przykład</span><p class="mono">GET /agents/credit-scoring/report/pdf → gotowy plik z KPI, rozkładem ryzyka i listą przeglądów po terminie — do ręki audytorowi bez dotykania arkusza.</p></div>
+      </div>
+      <div class="product-section__visual">
+        <div class="mockpanel">
+          <div class="titlebar"><div class="dot-row"><span></span><span></span><span></span></div><div class="mp-title mono">compliance report · Q3 2026</div></div>
+          <div class="mp-body">
+            <div class="report-card">
+              <div class="report-row"><span>Agenty w rejestrze</span><span class="v">14</span></div>
+              <div class="report-row"><span>Wywołań ocenionych</span><span class="v">48 902</span></div>
+              <div class="report-row"><span>Zablokowanych</span><span class="v">211</span></div>
+              <div class="report-row"><span>Skierowanych do nadzoru</span><span class="v">1 340</span></div>
+              <div class="report-row"><span>Pokrycie logu</span><span class="v" style="color:#3ED18C">100%</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9 -->
+  <div class="product-section">
+    <div class="container product-section__inner">
+      <div class="product-section__text">
+        <span class="num mono">09 / 10</span>
+        <h3>Dostęp oparty na rolach</h3>
+        <div class="product-block"><span class="product-label">Jaki problem rozwiązuje</span><p>W większości narzędzi jedyną rolą, która faktycznie ma sensowny dostęp, jest "admin" — reszta dostaje przekierowanie do skrzynki mailowej.</p></div>
+        <div class="product-block"><span class="product-label">W jaki sposób</span><p>Pięć ról — partner, IT admin, compliance officer, associate, reviewer — każda widzi dokładnie to, czego potrzebuje jej funkcja.</p></div>
+        <div class="product-block example"><span class="product-label">Przykład</span><p class="mono">Reviewer może zatwierdzić lub odrzucić oznaczone wywołanie, nie widząc konfiguracji dostawców ani rozliczeń organizacji.</p></div>
+      </div>
+      <div class="product-section__visual">
+        <div class="mockpanel">
+          <div class="titlebar"><div class="dot-row"><span></span><span></span><span></span></div><div class="mp-title mono">RBAC matrix</div></div>
+          <div class="mp-body audit-scroll">
+            <table class="role-tbl">
+              <thead><tr><th>Rola</th><th>Polityki</th><th>Nadzór</th><th>Rozliczenia</th></tr></thead>
+              <tbody>
+                <tr><td>partner</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
+                <tr><td>it_admin</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td></tr>
+                <tr><td>compliance_officer</td><td class="n">—</td><td class="n">—</td><td class="n">—</td></tr>
+                <tr><td>reviewer</td><td class="n">—</td><td class="y">✓</td><td class="n">—</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10 -->
+  <div class="product-section product-section--alt">
+    <div class="container product-section__inner">
+      <div class="product-section__text">
+        <span class="num mono">10 / 10</span>
+        <h3>Dedykowana instancja</h3>
+        <div class="product-block"><span class="product-label">Jaki problem rozwiązuje</span><p>Współdzielone SaaS multi-tenant oznacza, że Twój dziennik audytowy leży w tej samej bazie co dziennik innej firmy — fakt, o którym większość dostawców nie mówi wprost.</p></div>
+        <div class="product-block"><span class="product-label">W jaki sposób</span><p>Każdy klient GovAI dostaje osobne wdrożenie — jedna VM, własna baza, własny dziennik audytowy, nic nie jest współdzielone.</p></div>
+        <div class="product-block example"><span class="product-label">Przykład</span><p class="mono">Dwaj klienci GovAI nigdy nie dzielą instancji Postgres, Redis ani jednego wiersza cudzej historii audytowej — weryfikowalne na poziomie infrastruktury, nie tylko umowy.</p></div>
+      </div>
+      <div class="product-section__visual">
+        <div class="mockpanel">
+          <div class="titlebar"><div class="dot-row"><span></span><span></span><span></span></div><div class="mp-title mono">deployment isolation</div></div>
+          <div class="mp-body">
+            <div class="iso-grid">
+              <div class="iso-box"><div class="t">Klient A · VM</div><div class="stack"><span>Postgres</span><span>Redis</span><span>Audit log</span></div></div>
+              <div class="iso-box"><div class="t">Klient B · VM</div><div class="stack"><span>Postgres</span><span>Redis</span><span>Audit log</span></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section id="onboarding" style="padding-top:0;">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">Wdrożenie</div>
+        <h2>Na produkcji tego samego dnia, nie za kwartał.</h2>
+        <p>Bez projektu migracyjnego. GovAI mówi w API, którego Twoje agenty już używają.</p>
+      </div>
+      <div class="onboard-grid">
+        <div class="mockpanel onboard-demo" id="onboardDemo">
+          <div class="titlebar"><div class="dot-row"><span></span><span></span><span></span></div><div class="mp-title mono">wdrożenie · krok <span id="odStepNum">1</span>/4</div></div>
+          <div class="mp-body onboard-demo__body">
+            <div class="od-slide active" data-step="1">
+              <div class="od-code mono">agent = OpenAI(<br>&nbsp;&nbsp;<span class="k">base_url</span>=<span class="k">"https://app.govai.pl/gateway/v1"</span><br>)</div>
+              <p class="od-caption">Jedna linijka konfiguracji. Reszta kodu agenta — bez zmian.</p>
+            </div>
+            <div class="od-slide" data-step="2">
+              <div class="od-code mono">POST /agents<br>{"name":"credit-scoring", "description":"..."}<br><span class="k">→ risk_level: "high"</span> (Zał. III.5b, auto)</div>
+              <p class="od-caption">Claude analizuje opis i proponuje klasyfikację — konsultant tylko zatwierdza.</p>
+            </div>
+            <div class="od-slide" data-step="3">
+              <div class="od-code mono"><span class="k">pii=email</span> → policy=oversight_required<br><span class="k">pii=none</span> → policy=allow</div>
+              <p class="od-caption">Reguły per agent, per typ danych — edytowalne bez wdrożenia nowego kodu.</p>
+            </div>
+            <div class="od-slide" data-step="4">
+              <div class="od-code mono">09:14:02 credit-scoring <span class="k">allow</span> anthropic<br>09:15:44 credit-scoring <span class="k">oversight</span> —</div>
+              <p class="od-caption">Od pierwszego wywołania: skanowane, egzekwowane, zalogowane — bez ręcznej pracy.</p>
+            </div>
+          </div>
+          <div class="od-progress" id="odProgress">
+            <i data-i="0"><b></b></i><i data-i="1"><b></b></i><i data-i="2"><b></b></i><i data-i="3"><b></b></i>
+          </div>
+        </div>
+        <div class="steps" id="onboardSteps">
+          <button type="button" class="step active" data-step="1"><div class="tag mono">01</div><h4>Wskaż agenta na GovAI</h4><p>Zmiana jednego base URL. GovAI mówi w OpenAI Chat Completions API, więc nic więcej się nie zmienia.</p></button>
+          <button type="button" class="step" data-step="2"><div class="tag mono">02</div><h4>Zarejestruj i sklasyfikuj</h4><p>Dodaj agenta do rejestru; GovAI proponuje poziom ryzyka AI Act na podstawie sposobu użycia.</p></button>
+          <button type="button" class="step" data-step="3"><div class="tag mono">03</div><h4>Ustaw polityki</h4><p>Wybierz, co jest dozwolone, blokowane lub wymaga człowieka — per agent, per typ danych.</p></button>
+          <button type="button" class="step" data-step="4"><div class="tag mono">04</div><h4>Wejdź na produkcję z dowodem</h4><p>Każde wywołanie od tej chwili jest skanowane, egzekwowane i logowane — automatycznie.</p></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="compare">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">Dlaczego egzekwowanie, nie dokumentacja</div>
+        <h2>Dokumentacja dowodzi, że chciałeś być zgodny. Egzekwowanie dowodzi, że byłeś.</h2>
+        <p>Większość narzędzi do AI Act kończy na generowaniu papierów. GovAI stoi w ścieżce requestu.</p>
+      </div>
+      <div class="cmp-wrap">
+        <table class="cmp">
+          <thead><tr><th></th><th>Proces ręczny</th><th>Platformy dokumentacyjne</th><th class="win">GovAI</th></tr></thead>
+          <tbody>
+            <tr><td class="label">Gdzie działa</td><td>Po incydencie, jeśli w ogóle</td><td>Po wywołaniu, na podstawie logów</td><td class="win">Zanim wywołanie dotrze do dostawcy</td></tr>
+            <tr><td class="label">Blokuje naruszenie na żywo</td><td>Nie</td><td>Nie</td><td class="win">Tak</td></tr>
+            <tr><td class="label">Ocena luk vs. egzekwowanie</td><td>Rozłączone — arkusz nikogo nie blokuje</td><td>Panel pokazuje luki, ruch płynie dalej bez zmian</td><td class="win">Ten sam status luki steruje kolejką nadzoru i routingiem na żywo</td></tr>
+            <tr><td class="label">Kolejka nadzoru człowieka</td><td>Ad hoc, mailem</td><td>Śledzona jako zadanie</td><td class="win">Wbudowana w ścieżkę wywołania</td></tr>
+            <tr><td class="label">Izolacja danych</td><td>To, co już masz</td><td>Współdzielony SaaS multi-tenant</td><td class="win">Jedna dedykowana instancja na klienta</td></tr>
+            <tr><td class="label">Dowód na audyt</td><td>To, co ktoś zapisał</td><td>Wygenerowane dokumenty</td><td class="win">Niezmienny dziennik decyzji ze znacznikiem czasu</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">Cennik</div>
+        <h2>Cennik skalujący się z rejestrem agentów, nie z liczbą etatów.</h2>
+        <p>Każdy plan to dedykowana instancja — nie wspólne konto.</p>
+      </div>
+      <div class="pricing-note">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex:none; margin-top:2px;"><path d="M8 1L1 14h14L8 1z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M8 6v3.5M8 11.5v.1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        <div><strong>Cennik wstępny, punkt wyjścia do negocjacji</strong> — pierwszy pilotaż może być świadomie wyceniony niżej.</div>
+      </div>
+      <div class="pricing-grid">
+        <div class="ptier">
+          <h3>Starter</h3>
+          <p class="tagline">Twój pierwszy regulowany agent. Do 5 agentów w rejestrze.</p>
+          <div class="price-block">
+            <div class="setup">Opłata wdrożeniowa: <b>15 000–25 000 PLN</b> jednorazowo</div>
+            <div class="monthly mono">3 000–4 500 <small>PLN/mies.</small></div>
+            <div class="eur">≈ €670–1 000/mies.</div>
+          </div>
+          <ul>
+            <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Do 5 agentów w rejestrze</li>
+            <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Dedykowana instancja (1 VM)</li>
+            <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Skaner PII i silnik polityk</li>
+            <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Wsparcie standardowe</li>
+          </ul>
+          <a class="btn btn-ghost btn-block" href="#cta">Umów demo</a>
+        </div>
+        <div class="ptier featured">
+          <span class="pbadge">Najczęściej wybierany</span>
+          <h3>Growth</h3>
+          <p class="tagline">Dla zespołów prowadzących kilkanaście agentów produkcyjnie.</p>
+          <div class="price-block">
+            <div class="setup">Opłata wdrożeniowa: <b>25 000–40 000 PLN</b> jednorazowo</div>
+            <div class="monthly mono">5 000–8 000 <small>PLN/mies.</small></div>
+            <div class="eur">≈ €1 080–1 750/mies.</div>
+          </div>
+          <ul>
+            <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Do 20 agentów w rejestrze</li>
+            <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Routing wielu dostawców</li>
+            <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Kolejka nadzoru człowieka</li>
+            <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Wsparcie priorytetowe</li>
+          </ul>
+          <a class="btn btn-primary btn-block" href="#cta">Umów demo</a>
+        </div>
+        <div class="ptier">
+          <h3>Enterprise</h3>
+          <p class="tagline">Dla wdrożeń regulowanych, wysokowolumenowych lub on-prem.</p>
+          <div class="price-block">
+            <div class="setup">Wycena indywidualna</div>
+            <div class="monthly mono" style="font-size:22px;">Wycena&nbsp;indywidualna</div>
+            <div class="eur">Sektor publiczny, on-prem, SLA/DR</div>
+          </div>
+          <ul>
+            <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Nielimitowani agenci</li>
+            <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>On-prem lub Twoja chmura</li>
+            <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>SLA i dedykowany backup/DR</li>
+            <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Dedykowany opiekun ds. zgodności</li>
+          </ul>
+          <a class="btn btn-ghost btn-block" href="#cta">Porozmawiajmy</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">FAQ</div>
+        <h2>Pytania, które faktycznie zadają compliance officerowie.</h2>
+      </div>
+      <div class="faq-list">
+        <details class="faq-item"><summary class="faq-q">Czy GovAI to tylko bramka nasłuchująca ruch, bez rejestru i oceny ryzyka?<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></summary><div class="faq-a">Nie — to dwie warstwy tego samego systemu. Najpierw agent trafia do rejestru i dostaje klasyfikację ryzyka oraz ocenę luk wobec konkretnych artykułów AI Act (jak w narzędziach dokumentacyjnych). Dopiero ta sama klasyfikacja jest egzekwowana na żywo na bramce — więc status "wymaga nadzoru" nie jest tylko czerwoną kropką na dashboardzie, tylko realnie wstrzymuje odpowiedź agenta.</div></details>
+        <details class="faq-item"><summary class="faq-q">Czy GovAI to kolejne narzędzie-checklista do zgodności?<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></summary><div class="faq-a">Nie. Narzędzia typu checklista i dokumentacja mówią, co powinieneś był zrobić. GovAI egzekwuje politykę na faktycznym wywołaniu API, zanim dostawca modelu je zobaczy — dziennik audytowy jest efektem ubocznym, nie głównym produktem.</div></details>
+        <details class="faq-item"><summary class="faq-q">Które terminy AI Act faktycznie nas dziś dotyczą?<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></summary><div class="faq-a">Zakaz praktyk niedopuszczalnych z Art. 5 obowiązuje od lutego 2025, obowiązki GPAI od sierpnia 2025, przejrzystość z Art. 50 od sierpnia 2026 — te terminy są dziś aktualne. Pełne obowiązki wysokiego ryzyka z Załącznika III zostały przesunięte przez Digital Omnibus (Rozporządzenie 2026/1744) z sierpnia 2026 na grudzień 2027 — to nadal nadchodzi, nie jest już "teraz".</div></details>
+        <details class="faq-item"><summary class="faq-q">Czy dzielimy infrastrukturę z innymi klientami GovAI?<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></summary><div class="faq-a">Nie. Każdy klient dostaje dedykowaną instancję — własną bazę danych, własny dziennik audytowy. Nic nie jest łączone między najemcami.</div></details>
+        <details class="faq-item"><summary class="faq-q">Jakich dostawców modeli obsługuje GovAI?<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></summary><div class="faq-a">Anthropic i DeepSeek od razu po instalacji, plus opcja self-hosted (Bielik) dla danych, które nie powinny opuszczać Twojej infrastruktury. Routing jest automatyczny, na podstawie wrażliwości danych.</div></details>
+        <details class="faq-item"><summary class="faq-q">Czy możemy uruchomić GovAI na własnej infrastrukturze?<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></summary><div class="faq-a">Tak. GovAI wdraża się tak samo na Twojej infrastrukturze albo na dedykowanej instancji, którą hostujemy dla Ciebie — model zgodności się nie zmienia.</div></details>
+        <details class="faq-item"><summary class="faq-q">Czy możemy przetestować GovAI przed zapłatą?<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></summary><div class="faq-a">Umów demo, a pokażemy klasyfikację jednego z Twoich realnych agentów na żywo. Warunki pilotażu (długość, zakres, ewentualny rabat referencyjny) ustalamy indywidualnie na tym etapie.</div></details>
+      </div>
+    </div>
+  </section>
+
+  <section id="cta">
+    <div class="container">
+      <div class="finalcta">
+        <div>
+          <h2>Zobacz swojego pierwszego agenta pod egzekwowaniem — w tym tygodniu.</h2>
+          <p>30-minutowa rozmowa. Sklasyfikujemy jednego realnego agenta na żywo.</p>
+        </div>
+        <a class="btn btn-accent" href="mailto:hello@govai.pl">Umów demo</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="brand">
+          <svg class="mark" width="26" height="26" viewBox="0 0 100 100"><defs><linearGradient id="rg2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00B4D8"/><stop offset="100%" stop-color="#1E6FBF"/></linearGradient><mask id="gm2"><rect x="0" y="0" width="100" height="100" fill="#fff"/><rect x="58" y="10" width="32" height="32" fill="#000"/></mask></defs><circle cx="50" cy="50" r="30" fill="none" stroke="url(#rg2)" stroke-width="13" mask="url(#gm2)"/><line x1="74" y1="27" x2="56" y2="27" stroke="url(#rg2)" stroke-width="13" stroke-linecap="round"/><circle cx="56" cy="27" r="8.5" fill="var(--bg)"/></svg>
+          Gov<span style="color:var(--accent-ink)">AI</span>
+        </div>
+        <p>Punkt kontrolny między Twoimi agentami a modelem.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Produkt</h4>
+        <a href="#features">Platforma</a>
+        <a href="#pricing">Cennik</a>
+        <a href="#hero">Jak to działa</a>
+      </div>
+      <div class="foot-col">
+        <h4>Zasoby</h4>
+        <a href="#faq">FAQ</a>
+        <a href="blog.html">Blog</a>
+        <a href="#act">Harmonogram AI Act</a>
+      </div>
+      <div class="foot-col">
+        <h4>Firma</h4>
+        <a href="mailto:hello@govai.pl">Kontakt</a>
+        <a href="#cta">Umów demo</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 GovAI. Wszelkie prawa zastrzeżone.</span>
+      <div class="legal"><a href="#">Regulamin</a><a href="#">Prywatność</a><a href="#">DPA</a></div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var navToggle = document.getElementById('navToggle');
+  var mobileNav = document.getElementById('mobileNav');
+  function closeNav(){ navToggle.setAttribute('aria-expanded','false'); mobileNav.classList.remove('open'); }
+  navToggle.addEventListener('click', function(){
+    var open = navToggle.getAttribute('aria-expanded') === 'true';
+    navToggle.setAttribute('aria-expanded', String(!open));
+    mobileNav.classList.toggle('open', !open);
+  });
+  mobileNav.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', closeNav); });
+
+  var themeToggle = document.getElementById('themeToggle');
+  function getStored(){ try { return localStorage.getItem('govai_theme'); } catch(e){ return null; } }
+  function setStored(v){ try { localStorage.setItem('govai_theme', v); } catch(e){} }
+  function apply(theme){
+    if (theme === 'light' || theme === 'dark') document.documentElement.setAttribute('data-theme', theme);
+    else document.documentElement.removeAttribute('data-theme');
+  }
+  apply(getStored());
+  themeToggle.addEventListener('click', function(){
+    var current = document.documentElement.getAttribute('data-theme');
+    var sysDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var effectiveDark = current ? current === 'dark' : sysDark;
+    var next = effectiveDark ? 'light' : 'dark';
+    apply(next); setStored(next);
+  });
+
+  // ---- Onboarding demo: auto-advancing 4-step widget ----
+  (function(){
+    var demo = document.getElementById('onboardDemo');
+    if (!demo) return;
+    var stepBtns = Array.prototype.slice.call(document.querySelectorAll('#onboardSteps .step'));
+    var slides = Array.prototype.slice.call(demo.querySelectorAll('.od-slide'));
+    var dots = Array.prototype.slice.call(demo.querySelectorAll('#odProgress i'));
+    var stepNumEl = document.getElementById('odStepNum');
+    var current = 0, timer = null, paused = false;
+    var STEP_MS = 4000;
+
+    function render(){
+      stepBtns.forEach(function(b, i){ b.classList.toggle('active', i === current); });
+      slides.forEach(function(s, i){ s.classList.toggle('active', i === current); });
+      dots.forEach(function(d, i){
+        d.classList.toggle('done', i < current);
+        d.classList.toggle('active', i === current);
+      });
+      if (stepNumEl) stepNumEl.textContent = String(current + 1);
+    }
+
+    function goTo(i){ current = ((i % 4) + 4) % 4; render(); restart(); }
+
+    function restart(){
+      if (timer) clearTimeout(timer);
+      if (paused) return;
+      timer = setTimeout(function(){ goTo(current + 1); }, STEP_MS);
+    }
+
+    stepBtns.forEach(function(b, i){
+      b.addEventListener('click', function(){ goTo(i); });
+    });
+
+    demo.addEventListener('mouseenter', function(){ paused = true; if (timer) clearTimeout(timer); });
+    demo.addEventListener('mouseleave', function(){ paused = false; restart(); });
+
+    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) paused = true;
+
+    render();
+    restart();
+  })();
+})();
+</script>
+</body>
+</html>

@@ -1,4 +1,17 @@
+# Marketing (landing + blog) — statyczne pliki z website/, serwowane
+# bezpośrednio przez Caddy. Produkt (panel logowania/dashboard) świadomie na
+# osobnym subdomenowym hoście app.{{ADDRESS}} — root domeny i panel logowania
+# nigdy nie dzielą tego samego hosta/canonical URL (lekcja z crmtree.pl:
+# landing statyczny + blog SSR na innym hoście się rozjechały, miesiąc pracy
+# nad SEO poszedł na marne, zanim to wykryto).
 {{ADDRESS}} {
+	encode gzip
+	root * /srv/website
+	try_files {path} {path}.html
+	file_server
+}
+
+app.{{ADDRESS}} {
 	encode gzip
 
 	handle_path /api/* {

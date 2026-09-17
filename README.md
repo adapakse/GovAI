@@ -13,14 +13,17 @@ sztucznej inteligencji (AI Act).
 ## Architektura
 
 ```
-   Agent AI
-      │  POST /gateway/v1/chat/completions  (zgodne z OpenAI API)
-      ▼
-┌─────────────────┐
-│  Caddy :443     │  TLS termination (ACME z DOMAIN_NAME albo self-signed)
-└────────┬────────┘
-         │  /  → frontend   /api/* → api   /gateway/* → gateway
-         ▼
+   Odwiedzający              Agent AI
+      │                         │  POST /gateway/v1/chat/completions
+      ▼                         ▼
+┌───────────────────┐   ┌─────────────────┐
+│ <DOMAIN>           │   │ app.<DOMAIN>    │  Caddy :443 — TLS (ACME z DOMAIN_NAME albo self-signed)
+│ statyczna strona   │   │  /  → frontend  │
+│ website/ (landing  │   │  /api/* → api   │
+│ + blog)            │   │  /gateway/* →   │
+└───────────────────┘   │    gateway      │
+                         └────────┬────────┘
+                                  ▼
 ┌─────────────────┐     skan PII → silnik polityk → wybór dostawcy → audyt
 │    Gateway      │ ──────────────────────────────────────────────────────►  Anthropic / DeepSeek
 └─────────────────┘
@@ -33,12 +36,19 @@ sztucznej inteligencji (AI Act).
 └─────────────────┘
 ```
 
+Marketing (`<DOMAIN>`, np. `govai.pl`) i produkt (`app.<DOMAIN>`) są świadomie
+na dwóch różnych hostach — landing statyczny i panel logowania nigdy nie
+dzielą jednego canonical URL (patrz komentarz w `caddy/Caddyfile.domain.template`).
+Bez `DOMAIN_NAME` (dev/INT) marketing się nie serwuje — `Caddyfile.internal.template`
+to nadal tylko reverse-proxy do `frontend`.
+
 | Usługa | Dostęp | Opis |
 |--------|--------|------|
-| **caddy** | `:443`/`:80` (host) | Reverse proxy TLS — jedyny punkt wejścia z zewnątrz. |
-| **gateway** | `/gateway/*` za Caddy | Bramka bezpieczeństwa — proxy zgodne z OpenAI Chat Completions. Skan PII, egzekwowanie polityk, routing dostawców, audyt. |
-| **api** | `/api/*` za Caddy | Panel zarządzania — rejestr agentów, polityki, nadzór człowieka, dziennik audytowy, raporty zgodności, uwierzytelnianie. |
-| **frontend** | `/` za Caddy | Konsola webowa (Next.js): logowanie, dashboard, rejestr, polityki, audyt, nadzór, raporty. |
+| **caddy** | `:443`/`:80` (host) | Reverse proxy TLS + statyczny file-server dla strony marketingowej — jedyny punkt wejścia z zewnątrz. |
+| **website** (statyczne pliki, bez własnego kontenera) | `<DOMAIN>` za Caddy | Landing + blog (`website/index.html`, `website/blog.html`) — zero build-stepu, serwowane bezpośrednio przez `file_server`. |
+| **gateway** | `app.<DOMAIN>/gateway/*` za Caddy | Bramka bezpieczeństwa — proxy zgodne z OpenAI Chat Completions. Skan PII, egzekwowanie polityk, routing dostawców, audyt. |
+| **api** | `app.<DOMAIN>/api/*` za Caddy | Panel zarządzania — rejestr agentów, polityki, nadzór człowieka, dziennik audytowy, raporty zgodności, uwierzytelnianie. |
+| **frontend** | `app.<DOMAIN>/` za Caddy | Konsola webowa (Next.js): logowanie, dashboard, rejestr, polityki, audyt, nadzór, raporty. |
 | **postgres** | — (wewnętrzny) | TimescaleDB (PG16) — dane aplikacji + szereg czasowy dziennika audytowego. |
 | **redis** | — (wewnętrzny) | Live-feed dashboardu oraz kolejka/TTL zadań nadzoru człowieka. |
 
