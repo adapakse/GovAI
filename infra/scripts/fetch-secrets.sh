@@ -47,6 +47,15 @@ db_password=$(get_secret db-password)
 anthropic_api_key=$(get_secret anthropic-api-key)
 deepseek_api_key=$(get_secret deepseek-api-key)
 
+# Z DOMAIN_NAME (z $AZURE_ENV_FILE) — bez tego api korzysta z domyślnego
+# ALLOWED_ORIGINS=https://localhost i blokuje przeglądarkę na app.<domena>
+# ("Disallowed CORS origin", logowanie nie działa mimo poprawnego JWT/CORS
+# lokalnie).
+allowed_origins=""
+if [ -n "$DOMAIN_NAME" ]; then
+  allowed_origins="https://app.${DOMAIN_NAME}"
+fi
+
 mkdir -p "$(dirname "$TARGET_ENV_FILE")"
 {
   echo "# Wygenerowane automatycznie przez infra/scripts/fetch-secrets.sh — NIE edytuj ręcznie."
@@ -54,6 +63,7 @@ mkdir -p "$(dirname "$TARGET_ENV_FILE")"
   echo "DB_PASSWORD=${db_password}"
   echo "ANTHROPIC_API_KEY=${anthropic_api_key}"
   echo "DEEPSEEK_API_KEY=${deepseek_api_key}"
+  [ -n "$allowed_origins" ] && echo "ALLOWED_ORIGINS=${allowed_origins}"
   grep -v '^AZURE_CLIENT_ID=\|^AZURE_KEY_VAULT_NAME=\|^SECRETS_BACKEND=' "$AZURE_ENV_FILE" || true
 } > "$TARGET_ENV_FILE"
 
