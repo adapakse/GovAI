@@ -259,7 +259,7 @@ export const api = {
     updateStatus: (id: string, status: AgentStatus) => patch(`/agents/${id}/status`, { status }),
     updateRegistry: (id: string, body: unknown) => patch(`/agents/${id}/registry`, body),
     compliance: (id: string) => get<ComplianceReport>(`/agents/${id}/compliance`),
-    stats: (id: string, days = 30) => get(`/agents/${id}/stats?days=${days}`),
+    stats: (id: string, days = 30) => get<Record<string, unknown>>(`/agents/${id}/stats?days=${days}`),
   },
   oversight: {
     pending: () => get<OversightTask[]>('/oversight/pending'),

@@ -10,10 +10,12 @@ Wszystko pochodzi z dwóch źródeł danych:
      `agents.compliance_decl` (samo-deklaracja per wymaganie, zakładka Rejestr).
 
 Dla każdego wymagania silnik sprawdza najpierw, czy istnieje obiektywny
-automatyczny check (pole rejestru, nie oświadczenie) — obecnie tylko nadzór
-człowieka (art. 14). W przeciwnym razie czyta samo-deklarację po `decl_key`.
-Brak jednego i drugiego = wymaganie nieocenione ("undeclared") — realna luka,
-nie fikcyjna wartość domyślna.
+automatyczny check (pole rejestru, nie oświadczenie) — dziś nadzór człowieka
+(art. 14 i art. 26 ust. 2 czytają to samo pole systemowe) oraz retencja logów
+(art. 26 ust. 6, patrz uzasadnienie przy stałej niżej). W przeciwnym razie
+silnik czyta samo-deklarację po `decl_key`. Brak jednego i drugiego =
+wymaganie nieocenione ("undeclared") — realna luka, nie fikcyjna wartość
+domyślna.
 """
 from __future__ import annotations
 
@@ -24,7 +26,16 @@ from typing import Optional
 # To JEDYNE miejsce z "twardą" regułą — bo to obiektywny stan systemu, a nie
 # oświadczenie, które mogłoby być błędne lub aspiracyjne.
 _AUTO_CHECKS = {
+    # Art. 14 i Art. 26 ust. 2 wymagają tego samego faktu — nadzór człowieka
+    # przypisany do kompetentnej osoby — więc czytają to samo pole rejestru.
     "art14_human_oversight": lambda agent: "yes" if agent.get("requires_oversight") else "no",
+    "art26_2_human_oversight": lambda agent: "yes" if agent.get("requires_oversight") else "no",
+    # Art. 26 ust. 6 wymaga polityki retencji logów min. 6 miesięcy, nie
+    # dowodu że akurat ten agent istnieje od pół roku. Architektura GovAI nie
+    # ma żadnego mechanizmu kasowania wpisów w audit_log (zweryfikowane —
+    # brak TTL/expire na tej tabeli), więc retencja ≥ 6 miesięcy jest stałą,
+    # systemową gwarancją dla każdego agenta, nie czymś do samo-deklaracji.
+    "art26_6_log_retention": lambda agent: "yes",
 }
 
 

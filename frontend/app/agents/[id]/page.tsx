@@ -9,8 +9,19 @@ import RiskBadge from '@/components/RiskBadge';
 type Tab = 'compliance' | 'stats' | 'registry';
 
 // Wymagania z auto-checkiem — status liczony z faktu w rejestrze agenta, nie
-// z samo-deklaracji. Musi być spójne z api/services/compliance.py:_AUTO_CHECKS.
-const AUTO_CHECK_KEYS = new Set(['art14_human_oversight']);
+// z samo-deklaracji. Musi być spójne z api/services/compliance.py:_AUTO_CHECKS
+// (klucz → funkcja ORAZ etykieta wyjaśniająca skąd bierze się status).
+const AUTO_CHECK_RESOLVERS: Record<string, (agent: Agent) => 'yes' | 'no'> = {
+  art14_human_oversight:   agent => (agent.requires_oversight ? 'yes' : 'no'),
+  art26_2_human_oversight: agent => (agent.requires_oversight ? 'yes' : 'no'),
+  art26_6_log_retention:   () => 'yes',
+};
+
+const AUTO_CHECK_LABELS: Record<string, string> = {
+  art14_human_oversight:   'sprawdzane z pola „Wymaga nadzoru”',
+  art26_2_human_oversight: 'sprawdzane z pola „Wymaga nadzoru”',
+  art26_6_log_retention:   'gwarancja architektoniczna — dziennik audytowy bez mechanizmu kasowania',
+};
 
 const DECL_STATUS_OPTS: { value: DeclStatus; label: string; color: string }[] = [
   { value: '',        label: '— nie oceniono —', color: 'text-mgray' },
@@ -174,13 +185,15 @@ function RegistryTab({ agent, onSaved }: { agent: Agent; onSaved: (updated: Agen
         ) : (
           <div className="space-y-3">
             {requirements.map(req => {
-              const isAuto = !!req.decl_key && AUTO_CHECK_KEYS.has(req.decl_key);
+              const autoResolver = req.decl_key ? AUTO_CHECK_RESOLVERS[req.decl_key] : undefined;
               const noDecl = !req.decl_key;
 
-              // Auto-check: status pochodzi z faktu rejestru (requires_oversight),
-              // nie z samo-deklaracji — pokazujemy tylko do odczytu.
-              if (isAuto) {
-                const autoStatus = agent.requires_oversight ? 'yes' : 'no';
+              // Auto-check: status pochodzi z faktu rejestru (per-klucz resolver
+              // zgodny z api/services/compliance.py:_AUTO_CHECKS), nie z
+              // samo-deklaracji — pokazujemy tylko do odczytu.
+              if (autoResolver) {
+                const autoStatus = autoResolver(agent);
+                const label = AUTO_CHECK_LABELS[req.decl_key as string] ?? 'sprawdzane automatycznie';
                 return (
                   <div key={req.id} className={`border rounded-lg px-4 py-3 ${STATUS_COLOR[autoStatus]}`}>
                     <div className="flex items-start gap-4 flex-wrap">
@@ -193,7 +206,7 @@ function RegistryTab({ agent, onSaved }: { agent: Agent; onSaved: (updated: Agen
                         <p className="text-xs opacity-60 leading-relaxed">{req.requirement_text}</p>
                       </div>
                       <div className="flex-shrink-0 min-w-[180px] text-xs font-semibold">
-                        {autoStatus === 'yes' ? '✓ Spełnione' : '✗ Luka'} — sprawdzane z pola „Wymaga nadzoru”
+                        {autoStatus === 'yes' ? '✓ Spełnione' : '✗ Luka'} — {label}
                       </div>
                     </div>
                   </div>
@@ -385,7 +398,7 @@ export default function AgentDetailPage() {
 
   // Liczba deklaracji wypełnionych do wyświetlenia w zakładce
   const declFilled = Object.values(agent.compliance_decl ?? {})
-    .filter(v => v?.status && v.status !== '').length;
+    .filter(v => v?.status).length;
 
   return (
     <div className="space-y-6 max-w-5xl">

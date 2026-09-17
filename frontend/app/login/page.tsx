@@ -1,11 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { apiLogin, saveSession } from '@/lib/auth';
 
 export default function LoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -18,7 +16,11 @@ export default function LoginPage() {
     try {
       const data = await apiLogin(email, password);
       saveSession(data);
-      router.replace('/dashboard');
+      // Twarde przejście, nie router.replace — client-side nawigacja Next.js
+      // potrafi oddać z cache'u routera wynik prefetchu sprzed zalogowania
+      // (przekierowanie na /login, bo wtedy ciasteczka gai_session jeszcze
+      // nie było), co objawia się jako "miganie" z powrotem do pustego logowania.
+      window.location.href = '/dashboard';
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Błąd logowania');
     } finally {

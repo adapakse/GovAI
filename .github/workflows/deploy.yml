@@ -1,0 +1,34 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Nazwa instancji (GitHub Environment + nazwa RG/VM na Azure), np. "int"'
+        required: true
+        default: 'int'
+        type: string
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy on VM via az vm run-command
+        run: |
+          az vm run-command invoke \
+            --resource-group "rg-govai-${{ inputs.environment }}" \
+            --name "vm-govai-${{ inputs.environment }}" \
+            --command-id RunShellScript \
+            --scripts "cd /opt/govai && git fetch origin && git checkout ${{ github.ref_name }} && git reset --hard origin/${{ github.ref_name }} && chmod +x infra/scripts/deploy-remote.sh infra/scripts/fetch-secrets.sh && ./infra/scripts/deploy-remote.sh"
