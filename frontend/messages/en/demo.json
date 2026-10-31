@@ -1,0 +1,100 @@
+{
+  "chat": {
+    "awaitingOversight": "⏳ Referred for human oversight (Art. 14 EU AI Act)\nOversight ID: {id}",
+    "blocked": "🚫 Blocked: {reason}",
+    "clear": "Clear",
+    "connectionError": "Connection error: {error}",
+    "defaultBlockReason": "GovAI security policy",
+    "emptyHint": "Type a message below — it will be processed by GovAI Gateway (PII scan → policies → {model})",
+    "pipeline": "Free chat · GovAI Gateway → PII scan → policies → {model}",
+    "placeholder": "Write a message to the agent...",
+    "sectionTitle": "Free chat — direct call through the Gateway",
+    "send": "Send ▶"
+  },
+  "expected": {
+    "allowed": "Allowed",
+    "allowed_with_pii": "Allowed + PII",
+    "blocked": "Blocked",
+    "oversight_required": "Requires oversight"
+  },
+  "fleet": {
+    "button": "▦ Seed fleet (50 agents)",
+    "count": "{count, plural, one {# fleet agent} other {# fleet agents}}",
+    "desc": "Adds 50 agents spread across departments, with deliberate compliance gaps (high-risk without oversight, overdue reviews, Art. 5 prohibited practices). Shows that at scale, managing AI Act compliance manually is not feasible.",
+    "seededAgents": "Seeded {count, plural, one {# agent} other {# agents}}.",
+    "title": "Demo fleet (scale)"
+  },
+  "links": {
+    "audit": "→ Audit log",
+    "auditLog": "→ Audit log",
+    "oversight": "→ Oversight",
+    "oversightQueue": "→ Oversight queue"
+  },
+  "loading": "⏳ Loading...",
+  "noAgents": "No active agents.",
+  "noResults": "No agents matching “{query}”.",
+  "playbook": {
+    "collapse": "▲ collapse",
+    "expand": "▼ expand",
+    "go": "Go →",
+    "intro": "Run the presentation step by step.",
+    "steps": {
+      "1": {
+        "desc": "Click \"Seed 30 days of data\" — the seeder generates ~500 audit entries and ~23 oversight queue items.",
+        "title": "Seed the historical database"
+      },
+      "2": {
+        "desc": "Go to the Dashboard. You will see total calls, blocks, PII, costs and the 24h chart.",
+        "title": "Check the Dashboard — historical data"
+      },
+      "3": {
+        "desc": "Click \"Run ▶\" next to the \"Insurance enquiry\" scenario (Agent 1).",
+        "title": "Run a scenario — positive"
+      },
+      "4": {
+        "desc": "Click \"Customer provides PESEL and account number\". Presidio masks the data before it is sent to the model.",
+        "title": "Run a scenario with PII"
+      },
+      "5": {
+        "desc": "Attempted financial mutation → G-001. Prompt injection attack → G-002. Visible in the Audit log.",
+        "title": "Trigger the G-001 and G-002 blocks"
+      },
+      "6": {
+        "desc": "Agent 2 requires oversight — the call goes to the queue. Go to Oversight and approve it.",
+        "title": "Oversight queue (Art. 14)"
+      },
+      "7": {
+        "desc": "Select the DeepSeek agent and write any message. GovAI intercepts the traffic, scans for PII and checks policies — exactly as for Claude.",
+        "title": "Test DeepSeek through GovAI"
+      }
+    },
+    "title": "📋 Demo Guide — 7 steps"
+  },
+  "result": {
+    "blockedByPolicy": "Blocked by policy.",
+    "expected": "→ expected: {label}",
+    "gatewayResponse": "Gateway response:",
+    "match": "✓ as expected",
+    "mismatch": "≠ unexpected",
+    "run": "Run ▶",
+    "running": "⏳ Calling...",
+    "sentToOversight": "Decision referred for oversight.\nOversight ID: {id}\n\n{message}",
+    "task": "task: {id}..."
+  },
+  "searchPlaceholder": "Search for an agent — name, model, provider (e.g. bielik, ollama), team...",
+  "seed": {
+    "button": "▦ Seed 30 days of data",
+    "counts": "{audit} audit entries · {oversight} oversight",
+    "desc": "The seeder generates ~500 audit entries and 23 queue items.",
+    "refresh": "↻ Refresh",
+    "reset": "✕ Reset data",
+    "resetConfirm": "Delete ALL demo data (audit, oversight, agent fleet)?",
+    "resetDone": "Deleted {audit} audit entries, {oversight} oversight items and {fleet} fleet agents.",
+    "seededEntries": "Seeded {count, plural, one {# entry} other {# entries}}.",
+    "statusEmpty": "○ Empty",
+    "statusSeeded": "● Seeded",
+    "title": "Demo data (30 days of history)"
+  },
+  "subtitle": "Every call passes through GovAI Gateway → PII scan → Policy engine → AI model. Results are visible in the Audit log and the Oversight queue.",
+  "title": "AI Agent Simulator"
+}

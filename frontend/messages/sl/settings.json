@@ -1,0 +1,67 @@
+{
+  "categories": {
+    "budget": {
+      "desc": "Privzete omejitve in pragi opozoril o stroških za nove agente.",
+      "title": "Proračuni"
+    },
+    "compliance": {
+      "desc": "Roki za vrzeli v skladnosti in omejitve pripovednih delov poročil.",
+      "title": "Skladnost"
+    },
+    "i18n": {
+      "desc": "Privzeti jezik vmesnika, poročil in sporočil instance.",
+      "title": "Jezik"
+    },
+    "intervals": {
+      "desc": "Pogostost opravil v ozadju (osveževanje pravilnikov, nadzornik TTL).",
+      "title": "Intervali"
+    },
+    "models": {
+      "desc": "Privzeti modeli in parametri klicev LLM.",
+      "title": "Privzeti modeli"
+    },
+    "oversight": {
+      "desc": "Pragi in omejitve čakalne vrste človeškega nadzora (člen 14 EU AI Act).",
+      "title": "Nadzor"
+    },
+    "pagination": {
+      "desc": "Privzete in največje velikosti seznamov ter razponi dni/ur.",
+      "title": "Ostranjevanje in časovna okna"
+    },
+    "pricing": {
+      "desc": "Cene modelov in menjalni tečaj za vrednotenje klicev.",
+      "title": "Cenik in stroški"
+    },
+    "security": {
+      "desc": "Žetoni, zgoščevanje gesel in pragi zaznavanja PII.",
+      "title": "Varnost"
+    }
+  },
+  "history": {
+    "empty": "Ni zabeleženih sprememb.",
+    "loading": "Nalaganje zgodovine ...",
+    "unknownUser": "neznan"
+  },
+  "loading": "Nalaganje ...",
+  "noResults": "Ni parametrov, ki bi ustrezali »{query}«.",
+  "readOnly": "Način ogleda — urejanje parametrov zahteva vlogo <b>it_admin</b>. Vaša vloga: <b>{role}</b>.",
+  "reload": {
+    "button": "⟳ Takoj znova naloži predpomnilnik",
+    "done": "Predpomnilnik je znova naložen.",
+    "error": "Napaka: {error}",
+    "running": "Ponovno nalaganje ..."
+  },
+  "row": {
+    "hideHistory": "skrij zgodovino",
+    "invalidJson": "Neveljaven JSON",
+    "lastChange": "zadnja sprememba: {user} · {date}",
+    "locked": "zaklenjeno",
+    "range": "razpon: {range}",
+    "save": "✓ Shrani",
+    "showHistory": "zgodovina",
+    "unit": "enota: {unit}"
+  },
+  "searchPlaceholder": "Iskanje parametra (ime, ključ, opis) ...",
+  "subtitle": "Operativna konfiguracija brez sprememb kode. Spremembe so aktivne takoj (prehod/API osvežita vrednosti v 60 s).",
+  "title": "Sistemski parametri"
+}

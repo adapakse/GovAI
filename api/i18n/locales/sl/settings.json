@@ -1,0 +1,13 @@
+{
+  "errors": {
+    "above_max": "Vrednost {value} presega največjo vrednost {max}",
+    "below_min": "Vrednost {value} je pod najmanjšo vrednostjo {min}",
+    "expected_bool": "Pričakovana je logična vrednost",
+    "expected_json": "Pričakovan je objekt ali seznam JSON",
+    "expected_string": "Pričakovano je besedilo",
+    "invalid_locale": "Nepodprt jezik. Dovoljeno: {allowed}",
+    "invalid_value": "Neveljavna vrednost: {error}",
+    "not_editable": "Parametra '{key}' ni mogoče urejati",
+    "not_found": "Parameter '{key}' ne obstaja"
+  }
+}

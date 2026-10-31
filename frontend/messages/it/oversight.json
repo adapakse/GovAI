@@ -1,0 +1,20 @@
+{
+  "allApproved": "Tutto approvato",
+  "empty": {
+    "subtitle": "Tutte le decisioni sono state esaminate.",
+    "title": "Nessuna attività in attesa"
+  },
+  "header": {
+    "subtitle": "Le decisioni degli agenti ad alto rischio richiedono approvazione · aggiornamento ogni 10 s",
+    "title": "Sorveglianza umana"
+  },
+  "info": {
+    "text": "Il tempo di revisione di ogni attività viene misurato. Un'approvazione in meno di 10 secondi dall'apertura della scheda genera un avviso e viene registrata nel log di audit (art. 14 EU AI Act).",
+    "title": "Protezione contro la sorveglianza apparente:"
+  },
+  "loading": "Caricamento delle attività di sorveglianza...",
+  "pendingCount": "{count} in attesa",
+  "refresh": "Aggiorna",
+  "review": "Esamina",
+  "timer": "{mins}m {secs}s"
+}

@@ -1,0 +1,7 @@
+{
+  "errors": {
+    "invalid_sensitivity": "max_data_sensitivity invalide. Valeurs autorisées : {allowed}",
+    "invalid_type": "provider_type inconnu. Valeurs autorisées : {allowed}",
+    "not_found": "Fournisseur de modèles introuvable"
+  }
+}

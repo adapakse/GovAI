@@ -1,0 +1,74 @@
+{
+  "high|Art. 10": {
+    "text": "Učni, validacijski in testni podatki morajo izpolnjevati merila kakovosti — ustreznost, reprezentativnost, brez napak in popolnost. Zahtevana je dokumentacija podatkovnih nizov.",
+    "title": "Zahteve glede podatkov"
+  },
+  "high|Art. 11": {
+    "text": "Pred dajanjem v uporabo je zahtevana popolna tehnična dokumentacija v skladu s Prilogo IV EU AI Act. Dokument je treba posodabljati ves življenjski cikel sistema.",
+    "title": "Tehnična dokumentacija"
+  },
+  "high|Art. 13": {
+    "text": "Sistem UI mora zagotavljati preglednost delovanja. Uporabniki morajo biti obveščeni o interakciji s sistemom UI in razumeti njegovo delovanje v obsegu, potrebnem za nadzor.",
+    "title": "Preglednost in zagotavljanje informacij"
+  },
+  "high|Art. 14": {
+    "text": "Uvedeni ukrepi, ki človeku omogočajo razumevanje, spremljanje in posredovanje v delovanje sistema UI. Možnost ustavitve ali razveljavitve vsake odločitve sistema.",
+    "title": "Človeški nadzor"
+  },
+  "high|Art. 15": {
+    "text": "Sistem mora ves življenjski cikel dosegati ustrezno raven točnosti. Zahtevani so testi odpornosti na napake, napade in nepričakovane vhodne podatke.",
+    "title": "Točnost in robustnost"
+  },
+  "high|Art. 17": {
+    "text": "Ponudnik vzpostavi sistem upravljanja kakovosti, ki zajema politike, postopke in navodila za zagotavljanje skladnosti z EU AI Act.",
+    "title": "Sistem upravljanja kakovosti"
+  },
+  "high|Art. 26 ust. 2": {
+    "text": "Uvajalec visokotveganega sistema UI mora človeški nadzor dodeliti osebam, ki imajo potrebne kompetence, usposabljanje, pooblastila in podporo za njegovo izvajanje.",
+    "title": "Človeški nadzor, dodeljen usposobljeni osebi"
+  },
+  "high|Art. 26 ust. 5": {
+    "text": "Uvajalec mora spremljati delovanje sistema v skladu z navodili za uporabo ter obveščati ponudnika in — kadar je ustrezno — organ za nadzor trga o ugotovljenem tveganju ali resnem incidentu.",
+    "title": "Spremljanje delovanja in obveščanje ponudnika"
+  },
+  "high|Art. 26 ust. 6": {
+    "text": "Uvajalec mora samodejno ustvarjene dnevniške zapise sistema hraniti obdobje, ki ustreza namenu sistema, in sicer najmanj 6 mesecev, razen če pravo Unije ali nacionalno pravo ne določa drugače.",
+    "title": "Hramba samodejno ustvarjenih dnevniških zapisov"
+  },
+  "high|Art. 26 ust. 8": {
+    "text": "Uvajalec, ki je javni organ, mora izpolnjevati obveznosti registracije iz člena 49 in pred začetkom uporabe sistema preveriti, ali je ta registriran v podatkovni zbirki EU.",
+    "title": "Preverjanje registracije v podatkovni zbirki EU"
+  },
+  "high|Art. 27": {
+    "text": "Pred uvedbo visokotveganega sistema iz točke 5(b)/(c) Priloge III (ocena kreditne sposobnosti, zavarovalno tveganje) ali kadar sistem uvaja javni subjekt/zasebni subjekt, ki opravlja javne storitve, mora uvajalec izvesti oceno učinka na temeljne pravice: opis postopkov uporabe, obdobje in pogostost uporabe, kategorije prizadetih oseb, tveganja škode za te osebe ter ukrepe človeškega nadzora in pritožbene mehanizme.",
+    "title": "Ocena učinka na temeljne pravice (FRIA)"
+  },
+  "high|Art. 43": {
+    "text": "Za visokotvegane sisteme iz Priloge III je pred dajanjem v uporabo treba izvesti ugotavljanje skladnosti (z notranjo kontrolo ali prek priglašenega organa).",
+    "title": "Ugotavljanje skladnosti"
+  },
+  "high|Art. 49": {
+    "text": "Visokotvegani sistemi morajo biti pred dajanjem v uporabo registrirani v podatkovni zbirki EU za sisteme UI.",
+    "title": "Registracija v podatkovni zbirki EU"
+  },
+  "high|Art. 9": {
+    "text": "Visokotvegani agent zahteva dokumentiran sistem obvladovanja tveganja skozi ves življenjski cikel. Zahtevani so prepoznavanje, analiza in ocena tveganj ter uvedba ukrepov za njihovo zmanjšanje.",
+    "title": "Sistem obvladovanja tveganja"
+  },
+  "limited|Art. 50 ust. 1": {
+    "text": "Sistemi, ki so v interakciji z ljudmi, morajo uporabnika jasno, razločno in pravočasno obvestiti o avtomatizirani naravi sistema, razen če je to očitno.",
+    "title": "Obveznost obveščanja o UI"
+  },
+  "limited|Art. 50 ust. 4": {
+    "text": "Besedilne, zvočne in video vsebine, ki jih ustvari UI, morajo biti v strojno berljivi obliki označene kot umetno ustvarjene.",
+    "title": "Označevanje vsebin, ustvarjenih z UI"
+  },
+  "minimal|Preambuła 46": {
+    "text": "Za sisteme z minimalnim tveganjem ni obveznih pravnih zahtev. Priporočena je uporaba prostovoljnih kodeksov ravnanja in splošnih načel zaupanja vredne UI (preglednost, pravičnost, varnost).",
+    "title": "Prostovoljni kodeksi ravnanja"
+  },
+  "unacceptable|Art. 5": {
+    "text": "Prakse UI iz člena 5 so v EU absolutno prepovedane. Treba je preveriti, da sistem ne spada v nobeno od prepovedanih kategorij (subliminalna manipulacija, družbeno točkovanje, biometrična identifikacija v realnem času).",
+    "title": "Absolutna prepoved uporabe"
+  }
+}

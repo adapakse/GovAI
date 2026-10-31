@@ -1,0 +1,29 @@
+{
+  "cta": {
+    "bookDemo": "Programați un demo"
+  },
+  "footer": {
+    "home": "Pagina principală",
+    "owner": "Proprietarul platformei:",
+    "privacy": "Confidențialitate",
+    "rights": "© 2026 GovAI. Toate drepturile rezervate.",
+    "terms": "Termeni și condiții"
+  },
+  "lang": {
+    "label": "Limba",
+    "picker": "Limba site-ului"
+  },
+  "nav": {
+    "act": "AI Act",
+    "backHome": "← Pagina principală",
+    "blog": "Blog",
+    "faq": "Întrebări frecvente",
+    "login": "Autentificare",
+    "menu": "Meniu",
+    "platform": "Platforma",
+    "pricing": "Prețuri"
+  },
+  "theme": {
+    "toggle": "Schimbați tema"
+  }
+}

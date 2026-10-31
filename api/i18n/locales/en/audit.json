@@ -1,0 +1,5 @@
+{
+  "errors": {
+    "call_not_found": "Call '{call_id}' not found in the audit log"
+  }
+}

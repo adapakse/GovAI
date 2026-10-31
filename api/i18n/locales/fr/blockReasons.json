@@ -1,0 +1,8 @@
+{
+  "agent_inactive": "L’agent a le statut '{status}' — appel rejeté avant traitement",
+  "llm_error": "Erreur du modèle de langage ({provider}) : {error}",
+  "no_eligible_provider": "Aucun fournisseur de modèles n’est en mesure de traiter le modèle '{model}' de l’agent au niveau de sensibilité des données requis '{sensitivity}'. Soit aucun fournisseur actif ne prend en charge ce niveau de sensibilité, soit aucun des fournisseurs éligibles ne propose ce modèle (la passerelle ne le remplace volontairement pas en silence par un autre modèle). Veuillez contacter l’administrateur — activez un fournisseur prenant en charge ce modèle et ce niveau de sensibilité, ou abaissez la sensibilité des données de la requête.",
+  "policy_custom": "{reason}",
+  "policy_default": "Bloqué par la politique de sécurité",
+  "unknown_agent": "agent_id inconnu : {agent_id} — absent du registre GovAI"
+}

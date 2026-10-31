@@ -1,0 +1,13 @@
+{
+  "agentInactive": "Agent '{agent}' ima status '{status}' in ne more izvajati klicev.",
+  "agentNotRegistered": "Agent '{agent_id}' ni registriran v GovAI. Pred uporabo varnostnega prehoda agenta registrirajte.",
+  "auth": {
+    "invalidApiKey": "Ključ API je neveljaven ali je potekel",
+    "invalidToken": "Žeton je neveljaven ali je potekel",
+    "missing": "Manjka avtorizacija",
+    "missingDetail": "Zahtevana je glava Authorization: Bearer <token> ali X-API-Key: <key>"
+  },
+  "llmError": "Napaka jezikovnega modela: {error}",
+  "missingAgentId": "Manjka glava X-Agent-ID",
+  "missingMessages": "V zahtevi ni sporočil"
+}

@@ -1,0 +1,7 @@
+{
+  "errors": {
+    "invalid_sensitivity": "Neveljaven max_data_sensitivity. Dovoljeno: {allowed}",
+    "invalid_type": "Neznan provider_type. Dovoljeno: {allowed}",
+    "not_found": "Dobavitelja ni bilo mogoče najti"
+  }
+}

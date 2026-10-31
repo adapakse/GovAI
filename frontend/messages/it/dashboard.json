@@ -1,0 +1,48 @@
+{
+  "alerts": {
+    "empty": "Nessun avviso in questo periodo",
+    "title": "Ultimi eventi di sicurezza",
+    "viewAudit": "Vai al log →"
+  },
+  "byAgent": {
+    "title": "Chiamate per agente"
+  },
+  "chart": {
+    "allowed": "Consentite",
+    "blocked": "Bloccate",
+    "noData": "Nessun dato",
+    "total": "Totale"
+  },
+  "cost": {
+    "byAgent": "Costo per agente (7 giorni)",
+    "note": "solo costo dei token Anthropic",
+    "total": "Costo totale (7 giorni)"
+  },
+  "header": {
+    "subtitle": "Ultimi 7 giorni · aggiornamento ogni 30 s",
+    "title": "Dashboard operativa"
+  },
+  "kpi": {
+    "activeAgents": "Agenti attivi",
+    "activeAgentsSub": "{count} ad alto rischio",
+    "blocked": "Blocchi",
+    "blockedSub": "{rate}% di tutte le chiamate",
+    "calls": "Chiamate (7 giorni)",
+    "callsSub": "latenza media {latency} ms",
+    "infraErrors": "Errori di infrastruttura",
+    "infraErrorsSub": "provider assente / errore LLM",
+    "pendingOversight": "In attesa di sorveglianza",
+    "pendingOversightSub": "richiede la decisione di un revisore"
+  },
+  "loadError": "Errore nel caricamento dei dati.",
+  "loading": "Caricamento della dashboard...",
+  "stats": {
+    "oversight": "Da sorvegliare",
+    "pii": "Rilevamenti di dati personali"
+  },
+  "timeline": {
+    "empty": "Nessun dato nelle ultime 24 h",
+    "refresh": "aggiornamento ogni 30 s",
+    "title": "Chiamate per ora (ultime 24 h)"
+  }
+}

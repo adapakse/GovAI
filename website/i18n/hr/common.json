@@ -1,0 +1,29 @@
+{
+  "cta": {
+    "bookDemo": "Dogovorite demo"
+  },
+  "footer": {
+    "home": "Početna stranica",
+    "owner": "Vlasnik platforme:",
+    "privacy": "Privatnost",
+    "rights": "© 2026 GovAI. Sva prava pridržana.",
+    "terms": "Uvjeti korištenja"
+  },
+  "lang": {
+    "label": "Jezik",
+    "picker": "Jezik stranice"
+  },
+  "nav": {
+    "act": "AI Act",
+    "backHome": "← Početna stranica",
+    "blog": "Blog",
+    "faq": "Česta pitanja",
+    "login": "Prijava",
+    "menu": "Izbornik",
+    "platform": "Platforma",
+    "pricing": "Cjenik"
+  },
+  "theme": {
+    "toggle": "Promijeni temu"
+  }
+}

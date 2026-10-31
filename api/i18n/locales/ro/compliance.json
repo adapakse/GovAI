@@ -1,0 +1,6 @@
+{
+  "errors": {
+    "invalid_risk_level": "risk_level trebuie să fie: minimal, limited, high sau unacceptable",
+    "requirement_not_found": "Cerința '{req_id}' nu există"
+  }
+}

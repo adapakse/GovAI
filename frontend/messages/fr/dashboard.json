@@ -1,0 +1,48 @@
+{
+  "alerts": {
+    "empty": "Aucune alerte sur cette période",
+    "title": "Derniers événements de sécurité",
+    "viewAudit": "Voir le journal →"
+  },
+  "byAgent": {
+    "title": "Appels par agent"
+  },
+  "chart": {
+    "allowed": "Autorisés",
+    "blocked": "Bloqués",
+    "noData": "Aucune donnée",
+    "total": "Total"
+  },
+  "cost": {
+    "byAgent": "Coût par agent (7 jours)",
+    "note": "uniquement le coût des jetons Anthropic",
+    "total": "Coût total (7 jours)"
+  },
+  "header": {
+    "subtitle": "7 derniers jours · actualisé toutes les 30 s",
+    "title": "Tableau de bord opérationnel"
+  },
+  "kpi": {
+    "activeAgents": "Agents actifs",
+    "activeAgentsSub": "{count} à haut risque",
+    "blocked": "Blocages",
+    "blockedSub": "{rate} % de tous les appels",
+    "calls": "Appels (7 jours)",
+    "callsSub": "latence moy. {latency} ms",
+    "infraErrors": "Erreurs d’infrastructure",
+    "infraErrorsSub": "aucun fournisseur de modèles / erreur LLM",
+    "pendingOversight": "En attente de contrôle",
+    "pendingOversightSub": "décision d’un examinateur requise"
+  },
+  "loadError": "Erreur lors du chargement des données.",
+  "loading": "Chargement du tableau de bord...",
+  "stats": {
+    "oversight": "Pour contrôle",
+    "pii": "Détections de DCP"
+  },
+  "timeline": {
+    "empty": "Aucune donnée sur les dernières 24 h",
+    "refresh": "actualisé toutes les 30 s",
+    "title": "Appels par heure (dernières 24 h)"
+  }
+}

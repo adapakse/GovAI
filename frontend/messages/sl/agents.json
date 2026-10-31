@@ -1,0 +1,268 @@
+{
+  "detail": {
+    "breadcrumb": "Agenti",
+    "compliance": {
+      "automatic": "samodejno",
+      "complianceOfficer": "Pooblaščenec za skladnost",
+      "dataRetention": "Hramba podatkov",
+      "dataRetentionValue": "{days, plural, one {# dan} two {# dneva} few {# dni} other {# dni}}",
+      "deadline": "Rok: {days, plural, one {# dan} two {# dneva} few {# dni} other {# dni}}",
+      "fillDeclaration": "→ Izpolnite samoizjavo na zavihku Register.",
+      "geographicScope": "Geografsko področje",
+      "immediately": "TAKOJ",
+      "integrationPoints": "Integracijske točke",
+      "intendedPurpose": "Namen in obseg sistema",
+      "intendedUsers": "Ciljni uporabniki",
+      "missingLegalBasis": "manjka pravna podlaga",
+      "notFilled": "Ni izpolnjeno — glejte zavihek Register",
+      "note": "Opomba: {notes}",
+      "personalData": "Obdelava osebnih podatkov",
+      "personalDataNo": "Ne",
+      "personalDataYes": "Da — ",
+      "requirementsHeading": "Zahteve EU AI Act ({met}/{total} izpolnjenih)",
+      "systemProfile": "Profil sistema",
+      "technicalContact": "Tehnični kontakt"
+    },
+    "generateReport": "Ustvari poročilo PDF →",
+    "loading": "Nalaganje ...",
+    "oversightRequired": "Nadzor<br></br>potreben",
+    "profile": {
+      "budgetPerMonth": "Proračun / mes.",
+      "budgetValue": "{amount} EUR",
+      "lastReview": "Zadnji pregled: ",
+      "legalBasis": "Pravna podlaga: ",
+      "model": "Model",
+      "nextReview": "Naslednji: ",
+      "owner": "Lastnik",
+      "team": "Ekipa"
+    },
+    "stats": {
+      "avgLatency": "Povpr. zakasnitev",
+      "blocked": "Blokade",
+      "calls": "Klici",
+      "oversight": "Za nadzor",
+      "pii": "Z osebnimi podatki",
+      "piiDetected": "Zaznani osebni podatki",
+      "totalCost": "Skupni strošek"
+    },
+    "tabs": {
+      "compliance": "Skladnost z AI Act",
+      "registry": "Register",
+      "registryWithCount": "Register ({count} prijavljenih)",
+      "stats": "Statistika 30 dni"
+    }
+  },
+  "form": {
+    "cancel": "Prekliči",
+    "done": "Končano",
+    "errors": {
+      "register": "Napaka pri registraciji"
+    },
+    "fields": {
+      "description": "Opis agenta (uporablja se za razvrstitev po AI Act)",
+      "descriptionPlaceholder": "Natančno opišite, kaj agent počne, katere odločitve sprejema in katere podatke obdeluje ...",
+      "model": "Model",
+      "monthlyBudget": "Mesečni proračun (EUR)",
+      "name": "Ime agenta",
+      "namePlaceholder": "npr. Agent za podporo strankam",
+      "owner": "Lastnik",
+      "ownerEmail": "E-pošta lastnika",
+      "ownerEmailPlaceholder": "j.kowalski@firma.pl",
+      "ownerPlaceholder": "Janez Novak",
+      "team": "Ekipa",
+      "teamPlaceholder": "npr. Podpora strankam"
+    },
+    "result": {
+      "annexIIICategory": "Kategorija iz Priloge III:",
+      "no": "NE",
+      "oversightRequired": "Potreben nadzor:",
+      "riskLevel": "Stopnja tveganja:",
+      "yes": "DA"
+    },
+    "submit": "Registriraj + razvrsti",
+    "submitting": "Razvrščanje ...",
+    "subtitle": "Claude bo samodejno razvrstil tveganje po AI Act",
+    "success": "Agent je bil uspešno registriran!",
+    "title": "Registracija agenta UI"
+  },
+  "list": {
+    "actions": {
+      "activate": "Aktiviraj",
+      "details": "Podrobnosti",
+      "suspend": "Začasno ustavi"
+    },
+    "annexIII": "Priloga III: {category}",
+    "columns": {
+      "actions": "Dejanja",
+      "model": "Model",
+      "name": "Ime",
+      "oversight": "Nadzor",
+      "owner": "Lastnik",
+      "risk": "Tveganje",
+      "status": "Status"
+    },
+    "count": "{count, plural, one {# agent} two {# agenta} few {# agenti} other {# agentov}}",
+    "countFiltered": "{shown} od {total} agentov",
+    "empty": "Ni agentov",
+    "filters": {
+      "allStatuses": "Vsi statusi"
+    },
+    "loading": "Nalaganje ...",
+    "noMatches": "Ni agentov, ki bi ustrezali »{query}«",
+    "oversightRequired": "● Potreben",
+    "registerButton": "+ Registriraj agenta",
+    "searchPlaceholder": "Iskanje — ime, model, dobavitelj, lastnik, ekipa ...",
+    "title": "Register agentov"
+  },
+  "options": {
+    "autoCheck": {
+      "art14_human_oversight": "preverjeno iz polja »Zahteva nadzor«",
+      "art26_2_human_oversight": "preverjeno iz polja »Zahteva nadzor«",
+      "art26_6_log_retention": "arhitekturno jamstvo — revizijski dnevnik brez mehanizma za brisanje"
+    },
+    "declStatus": {
+      "na": "N/A — se ne uporablja",
+      "no": "✗ Ne — vrzel",
+      "none": "— ni ocenjeno —",
+      "partial": "◑ Delno",
+      "yes": "✓ Da — izpolnjeno"
+    },
+    "gdprBasis": {
+      "consent": "Privolitev posameznika (člen 6(1)(a))",
+      "contract": "Izvajanje pogodbe (člen 6(1)(b))",
+      "legal_obligation": "Zakonska obveznost (člen 6(1)(c))",
+      "legitimate_interest": "Zakoniti interes (točka (f))",
+      "public_task": "Naloga v javnem interesu (člen 6(1)(e))",
+      "vital_interests": "Zaščita življenjskih interesov (točka (d))"
+    },
+    "requirementStatus": {
+      "na": "Se ne uporablja",
+      "no": "Vrzel",
+      "partial": "Delno",
+      "undeclared": "Ni ocenjeno",
+      "yes": "Izpolnjeno"
+    },
+    "riskFilter": {
+      "all": "Vse stopnje tveganja",
+      "high": "Visoko tveganje",
+      "limited": "Omejeno tveganje",
+      "minimal": "Minimalno tveganje",
+      "unacceptable": "Nesprejemljivo tveganje"
+    },
+    "severity": {
+      "critical": "Kritična",
+      "major": "Resna",
+      "minor": "Manjša"
+    }
+  },
+  "registry": {
+    "autoStatusGap": "✗ Vrzel",
+    "autoStatusMet": "✓ Izpolnjeno",
+    "automatic": "samodejno",
+    "declarationsIntro": "Ocena vsake zahteve s strani odgovorne osebe — vidna v poročilih PDF in oceni skladnosti. Seznam izhaja iz kataloga zahtev EU AI Act (Pravilniki → Zahteve EU AI Act) za stopnjo tveganja »{risk}«.",
+    "fields": {
+      "complianceOfficer": "Pooblaščenec za skladnost",
+      "costAlertThreshold": "Prag opozorila o proračunu (EUR)",
+      "costAlertThresholdPlaceholder": "npr. 160 = opozorilo pri 80 %",
+      "dataRetentionDays": "Hramba podatkov (dni)",
+      "dataRetentionDaysPlaceholder": "npr. 365",
+      "gdprLegalBasis": "Pravna podlaga po GDPR",
+      "geographicScope": "Geografsko področje",
+      "geographicScopePlaceholder": "npr. SI, EU",
+      "inputModalities": "Vhodne modalnosti (seznam)",
+      "integrationPoints": "Integracijske točke (vsaka v novi vrstici)",
+      "integrationPointsPlaceholder": "Core Banking System (CBS)\nCRM Salesforce\nBaza BIK",
+      "intendedPurpose": "Namen in obseg sistema (predvideni namen)",
+      "intendedPurposePlaceholder": "Kratek opis, čemu sistem služi in v kakšnem kontekstu se uporablja ...",
+      "intendedUsers": "Ciljni uporabniki",
+      "intendedUsersPlaceholder": "npr. kreditni analitiki, kadrovski delavci",
+      "lastReviewedAt": "Zadnji pregled skladnosti",
+      "modelVersion": "Različica modela",
+      "modelVersionPlaceholder": "npr. claude-haiku-4-5-20251001",
+      "monthlyBudget": "Mesečni proračun (EUR)",
+      "nextReviewDate": "Načrtovani naslednji pregled",
+      "outputModalities": "Izhodne modalnosti (seznam)",
+      "processesPersonalData": "Sistem obdeluje osebne podatke",
+      "selectPlaceholder": "— izberite —",
+      "technicalContact": "Tehnični kontakt",
+      "version": "Različica sistema"
+    },
+    "lastUpdated": "Zadnja posodobitev: {date}",
+    "loadingRequirements": "Nalaganje zahtev ...",
+    "noRequirements": "V katalogu ni opredeljenih zahtev za stopnjo tveganja »{risk}«.",
+    "notSelfDeclarable": "Ni predmet samoizjave — zahteva dejansko odpravo težave.",
+    "notePlaceholder": "Opomba (neobvezno) — npr. 'Dokumentacija v Confluence, prostor AI-GOV'",
+    "save": "Shrani register",
+    "saved": "✓ Uspešno shranjeno",
+    "saving": "Shranjevanje ...",
+    "sections": {
+      "contactsBudget": "Kontakti in proračun",
+      "declarations": "Izjave o skladnosti z EU AI Act",
+      "personalData": "Osebni podatki in GDPR",
+      "technical": "Tehnični podatki",
+      "versionReviews": "Različica in pregledi"
+    }
+  },
+  "report": {
+    "annexIII": "Priloga III: {category}",
+    "backToAgent": "← Nazaj na agenta",
+    "breadcrumbAgents": "Agenti",
+    "breadcrumbReport": "Poročilo AI Act",
+    "columns": {
+      "article": "Člen",
+      "deadline": "Rok",
+      "requirement": "Zahteva",
+      "severity": "Resnost"
+    },
+    "deadlineDays": "{days, plural, one {# dan} two {# dneva} few {# dni} other {# dni}}",
+    "downloadPdf": "Prenesi PDF",
+    "error": "Napaka pri ustvarjanju poročila: {error}",
+    "errors": {
+      "sessionExpired": "Seja je potekla"
+    },
+    "footer": "Poročilo je ustvaril GovAI v0.2.0 · EU AI Act (Uredba (EU) 2024/1689) · Dokument je informativne narave. Ne predstavlja pravnega nasveta.",
+    "generatingPdf": "Ustvarjanje PDF ...",
+    "header": "GovAI · Poročilo o skladnosti z EU AI Act · Uredba (EU) 2024/1689",
+    "immediately": "TAKOJ",
+    "loading": "Ustvarjanje poročila o skladnosti z AI Act ...",
+    "meta": {
+      "generatedAt": "Ustvarjeno: ",
+      "model": "Model: ",
+      "owner": "Lastnik: ",
+      "team": "Ekipa: "
+    },
+    "noGaps": "Ni ugotovljenih vrzeli — zahteve so v izjavah o skladnosti (zavihek Register) potrjene kot izpolnjene ali se ne uporabljajo.",
+    "oversightRequired": "◎ Potreben nadzor",
+    "pdfFilename": "ai-act-porocilo-{id}.pdf",
+    "print": "Natisni",
+    "profile": {
+      "annexIIICategory": "Kategorija Pril. III",
+      "annexIIINone": "Ni",
+      "budgetPerMonth": "Proračun / mes.",
+      "budgetValue": "{amount} EUR",
+      "humanOversight": "Človeški nadzor",
+      "legalBasis": "Pravna podlaga in razvrstitev",
+      "model": "Model UI",
+      "oversightNotRequired": "Ni potreben",
+      "oversightRequired": "POTREBEN",
+      "ownerEmail": "E-pošta lastnika",
+      "status": "Status"
+    },
+    "risk": "Tveganje: {risk}",
+    "sections": {
+      "compliance": "4. Ocena skladnosti z EU AI Act",
+      "profile": "2. Profil sistema UI",
+      "stats": "3. Operativna statistika (30 dni)",
+      "summary": "1. Povzetek za vodstvo"
+    },
+    "stats": {
+      "apiCost": "Strošek API",
+      "avgLatency": "Povpr. zakasnitev",
+      "blocked": "Blokade",
+      "blockedValue": "{count} ({rate} %)",
+      "calls": "Klici",
+      "oversight": "Za nadzor",
+      "pii": "Z osebnimi podatki"
+    }
+  }
+}

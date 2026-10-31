@@ -1,0 +1,20 @@
+{
+  "allApproved": "All approved",
+  "empty": {
+    "subtitle": "All decisions have been reviewed.",
+    "title": "No pending tasks"
+  },
+  "header": {
+    "subtitle": "Decisions of high-risk agents require approval · refreshed every 10s",
+    "title": "Human Oversight"
+  },
+  "info": {
+    "text": "The review time of each task is measured. Approval in less than 10 seconds after opening the card triggers an alert and is recorded in the audit log (Art. 14 EU AI Act).",
+    "title": "Protection against rubber-stamp oversight:"
+  },
+  "loading": "Loading oversight tasks...",
+  "pendingCount": "{count} pending",
+  "refresh": "Refresh",
+  "review": "Review",
+  "timer": "{mins}m {secs}s"
+}

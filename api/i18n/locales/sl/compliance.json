@@ -1,0 +1,6 @@
+{
+  "errors": {
+    "invalid_risk_level": "risk_level mora biti: minimal, limited, high ali unacceptable",
+    "requirement_not_found": "Zahteva '{req_id}' ne obstaja"
+  }
+}

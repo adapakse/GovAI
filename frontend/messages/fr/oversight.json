@@ -1,0 +1,20 @@
+{
+  "allApproved": "Tout est approuvé",
+  "empty": {
+    "subtitle": "Toutes les décisions ont été traitées.",
+    "title": "Aucune tâche en attente"
+  },
+  "header": {
+    "subtitle": "Les décisions des agents à haut risque doivent être approuvées · actualisé toutes les 10 s",
+    "title": "Contrôle humain"
+  },
+  "info": {
+    "text": "La durée d’examen de chaque tâche est mesurée. Une approbation en moins de 10 secondes après l’ouverture de la fiche déclenche une alerte et est consignée dans le journal d’audit (art. 14 de l’EU AI Act).",
+    "title": "Protection contre le contrôle de pure forme :"
+  },
+  "loading": "Chargement des tâches de contrôle...",
+  "pendingCount": "{count} en attente",
+  "refresh": "Actualiser",
+  "review": "Examiner",
+  "timer": "{mins} min {secs} s"
+}

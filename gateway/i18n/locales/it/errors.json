@@ -1,0 +1,13 @@
+{
+  "agentInactive": "L'agente '{agent}' ha lo stato '{status}' e non può effettuare chiamate.",
+  "agentNotRegistered": "L'agente '{agent_id}' non è registrato in GovAI. Registri l'agente prima di utilizzare il gateway.",
+  "auth": {
+    "invalidApiKey": "Chiave API non valida o scaduta",
+    "invalidToken": "Token non valido o scaduto",
+    "missing": "Autorizzazione mancante",
+    "missingDetail": "È richiesta l'intestazione Authorization: Bearer <token> oppure X-API-Key: <key>"
+  },
+  "llmError": "Errore del modello linguistico: {error}",
+  "missingAgentId": "Intestazione X-Agent-ID mancante",
+  "missingMessages": "Nessun messaggio nella richiesta"
+}

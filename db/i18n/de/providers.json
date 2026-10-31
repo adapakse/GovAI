@@ -1,0 +1,17 @@
+{
+  "Anthropic Claude (Cloud)": {
+    "notes": "Externer Modellanbieter. Erfordert einen AVV (DPA). Nicht für Daten verwenden, die dem Anwaltsgeheimnis unterliegen."
+  },
+  "Bielik On-Prem (Local)": {
+    "notes": "Lokales Modell — für Daten unter Anwaltsgeheimnis geeignet. Nach dem Start des Ollama-Servers aktivieren."
+  },
+  "DeepSeek (Cloud)": {
+    "notes": "Server außerhalb der EU (China). Ausschließlich öffentliche Daten — Verarbeitung von Kundendaten untersagt."
+  },
+  "Google Gemini (Cloud)": {
+    "notes": "Externer Modellanbieter mit EU Data Boundary. Erfordert einen AVV (DPA). Nicht für privilegierte Daten verwenden."
+  },
+  "OpenAI (Cloud)": {
+    "notes": "Externer Modellanbieter. Erfordert einen AVV (DPA Enterprise). Nicht für vertrauliche Daten verwenden."
+  }
+}

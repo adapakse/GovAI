@@ -1,0 +1,26 @@
+{
+  "logout": "Cerrar sesión",
+  "meta": {
+    "description": "Cumplimiento del EU AI Act | Pasarela de seguridad | Supervisión humana",
+    "title": "GovAI — Plataforma de gestión de agentes de IA"
+  },
+  "nav": {
+    "admin": "Administración",
+    "agents": "Agentes",
+    "audit": "Registro",
+    "dashboard": "Panel",
+    "demo": "Simulador",
+    "oversight": "Supervisión",
+    "policies": "Políticas",
+    "providers": "Proveedores",
+    "reports": "Informes",
+    "settings": "Parámetros"
+  },
+  "roles": {
+    "associate": "Asociado",
+    "compliance_officer": "Responsable de cumplimiento",
+    "it_admin": "Administrador de TI",
+    "partner": "Socio",
+    "reviewer": "Revisor"
+  }
+}

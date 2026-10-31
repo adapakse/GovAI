@@ -1,0 +1,139 @@
+{
+  "agentStatus": {
+    "active": "Activo",
+    "quarantined": "En cuarentena",
+    "retired": "Retirado",
+    "suspended": "Suspendido"
+  },
+  "fallbackNarrative": "Durante el período analizado de {days} días, la organización explotó {agents} agentes de IA, de los cuales {high} están clasificados como de alto riesgo según el EU AI Act. Se registraron {total} llamadas, de las cuales {blocked} ({block_pct}%) fueron bloqueadas por el motor de políticas de seguridad. Se detectaron {pii} incidentes relacionados con datos personales. El coste total de la API ascendió a {cost} EUR. El análisis detallado de la conformidad con el EU AI Act requiere la verificación por la función de cumplimiento competente.",
+  "fileName": "govai-informe-enterprise-{date}.pdf",
+  "pdf": {
+    "activity": {
+      "topByBlocks": "Agentes con más bloqueos:",
+      "topByCalls": "Agentes con más llamadas:"
+    },
+    "alerts": {
+      "budgetExceeded": "⚠ Presupuesto superado: {name} — {actual} EUR ({pct}% del umbral de {threshold} EUR)",
+      "overdueReview": "⚠ Revisión de cumplimiento atrasada: {name} (plazo: {date})"
+    },
+    "columns": {
+      "agent": "Agente",
+      "avgLatency": "Latencia media",
+      "blockRate": "% de bloqueos",
+      "blocks": "Bloqueos",
+      "calls": "Llamadas",
+      "costEur": "Coste EUR",
+      "oversight": "Supervisión",
+      "pii": "Datos pers.",
+      "review": "Revisión",
+      "risk": "Riesgo",
+      "status": "Estado"
+    },
+    "cover": {
+      "agents": "Agentes de IA",
+      "agentsActive": "{n} activos",
+      "apiCost": "Coste de la API",
+      "blocks": "Bloqueos",
+      "blocksShare": "{pct}% del total",
+      "calls": "Llamadas",
+      "lastDays": "últimos {days} días",
+      "pii": "Incidentes de datos personales",
+      "piiNote": "datos personales detectados",
+      "totalDays": "{days} días en total"
+    },
+    "declarationsLegend": "✓ Cumplido · ◑ Parcialmente · ✗ Carencia · N/A No aplicable · — Sin evaluar",
+    "generated": "Generado: {date} UTC",
+    "incidents": {
+      "approved": "Aprobadas",
+      "avgReviewTime": "Tiempo medio de revisión",
+      "blockCount": "Número de bloqueos",
+      "escalated": "Escaladas",
+      "incidentCount": "Número de incidentes",
+      "noPii": "No se han detectado incidentes de datos personales en el período analizado.",
+      "oversightHistory": "Historial de la cola de supervisión humana (art. 14):",
+      "pending": "Pendientes",
+      "piiCategories": "Categorías de datos personales detectadas:",
+      "piiCategory": "Categoría de datos personales",
+      "policyCode": "Política (código)",
+      "policyHits": "Activaciones de reglas de bloqueo:",
+      "rejected": "Rechazadas",
+      "tasksTotal": "Total de tareas"
+    },
+    "kpi": {
+      "apiCost": "Coste total de la API",
+      "apiCostNote": "coste estimado de los modelos LLM",
+      "avgLatency": "Latencia media",
+      "avgLatencyNote": "de extremo a extremo",
+      "avgReview": "tiempo medio de revisión: {min} min",
+      "comment": "Comentario",
+      "maxLatency": "Latencia máx.",
+      "maxLatencyNote": "llamada más lenta",
+      "metric": "Métrica",
+      "oversight": "Remitidas a supervisión",
+      "oversightNote": "política A-001 (art. 14)",
+      "oversightQueue": "Cola de supervisión",
+      "oversightQueueValue": "{total} tareas ({pending} pendientes)",
+      "pii": "Incidentes de datos personales",
+      "piiNote": "{n} entidades en total",
+      "policyBlocks": "Bloqueos por políticas",
+      "policyBlocksNote": "G-001 financieras, G-002 prompt injection",
+      "tokensIn": "Tokens de entrada",
+      "tokensInNote": "prompt",
+      "tokensOut": "Tokens de salida",
+      "tokensOutNote": "completion",
+      "totalCalls": "Total de llamadas",
+      "totalCallsNote": "todos los agentes",
+      "value": "Valor"
+    },
+    "no": "no",
+    "noData": "sin datos",
+    "period": "Período de análisis: últimos {days} días",
+    "recommendations": {
+      "basis": "Fundamento",
+      "priority": "Prioridad",
+      "recommendation": "Recomendación"
+    },
+    "risk": {
+      "agentCount": "Número de agentes",
+      "agents": "Agentes",
+      "level": "Nivel de riesgo",
+      "requiresOversight": "Requiere supervisión"
+    },
+    "riskShort": {
+      "high": "ALT",
+      "limited": "LIM",
+      "minimal": "MÍN",
+      "unacceptable": "INA"
+    },
+    "sections": {
+      "activity": "5. Análisis de la actividad de los agentes",
+      "declarations": "7. Declaraciones de conformidad con el EU AI Act — agentes de alto riesgo",
+      "incidents": "6. Incidentes de seguridad",
+      "kpi": "3. KPI operativos (últimos {days} días)",
+      "recommendations": "{n}. Recomendaciones prioritarias",
+      "registry": "4. Registro de agentes de IA",
+      "riskDistribution": "2. Distribución del riesgo según el EU AI Act",
+      "summary": "1. Resumen para la Dirección"
+    },
+    "title": "Informe corporativo de gobernanza de la IA",
+    "yes": "SÍ"
+  },
+  "priority": {
+    "critical": "Crítica",
+    "high": "Alta",
+    "medium": "Media"
+  },
+  "recommendations": {
+    "basisBestPractices": "Buenas prácticas",
+    "basisCostControl": "Control de costes",
+    "basisInternalPolicy": "Política interna",
+    "budgetReview": "Revisar los presupuestos de los agentes que superan los umbrales de alerta: {names}.",
+    "highBlockRate": "La tasa de bloqueos es del {pct}% — revisar las reglas de las políticas y ajustar las palabras clave.",
+    "implementOversight": "Implantar procedimientos de supervisión humana para: {names}.",
+    "keepMonitoring": "Continuar la vigilancia de los agentes. Realizar una revisión trimestral de cumplimiento.",
+    "missingTechnicalDocs": "Falta la documentación técnica (art. 11) para: {names}. Elaborarla en un plazo de 60 días.",
+    "overdueReviews": "Realizar las revisiones de cumplimiento atrasadas para: {names}.",
+    "pendingOversight": "Resolver las {n} tareas pendientes de la cola de supervisión.",
+    "suspendUnacceptable": "Suspender inmediatamente los agentes clasificados como de riesgo INACEPTABLE. Consultar con un asesor jurídico."
+  }
+}

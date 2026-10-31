@@ -1,0 +1,67 @@
+{
+  "categories": {
+    "budget": {
+      "desc": "Standardlimits und Kostenwarnschwellen für neue KI-Agenten.",
+      "title": "Budgets"
+    },
+    "compliance": {
+      "desc": "Fristen für Konformitätslücken und Limits für Berichtsnarrative.",
+      "title": "Compliance"
+    },
+    "i18n": {
+      "desc": "Standardsprache der Benutzeroberfläche, der Berichte und der Meldungen der Instanz.",
+      "title": "Sprache"
+    },
+    "intervals": {
+      "desc": "Häufigkeit von Hintergrundaufgaben (Neuladen der Richtlinien, TTL-Monitor).",
+      "title": "Intervalle"
+    },
+    "models": {
+      "desc": "Standardmodelle und Parameter für LLM-Aufrufe.",
+      "title": "Standardmodelle"
+    },
+    "oversight": {
+      "desc": "Schwellenwerte und Limits der Warteschlange für die menschliche Aufsicht (Art. 14 EU AI Act).",
+      "title": "Aufsicht"
+    },
+    "pagination": {
+      "desc": "Standard- und Maximalgrößen von Listen sowie Tages-/Stundenbereiche.",
+      "title": "Paginierung und Zeitfenster"
+    },
+    "pricing": {
+      "desc": "Modellpreise und Wechselkurs für die Kostenberechnung der Aufrufe.",
+      "title": "Preise und Kosten"
+    },
+    "security": {
+      "desc": "Tokens, Passwort-Hashing und Schwellenwerte für die Erkennung personenbezogener Daten.",
+      "title": "Sicherheit"
+    }
+  },
+  "history": {
+    "empty": "Keine Änderungen erfasst.",
+    "loading": "Verlauf wird geladen...",
+    "unknownUser": "unbekannt"
+  },
+  "loading": "Wird geladen...",
+  "noResults": "Keine Parameter gefunden für „{query}“.",
+  "readOnly": "Ansichtsmodus — zum Bearbeiten der Parameter ist die Rolle <b>it_admin</b> erforderlich. Ihre Rolle: <b>{role}</b>.",
+  "reload": {
+    "button": "⟳ Cache jetzt neu laden",
+    "done": "Cache neu geladen.",
+    "error": "Fehler: {error}",
+    "running": "Wird neu geladen..."
+  },
+  "row": {
+    "hideHistory": "Verlauf ausblenden",
+    "invalidJson": "Ungültiges JSON",
+    "lastChange": "letzte Änderung: {user} · {date}",
+    "locked": "gesperrt",
+    "range": "Bereich: {range}",
+    "save": "✓ Speichern",
+    "showHistory": "Verlauf",
+    "unit": "Einheit: {unit}"
+  },
+  "searchPlaceholder": "Parameter suchen (Name, Schlüssel, Beschreibung)...",
+  "subtitle": "Betriebskonfiguration ohne Codeänderungen. Änderungen sind sofort wirksam (Gateway/API laden die Werte innerhalb von 60 s neu).",
+  "title": "Systemparameter"
+}

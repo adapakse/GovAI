@@ -1,0 +1,43 @@
+{
+  "alerts": {
+    "budgetExceeded": "⚠ Presupuesto superado: <b>{name}</b> — {actual} EUR ({pct}% del umbral de {threshold} EUR)",
+    "overdueReview": "⚠ Revisión de cumplimiento atrasada: <b>{name}</b> (plazo: {date})",
+    "title": "ALERTAS QUE REQUIEREN ATENCIÓN"
+  },
+  "dataFrom": "Datos de: {date} ·",
+  "days": "{days} días",
+  "download": "↓ Descargar PDF",
+  "error": "Error: {error}",
+  "generating": "Generando...",
+  "header": {
+    "subtitle": "Informe corporativo de conformidad con el EU AI Act para toda la organización",
+    "title": "Informes de gobernanza de la IA"
+  },
+  "kpi": {
+    "agents": "Agentes de IA",
+    "agentsSub": "en el registro",
+    "blocked": "Bloqueos",
+    "calls": "Llamadas",
+    "cost": "Coste de la API",
+    "costSub": "en total",
+    "pii": "Incidentes de datos personales",
+    "piiSub": "detectados"
+  },
+  "loading": "Cargando datos...",
+  "oversight": {
+    "avgReview": "Tiempo medio de revisión: {minutes} min",
+    "title": "Cola de supervisión (art. 14)",
+    "total": "Total de tareas"
+  },
+  "pdfError": "Error al generar el PDF: {error}",
+  "period": "Período:",
+  "piiCategories": "Categorías de datos personales",
+  "policyHits": "Activaciones de políticas",
+  "refresh": "actualizar",
+  "riskDistribution": "Distribución del riesgo según el EU AI Act",
+  "sessionExpired": "La sesión ha caducado",
+  "topAgents": {
+    "blockedCost": "{blocked} bloqueos · {cost} EUR",
+    "title": "Agentes con más llamadas"
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "hero": {
+    "lead": "Termene, obligații și decizii de arhitectură legate de EU AI Act — scrise din perspectiva echipei care trebuie să le implementeze, nu doar să le descrie.",
+    "title": "Conformitatea cu AI Act, pe înțelesul tuturor — nu doar al juriștilor."
+  },
+  "list": {
+    "all": "Toate",
+    "empty": "Nu există articole în această categorie.",
+    "sort": "Sortare:",
+    "sortNewest": "Cele mai noi",
+    "sortOldest": "Cele mai vechi",
+    "sortReadTime": "Timp de citire"
+  },
+  "meta": {
+    "description": "Conformitatea cu EU AI Act, pe înțelesul tuturor — termene, obligații și decizii de arhitectură scrise din perspectiva echipei care trebuie să le implementeze.",
+    "ogDescription": "Conformitatea cu EU AI Act, pe înțelesul tuturor — termene, obligații și decizii de arhitectură scrise din perspectiva echipei care trebuie să le implementeze.",
+    "ogTitle": "Blog — GovAI",
+    "title": "Blog — GovAI"
+  },
+  "post": {
+    "back": "← Toate articolele",
+    "categories": "Categorii",
+    "noRelated": "Nu există articole asociate.",
+    "notFound": "Articolul nu a fost găsit.",
+    "readTime": "{minutes} min de citit",
+    "related": "Articole asociate"
+  },
+  "posts": {
+    "checklist-rejestracja-agenta": {
+      "body": [
+        "Înainte ca un agent să ajungă în registru, merită să aveți răspunsuri la câteva întrebări: care este domeniul exact de utilizare, dacă prelucrează date cu caracter personal, cine este responsabilul de business pentru deciziile pe care le ia sau le sprijină și care este planul pentru situația în care domeniul de utilizare se schimbă.",
+        "Cel mai frecvent motiv al unei clasificări greșite la început este subestimarea domeniului de utilizare — un agent implementat „doar pentru a sprijini departamentul HR la sortarea CV-urilor” începe foarte repede să fie folosit pentru preselecția efectivă a candidaților, ceea ce schimbă categoria de risc.",
+        "Regula care funcționează: clasificați pe baza a ceea ce agentul poate fi efectiv folosit în organizație, nu doar a ceea ce a fost proiectat să facă."
+      ],
+      "category": "Compliance ops",
+      "excerpt": "O listă scurtă și practică a ceea ce merită stabilit înainte de prima implementare — pentru ca clasificarea riscului să fie relevantă de la început, nu provizorie.",
+      "tags": [
+        "onboarding",
+        "registrul agenților",
+        "checklist"
+      ],
+      "title": "Checklist: ce trebuie pregătit înainte de înregistrarea primului agent în registru"
+    },
+    "dedykowana-instancja-vs-multitenant": {
+      "body": [
+        "Multe platforme de „AI governance” sunt SaaS partajat: o singură bază de date, rânduri separate logic pentru fiecare client. Este modul standard și ieftin de a construi un SaaS — și de obicei suficient.",
+        "În cazul unui jurnal de audit pentru un sistem de IA reglementat, întrebarea auditorului se schimbă însă: nu „sunt datele separate logic”, ci „există vreun scenariu în care datele altui client ajung în interogarea noastră”. Răspunsul „nu, pentru că avem o bază de date separată” este mai ușor de susținut decât „nu, pentru că filtrăm corect după tenant_id în toate interogările, întotdeauna”.",
+        "Este un compromis de cost — o instanță dedicată pentru fiecare client este mai scumpă de întreținut decât o singură bază de date partajată. Pentru un sistem al cărui unic rol este să constituie dovada conformității, am considerat că acesta este un cost care trebuie asumat, nu optimizat."
+      ],
+      "category": "Securitate",
+      "excerpt": "O bază de date partajată este o decizie de arhitectură, nu un detaliu tehnic — iar la un audit de conformitate devine o întrebare la care este greu de răspuns bine.",
+      "tags": [
+        "arhitectură",
+        "izolarea datelor",
+        "audit"
+      ],
+      "title": "De ce „multi-tenant” și „conform cu AI Act” rareori merg împreună"
+    },
+    "digital-omnibus-grudzien-2027": {
+      "body": [
+        "La 27 iulie 2026 a intrat în vigoare Digital Omnibus AI (Regulamentul (UE) 2026/1744) — o modificare care amână obligațiile complete pentru sistemele cu grad ridicat de risc din anexa III de la 2 august 2026 la 2 decembrie 2027. Pentru sistemele integrate în produse reglementate (anexa I), termenul a fost amânat din august 2027 în august 2028.",
+        "Nu este o amânare generală a întregului act. Interzicerea practicilor inacceptabile prevăzute la art. 5 se aplică din februarie 2025 fără modificări, obligațiile pentru modelele de IA de uz general (GPAI) — din august 2025, iar transparența prevăzută la art. 50 (marcarea conținutului generat de IA, informarea cu privire la interacțiunea cu un chatbot) — din august 2026, adică deja acum. Modificarea a adăugat și o nouă interdicție la art. 5 — generarea de conținut intim fără consimțământ și de materiale care prezintă abuzuri sexuale asupra copiilor — care intră în vigoare la 2 decembrie 2026.",
+        "Concluzia practică: cele 16 luni suplimentare sunt timp pentru a face lucrurile temeinic, nu pentru a amâna subiectul. Registrul agenților, clasificarea riscului și evaluarea lacunelor necesită aceeași cantitate de muncă, indiferent dacă termenul este peste un an sau peste o lună — singura diferență este că astăzi nimeni nu lucrează sub presiune."
+      ],
+      "category": "AI Act",
+      "excerpt": "Regulamentul 2026/1744 a amânat obligațiile complete din anexa III cu 16 luni. Nu este un motiv de a încetini — este o nouă fereastră de timp care merită folosită înainte să o facă altcineva.",
+      "tags": [
+        "Digital Omnibus",
+        "termene",
+        "Anexa III"
+      ],
+      "title": "Digital Omnibus: de ce termenul pentru sistemele cu grad ridicat de risc a fost amânat în decembrie 2027"
+    },
+    "dokumentacja-vs-egzekwowanie": {
+      "body": [
+        "Piața instrumentelor pentru AI Act rezolvă în cea mai mare parte o singură problemă: generarea documentației tehnice cerute de anexa IV. Este o muncă reală și necesară — dar documentația descrie ce ar trebui să facă sistemul, nu impune acest lucru în momentul în care sistemul funcționează efectiv.",
+        "Diferența devine vizibilă abia în momentul unui incident. Documentația, oricât de bine ar fi scrisă, nu a blocat apelul care nu ar fi trebuit să treacă — poate servi cel mult ca dovadă că știați cum ar trebui să arate funcționarea corectă.",
+        "Aplicarea în timp real și documentația nu sunt concurente — sunt complementare. Dar doar una dintre ele se află fizic între agent și răspuns."
+      ],
+      "category": "AI Act",
+      "excerpt": "Instrumentele de documentare răspund la întrebarea „avem hârtiile”. Nu răspund la întrebarea „putea această încălcare să aibă loc vreodată”.",
+      "tags": [
+        "documentație",
+        "aplicare",
+        "audit"
+      ],
+      "title": "Documentația de conformitate nu oprește pe nimeni în timp real"
+    },
+    "nadzor-czlowieka-art-14": {
+      "body": [
+        "Art. 14 din AI Act impune ca sistemele cu grad ridicat de risc să aibă încorporat un mecanism de supraveghere umană. Problema este că, în practică, „mecanismul” este adesea o simplă adresă de e-mail la care cineva răspunde din când în când.",
+        "Supravegherea umană auditabilă are trei caracteristici: decizia este oprită până la revizuire (nu rulează în paralel „pentru orice eventualitate”), revizuirea este atribuită unei persoane concrete, autorizate, iar rezultatul revizuirii este înregistrat împreună cu cine a luat decizia și când.",
+        "Ceea ce deosebește un instrument de o procedură pe hârtie este dacă aceste trei elemente sunt impuse structural — dacă agentul chiar nu poate răspunde până când evaluatorul nu ia o decizie — sau doar descrise într-un document de politică."
+      ],
+      "category": "Compliance ops",
+      "excerpt": "Supravegherea umană pe hârtie și supravegherea umană care rezistă unui audit sunt două lucruri diferite. Diferența constă în ceea ce se întâmplă între „semnalat” și „aprobat”.",
+      "tags": [
+        "Art. 14",
+        "supraveghere",
+        "proces"
+      ],
+      "title": "Articolul 14 în practică: când „a fost verificat de un om” înseamnă cu adevărat ceva"
+    },
+    "routing-dostawcow-wedlug-wrazliwosci": {
+      "body": [
+        "Marea majoritate a implementărilor de agenți IA au un singur base URL al furnizorului de modele, scris direct în cod. Funcționează bine până când apare o cerere care conține date cu caracter personal, date financiare sau date protejate de secretul profesional — care urmează exact aceeași cale ca oricare alta.",
+        "Rutarea bazată pe sensibilitatea datelor inversează această abordare: nu dezvoltatorul decide unde ajunge cererea, ci o politică ce evaluează în timp real conținutul cererii — prezența datelor cu caracter personal, categoria agentului, nivelul de clasificare a riscului.",
+        "În practică, acest lucru înseamnă că două apeluri ale aceluiași agent pot ajunge la doi furnizori diferiți în același minut — unul la un model extern, celălalt la o instanță self-hosted — fără nicio modificare în codul agentului."
+      ],
+      "category": "Securitate",
+      "excerpt": "Furnizorul de modele implicit este adesea un accident istoric, nu o decizie. Vă arătăm cum arată o rutare în care destinația este decisă de conținutul cererii, nu de obișnuință.",
+      "tags": [
+        "rutare",
+        "confidențialitatea datelor",
+        "arhitectură"
+      ],
+      "title": "Rutarea modelelor în funcție de sensibilitatea datelor, nu de ceea ce scrie în configurație"
+    }
+  }
+}

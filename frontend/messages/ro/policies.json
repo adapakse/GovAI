@@ -1,0 +1,86 @@
+{
+  "aiactTab": {
+    "count": "{count, plural, one {# cerință} few {# cerințe} other {# de cerințe}}",
+    "emptyLevel": "Nu există cerințe pentru acest nivel.",
+    "intro": "Cerințe atribuite nivelurilor de risc. Vizibile în rapoartele PDF și în vizualizarea conformității agentului. Puteți adăuga propriile adnotări la anumite articole din EU AI Act."
+  },
+  "banner": {
+    "text": "Gateway-ul reîncarcă automat regulile din baza de date la fiecare 60 de secunde. După salvarea modificării — nu mai este nevoie de nicio altă acțiune.",
+    "title": "Configurare fără repornire:"
+  },
+  "cancel": "Anulare",
+  "delete": "Ștergere",
+  "edit": "Editare",
+  "loading": "Se încarcă...",
+  "newRequirement": {
+    "addButton": "+ Adăugați o cerință",
+    "article": "Articol *",
+    "articlePlaceholder": "ex. art. 9 alin. (2)",
+    "deadlineDays": "Termen (zile)",
+    "declKey": "Cheie de autodeclarare",
+    "declKeyHint": "Cheia de autodeclarare leagă această cerință de un câmp din fila Registru a agentului. Gol = cerința nu poate fi autodeclarată (ex. interdicție conform art. 5).",
+    "declKeyPlaceholder": "ex. art9_risk_management",
+    "reqText": "Descrierea cerinței *",
+    "reqTextPlaceholder": "Descriere detaliată a cerinței și a modului de îndeplinire...",
+    "reqTitle": "Titlul cerinței *",
+    "reqTitlePlaceholder": "ex. Registrul sistemelor de IA cu grad ridicat de risc",
+    "riskLevel": "Nivel de risc *",
+    "save": "Salvați cerința",
+    "severity": "Gravitate implicită",
+    "sortOrder": "Ordine",
+    "title": "Cerință nouă EU AI Act"
+  },
+  "newRule": {
+    "addButton": "+ Adăugați o regulă nouă",
+    "code": "Codul regulii",
+    "codePlaceholder": "ex. G-003",
+    "defaultReason": "Blocat de regula {code}",
+    "keywords": "Cuvinte-cheie (unul pe rând) *",
+    "keywordsPlaceholder": "exportă datele\nexport data\nsend all records",
+    "name": "Nume *",
+    "namePlaceholder": "ex. Blocarea exportului de date",
+    "priority": "Prioritate (mai mică = mai importantă)",
+    "reason": "Mesaj de blocare",
+    "reasonPlaceholder": "A fost detectată o operațiune nepermisă",
+    "save": "Salvați regula",
+    "title": "Regulă nouă de blocare"
+  },
+  "requirement": {
+    "article": "Articol",
+    "days": "{count, plural, one {# zi} few {# zile} other {# de zile}}",
+    "deleteConfirm": "Ștergeți cerința „{title}”?",
+    "noDeclKey": "fără autodeclarare",
+    "title": "Titlu"
+  },
+  "rule": {
+    "activate": "Activare",
+    "addKeyword": "+ Adăugați",
+    "addKeywordPlaceholder": "Adăugați un cuvânt-cheie...",
+    "deactivate": "Dezactivare",
+    "inactive": "INACTIVĂ",
+    "keywords": "Cuvinte-cheie ({count})",
+    "meta": "Prioritate: {priority} · Domeniu: {level} · v{version}",
+    "noKeywords": "Niciun cuvânt-cheie — regula nu se va activa niciodată.",
+    "reason": "Mesaj: „{reason}”",
+    "unsaved": "Modificări nesalvate · Gateway-ul le va aplica în 60s."
+  },
+  "rulesTab": {
+    "empty": "Nu există reguli definite.",
+    "intro": "Regulile de blocare sunt verificate în ordinea priorității (număr mai mic = prioritate mai mare). Prima potrivire a unui cuvânt-cheie activează blocarea înainte de apelarea modelului.",
+    "noResults": "Nicio regulă nu corespunde căutării „{query}”.",
+    "searchPlaceholder": "Căutați o regulă — nume, cod, cuvânt-cheie, motiv..."
+  },
+  "save": "✓ Salvați",
+  "saving": "Se salvează...",
+  "severity": {
+    "critical": "Critică",
+    "major": "Majoră",
+    "minor": "Minoră"
+  },
+  "subtitle": "Gestionați regulile de securitate și cerințele EU AI Act fără modificări de cod. Modificările regulilor devin active în Gateway în 60s.",
+  "tabs": {
+    "aiact": "Cerințe EU AI Act",
+    "rules": "Reguli de securitate"
+  },
+  "title": "Politici și conformitate"
+}

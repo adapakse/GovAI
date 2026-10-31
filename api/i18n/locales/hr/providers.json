@@ -1,0 +1,7 @@
+{
+  "errors": {
+    "invalid_sensitivity": "Neispravan max_data_sensitivity. Dopuštene vrijednosti: {allowed}",
+    "invalid_type": "Nepoznat provider_type. Dopuštene vrijednosti: {allowed}",
+    "not_found": "Pružatelj nije pronađen"
+  }
+}

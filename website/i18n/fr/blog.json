@@ -1,0 +1,120 @@
+{
+  "hero": {
+    "lead": "Échéances, obligations et choix d'architecture autour de l'EU AI Act — rédigés du point de vue d'une équipe qui doit les mettre en œuvre, et pas seulement les décrire.",
+    "title": "La conformité à l'AI Act, en clair — pas seulement pour les juristes."
+  },
+  "list": {
+    "all": "Tous",
+    "empty": "Aucun article dans cette catégorie.",
+    "sort": "Trier :",
+    "sortNewest": "Plus récents",
+    "sortOldest": "Plus anciens",
+    "sortReadTime": "Temps de lecture"
+  },
+  "meta": {
+    "description": "La conformité à l'EU AI Act, en clair — échéances, obligations et choix d'architecture rédigés du point de vue d'une équipe qui doit les mettre en œuvre.",
+    "ogDescription": "La conformité à l'EU AI Act, en clair — échéances, obligations et choix d'architecture rédigés du point de vue d'une équipe qui doit les mettre en œuvre.",
+    "ogTitle": "Blog — GovAI",
+    "title": "Blog — GovAI"
+  },
+  "post": {
+    "back": "← Tous les articles",
+    "categories": "Catégories",
+    "noRelated": "Aucun article associé.",
+    "notFound": "Article introuvable.",
+    "readTime": "{minutes} min de lecture",
+    "related": "Articles associés"
+  },
+  "posts": {
+    "checklist-rejestracja-agenta": {
+      "body": [
+        "Avant qu'un agent n'entre dans le registre, il est utile de disposer de réponses à quelques questions : quel est son périmètre d'utilisation exact, traite-t-il des données à caractère personnel, qui est le responsable métier des décisions qu'il prend ou qu'il appuie, et quel est le plan prévu si ce périmètre d'utilisation venait à changer.",
+        "La cause la plus fréquente d'une mauvaise classification au départ est la sous-estimation du périmètre — un agent déployé « uniquement pour aider les RH à trier les CV » finit très vite par servir à une véritable présélection des candidats, ce qui change sa catégorie de risque.",
+        "Une règle qui a fait ses preuves : classez l'agent en fonction de ce à quoi il peut effectivement servir dans l'organisation, et pas seulement de ce pour quoi il a été conçu."
+      ],
+      "category": "Conformité opérationnelle",
+      "excerpt": "Une liste courte et pratique de ce qu'il convient d'établir avant le premier déploiement — pour que la classification des risques soit pertinente d'emblée, et non provisoire.",
+      "tags": [
+        "onboarding",
+        "registre des agents",
+        "checklist"
+      ],
+      "title": "Checklist : que préparer avant d'inscrire votre premier agent au registre"
+    },
+    "dedykowana-instancja-vs-multitenant": {
+      "body": [
+        "De nombreuses plateformes de « gouvernance de l'IA » sont des SaaS mutualisés : une seule base de données, des lignes séparées logiquement par client. C'est une manière standard et économique de construire un SaaS — et généralement suffisante.",
+        "Lorsqu'il s'agit du journal d'audit d'un système d'IA réglementé, la question de l'auditeur change cependant : il ne demande plus « les données sont-elles séparées logiquement ? », mais « existe-t-il le moindre scénario dans lequel les données d'un autre client se retrouvent dans notre requête ? ». La réponse « non, car nous avons une base distincte » est plus facile à défendre que « non, car nous filtrons correctement sur tenant_id dans toutes les requêtes, toujours ».",
+        "C'est un compromis de coût — une instance dédiée par client est plus coûteuse à maintenir qu'une base unique mutualisée. Pour un système dont la seule raison d'être est de servir de preuve de conformité, nous avons estimé qu'il s'agit d'un coût à assumer, pas à optimiser."
+      ],
+      "category": "Sécurité",
+      "excerpt": "Une base de données mutualisée est un choix d'architecture, pas un détail technique — et lors d'un audit de conformité, elle devient une question à laquelle il est difficile de bien répondre.",
+      "tags": [
+        "architecture",
+        "isolation des données",
+        "audit"
+      ],
+      "title": "Pourquoi « multi-tenant » et « conforme à l'AI Act » vont rarement de pair"
+    },
+    "digital-omnibus-grudzien-2027": {
+      "body": [
+        "Le 27 juillet 2026 est entré en vigueur le Digital Omnibus AI (règlement (UE) 2026/1744) — une modification qui reporte l'application complète des obligations relatives aux systèmes à haut risque visés à l'annexe III du 2 août 2026 au 2 décembre 2027. Pour les systèmes intégrés dans des produits réglementés (annexe I), l'échéance passe d'août 2027 à août 2028.",
+        "Il ne s'agit pas d'un report général de l'ensemble du règlement. L'interdiction des pratiques inacceptables de l'article 5 s'applique depuis février 2025 sans changement, les obligations relatives aux modèles d'IA à usage général (GPAI) depuis août 2025, et les obligations de transparence de l'article 50 (marquage des contenus générés par l'IA, information sur l'interaction avec un chatbot) depuis août 2026, c'est-à-dire dès maintenant. La modification a également ajouté une nouvelle interdiction à l'article 5 — la génération de contenus intimes sans consentement et de matériels pédopornographiques — qui entre en application le 2 décembre 2026.",
+        "Conclusion pratique : 16 mois supplémentaires, c'est le temps de bien faire les choses, pas de remettre le sujet à plus tard. Le registre des agents, la classification des risques et l'analyse des écarts demandent la même quantité de travail, que l'échéance soit dans un an ou dans un mois — la seule différence est qu'aujourd'hui, personne ne le fait sous pression."
+      ],
+      "category": "AI Act",
+      "excerpt": "Le règlement 2026/1744 a reporté de 16 mois les obligations complètes de l'annexe III. Ce n'est pas une raison de ralentir — c'est une nouvelle fenêtre de temps qu'il vaut la peine d'exploiter avant que quelqu'un d'autre ne le fasse.",
+      "tags": [
+        "Digital Omnibus",
+        "échéances",
+        "annexe III"
+      ],
+      "title": "Digital Omnibus : pourquoi l'échéance des systèmes à haut risque a été reportée à décembre 2027"
+    },
+    "dokumentacja-vs-egzekwowanie": {
+      "body": [
+        "Le marché des outils pour l'AI Act résout pour l'essentiel un seul problème : la production de la documentation technique exigée par l'annexe IV. C'est un travail réel et nécessaire — mais la documentation décrit ce que le système devrait faire, elle ne l'impose pas au moment où le système fonctionne effectivement.",
+        "La différence ne devient visible qu'au moment d'un incident. Une documentation, même parfaitement rédigée, n'a pas bloqué l'appel qui n'aurait pas dû passer — elle peut tout au plus servir de preuve que vous saviez à quoi devait ressembler un fonctionnement correct.",
+        "L'application en temps réel et la documentation ne sont pas concurrentes — elles sont complémentaires. Mais une seule des deux se trouve physiquement entre l'agent et la réponse."
+      ],
+      "category": "AI Act",
+      "excerpt": "Les outils documentaires répondent à la question « avons-nous les papiers ? ». Ils ne répondent pas à la question « cette violation pouvait-elle seulement se produire ? ».",
+      "tags": [
+        "documentation",
+        "application des règles",
+        "audit"
+      ],
+      "title": "La documentation de conformité n'arrête personne en temps réel"
+    },
+    "nadzor-czlowieka-art-14": {
+      "body": [
+        "L'article 14 de l'AI Act exige que les systèmes à haut risque intègrent un mécanisme de contrôle humain. Le problème, c'est qu'en pratique, ce « mécanisme » se résume souvent à une adresse e-mail à laquelle quelqu'un répond de temps en temps.",
+        "Un contrôle humain auditable présente trois caractéristiques : la décision est suspendue jusqu'à l'examen (elle ne s'exécute pas en parallèle « au cas où »), l'examen est attribué à une personne précise et habilitée, et le résultat de l'examen est enregistré avec l'identité de la personne qui l'a effectué et le moment où elle l'a fait.",
+        "Ce qui distingue un outil d'une procédure sur papier, c'est de savoir si ces trois éléments sont imposés structurellement — l'agent ne peut effectivement pas répondre tant que l'examinateur n'a pas pris sa décision — ou seulement décrits dans un document de politique."
+      ],
+      "category": "Conformité opérationnelle",
+      "excerpt": "Un contrôle humain sur le papier et un contrôle humain qui résiste à un audit sont deux choses différentes. La différence tient à ce qui se passe entre « signalé » et « approuvé ».",
+      "tags": [
+        "art. 14",
+        "contrôle humain",
+        "processus"
+      ],
+      "title": "L'article 14 en pratique : quand « un humain l'a vérifié » a vraiment un sens"
+    },
+    "routing-dostawcow-wedlug-wrazliwosci": {
+      "body": [
+        "La grande majorité des déploiements d'agents d'IA reposent sur une seule base URL de fournisseur de modèles, codée en dur. Cela fonctionne bien, jusqu'à ce qu'arrive une requête contenant des données à caractère personnel, des données financières ou des données couvertes par le secret professionnel — qui empruntent exactement le même chemin que toutes les autres.",
+        "Le routage fondé sur la sensibilité des données inverse cette approche : ce n'est pas le développeur qui décide où part la requête, mais une politique qui évalue son contenu à la volée — présence de données personnelles, catégorie de l'agent, niveau de classification des risques.",
+        "En pratique, cela signifie que deux appels provenant du même agent peuvent être acheminés vers deux fournisseurs différents au cours de la même minute — l'un vers un modèle externe, l'autre vers une instance auto-hébergée — sans aucune modification du code de l'agent."
+      ],
+      "category": "Sécurité",
+      "excerpt": "Le fournisseur de modèles par défaut est souvent un accident historique, pas une décision. Nous montrons à quoi ressemble un routage dans lequel la destination est déterminée par le contenu de la requête, et non par l'habitude.",
+      "tags": [
+        "routage",
+        "confidentialité des données",
+        "architecture"
+      ],
+      "title": "Router les modèles selon la sensibilité des données, et non selon ce qui figure dans la config"
+    }
+  }
+}

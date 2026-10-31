@@ -1,0 +1,100 @@
+{
+  "chat": {
+    "awaitingOversight": "⏳ Transmis spre supraveghere umană (art. 14 EU AI Act)\nOversight ID: {id}",
+    "blocked": "🚫 Blocat: {reason}",
+    "clear": "Ștergeți",
+    "connectionError": "Eroare de conexiune: {error}",
+    "defaultBlockReason": "Politica de securitate GovAI",
+    "emptyHint": "Introduceți un mesaj mai jos — acesta va fi procesat de GovAI Gateway (scanare date personale → politici → {model})",
+    "pipeline": "Chat liber · GovAI Gateway → scanare date personale → politici → {model}",
+    "placeholder": "Scrieți un mesaj către agent...",
+    "sectionTitle": "Chat liber — apel direct prin Gateway",
+    "send": "Trimiteți ▶"
+  },
+  "expected": {
+    "allowed": "Permis",
+    "allowed_with_pii": "Permis + date personale",
+    "blocked": "Blocat",
+    "oversight_required": "Necesită supraveghere"
+  },
+  "fleet": {
+    "button": "▦ Populați flota (50 de agenți)",
+    "count": "{count, plural, one {# agent din flotă} few {# agenți din flotă} other {# de agenți din flotă}}",
+    "desc": "Adaugă 50 de agenți distribuiți pe departamente, cu lacune de conformitate intenționate (sisteme cu risc ridicat fără supraveghere, revizuiri restante, practici interzise conform art. 5). Arată că, la scară, gestionarea manuală a conformității cu AI Act este imposibilă.",
+    "seededAgents": "{count, plural, one {A fost generat # agent} few {Au fost generați # agenți} other {Au fost generați # de agenți}}.",
+    "title": "Flotă demonstrativă (scară)"
+  },
+  "links": {
+    "audit": "→ Jurnal",
+    "auditLog": "→ Jurnal de audit",
+    "oversight": "→ Supraveghere",
+    "oversightQueue": "→ Coada de supraveghere"
+  },
+  "loading": "⏳ Se încarcă...",
+  "noAgents": "Niciun agent activ.",
+  "noResults": "Niciun agent nu corespunde căutării „{query}”.",
+  "playbook": {
+    "collapse": "▲ restrângeți",
+    "expand": "▼ extindeți",
+    "go": "Accesați →",
+    "intro": "Parcurgeți prezentarea pas cu pas.",
+    "steps": {
+      "1": {
+        "desc": "Faceți clic pe „Populați 30 de zile de date” — generatorul creează ~500 de înregistrări de audit și ~23 de elemente în coada de supraveghere.",
+        "title": "Populați baza de date istorice"
+      },
+      "2": {
+        "desc": "Accesați Tabloul de bord. Veți vedea numărul total de apeluri, blocările, datele personale, costurile și graficul pe 24h.",
+        "title": "Verificați Tabloul de bord — date istorice"
+      },
+      "3": {
+        "desc": "Faceți clic pe „Rulați ▶” la scenariul „Solicitare privind asigurarea” (Agentul 1).",
+        "title": "Rulați un scenariu — pozitiv"
+      },
+      "4": {
+        "desc": "Faceți clic pe „Clientul furnizează PESEL și numărul de cont”. Presidio maschează datele înainte de trimiterea către model.",
+        "title": "Rulați un scenariu cu date personale"
+      },
+      "5": {
+        "desc": "Încercare de modificare financiară → G-001. Atac de tip prompt injection → G-002. Vizibile în Jurnal.",
+        "title": "Declanșați blocările G-001 și G-002"
+      },
+      "6": {
+        "desc": "Agentul 2 necesită supraveghere — apelul ajunge în coadă. Accesați Supravegherea și aprobați.",
+        "title": "Coada de supraveghere (art. 14)"
+      },
+      "7": {
+        "desc": "Selectați agentul DeepSeek și scrieți orice mesaj. GovAI interceptează traficul, scanează datele personale și verifică politicile — identic ca pentru Claude.",
+        "title": "Testați DeepSeek prin GovAI"
+      }
+    },
+    "title": "📋 Ghid demo — 7 pași"
+  },
+  "result": {
+    "blockedByPolicy": "Blocat de politică.",
+    "expected": "→ așteptat: {label}",
+    "gatewayResponse": "Răspunsul gateway-ului:",
+    "match": "✓ conform",
+    "mismatch": "≠ neașteptat",
+    "run": "Rulați ▶",
+    "running": "⏳ Se apelează...",
+    "sentToOversight": "Decizia a fost transmisă spre supraveghere.\nOversight ID: {id}\n\n{message}",
+    "task": "task: {id}..."
+  },
+  "searchPlaceholder": "Căutați un agent — nume, model, furnizor (ex. bielik, ollama), echipă...",
+  "seed": {
+    "button": "▦ Populați 30 de zile de date",
+    "counts": "{audit} audituri · {oversight} supravegheri",
+    "desc": "Generatorul creează ~500 de înregistrări de audit și 23 de elemente în coadă.",
+    "refresh": "↻ Actualizați",
+    "reset": "✕ Resetați datele",
+    "resetConfirm": "Ștergeți TOATE datele demo (audit, supraveghere, flota de agenți)?",
+    "resetDone": "Au fost șterse {audit} audituri, {oversight} supravegheri și {fleet} agenți din flotă.",
+    "seededEntries": "{count, plural, one {A fost generată # înregistrare} few {Au fost generate # înregistrări} other {Au fost generate # de înregistrări}}.",
+    "statusEmpty": "○ Gol",
+    "statusSeeded": "● Populat",
+    "title": "Date demo (30 de zile istorice)"
+  },
+  "subtitle": "Fiecare apel trece prin GovAI Gateway → scanare date personale → motorul de politici → model AI. Rezultatele sunt vizibile în Jurnal și în coada de Supraveghere.",
+  "title": "Simulator de agenți AI"
+}

@@ -1,0 +1,67 @@
+{
+  "categories": {
+    "budget": {
+      "desc": "Default limits and cost alert thresholds for new agents.",
+      "title": "Budgets"
+    },
+    "compliance": {
+      "desc": "Compliance gap deadlines and report narrative limits.",
+      "title": "Compliance"
+    },
+    "i18n": {
+      "desc": "Default language of the instance's interface, reports and messages.",
+      "title": "Language"
+    },
+    "intervals": {
+      "desc": "Frequency of background tasks (policy refresh, TTL monitor).",
+      "title": "Intervals"
+    },
+    "models": {
+      "desc": "Default models and LLM call parameters.",
+      "title": "Default models"
+    },
+    "oversight": {
+      "desc": "Thresholds and limits of the human oversight queue (Art. 14 EU AI Act).",
+      "title": "Oversight"
+    },
+    "pagination": {
+      "desc": "Default and maximum list sizes and day/hour ranges.",
+      "title": "Pagination and time windows"
+    },
+    "pricing": {
+      "desc": "Model rates and currency conversion rate used to price calls.",
+      "title": "Pricing and costs"
+    },
+    "security": {
+      "desc": "Tokens, password hashing and PII detection thresholds.",
+      "title": "Security"
+    }
+  },
+  "history": {
+    "empty": "No changes recorded.",
+    "loading": "Loading history...",
+    "unknownUser": "unknown"
+  },
+  "loading": "Loading...",
+  "noResults": "No settings matching “{query}”.",
+  "readOnly": "Read-only mode — editing settings requires the <b>it_admin</b> role. Your role: <b>{role}</b>.",
+  "reload": {
+    "button": "⟳ Reload cache now",
+    "done": "Cache reloaded.",
+    "error": "Error: {error}",
+    "running": "Reloading..."
+  },
+  "row": {
+    "hideHistory": "hide history",
+    "invalidJson": "Invalid JSON",
+    "lastChange": "last change: {user} · {date}",
+    "locked": "locked",
+    "range": "range: {range}",
+    "save": "✓ Save",
+    "showHistory": "history",
+    "unit": "unit: {unit}"
+  },
+  "searchPlaceholder": "Search settings (name, key, description)...",
+  "subtitle": "Operational configuration without code changes. Changes take effect immediately (gateway/API refresh values within 60s).",
+  "title": "System settings"
+}

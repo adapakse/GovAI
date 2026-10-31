@@ -1,0 +1,84 @@
+{
+  "agentStatus": {
+    "active": "Activo",
+    "quarantined": "En cuarentena",
+    "retired": "Retirado",
+    "suspended": "Suspendido"
+  },
+  "components": {
+    "liveFeed": {
+      "connected": "Conectado",
+      "disconnected": "Desconectado",
+      "events": {
+        "auditBlocked": "BLOQUEO",
+        "auditError": "ERROR",
+        "auditNewCall": "LLAMADA",
+        "oversightEscalated": "ESCALADO",
+        "oversightPending": "SUPERVISIÓN"
+      },
+      "title": "Eventos en tiempo real",
+      "waiting": "Esperando eventos..."
+    },
+    "oversightModal": {
+      "actions": {
+        "approved": "✓ Aprobar",
+        "escalated": "↑ Escalar",
+        "rejected": "✕ Rechazar"
+      },
+      "agentDecision": "Decisión del agente",
+      "cancel": "Cancelar",
+      "commentOptional": "Comentario opcional...",
+      "commentRequired": "El comentario es obligatorio en caso de rechazo o escalado.",
+      "decisionType": "Tipo de decisión:",
+      "justificationRequired": "Justificación (obligatoria)",
+      "rubberStampWarning": "⚠ El tiempo de revisión se mide desde el momento en que se abre esta ventana. Una decisión tomada en menos de 10 segundos se marcará como supervisión aparente.",
+      "save": "Guardar decisión",
+      "saveError": "Error al guardar la decisión",
+      "saved": "Guardado: {action}",
+      "saving": "Guardando...",
+      "submitted": "Enviado:",
+      "taskId": "Task ID: {id}",
+      "timeLeft": "Tiempo restante",
+      "timer": "{mins}m {secs}s",
+      "yourDecision": "Su decisión"
+    },
+    "searchBox": {
+      "clear": "Borrar",
+      "placeholder": "Buscar..."
+    }
+  },
+  "language": {
+    "instanceDefault": "Predeterminado de la instancia ({language})",
+    "label": "Idioma"
+  },
+  "oversightStatus": {
+    "approved": "Aprobado",
+    "escalated": "Escalado",
+    "pending": "Pendiente",
+    "rejected": "Rechazado"
+  },
+  "policyResult": {
+    "allowed": "Permitido",
+    "blocked": "Bloqueado",
+    "error": "Error",
+    "oversight_required": "Requiere supervisión",
+    "short": {
+      "allowed": "OK",
+      "blocked": "BLOQUEO",
+      "error": "ERROR",
+      "oversight_required": "SUPERVISIÓN"
+    }
+  },
+  "risk": {
+    "high": "Alto",
+    "limited": "Limitado",
+    "minimal": "Mínimo",
+    "short": {
+      "high": "ALTO",
+      "limited": "LIMITADO",
+      "minimal": "MÍNIMO",
+      "unacceptable": "INACEPTABLE"
+    },
+    "unacceptable": "Inaceptable"
+  }
+}

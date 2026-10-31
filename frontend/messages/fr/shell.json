@@ -1,0 +1,26 @@
+{
+  "logout": "Se déconnecter",
+  "meta": {
+    "description": "Conformité à l’EU AI Act | Passerelle de sécurité | Contrôle humain",
+    "title": "GovAI — Plateforme de gouvernance des agents IA"
+  },
+  "nav": {
+    "admin": "Admin",
+    "agents": "Agents",
+    "audit": "Journal",
+    "dashboard": "Tableau de bord",
+    "demo": "Simulateur",
+    "oversight": "Contrôle",
+    "policies": "Politiques",
+    "providers": "Fournisseurs de modèles",
+    "reports": "Rapports",
+    "settings": "Paramètres"
+  },
+  "roles": {
+    "associate": "Collaborateur",
+    "compliance_officer": "Responsable de la conformité",
+    "it_admin": "Administrateur informatique",
+    "partner": "Associé",
+    "reviewer": "Examinateur"
+  }
+}

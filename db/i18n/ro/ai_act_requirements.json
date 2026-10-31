@@ -1,0 +1,74 @@
+{
+  "high|Art. 10": {
+    "text": "Seturile de date de antrenament, de validare și de testare trebuie să îndeplinească criterii de calitate — relevanță, reprezentativitate, lipsa erorilor și completitudine. Este necesară documentarea seturilor de date.",
+    "title": "Cerințe privind datele"
+  },
+  "high|Art. 11": {
+    "text": "Înainte de punerea în funcțiune este necesară o documentație tehnică completă, conformă cu anexa IV la EU AI Act. Documentația trebuie actualizată pe întreaga durată a ciclului de viață al sistemului.",
+    "title": "Documentația tehnică"
+  },
+  "high|Art. 13": {
+    "text": "Sistemul de IA trebuie să asigure transparența funcționării. Utilizatorii trebuie informați cu privire la interacțiunea cu un sistem de IA și trebuie să înțeleagă funcționarea acestuia în măsura necesară supravegherii.",
+    "title": "Transparență și furnizarea de informații"
+  },
+  "high|Art. 14": {
+    "text": "Măsuri implementate care permit persoanelor fizice să înțeleagă, să monitorizeze și să intervină în funcționarea sistemului de IA. Posibilitatea de a opri sau de a inversa orice decizie a sistemului.",
+    "title": "Supravegherea umană"
+  },
+  "high|Art. 15": {
+    "text": "Sistemul trebuie să atingă un nivel adecvat de acuratețe pe întreaga durată a ciclului de viață. Sunt necesare teste de reziliență la erori, atacuri și date de intrare neprevăzute.",
+    "title": "Acuratețe și robustețe"
+  },
+  "high|Art. 17": {
+    "text": "Furnizorul instituie un sistem de management al calității care cuprinde politici, proceduri și instrucțiuni pentru asigurarea conformității cu EU AI Act.",
+    "title": "Sistemul de management al calității"
+  },
+  "high|Art. 26 ust. 2": {
+    "text": "Implementatorul unui sistem cu grad ridicat de risc trebuie să încredințeze supravegherea umană unor persoane fizice care dispun de competența, formarea, autoritatea și sprijinul necesare pentru exercitarea acesteia.",
+    "title": "Supraveghere umană încredințată unei persoane competente"
+  },
+  "high|Art. 26 ust. 5": {
+    "text": "Implementatorul trebuie să monitorizeze funcționarea sistemului pe baza instrucțiunilor de utilizare și să informeze furnizorul și — după caz — autoritatea de supraveghere a pieței cu privire la riscurile identificate sau la incidentele grave.",
+    "title": "Monitorizarea funcționării și informarea furnizorului"
+  },
+  "high|Art. 26 ust. 6": {
+    "text": "Implementatorul trebuie să păstreze jurnalele generate automat de sistem pentru o perioadă adecvată scopului preconizat al sistemului, de cel puțin șase luni, cu excepția cazului în care dreptul Uniunii sau dreptul intern prevede altfel.",
+    "title": "Păstrarea jurnalelor generate automat"
+  },
+  "high|Art. 26 ust. 8": {
+    "text": "Implementatorul care este autoritate publică trebuie să respecte obligațiile de înregistrare prevăzute la art. 49 și, înainte de punerea în funcțiune a sistemului, să verifice dacă acesta este înregistrat în baza de date a UE.",
+    "title": "Verificarea înregistrării în baza de date a UE"
+  },
+  "high|Art. 27": {
+    "text": "Înainte de implementarea unui sistem cu grad ridicat de risc menționat la anexa III punctul 5 literele (b)/(c) (evaluarea bonității, riscul în asigurări) sau de către o entitate publică/privată care furnizează servicii publice, implementatorul trebuie să efectueze o evaluare a impactului asupra drepturilor fundamentale: descrierea proceselor de utilizare, perioada și frecvența utilizării, categoriile de persoane afectate, riscurile de prejudiciu pentru aceste persoane, precum și măsurile de supraveghere umană și mecanismele de reclamație.",
+    "title": "Evaluarea impactului asupra drepturilor fundamentale (FRIA)"
+  },
+  "high|Art. 43": {
+    "text": "Sistemele cu grad ridicat de risc din anexa III necesită efectuarea unei evaluări a conformității (autoevaluare sau de către un organism notificat) înainte de punerea în funcțiune.",
+    "title": "Evaluarea conformității"
+  },
+  "high|Art. 49": {
+    "text": "Sistemele cu grad ridicat de risc trebuie înregistrate în baza de date a UE înainte de punerea în funcțiune.",
+    "title": "Înregistrarea în baza de date a UE"
+  },
+  "high|Art. 9": {
+    "text": "Un agent cu grad ridicat de risc necesită un sistem de gestionare a riscurilor documentat pe întreaga durată a ciclului de viață. Sunt necesare identificarea, analiza și evaluarea riscurilor, precum și implementarea măsurilor de atenuare.",
+    "title": "Sistemul de gestionare a riscurilor"
+  },
+  "limited|Art. 50 ust. 1": {
+    "text": "Sistemele care interacționează cu persoane fizice trebuie să informeze utilizatorul în mod clar, distinct și în timp util cu privire la caracterul automatizat al sistemului, cu excepția cazului în care acest lucru este evident.",
+    "title": "Obligația de informare privind IA"
+  },
+  "limited|Art. 50 ust. 4": {
+    "text": "Conținutul de tip text, audio și video generat de IA trebuie marcat într-un format care poate fi citit automat ca fiind generat de IA.",
+    "title": "Marcarea conținutului generat de IA"
+  },
+  "minimal|Preambuła 46": {
+    "text": "Nu există cerințe legale obligatorii pentru sistemele cu risc minim. Se recomandă aplicarea codurilor de conduită voluntare și a principiilor generale ale unei IA de încredere (transparență, echitate, siguranță).",
+    "title": "Coduri de conduită voluntare"
+  },
+  "unacceptable|Art. 5": {
+    "text": "Practicile în domeniul IA enumerate la art. 5 sunt interzise în mod absolut în UE. Este necesară verificarea faptului că sistemul nu se încadrează în niciuna dintre categoriile interzise (manipulare subliminală, evaluarea comportamentului social, identificare biometrică în timp real).",
+    "title": "Interdicție absolută de utilizare"
+  }
+}

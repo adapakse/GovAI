@@ -1,0 +1,20 @@
+{
+  "allApproved": "Vse odobreno",
+  "empty": {
+    "subtitle": "Vse odločitve so bile obravnavane.",
+    "title": "Ni nalog na čakanju"
+  },
+  "header": {
+    "subtitle": "Odločitve visokotveganih agentov zahtevajo odobritev · osveževanje vsakih 10 s",
+    "title": "Človeški nadzor"
+  },
+  "info": {
+    "text": "Čas pregleda vsake naloge se meri. Odobritev v manj kot 10 sekundah po odprtju kartice sproži opozorilo in se zabeleži v revizijski dnevnik (člen 14 EU AI Act).",
+    "title": "Zaščita pred navideznim nadzorom:"
+  },
+  "loading": "Nalaganje nalog nadzora ...",
+  "pendingCount": "{count} na čakanju",
+  "refresh": "Osveži",
+  "review": "Preglej",
+  "timer": "{mins} min {secs} s"
+}

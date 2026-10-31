@@ -1,0 +1,43 @@
+{
+  "alerts": {
+    "budgetExceeded": "⚠ Budget exceeded: <b>{name}</b> — {actual} EUR ({pct}% of the {threshold} EUR threshold)",
+    "overdueReview": "⚠ Overdue compliance review: <b>{name}</b> (due: {date})",
+    "title": "ALERTS REQUIRING ATTENTION"
+  },
+  "dataFrom": "Data from: {date} ·",
+  "days": "{days} days",
+  "download": "↓ Download PDF",
+  "error": "Error: {error}",
+  "generating": "Generating...",
+  "header": {
+    "subtitle": "Organisation-wide EU AI Act compliance report",
+    "title": "AI Governance Reports"
+  },
+  "kpi": {
+    "agents": "AI agents",
+    "agentsSub": "in the registry",
+    "blocked": "Blocked",
+    "calls": "Calls",
+    "cost": "API cost",
+    "costSub": "total",
+    "pii": "PII incidents",
+    "piiSub": "detected"
+  },
+  "loading": "Loading data...",
+  "oversight": {
+    "avgReview": "Avg. review time: {minutes} min",
+    "title": "Oversight queue (Art. 14)",
+    "total": "Total tasks"
+  },
+  "pdfError": "PDF generation error: {error}",
+  "period": "Period:",
+  "piiCategories": "PII categories",
+  "policyHits": "Policy triggers",
+  "refresh": "refresh",
+  "riskDistribution": "EU AI Act risk distribution",
+  "sessionExpired": "Session expired",
+  "topAgents": {
+    "blockedCost": "{blocked} blocked · {cost} EUR",
+    "title": "Top agents by calls"
+  }
+}

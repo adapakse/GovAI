@@ -1,0 +1,86 @@
+{
+  "aiactTab": {
+    "count": "{count, plural, one {# zahtjev} few {# zahtjeva} many {# zahtjeva} other {# zahtjeva}}",
+    "emptyLevel": "Nema zahtjeva za ovu razinu.",
+    "intro": "Zahtjevi dodijeljeni razinama rizika. Vidljivi su u PDF izvješćima i prikazu usklađenosti agenta. Možete dodavati vlastite napomene uz pojedine članke EU AI Acta."
+  },
+  "banner": {
+    "text": "Gateway automatski osvježava pravila iz baze svakih 60 sekundi. Nakon spremanja promjene nije potrebno ništa drugo.",
+    "title": "Konfiguracija bez ponovnog pokretanja:"
+  },
+  "cancel": "Odustani",
+  "delete": "Izbriši",
+  "edit": "Uredi",
+  "loading": "Učitavanje...",
+  "newRequirement": {
+    "addButton": "+ Dodaj zahtjev",
+    "article": "Članak *",
+    "articlePlaceholder": "npr. čl. 9. st. 2.",
+    "deadlineDays": "Rok (dani)",
+    "declKey": "Ključ samoprocjene",
+    "declKeyHint": "Ključ samoprocjene povezuje ovaj zahtjev s poljem na kartici Registar agenta. Prazno = zahtjev nije moguće samostalno deklarirati (npr. zabrana iz čl. 5.).",
+    "declKeyPlaceholder": "npr. art9_risk_management",
+    "reqText": "Opis zahtjeva *",
+    "reqTextPlaceholder": "Detaljan opis zahtjeva i načina njegova ispunjavanja...",
+    "reqTitle": "Naslov zahtjeva *",
+    "reqTitlePlaceholder": "npr. Registar visokorizičnih UI sustava",
+    "riskLevel": "Razina rizika *",
+    "save": "Spremi zahtjev",
+    "severity": "Zadana težina",
+    "sortOrder": "Redoslijed",
+    "title": "Novi zahtjev EU AI Acta"
+  },
+  "newRule": {
+    "addButton": "+ Dodaj novo pravilo",
+    "code": "Oznaka pravila",
+    "codePlaceholder": "npr. G-003",
+    "defaultReason": "Blokirano pravilom {code}",
+    "keywords": "Ključne riječi (jedna po retku) *",
+    "keywordsPlaceholder": "izvezi podatke\nexport data\nsend all records",
+    "name": "Naziv *",
+    "namePlaceholder": "npr. Blokada izvoza podataka",
+    "priority": "Prioritet (niži = važniji)",
+    "reason": "Poruka o blokadi",
+    "reasonPlaceholder": "Otkrivena je nedopuštena operacija",
+    "save": "Spremi pravilo",
+    "title": "Novo pravilo blokiranja"
+  },
+  "requirement": {
+    "article": "Članak",
+    "days": "{count, plural, one {# dan} few {# dana} many {# dana} other {# dana}}",
+    "deleteConfirm": "Izbrisati zahtjev \"{title}\"?",
+    "noDeclKey": "bez samoprocjene",
+    "title": "Naslov"
+  },
+  "rule": {
+    "activate": "Aktiviraj",
+    "addKeyword": "+ Dodaj",
+    "addKeywordPlaceholder": "Dodajte ključnu riječ...",
+    "deactivate": "Deaktiviraj",
+    "inactive": "NEAKTIVNO",
+    "keywords": "Ključne riječi ({count})",
+    "meta": "Prioritet: {priority} · Opseg: {level} · v{version}",
+    "noKeywords": "Nema ključnih riječi — pravilo se nikada neće aktivirati.",
+    "reason": "Poruka: „{reason}\"",
+    "unsaved": "Nespremljene promjene · Gateway će ih primijeniti u roku od 60 s."
+  },
+  "rulesTab": {
+    "empty": "Nema definiranih pravila.",
+    "intro": "Pravila blokiranja provjeravaju se redoslijedom prioriteta (niži broj = viši prioritet). Prvo podudaranje ključne riječi aktivira blokadu prije poziva modela.",
+    "noResults": "Nema pravila koja odgovaraju upitu „{query}”.",
+    "searchPlaceholder": "Pretraži pravila — naziv, oznaka, ključna riječ, razlog..."
+  },
+  "save": "✓ Spremi",
+  "saving": "Spremanje...",
+  "severity": {
+    "critical": "Kritična",
+    "major": "Ozbiljna",
+    "minor": "Manja"
+  },
+  "subtitle": "Upravljajte sigurnosnim pravilima i zahtjevima EU AI Acta bez izmjena koda. Promjene pravila aktivne su u Gatewayu u roku od 60 s.",
+  "tabs": {
+    "aiact": "Zahtjevi EU AI Acta",
+    "rules": "Sigurnosna pravila"
+  },
+  "title": "Pravila i usklađenost"
+}

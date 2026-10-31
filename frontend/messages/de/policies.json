@@ -1,0 +1,86 @@
+{
+  "aiactTab": {
+    "count": "{count, plural, one {# Anforderung} other {# Anforderungen}}",
+    "emptyLevel": "Keine Anforderungen für diese Stufe.",
+    "intro": "Den Risikostufen zugeordnete Anforderungen. Sichtbar in den PDF-Berichten und in der Konformitätsansicht des KI-Agenten. Sie können eigene Anmerkungen zu bestimmten Artikeln des EU AI Act hinzufügen."
+  },
+  "banner": {
+    "text": "Das Gateway lädt die Regeln automatisch alle 60 Sekunden aus der Datenbank neu. Nach dem Speichern einer Änderung ist nichts weiter zu tun.",
+    "title": "Konfiguration ohne Neustart:"
+  },
+  "cancel": "Abbrechen",
+  "delete": "Löschen",
+  "edit": "Bearbeiten",
+  "loading": "Wird geladen...",
+  "newRequirement": {
+    "addButton": "+ Anforderung hinzufügen",
+    "article": "Artikel *",
+    "articlePlaceholder": "z. B. Art. 9 Abs. 2",
+    "deadlineDays": "Frist (Tage)",
+    "declKey": "Schlüssel der Selbsterklärung",
+    "declKeyHint": "Der Schlüssel der Selbsterklärung verknüpft diese Anforderung mit einem Feld im Tab „Register“ des KI-Agenten. Leer = Anforderung nicht per Selbsterklärung erfüllbar (z. B. Verbot nach Art. 5).",
+    "declKeyPlaceholder": "z. B. art9_risk_management",
+    "reqText": "Beschreibung der Anforderung *",
+    "reqTextPlaceholder": "Detaillierte Beschreibung der Anforderung und wie sie erfüllt wird...",
+    "reqTitle": "Titel der Anforderung *",
+    "reqTitlePlaceholder": "z. B. Register der Hochrisiko-KI-Systeme",
+    "riskLevel": "Risikostufe *",
+    "save": "Anforderung speichern",
+    "severity": "Standard-Schweregrad",
+    "sortOrder": "Reihenfolge",
+    "title": "Neue Anforderung des EU AI Act"
+  },
+  "newRule": {
+    "addButton": "+ Neue Regel hinzufügen",
+    "code": "Regelcode",
+    "codePlaceholder": "z. B. G-003",
+    "defaultReason": "Durch Regel {code} blockiert",
+    "keywords": "Schlüsselwörter (eines pro Zeile) *",
+    "keywordsPlaceholder": "Daten exportieren\nexport data\nsend all records",
+    "name": "Name *",
+    "namePlaceholder": "z. B. Blockierung des Datenexports",
+    "priority": "Priorität (niedriger = wichtiger)",
+    "reason": "Blockierungsmeldung",
+    "reasonPlaceholder": "Unzulässiger Vorgang erkannt",
+    "save": "Regel speichern",
+    "title": "Neue Blockierungsregel"
+  },
+  "requirement": {
+    "article": "Artikel",
+    "days": "{count, plural, one {# Tag} other {# Tage}}",
+    "deleteConfirm": "Anforderung „{title}“ löschen?",
+    "noDeclKey": "keine Selbsterklärung",
+    "title": "Titel"
+  },
+  "rule": {
+    "activate": "Aktivieren",
+    "addKeyword": "+ Hinzufügen",
+    "addKeywordPlaceholder": "Schlüsselwort hinzufügen...",
+    "deactivate": "Deaktivieren",
+    "inactive": "INAKTIV",
+    "keywords": "Schlüsselwörter ({count})",
+    "meta": "Priorität: {priority} · Geltungsbereich: {level} · v{version}",
+    "noKeywords": "Keine Schlüsselwörter — die Regel wird nie ausgelöst.",
+    "reason": "Meldung: „{reason}“",
+    "unsaved": "Nicht gespeicherte Änderungen · Das Gateway übernimmt sie innerhalb von 60 s."
+  },
+  "rulesTab": {
+    "empty": "Keine Regeln definiert.",
+    "intro": "Blockierungsregeln werden in der Reihenfolge ihrer Priorität geprüft (niedrigere Nummer = höhere Priorität). Der erste Treffer eines Schlüsselworts löst die Blockierung vor dem Modellaufruf aus.",
+    "noResults": "Keine Regeln gefunden für „{query}“.",
+    "searchPlaceholder": "Regel suchen — Name, Code, Schlüsselwort, Grund..."
+  },
+  "save": "✓ Speichern",
+  "saving": "Wird gespeichert...",
+  "severity": {
+    "critical": "Kritisch",
+    "major": "Schwerwiegend",
+    "minor": "Geringfügig"
+  },
+  "subtitle": "Verwalten Sie Sicherheitsregeln und Anforderungen des EU AI Act ohne Codeänderungen. Regeländerungen sind im Gateway innerhalb von 60 s aktiv.",
+  "tabs": {
+    "aiact": "Anforderungen des EU AI Act",
+    "rules": "Sicherheitsregeln"
+  },
+  "title": "Richtlinien und Compliance"
+}

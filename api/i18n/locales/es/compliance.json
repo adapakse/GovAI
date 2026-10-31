@@ -1,0 +1,6 @@
+{
+  "errors": {
+    "invalid_risk_level": "risk_level debe ser: minimal, limited, high o unacceptable",
+    "requirement_not_found": "El requisito '{req_id}' no existe"
+  }
+}

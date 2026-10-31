@@ -1,0 +1,20 @@
+{
+  "allApproved": "Sve je odobreno",
+  "empty": {
+    "subtitle": "Sve su odluke razmotrene.",
+    "title": "Nema zadataka na čekanju"
+  },
+  "header": {
+    "subtitle": "Odluke agenata visokog rizika zahtijevaju odobrenje · osvježava se svakih 10 s",
+    "title": "Ljudski nadzor"
+  },
+  "info": {
+    "text": "Vrijeme pregleda svakog zadatka se mjeri. Odobrenje za manje od 10 sekundi od otvaranja kartice generira upozorenje i bilježi se u revizijskom zapisniku (čl. 14. EU AI Acta).",
+    "title": "Zaštita od prividnog nadzora:"
+  },
+  "loading": "Učitavanje zadataka nadzora...",
+  "pendingCount": "Na čekanju: {count}",
+  "refresh": "Osvježi",
+  "review": "Pregledaj",
+  "timer": "{mins} min {secs} s"
+}

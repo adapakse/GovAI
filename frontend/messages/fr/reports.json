@@ -1,0 +1,43 @@
+{
+  "alerts": {
+    "budgetExceeded": "⚠ Dépassement de budget : <b>{name}</b> — {actual} EUR ({pct} % du seuil de {threshold} EUR)",
+    "overdueReview": "⚠ Examen de conformité en retard : <b>{name}</b> (échéance : {date})",
+    "title": "ALERTES NÉCESSITANT UNE ATTENTION"
+  },
+  "dataFrom": "Données du : {date} ·",
+  "days": "{days} jours",
+  "download": "↓ Télécharger le PDF",
+  "error": "Erreur : {error}",
+  "generating": "Génération...",
+  "header": {
+    "subtitle": "Rapport de conformité à l’EU AI Act à l’échelle de l’organisation",
+    "title": "Rapports de gouvernance de l’IA"
+  },
+  "kpi": {
+    "agents": "Agents IA",
+    "agentsSub": "dans le registre",
+    "blocked": "Blocages",
+    "calls": "Appels",
+    "cost": "Coût API",
+    "costSub": "au total",
+    "pii": "Incidents DCP",
+    "piiSub": "détectés"
+  },
+  "loading": "Chargement des données...",
+  "oversight": {
+    "avgReview": "Durée moy. d’examen : {minutes} min",
+    "title": "File de contrôle (art. 14)",
+    "total": "Total des tâches"
+  },
+  "pdfError": "Erreur lors de la génération du PDF : {error}",
+  "period": "Période :",
+  "piiCategories": "Catégories de DCP",
+  "policyHits": "Déclenchements de politiques",
+  "refresh": "actualiser",
+  "riskDistribution": "Répartition des risques EU AI Act",
+  "sessionExpired": "Session expirée",
+  "topAgents": {
+    "blockedCost": "{blocked} blocages · {cost} EUR",
+    "title": "Agents les plus sollicités"
+  }
+}

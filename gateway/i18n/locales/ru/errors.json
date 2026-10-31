@@ -1,0 +1,13 @@
+{
+  "agentInactive": "Агент «{agent}» имеет статус «{status}» и не может выполнять вызовы.",
+  "agentNotRegistered": "Агент «{agent_id}» не зарегистрирован в GovAI. Зарегистрируйте агента перед использованием шлюза.",
+  "auth": {
+    "invalidApiKey": "Ключ API недействителен или истёк",
+    "invalidToken": "Токен недействителен или истёк",
+    "missing": "Отсутствует авторизация",
+    "missingDetail": "Требуется заголовок Authorization: Bearer <token> или X-API-Key: <key>"
+  },
+  "llmError": "Ошибка языковой модели: {error}",
+  "missingAgentId": "Отсутствует заголовок X-Agent-ID",
+  "missingMessages": "В запросе отсутствуют сообщения"
+}

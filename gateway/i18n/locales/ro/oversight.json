@@ -1,0 +1,5 @@
+{
+  "agentDecision": "Agentul '{agent}' procesează solicitarea și așteaptă aprobarea unui evaluator. Conținutul solicitării (prescurtat): {content}...",
+  "awaitingMessage": "Apelul agentului '{agent}' a fost suspendat — este necesară aprobarea unui evaluator în conformitate cu EU AI Act.",
+  "decisionType": "Apel al agentului {risk}"
+}

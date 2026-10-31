@@ -1,0 +1,139 @@
+{
+  "agentStatus": {
+    "active": "Active",
+    "quarantined": "Quarantined",
+    "retired": "Retired",
+    "suspended": "Suspended"
+  },
+  "fallbackNarrative": "During the analysed period of {days} days, the organisation operated {agents} AI agents, of which {high} are classified as high-risk under the EU AI Act. {total} calls were recorded, of which {blocked} ({block_pct}%) were blocked by the security policy engine. {pii} incidents involving personal data were detected. The total API cost amounted to {cost} EUR. A detailed EU AI Act compliance analysis requires verification by the competent compliance function.",
+  "fileName": "govai-enterprise-report-{date}.pdf",
+  "pdf": {
+    "activity": {
+      "topByBlocks": "Top agents by blocks:",
+      "topByCalls": "Top agents by calls:"
+    },
+    "alerts": {
+      "budgetExceeded": "⚠ Budget exceeded: {name} — {actual} EUR ({pct}% of the {threshold} EUR threshold)",
+      "overdueReview": "⚠ Overdue compliance review: {name} (due: {date})"
+    },
+    "columns": {
+      "agent": "Agent",
+      "avgLatency": "Avg. latency",
+      "blockRate": "% blocked",
+      "blocks": "Blocks",
+      "calls": "Calls",
+      "costEur": "Cost EUR",
+      "oversight": "Oversight",
+      "pii": "PII",
+      "review": "Review",
+      "risk": "Risk",
+      "status": "Status"
+    },
+    "cover": {
+      "agents": "AI agents",
+      "agentsActive": "{n} active",
+      "apiCost": "API cost",
+      "blocks": "Blocks",
+      "blocksShare": "{pct}% of all",
+      "calls": "Calls",
+      "lastDays": "last {days} days",
+      "pii": "PII incidents",
+      "piiNote": "personal data detected",
+      "totalDays": "{days} days in total"
+    },
+    "declarationsLegend": "✓ Met · ◑ Partially · ✗ Gap · N/A Not applicable · — Not assessed",
+    "generated": "Generated: {date} UTC",
+    "incidents": {
+      "approved": "Approved",
+      "avgReviewTime": "Avg. review time",
+      "blockCount": "Number of blocks",
+      "escalated": "Escalated",
+      "incidentCount": "Number of incidents",
+      "noPii": "No PII incidents detected in the analysed period.",
+      "oversightHistory": "Human oversight queue history (Art. 14):",
+      "pending": "Pending",
+      "piiCategories": "Detected categories of personal data (PII):",
+      "piiCategory": "PII category",
+      "policyCode": "Policy (code)",
+      "policyHits": "Blocking rule triggers:",
+      "rejected": "Rejected",
+      "tasksTotal": "Total tasks"
+    },
+    "kpi": {
+      "apiCost": "Total API cost",
+      "apiCostNote": "estimated LLM model cost",
+      "avgLatency": "Avg. latency",
+      "avgLatencyNote": "end-to-end",
+      "avgReview": "avg. review time: {min} min",
+      "comment": "Comment",
+      "maxLatency": "Max. latency",
+      "maxLatencyNote": "slowest call",
+      "metric": "Metric",
+      "oversight": "Referred for oversight",
+      "oversightNote": "policy A-001 (Art. 14)",
+      "oversightQueue": "Oversight queue",
+      "oversightQueueValue": "{total} tasks ({pending} pending)",
+      "pii": "PII incidents",
+      "piiNote": "{n} entities in total",
+      "policyBlocks": "Policy blocks",
+      "policyBlocksNote": "G-001 financial, G-002 prompt injection",
+      "tokensIn": "Input tokens",
+      "tokensInNote": "prompt",
+      "tokensOut": "Output tokens",
+      "tokensOutNote": "completion",
+      "totalCalls": "Total calls",
+      "totalCallsNote": "all agents",
+      "value": "Value"
+    },
+    "no": "no",
+    "noData": "no data",
+    "period": "Analysis period: last {days} days",
+    "recommendations": {
+      "basis": "Basis",
+      "priority": "Priority",
+      "recommendation": "Recommendation"
+    },
+    "risk": {
+      "agentCount": "Number of agents",
+      "agents": "Agents",
+      "level": "Risk level",
+      "requiresOversight": "Requires oversight"
+    },
+    "riskShort": {
+      "high": "HIGH",
+      "limited": "LTD",
+      "minimal": "MIN",
+      "unacceptable": "UNAC"
+    },
+    "sections": {
+      "activity": "5. Agent Activity Analysis",
+      "declarations": "7. EU AI Act Compliance Declarations — High-Risk Agents",
+      "incidents": "6. Security Incidents",
+      "kpi": "3. Operational KPIs (last {days} days)",
+      "recommendations": "{n}. Priority Recommendations",
+      "registry": "4. AI Agent Registry",
+      "riskDistribution": "2. EU AI Act Risk Distribution",
+      "summary": "1. Summary for the Management Board"
+    },
+    "title": "Enterprise AI Governance Report",
+    "yes": "YES"
+  },
+  "priority": {
+    "critical": "Critical",
+    "high": "High",
+    "medium": "Medium"
+  },
+  "recommendations": {
+    "basisBestPractices": "Best practice",
+    "basisCostControl": "Cost control",
+    "basisInternalPolicy": "Internal policy",
+    "budgetReview": "Review the budgets of agents exceeding their alert thresholds: {names}.",
+    "highBlockRate": "The block rate is {pct}% — review the policy rules and fine-tune the keywords.",
+    "implementOversight": "Implement human oversight procedures for: {names}.",
+    "keepMonitoring": "Continue monitoring the agents. Carry out a quarterly compliance review.",
+    "missingTechnicalDocs": "Missing technical documentation (Art. 11) for: {names}. Prepare it within 60 days.",
+    "overdueReviews": "Carry out overdue compliance reviews for: {names}.",
+    "pendingOversight": "Review {n} pending tasks in the oversight queue.",
+    "suspendUnacceptable": "Immediately suspend agents classified as UNACCEPTABLE risk. Consult a legal adviser."
+  }
+}

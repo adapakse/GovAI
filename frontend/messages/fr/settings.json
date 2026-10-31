@@ -1,0 +1,67 @@
+{
+  "categories": {
+    "budget": {
+      "desc": "Limites par défaut et seuils d’alerte de coûts pour les nouveaux agents.",
+      "title": "Budgets"
+    },
+    "compliance": {
+      "desc": "Échéances des lacunes de conformité et limites de la narration des rapports.",
+      "title": "Conformité"
+    },
+    "i18n": {
+      "desc": "Langue par défaut de l’interface, des rapports et des messages de l’instance.",
+      "title": "Langue"
+    },
+    "intervals": {
+      "desc": "Fréquence des tâches d’arrière-plan (rechargement des politiques, moniteur TTL).",
+      "title": "Intervalles"
+    },
+    "models": {
+      "desc": "Modèles par défaut et paramètres des appels LLM.",
+      "title": "Modèles par défaut"
+    },
+    "oversight": {
+      "desc": "Seuils et limites de la file de contrôle humain (art. 14 de l’EU AI Act).",
+      "title": "Contrôle"
+    },
+    "pagination": {
+      "desc": "Tailles par défaut et maximales des listes ainsi que plages de jours/heures.",
+      "title": "Pagination et fenêtres temporelles"
+    },
+    "pricing": {
+      "desc": "Tarifs des modèles et taux de change utilisés pour valoriser les appels.",
+      "title": "Tarifs et coûts"
+    },
+    "security": {
+      "desc": "Jetons, hachage des mots de passe et seuils de détection des DCP.",
+      "title": "Sécurité"
+    }
+  },
+  "history": {
+    "empty": "Aucune modification enregistrée.",
+    "loading": "Chargement de l’historique...",
+    "unknownUser": "inconnu"
+  },
+  "loading": "Chargement...",
+  "noResults": "Aucun paramètre correspondant à « {query} ».",
+  "readOnly": "Mode lecture seule — la modification des paramètres requiert le rôle <b>it_admin</b>. Votre rôle : <b>{role}</b>.",
+  "reload": {
+    "button": "⟳ Recharger le cache maintenant",
+    "done": "Cache rechargé.",
+    "error": "Erreur : {error}",
+    "running": "Rechargement..."
+  },
+  "row": {
+    "hideHistory": "masquer l’historique",
+    "invalidJson": "JSON invalide",
+    "lastChange": "dern. modif. : {user} · {date}",
+    "locked": "verrouillé",
+    "range": "plage : {range}",
+    "save": "✓ Enregistrer",
+    "showHistory": "historique",
+    "unit": "unité : {unit}"
+  },
+  "searchPlaceholder": "Rechercher un paramètre (nom, clé, description)...",
+  "subtitle": "Configuration opérationnelle sans modification du code. Modifications actives immédiatement (la passerelle/l’API rechargent les valeurs sous 60 s).",
+  "title": "Paramètres du système"
+}

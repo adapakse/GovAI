@@ -1,0 +1,84 @@
+{
+  "agentStatus": {
+    "active": "Activ",
+    "quarantined": "Carantină",
+    "retired": "Retras",
+    "suspended": "Suspendat"
+  },
+  "components": {
+    "liveFeed": {
+      "connected": "Conectat",
+      "disconnected": "Deconectat",
+      "events": {
+        "auditBlocked": "BLOCARE",
+        "auditError": "EROARE",
+        "auditNewCall": "APEL",
+        "oversightEscalated": "ESCALADARE",
+        "oversightPending": "SUPRAVEGHERE"
+      },
+      "title": "Evenimente în timp real",
+      "waiting": "Se așteaptă evenimente..."
+    },
+    "oversightModal": {
+      "actions": {
+        "approved": "✓ Aprobați",
+        "escalated": "↑ Escaladați",
+        "rejected": "✕ Respingeți"
+      },
+      "agentDecision": "Decizia agentului",
+      "cancel": "Anulare",
+      "commentOptional": "Comentariu opțional...",
+      "commentRequired": "Comentariul este obligatoriu în caz de respingere sau escaladare.",
+      "decisionType": "Tipul deciziei:",
+      "justificationRequired": "Justificare (obligatorie)",
+      "rubberStampWarning": "⚠ Timpul de revizuire este măsurat din momentul deschiderii acestei ferestre. O decizie luată în mai puțin de 10 secunde va fi marcată drept supraveghere aparentă.",
+      "save": "Salvați decizia",
+      "saveError": "Eroare la salvarea deciziei",
+      "saved": "Salvat: {action}",
+      "saving": "Se salvează...",
+      "submitted": "Transmis:",
+      "taskId": "Task ID: {id}",
+      "timeLeft": "Timp rămas",
+      "timer": "{mins}m {secs}s",
+      "yourDecision": "Decizia dumneavoastră"
+    },
+    "searchBox": {
+      "clear": "Ștergeți",
+      "placeholder": "Căutare..."
+    }
+  },
+  "language": {
+    "instanceDefault": "Implicit pentru instanță ({language})",
+    "label": "Limbă"
+  },
+  "oversightStatus": {
+    "approved": "Aprobate",
+    "escalated": "Escaladate",
+    "pending": "În așteptare",
+    "rejected": "Respinse"
+  },
+  "policyResult": {
+    "allowed": "Permise",
+    "blocked": "Blocate",
+    "error": "Eroare",
+    "oversight_required": "Necesită supraveghere",
+    "short": {
+      "allowed": "OK",
+      "blocked": "BLOCAT",
+      "error": "EROARE",
+      "oversight_required": "SUPRAVEGHERE"
+    }
+  },
+  "risk": {
+    "high": "Ridicat",
+    "limited": "Limitat",
+    "minimal": "Minim",
+    "short": {
+      "high": "RIDICAT",
+      "limited": "LIMITAT",
+      "minimal": "MINIM",
+      "unacceptable": "INACCEPTABIL"
+    },
+    "unacceptable": "Inacceptabil"
+  }
+}

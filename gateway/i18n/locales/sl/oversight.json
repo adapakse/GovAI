@@ -1,0 +1,5 @@
+{
+  "agentDecision": "Agent '{agent}' obdeluje zahtevo in čaka na odobritev pregledovalca. Vsebina zahteve (skrajšano): {content}...",
+  "awaitingMessage": "Klic agenta '{agent}' je bil zadržan — v skladu z EU AI Act je potrebna odobritev pregledovalca.",
+  "decisionType": "Klic agenta {risk}"
+}

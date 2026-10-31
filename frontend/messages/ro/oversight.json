@@ -1,0 +1,20 @@
+{
+  "allApproved": "Totul a fost aprobat",
+  "empty": {
+    "subtitle": "Toate deciziile au fost soluționate.",
+    "title": "Nicio sarcină în așteptare"
+  },
+  "header": {
+    "subtitle": "Deciziile agenților cu risc ridicat necesită aprobare · actualizare la fiecare 10s",
+    "title": "Supraveghere umană"
+  },
+  "info": {
+    "text": "Timpul de revizuire al fiecărei sarcini este măsurat. Aprobarea în mai puțin de 10 secunde de la deschiderea fișei generează o alertă și este înregistrată în jurnalul de audit (art. 14 EU AI Act).",
+    "title": "Protecție împotriva supravegherii aparente:"
+  },
+  "loading": "Se încarcă sarcinile de supraveghere...",
+  "pendingCount": "{count} în așteptare",
+  "refresh": "Actualizați",
+  "review": "Revizuiți",
+  "timer": "{mins}m {secs}s"
+}

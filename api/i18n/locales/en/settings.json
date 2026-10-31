@@ -1,0 +1,13 @@
+{
+  "errors": {
+    "above_max": "Value {value} is above the maximum of {max}",
+    "below_min": "Value {value} is below the minimum of {min}",
+    "expected_bool": "A boolean value was expected",
+    "expected_json": "A JSON object or list was expected",
+    "expected_string": "A text value was expected",
+    "invalid_locale": "Unsupported language. Allowed: {allowed}",
+    "invalid_value": "Invalid value: {error}",
+    "not_editable": "Setting '{key}' is not editable",
+    "not_found": "Setting '{key}' does not exist"
+  }
+}

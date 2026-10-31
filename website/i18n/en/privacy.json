@@ -1,0 +1,49 @@
+{
+  "changes": {
+    "text": "We may update this policy if the way the website operates or the legal requirements change. The current version is always available at this address.",
+    "title": "Changes to this policy"
+  },
+  "controller": {
+    "contact": "Data protection contact:",
+    "intro": "The controller of personal data processed in connection with the use of this website is:",
+    "title": "Data controller"
+  },
+  "cookies": {
+    "text": "This website does not use cookies for tracking or advertising. The only information stored locally in your browser is your chosen colour theme (light/dark) and — if you select it in the switcher — the site language, kept in <span class=\"mono\">localStorage</span>; it never leaves your device and is not transmitted to us in any way.",
+    "title": "Cookies and localStorage"
+  },
+  "data": {
+    "form": "This website collects personal data only when you provide it yourself — via the contact form. The form asks for: your first and last name, company name, business e-mail address, optionally a telephone number, and the content of your message.",
+    "noTracking": "We do not track or profile visitors on this website — there are no analytics or advertising tools here.",
+    "title": "What data we collect"
+  },
+  "meta": {
+    "description": "Privacy policy of the govai.pl website — what data we collect through the contact form, on what legal basis and for how long we keep it.",
+    "title": "Privacy policy — GovAI"
+  },
+  "purpose": {
+    "text": "We process data from the form solely in order to respond to your enquiry and, where applicable, to prepare a commercial offer — the legal basis is Art. 6(1)(b) GDPR (steps taken prior to entering into a contract, at your request) and Art. 6(1)(f) GDPR (our legitimate interest in conducting business correspondence).",
+    "title": "Purpose and legal basis of processing"
+  },
+  "recipients": {
+    "text": "To handle the contact form we use an external provider, <strong style=\"color:var(--text)\">Web3Forms</strong>, which forwards messages from the form to our mailbox <span class=\"mono\">kontakt@govai.pl</span>. Web3Forms acts here as a processor processing data on our behalf. Apart from this provider, we do not disclose data from the form to any other parties unless required by law.",
+    "title": "Who we share data with"
+  },
+  "retention": {
+    "text": "We keep data from the contact form for as long as necessary to handle your enquiry and the related correspondence, and thereafter — if no further cooperation follows — for a period justified by potential claims. If you would like us to erase your data sooner, write to <a href=\"mailto:kontakt@govai.pl\">kontakt@govai.pl</a>.",
+    "title": "Retention period"
+  },
+  "rights": {
+    "access": "The right of access to your data and to obtain a copy of it",
+    "complaint": "The right to lodge a complaint with the President of the Personal Data Protection Office (PUODO), the Polish supervisory authority",
+    "erasure": "The right to erasure (\"right to be forgotten\")",
+    "howTo": "To exercise any of the above rights, write to <a href=\"mailto:kontakt@govai.pl\">kontakt@govai.pl</a>.",
+    "objection": "The right to object to processing",
+    "portability": "The right to data portability",
+    "rectification": "The right to rectification (correction) of your data",
+    "restriction": "The right to restriction of processing",
+    "title": "Your rights"
+  },
+  "scope": "Applies to the <span class=\"mono\">govai.pl</span> and <span class=\"mono\">govai.pl/blog.html</span> websites.",
+  "title": "Privacy policy"
+}

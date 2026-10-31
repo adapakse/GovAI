@@ -1,0 +1,10 @@
+{
+  "alerts": {
+    "rubber_stamp": "Prividni nadzor — pregled kraći od {seconds} sekundi. Događaj je zabilježen."
+  },
+  "errors": {
+    "already_reviewed": "Zadatak je već razmotren — status: {status}",
+    "cannot_start_review": "Zadatak ima status '{status}' — nije moguće započeti pregled",
+    "task_not_found": "Zadatak nadzora ne postoji"
+  }
+}

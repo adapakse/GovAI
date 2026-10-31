@@ -1,0 +1,8 @@
+{
+  "agent_inactive": "Agentul are starea '{status}' — apelul a fost respins înainte de procesare",
+  "llm_error": "Eroare a modelului lingvistic ({provider}): {error}",
+  "no_eligible_provider": "Nu există niciun furnizor de modele capabil să deservească modelul '{model}' al agentului la nivelul de sensibilitate a datelor solicitat '{sensitivity}'. Fie niciun furnizor de modele activ nu acceptă acest nivel de sensibilitate, fie niciunul dintre furnizorii eligibili nu are acest model în listă (gateway-ul nu înlocuiește în mod intenționat, pe tăcute, modelul cu altul). Contactați administratorul — activați un furnizor de modele care acceptă acest model și acest nivel de sensibilitate sau reduceți sensibilitatea datelor din solicitare.",
+  "policy_custom": "{reason}",
+  "policy_default": "Blocat de politica de securitate",
+  "unknown_agent": "agent_id necunoscut: {agent_id} — nu există în registrul GovAI"
+}
