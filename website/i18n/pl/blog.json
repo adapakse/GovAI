@@ -1,0 +1,120 @@
+{
+  "hero": {
+    "lead": "Terminy, obowiązki i decyzje architektoniczne wokół EU AI Act — pisane z perspektywy zespołu, który musi to wdrożyć, nie tylko opisać.",
+    "title": "Zgodność z AI Act, czytelnie — nie tylko dla prawników."
+  },
+  "list": {
+    "all": "Wszystkie",
+    "empty": "Brak wpisów w tej kategorii.",
+    "sort": "Sortuj:",
+    "sortNewest": "Najnowsze",
+    "sortOldest": "Najstarsze",
+    "sortReadTime": "Czas czytania"
+  },
+  "meta": {
+    "description": "Zgodność z EU AI Act, czytelnie — terminy, obowiązki i decyzje architektoniczne pisane z perspektywy zespołu, który musi to wdrożyć.",
+    "ogDescription": "Zgodność z EU AI Act, czytelnie — terminy, obowiązki i decyzje architektoniczne pisane z perspektywy zespołu, który musi to wdrożyć.",
+    "ogTitle": "Blog — GovAI",
+    "title": "Blog — GovAI"
+  },
+  "post": {
+    "back": "← Wszystkie wpisy",
+    "categories": "Kategorie",
+    "noRelated": "Brak powiązanych wpisów.",
+    "notFound": "Nie znaleziono wpisu.",
+    "readTime": "{minutes} min czytania",
+    "related": "Powiązane wpisy"
+  },
+  "posts": {
+    "checklist-rejestracja-agenta": {
+      "body": [
+        "Zanim agent trafi do rejestru, warto mieć odpowiedzi na kilka pytań: jaki jest jego dokładny zakres użycia, czy przetwarza dane osobowe, kto jest właścicielem biznesowym decyzji, które podejmuje lub wspiera, oraz jaki jest plan na sytuację, w której zakres użycia się zmieni.",
+        "Najczęstszy powód złej klasyfikacji na starcie to niedoszacowanie zakresu — agent wdrożony 'tylko do wsparcia HR w sortowaniu CV' bardzo szybko zaczyna być używany do faktycznej wstępnej selekcji kandydatów, co zmienia kategorię ryzyka.",
+        "Zasada, która się sprawdza: klasyfikuj na podstawie tego, do czego agent faktycznie może zostać użyty w organizacji, nie tylko do czego został zaprojektowany."
+      ],
+      "category": "Compliance ops",
+      "excerpt": "Krótka, praktyczna lista tego, co warto ustalić przed pierwszym wdrożeniem — żeby klasyfikacja ryzyka od razu była sensowna, a nie tymczasowa.",
+      "tags": [
+        "onboarding",
+        "rejestr agentów",
+        "checklist"
+      ],
+      "title": "Checklist: co przygotować przed rejestracją pierwszego agenta w rejestrze"
+    },
+    "dedykowana-instancja-vs-multitenant": {
+      "body": [
+        "Wiele platform \"AI governance\" jest współdzielonym SaaS: jedna baza danych, logicznie odseparowane wiersze per klient. To standardowy, tani sposób budowania SaaS — i zwykle wystarczający.",
+        "Przy dzienniku audytowym dla regulowanego systemu AI zmienia się jednak pytanie audytora: nie \"czy dane są odseparowane logicznie\", tylko \"czy w ogóle istnieje scenariusz, w którym dane innego klienta trafiają do naszego zapytania\". Odpowiedź \"nie, bo mamy osobną bazę\" jest łatwiejsza do obronienia niż \"nie, bo poprawnie filtrujemy po tenant_id we wszystkich zapytaniach, zawsze\".",
+        "To kompromis kosztowy — dedykowana instancja per klient jest droższa w utrzymaniu niż jedna współdzielona baza. Dla systemu, którego jedynym zadaniem jest bycie dowodem zgodności, uznaliśmy, że to koszt, który trzeba ponieść, nie zoptymalizować."
+      ],
+      "category": "Bezpieczeństwo",
+      "excerpt": "Współdzielona baza danych to decyzja architektoniczna, nie szczegół techniczny — a przy audycie zgodności staje się pytaniem, na które trudno dobrze odpowiedzieć.",
+      "tags": [
+        "architektura",
+        "izolacja danych",
+        "audyt"
+      ],
+      "title": "Dlaczego 'multi-tenant' i 'zgodny z AI Act' rzadko idą razem"
+    },
+    "digital-omnibus-grudzien-2027": {
+      "body": [
+        "27 lipca 2026 w mocy wszedł Digital Omnibus AI (Rozporządzenie UE 2026/1744) — nowelizacja przesuwająca pełne obowiązki dla systemów wysokiego ryzyka z Załącznika III z 2 sierpnia 2026 na 2 grudnia 2027. Dla systemów wbudowanych w regulowane produkty (Załącznik I) termin przesunął się z sierpnia 2027 na sierpień 2028.",
+        "To nie jest ogólne odroczenie całej ustawy. Zakaz praktyk niedopuszczalnych z Art. 5 obowiązuje od lutego 2025 bez zmian, obowiązki dla modeli ogólnego przeznaczenia (GPAI) — od sierpnia 2025, a przejrzystość z Art. 50 (oznaczanie treści AI, informowanie o interakcji z chatbotem) — od sierpnia 2026, czyli już teraz. Nowelizacja dodała też nowy zakaz w Art. 5 — generowanie treści intymnych bez zgody i materiałów przedstawiających wykorzystywanie seksualne dzieci — który wchodzi w życie 2 grudnia 2026.",
+        "Praktyczny wniosek: 16 dodatkowych miesięcy to czas na zrobienie tego porządnie, nie na odłożenie tematu. Rejestr agentów, klasyfikacja ryzyka i ocena luk zajmują tyle samo pracy niezależnie od tego, czy termin jest za rok czy za miesiąc — różnica jest tylko taka, że dziś nikt nie robi tego pod presją."
+      ],
+      "category": "AI Act",
+      "excerpt": "Rozporządzenie 2026/1744 przesunęło pełne obowiązki z Załącznika III o 16 miesięcy. To nie jest powód, żeby zwolnić — to nowe okno czasowe, które warto wykorzystać, zanim zrobi to ktoś inny.",
+      "tags": [
+        "Digital Omnibus",
+        "terminy",
+        "Załącznik III"
+      ],
+      "title": "Digital Omnibus: dlaczego termin dla systemów wysokiego ryzyka przesunięto na grudzień 2027"
+    },
+    "dokumentacja-vs-egzekwowanie": {
+      "body": [
+        "Rynek narzędzi do AI Act w większości rozwiązuje jeden problem: wygenerowanie dokumentacji technicznej wymaganej przez Załącznik IV. To realna i potrzebna praca — ale dokumentacja opisuje, co system powinien robić, nie wymusza tego w momencie, w którym system faktycznie działa.",
+        "Różnica staje się widoczna dopiero w chwili incydentu. Dokumentacja, nawet najlepiej napisana, nie zablokowała wywołania, które nie powinno było przejść — może co najwyżej posłużyć jako dowód, że wiedzieliście, jak powinno wyglądać poprawne działanie.",
+        "Egzekwowanie w czasie rzeczywistym i dokumentacja nie są konkurencyjne — są komplementarne. Ale tylko jedno z nich stoi fizycznie między agentem a odpowiedzią."
+      ],
+      "category": "AI Act",
+      "excerpt": "Narzędzia dokumentacyjne odpowiadają na pytanie 'czy mamy papier'. Nie odpowiadają na pytanie 'czy to naruszenie w ogóle mogło się wydarzyć'.",
+      "tags": [
+        "dokumentacja",
+        "egzekwowanie",
+        "audyt"
+      ],
+      "title": "Dokumentacja zgodności nikogo nie powstrzymuje w czasie rzeczywistym"
+    },
+    "nadzor-czlowieka-art-14": {
+      "body": [
+        "Art. 14 AI Act wymaga, żeby systemy wysokiego ryzyka miały wbudowany mechanizm nadzoru człowieka. Problem w tym, że \"mechanizm\" bywa w praktyce jednym adresem e-mail, na który ktoś czasem odpowiada.",
+        "Audytowalny nadzór człowieka ma trzy cechy: decyzja jest zatrzymana do czasu przeglądu (nie działa równolegle \"na wszelki wypadek\"), przegląd jest przypisany do konkretnej, uprawnionej osoby, a wynik przeglądu jest zapisany razem z tym, kto go podjął i kiedy.",
+        "To, co odróżnia narzędzie od procedury na papierze, to czy te trzy elementy są wymuszone strukturalnie — czy agent faktycznie nie może odpowiedzieć, dopóki recenzent nie podejmie decyzji — czy tylko opisane w dokumencie polityki."
+      ],
+      "category": "Compliance ops",
+      "excerpt": "Nadzór człowieka na papierze i nadzór człowieka, który wytrzyma audyt, to dwie różne rzeczy. Różnica leży w tym, co dzieje się między 'oznaczono' a 'zatwierdzono'.",
+      "tags": [
+        "Art. 14",
+        "nadzór",
+        "proces"
+      ],
+      "title": "Artykuł 14 w praktyce: kiedy 'przejrzał to człowiek' naprawdę coś znaczy"
+    },
+    "routing-dostawcow-wedlug-wrazliwosci": {
+      "body": [
+        "Zdecydowana większość wdrożeń agentów AI ma jeden, zaszyty w kodzie base URL dostawcy modelu. Działa to dobrze, dopóki nie pojawi się zapytanie zawierające dane osobowe, dane finansowe albo dane objęte tajemnicą zawodową — które trafiają dokładnie tą samą ścieżką co każde inne.",
+        "Routing oparty na wrażliwości danych odwraca to podejście: to nie deweloper decyduje, dokąd trafia zapytanie, tylko polityka oceniająca zawartość zapytania w locie — obecność PII, kategorię agenta, poziom klasyfikacji ryzyka.",
+        "W praktyce oznacza to, że dwa wywołania z tego samego agenta mogą trafić do dwóch różnych dostawców w ciągu tej samej minuty — jedno do modelu zewnętrznego, drugie do instancji self-hosted — bez żadnej zmiany w kodzie agenta."
+      ],
+      "category": "Bezpieczeństwo",
+      "excerpt": "Domyślny dostawca modelu to często przypadek historyczny, nie decyzja. Pokazujemy, jak wygląda routing, w którym o miejscu docelowym decyduje treść zapytania, nie przyzwyczajenie.",
+      "tags": [
+        "routing",
+        "prywatność danych",
+        "architektura"
+      ],
+      "title": "Routing modeli według wrażliwości danych, nie według tego, co jest w konfigu"
+    }
+  }
+}

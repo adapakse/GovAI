@@ -1,10 +1,13 @@
+import { getActiveLocale, type LocalePreference } from './locale';
+import type { Locale } from '@/i18n/locales';
+
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
 
 const T_ACCESS  = 'gai_access';
 const T_REFRESH = 'gai_refresh';
 const T_USER    = 'gai_user';
 
-export interface AuthUser {
+export interface AuthUser extends LocalePreference {
   id: string;
   email: string;
   full_name: string;
@@ -56,12 +59,12 @@ export function clearSession(): void {
 export async function apiLogin(email: string, password: string): Promise<LoginResponse> {
   const r = await fetch(`${API}/auth/login`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'Accept-Language': getActiveLocale() },
     body: JSON.stringify({ email, password }),
   });
   if (!r.ok) {
     const err = await r.json().catch(() => ({}));
-    throw new Error(err?.detail ?? 'Logowanie nieudane');
+    throw new Error(err?.detail ?? `POST /auth/login → ${r.status}`);
   }
   return r.json();
 }
@@ -72,7 +75,7 @@ export async function apiRefresh(refresh_token: string): Promise<{ access_token:
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ refresh_token }),
   });
-  if (!r.ok) throw new Error('Refresh token wygasł');
+  if (!r.ok) throw new Error(`POST /auth/refresh → ${r.status}`);
   return r.json();
 }
 
@@ -85,6 +88,29 @@ export async function apiLogout(refresh_token: string, access_token: string): Pr
     },
     body: JSON.stringify({ refresh_token }),
   }).catch(() => {});
+}
+
+// Zapis języka w profilu (null = domyślny instancji). Aktualizuje też
+// użytkownika w localStorage, żeby AuthProvider nie przywrócił starego języka.
+export async function apiSetLocale(locale: Locale | null): Promise<AuthUser> {
+  const token = await ensureFreshToken();
+  const r = await fetch(`${API}/auth/me/locale`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept-Language': locale ?? getActiveLocale(),
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify({ locale }),
+  });
+  if (!r.ok) {
+    const err = await r.json().catch(() => ({}));
+    throw new Error(err?.detail ?? `PUT /auth/me/locale → ${r.status}`);
+  }
+  const user: AuthUser = await r.json();
+  const stored = getUser();
+  if (stored) localStorage.setItem(T_USER, JSON.stringify({ ...stored, ...user }));
+  return user;
 }
 
 // ── Token refresh with retry ──────────────────────────────────────────────────

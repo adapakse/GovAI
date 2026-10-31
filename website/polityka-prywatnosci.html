@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Polityka prywatności — GovAI</title>
-<meta name="description" content="Polityka prywatności strony govai.pl — jakie dane zbieramy przez formularz kontaktowy, na jakiej podstawie i jak długo je przechowujemy.">
+<title data-i18n="privacy.meta.title">Polityka prywatności — GovAI</title>
+<meta name="description" content="Polityka prywatności strony govai.pl — jakie dane zbieramy przez formularz kontaktowy, na jakiej podstawie i jak długo je przechowujemy." data-i18n-attr="content:privacy.meta.description">
 <link rel="canonical" href="https://{{ADDRESS}}/polityka-prywatnosci.html">
 <meta name="robots" content="noindex">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -51,6 +51,23 @@
   .brand .mark{width:30px; height:30px; flex:none;}
   .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; font-family:'Inter',sans-serif; font-weight:700; font-size:14px; padding:10px 18px; border-radius:9px; border:1px solid var(--line); color:var(--text); text-decoration:none;}
   .btn:hover{border-color:var(--blue); color:var(--blue); text-decoration:none;}
+  .navright{display:flex; align-items:center; gap:14px;}
+
+  /* language picker + login */
+  .langpicker{position:relative; flex:none;}
+  .langbtn{display:flex; align-items:center; gap:6px; height:36px; padding:0 10px; background:none; border:1px solid var(--line); border-radius:8px; color:var(--text-muted); font-family:'JetBrains Mono',monospace; font-size:12.5px; font-weight:600; cursor:pointer;}
+  .langbtn:hover, .langbtn[aria-expanded="true"]{color:var(--text); border-color:var(--blue);}
+  .langbtn svg{transition:transform .15s ease;}
+  .langbtn[aria-expanded="true"] svg{transform:rotate(180deg);}
+  .langmenu{position:absolute; right:0; top:calc(100% + 8px); min-width:190px; max-height:min(360px,70vh); overflow-y:auto; background:var(--surface); border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow); padding:6px; z-index:220;}
+  .langmenu[hidden]{display:none;}
+  .langmenu button{display:flex; width:100%; align-items:center; justify-content:space-between; gap:12px; padding:9px 10px; background:none; border:none; border-radius:7px; color:var(--text); font-family:inherit; font-size:14px; font-weight:500; text-align:left; cursor:pointer;}
+  .langmenu button:hover, .langmenu button:focus-visible{background:var(--surface-2); outline:none;}
+  .langmenu .lang-code{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--text-muted);}
+  .langmenu button[aria-current="true"]{color:var(--accent-ink); font-weight:700; background:var(--accent-soft);}
+  .navlogin{display:none; font-size:14px; font-weight:600; color:var(--text-muted); white-space:nowrap;}
+  .navlogin:hover{color:var(--text); text-decoration:none;}
+  @media (min-width:560px){ .navlogin{display:inline-flex;} }
 
   .legal-wrap{max-width:760px; margin:0 auto; padding-block:52px 80px;}
   .legal-wrap h1{font-size:clamp(26px,4.6vw,36px); margin-bottom:10px;}
@@ -69,7 +86,7 @@
   .foot-owner{margin-top:4px; font-size:11.5px; opacity:.8;}
 </style>
 </head>
-<body>
+<body data-i18n-ns="common,privacy">
 <!-- TODO(legal): treść tej polityki opisuje wyłącznie przetwarzanie danych przez samą stronę marketingową (govai.pl) — formularz kontaktowy i localStorage. NIE obejmuje przetwarzania danych klientów w produkcie GovAI (rejestr agentów, dziennik audytowy) — to wymaga osobnej, pełnej dokumentacji RODO/DPA po stronie prawnej, dziś nieukończonej. Przed publikacją potwierdzić z prawnikiem, zwłaszcza okres przechowywania danych z formularza. -->
 <header>
   <div class="container topbar">
@@ -83,67 +100,75 @@
       </svg>
       Gov<span style="color:var(--accent-ink)">AI</span>
     </a>
-    <a class="btn" href="index.html">← Strona główna</a>
+    <div class="navright">
+      <div class="langpicker">
+        <button type="button" class="langbtn" aria-label="Język strony" data-i18n-attr="aria-label:common.lang.picker"><span class="langbtn-label">PL</span><svg width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+        <div class="langmenu" hidden></div>
+      </div>
+      <a class="navlogin" href="https://app.{{ADDRESS}}/login" data-app-link data-i18n="common.nav.login">Zaloguj się</a>
+      <a class="btn" href="index.html" data-i18n="common.nav.backHome">← Strona główna</a>
+    </div>
   </div>
 </header>
 
 <main class="container">
   <div class="legal-wrap">
-    <h1>Polityka prywatności</h1>
-    <p class="updated">Dotyczy strony <span class="mono">govai.pl</span> i <span class="mono">govai.pl/blog.html</span>.</p>
+    <h1 data-i18n="privacy.title">Polityka prywatności</h1>
+    <p class="updated" data-i18n-html="privacy.scope">Dotyczy strony <span class="mono">govai.pl</span> i <span class="mono">govai.pl/blog.html</span>.</p>
 
     <div class="legal-card">
-      <h2 style="margin-top:0;">Administrator danych</h2>
-      <p>Administratorem danych osobowych przetwarzanych w związku z korzystaniem z tej strony jest:<br>
+      <h2 style="margin-top:0;" data-i18n="privacy.controller.title">Administrator danych</h2>
+      <p><span data-i18n="privacy.controller.intro">Administratorem danych osobowych przetwarzanych w związku z korzystaniem z tej strony jest:</span><br>
       <strong style="color:var(--text)">Comparme Sp. z o.o.</strong><br>
       ul. Herbu Janina 5, 02-972 Warszawa<br>
       NIP: 5213664910 · REGON: 147067912<br>
-      Kontakt w sprawach ochrony danych: <a href="mailto:kontakt@govai.pl">kontakt@govai.pl</a></p>
+      <span data-i18n="privacy.controller.contact">Kontakt w sprawach ochrony danych:</span> <a href="mailto:kontakt@govai.pl">kontakt@govai.pl</a></p>
     </div>
 
-    <h2>Jakie dane zbieramy</h2>
-    <p>Ta strona zbiera dane osobowe wyłącznie wtedy, gdy sam/-a je podasz — poprzez formularz kontaktowy. Formularz prosi o: imię i nazwisko, nazwę firmy, służbowy adres e-mail, opcjonalnie numer telefonu, oraz treść wiadomości.</p>
-    <p>Nie prowadzimy na tej stronie śledzenia ani profilowania odwiedzających — nie ma tu narzędzi analitycznych ani reklamowych.</p>
+    <h2 data-i18n="privacy.data.title">Jakie dane zbieramy</h2>
+    <p data-i18n="privacy.data.form">Ta strona zbiera dane osobowe wyłącznie wtedy, gdy sam/-a je podasz — poprzez formularz kontaktowy. Formularz prosi o: imię i nazwisko, nazwę firmy, służbowy adres e-mail, opcjonalnie numer telefonu, oraz treść wiadomości.</p>
+    <p data-i18n="privacy.data.noTracking">Nie prowadzimy na tej stronie śledzenia ani profilowania odwiedzających — nie ma tu narzędzi analitycznych ani reklamowych.</p>
 
-    <h2>Cel i podstawa prawna przetwarzania</h2>
-    <p>Dane z formularza przetwarzamy wyłącznie w celu odpowiedzi na zapytanie i ewentualnego przygotowania oferty handlowej — podstawą prawną jest art. 6 ust. 1 lit. b RODO (działania przed zawarciem umowy, na Twoje żądanie) oraz art. 6 ust. 1 lit. f RODO (nasz prawnie uzasadniony interes w prowadzeniu korespondencji biznesowej).</p>
+    <h2 data-i18n="privacy.purpose.title">Cel i podstawa prawna przetwarzania</h2>
+    <p data-i18n="privacy.purpose.text">Dane z formularza przetwarzamy wyłącznie w celu odpowiedzi na zapytanie i ewentualnego przygotowania oferty handlowej — podstawą prawną jest art. 6 ust. 1 lit. b RODO (działania przed zawarciem umowy, na Twoje żądanie) oraz art. 6 ust. 1 lit. f RODO (nasz prawnie uzasadniony interes w prowadzeniu korespondencji biznesowej).</p>
 
-    <h2>Komu przekazujemy dane</h2>
-    <p>Do obsługi formularza kontaktowego korzystamy z zewnętrznego dostawcy <strong style="color:var(--text)">Web3Forms</strong>, który pośredniczy w przekazaniu wiadomości z formularza na naszą skrzynkę <span class="mono">kontakt@govai.pl</span>. Web3Forms działa tu jako podmiot przetwarzający dane w naszym imieniu. Poza tym dostawcą nie przekazujemy danych z formularza żadnym innym podmiotom, chyba że wymaga tego prawo.</p>
+    <h2 data-i18n="privacy.recipients.title">Komu przekazujemy dane</h2>
+    <p data-i18n-html="privacy.recipients.text">Do obsługi formularza kontaktowego korzystamy z zewnętrznego dostawcy <strong style="color:var(--text)">Web3Forms</strong>, który pośredniczy w przekazaniu wiadomości z formularza na naszą skrzynkę <span class="mono">kontakt@govai.pl</span>. Web3Forms działa tu jako podmiot przetwarzający dane w naszym imieniu. Poza tym dostawcą nie przekazujemy danych z formularza żadnym innym podmiotom, chyba że wymaga tego prawo.</p>
 
-    <h2>Okres przechowywania</h2>
-    <p>Dane z formularza kontaktowego przechowujemy przez czas niezbędny do obsługi zapytania i prowadzonej korespondencji, a następnie — jeśli nie dojdzie do dalszej współpracy — przez okres uzasadniony ewentualnymi roszczeniami. Jeśli chcesz, żebyśmy usunęli Twoje dane wcześniej, napisz na <a href="mailto:kontakt@govai.pl">kontakt@govai.pl</a>.</p>
+    <h2 data-i18n="privacy.retention.title">Okres przechowywania</h2>
+    <p data-i18n-html="privacy.retention.text">Dane z formularza kontaktowego przechowujemy przez czas niezbędny do obsługi zapytania i prowadzonej korespondencji, a następnie — jeśli nie dojdzie do dalszej współpracy — przez okres uzasadniony ewentualnymi roszczeniami. Jeśli chcesz, żebyśmy usunęli Twoje dane wcześniej, napisz na <a href="mailto:kontakt@govai.pl">kontakt@govai.pl</a>.</p>
 
-    <h2>Twoje prawa</h2>
+    <h2 data-i18n="privacy.rights.title">Twoje prawa</h2>
     <ul>
-      <li>Prawo dostępu do swoich danych i uzyskania ich kopii</li>
-      <li>Prawo do sprostowania (poprawienia) danych</li>
-      <li>Prawo do usunięcia danych ("prawo do bycia zapomnianym")</li>
-      <li>Prawo do ograniczenia przetwarzania</li>
-      <li>Prawo do wniesienia sprzeciwu wobec przetwarzania</li>
-      <li>Prawo do przenoszenia danych</li>
-      <li>Prawo do wniesienia skargi do Prezesa Urzędu Ochrony Danych Osobowych (PUODO)</li>
+      <li data-i18n="privacy.rights.access">Prawo dostępu do swoich danych i uzyskania ich kopii</li>
+      <li data-i18n="privacy.rights.rectification">Prawo do sprostowania (poprawienia) danych</li>
+      <li data-i18n="privacy.rights.erasure">Prawo do usunięcia danych ("prawo do bycia zapomnianym")</li>
+      <li data-i18n="privacy.rights.restriction">Prawo do ograniczenia przetwarzania</li>
+      <li data-i18n="privacy.rights.objection">Prawo do wniesienia sprzeciwu wobec przetwarzania</li>
+      <li data-i18n="privacy.rights.portability">Prawo do przenoszenia danych</li>
+      <li data-i18n="privacy.rights.complaint">Prawo do wniesienia skargi do Prezesa Urzędu Ochrony Danych Osobowych (PUODO)</li>
     </ul>
-    <p>Aby skorzystać z powyższych praw, napisz na <a href="mailto:kontakt@govai.pl">kontakt@govai.pl</a>.</p>
+    <p data-i18n-html="privacy.rights.howTo">Aby skorzystać z powyższych praw, napisz na <a href="mailto:kontakt@govai.pl">kontakt@govai.pl</a>.</p>
 
-    <h2>Pliki cookies i localStorage</h2>
-    <p>Ta strona nie używa plików cookies do śledzenia ani reklam. Jedyna informacja zapisywana lokalnie w Twojej przeglądarce to wybrany motyw kolorystyczny (jasny/ciemny), przechowywany w <span class="mono">localStorage</span> — nie opuszcza Twojego urządzenia i nie jest nam w żaden sposób przekazywany.</p>
+    <h2 data-i18n="privacy.cookies.title">Pliki cookies i localStorage</h2>
+    <p data-i18n-html="privacy.cookies.text">Ta strona nie używa plików cookies do śledzenia ani reklam. Jedyne informacje zapisywane lokalnie w Twojej przeglądarce to wybrany motyw kolorystyczny (jasny/ciemny) oraz — jeśli wybierzesz go w przełączniku — język strony, przechowywane w <span class="mono">localStorage</span> — nie opuszczają Twojego urządzenia i nie są nam w żaden sposób przekazywane.</p>
 
-    <h2>Zmiany polityki</h2>
-    <p>Możemy aktualizować tę politykę, jeśli zmieni się sposób działania strony lub wymogi prawne. Aktualna wersja jest zawsze dostępna pod tym adresem.</p>
+    <h2 data-i18n="privacy.changes.title">Zmiany polityki</h2>
+    <p data-i18n="privacy.changes.text">Możemy aktualizować tę politykę, jeśli zmieni się sposób działania strony lub wymogi prawne. Aktualna wersja jest zawsze dostępna pod tym adresem.</p>
   </div>
 </main>
 
 <footer>
   <div class="foot-bottom">
     <div>
-      <div>© 2026 GovAI. Wszelkie prawa zastrzeżone.</div>
-      <div class="foot-owner">Właściciel platformy: Comparme Sp. z o.o. · ul. Herbu Janina 5, 02-972 Warszawa · NIP 5213664910 · REGON 147067912</div>
+      <div data-i18n="common.footer.rights">© 2026 GovAI. Wszelkie prawa zastrzeżone.</div>
+      <div class="foot-owner"><span data-i18n="common.footer.owner">Właściciel platformy:</span> Comparme Sp. z o.o. · ul. Herbu Janina 5, 02-972 Warszawa · NIP 5213664910 · REGON 147067912</div>
     </div>
-    <div style="display:flex; gap:16px;"><a href="index.html">Strona główna</a><a href="blog.html">Blog</a></div>
+    <div style="display:flex; gap:16px;"><a href="index.html" data-i18n="common.footer.home">Strona główna</a><a href="blog.html" data-i18n="common.nav.blog">Blog</a></div>
   </div>
 </footer>
 
+<script src="i18n.js"></script>
 <script>
 (function(){
   try {

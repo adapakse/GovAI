@@ -1,11 +1,14 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { api, OversightTask } from '@/lib/api';
 import RiskBadge from '@/components/RiskBadge';
 import OversightModal from '@/components/OversightModal';
+import { useFormat } from '@/lib/format';
 
 function TTLTimer({ expiresAt }: { expiresAt: string }) {
+  const t = useTranslations('oversight');
   const [remaining, setRemaining] = useState(0);
 
   useEffect(() => {
@@ -23,7 +26,7 @@ function TTLTimer({ expiresAt }: { expiresAt: string }) {
 
   return (
     <div>
-      <div className={`font-mono font-bold text-lg ${color}`}>{mins}m {secs}s</div>
+      <div className={`font-mono font-bold text-lg ${color}`}>{t('timer', { mins, secs })}</div>
       <div className="mt-1 h-1 bg-blue/30 rounded-full overflow-hidden w-24">
         <div className={`h-full ${barColor} transition-all duration-1000`} style={{ width: `${pct}%` }} />
       </div>
@@ -32,6 +35,8 @@ function TTLTimer({ expiresAt }: { expiresAt: string }) {
 }
 
 export default function OversightPage() {
+  const t = useTranslations('oversight');
+  const fmt = useFormat();
   const [tasks, setTasks] = useState<OversightTask[]>([]);
   const [selected, setSelected] = useState<OversightTask | null>(null);
   const [loading, setLoading] = useState(true);
@@ -61,19 +66,19 @@ export default function OversightPage() {
       {/* Nagłówek */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Nadzór Człowieka</h1>
+          <h1 className="text-2xl font-bold text-white">{t('header.title')}</h1>
           <p className="text-mgray text-sm mt-0.5">
-            Decyzje agentów wysokiego ryzyka wymagają zatwierdzenia · odświeżane co 10s
+            {t('header.subtitle')}
           </p>
         </div>
         <div className="flex items-center gap-3">
           <div className={`text-sm font-semibold px-4 py-2 rounded-lg ${
             tasks.length > 0 ? 'bg-orange-900/40 text-orange-300 border border-orange-700' : 'bg-green-900/40 text-green-300 border border-green-700'
           }`}>
-            {tasks.length > 0 ? `${tasks.length} oczekuje` : 'Wszystko zatwierdzone'}
+            {tasks.length > 0 ? t('pendingCount', { count: tasks.length }) : t('allApproved')}
           </div>
           <button onClick={load} className="text-xs text-mgray border border-blue/30 px-3 py-2 rounded-lg hover:bg-blue/20">
-            Odśwież
+            {t('refresh')}
           </button>
         </div>
       </div>
@@ -82,20 +87,19 @@ export default function OversightPage() {
       <div className="bg-navy border border-blue/30 rounded-lg px-5 py-3 flex items-start gap-3">
         <span className="text-teal text-lg">ⓘ</span>
         <div className="text-sm text-mgray">
-          <span className="text-white font-medium">Ochrona przed pozornym nadzorem: </span>
-          Czas przeglądu każdego zadania jest mierzony. Zatwierdzenie w mniej niż 10 sekund
-          od otwarcia karty generuje alert i jest rejestrowane w dzienniku audytowym (art. 14 EU AI Act).
+          <span className="text-white font-medium">{t('info.title')} </span>
+          {t('info.text')}
         </div>
       </div>
 
       {/* Stan pusty */}
-      {loading && <div className="text-mgray animate-pulse py-8 text-center">Ładowanie zadań nadzoru...</div>}
+      {loading && <div className="text-mgray animate-pulse py-8 text-center">{t('loading')}</div>}
 
       {!loading && tasks.length === 0 && (
         <div className="text-center py-20 text-mgray">
           <div className="text-4xl mb-4">✓</div>
-          <div className="text-xl font-semibold text-white">Brak oczekujących zadań</div>
-          <div className="text-sm mt-2">Wszystkie decyzje zostały rozpatrzone.</div>
+          <div className="text-xl font-semibold text-white">{t('empty.title')}</div>
+          <div className="text-sm mt-2">{t('empty.subtitle')}</div>
         </div>
       )}
 
@@ -125,13 +129,13 @@ export default function OversightPage() {
             {/* Footer */}
             <div className="px-4 py-3 border-t border-blue/20 flex items-center justify-between">
               <div className="text-xs text-mgray">
-                {new Date(task.created_at).toLocaleTimeString('pl-PL')}
+                {fmt.time(task.created_at)}
               </div>
               <button
                 onClick={() => openReview(task)}
                 className="px-4 py-1.5 bg-teal text-dark text-sm font-semibold rounded-lg hover:bg-teal/90 transition-colors"
               >
-                Przejrzyj
+                {t('review')}
               </button>
             </div>
           </div>

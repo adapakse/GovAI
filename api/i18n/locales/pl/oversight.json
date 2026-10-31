@@ -1,0 +1,10 @@
+{
+  "alerts": {
+    "rubber_stamp": "Pozorny nadzór — przegląd krótszy niż {seconds} sekund. Zdarzenie zalogowane."
+  },
+  "errors": {
+    "already_reviewed": "Zadanie już rozpatrzone — status: {status}",
+    "cannot_start_review": "Zadanie ma status '{status}' — nie można rozpocząć przeglądu",
+    "task_not_found": "Zadanie nadzoru nie istnieje"
+  }
+}

@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { WS } from '@/lib/api';
 import { formatDistanceToNow } from 'date-fns';
-import { pl } from 'date-fns/locale';
+import { useDateFnsLocale } from '@/lib/format';
 
 interface FeedEvent {
   type: string;
@@ -12,15 +13,18 @@ interface FeedEvent {
   receivedAt: number;
 }
 
-const TYPE_STYLE: Record<string, { label: string; dot: string }> = {
-  'audit:blocked':            { label: 'BLOKADA',  dot: 'bg-red-500' },
-  'audit:error':              { label: 'BŁĄD',     dot: 'bg-purple-500' },
-  'oversight:pending':        { label: 'NADZÓR',   dot: 'bg-orange-400' },
-  'oversight:escalated':      { label: 'ESKALACJA',dot: 'bg-red-700' },
-  'audit:new_call':           { label: 'WYWOŁANIE',dot: 'bg-green-500' },
+// labelKey — klucz w common.components.liveFeed.events
+const TYPE_STYLE: Record<string, { labelKey: string; dot: string }> = {
+  'audit:blocked':            { labelKey: 'auditBlocked',       dot: 'bg-red-500' },
+  'audit:error':              { labelKey: 'auditError',         dot: 'bg-purple-500' },
+  'oversight:pending':        { labelKey: 'oversightPending',   dot: 'bg-orange-400' },
+  'oversight:escalated':      { labelKey: 'oversightEscalated', dot: 'bg-red-700' },
+  'audit:new_call':           { labelKey: 'auditNewCall',       dot: 'bg-green-500' },
 };
 
 export default function LiveFeed() {
+  const t = useTranslations('common.components.liveFeed');
+  const dateLocale = useDateFnsLocale();
   const [events, setEvents] = useState<FeedEvent[]>([]);
   const [connected, setConnected] = useState(false);
 
@@ -65,30 +69,32 @@ export default function LiveFeed() {
   return (
     <div className="bg-navy rounded-lg border border-blue/30 flex flex-col h-full">
       <div className="px-4 py-3 border-b border-blue/30 flex items-center justify-between">
-        <span className="text-sm font-semibold text-white">Zdarzenia real-time</span>
+        <span className="text-sm font-semibold text-white">{t('title')}</span>
         <span className={`flex items-center gap-1.5 text-xs ${connected ? 'text-green-400' : 'text-red-400'}`}>
           <span className={`w-2 h-2 rounded-full ${connected ? 'bg-green-400 animate-pulse' : 'bg-red-400'}`} />
-          {connected ? 'Połączono' : 'Rozłączono'}
+          {connected ? t('connected') : t('disconnected')}
         </span>
       </div>
 
       <div className="flex-1 overflow-y-auto divide-y divide-blue/20">
         {events.length === 0 && (
           <div className="px-4 py-6 text-center text-mgray/50 text-sm">
-            Oczekiwanie na zdarzenia...
+            {t('waiting')}
           </div>
         )}
         {events.map((ev, i) => {
-          const style = TYPE_STYLE[ev.type] ?? { label: ev.type, dot: 'bg-blue-400' };
+          const style = TYPE_STYLE[ev.type];
+          const label = style ? t(`events.${style.labelKey}`) : ev.type;
+          const dot = style?.dot ?? 'bg-blue-400';
           const agentName = String((ev.payload as Record<string, unknown>)?.agent_name ?? '');
           const reason = String((ev.payload as Record<string, unknown>)?.block_reason ?? '');
           return (
             <div key={i} className="px-4 py-2.5 hover:bg-blue/10 transition-colors">
               <div className="flex items-center gap-2">
-                <span className={`w-2 h-2 rounded-full flex-shrink-0 ${style.dot}`} />
-                <span className="text-xs font-semibold text-mgray">{style.label}</span>
+                <span className={`w-2 h-2 rounded-full flex-shrink-0 ${dot}`} />
+                <span className="text-xs font-semibold text-mgray">{label}</span>
                 <span className="ml-auto text-xs text-mgray/50">
-                  {formatDistanceToNow(ev.receivedAt, { addSuffix: true, locale: pl })}
+                  {formatDistanceToNow(ev.receivedAt, { addSuffix: true, locale: dateLocale })}
                 </span>
               </div>
               {agentName && <div className="text-xs text-white mt-0.5 pl-4">{agentName}</div>}

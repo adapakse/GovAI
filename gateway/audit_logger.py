@@ -42,6 +42,11 @@ INSERT INTO audit_log (
 async def write_audit(entry: AuditEntry) -> None:
     """Zapisuje wpis do dziennika audytowego asynchronicznie."""
     try:
+        metadata = dict(entry.metadata) if entry.metadata is not None else {}
+        if entry.block_reason_code:
+            metadata["block_reason_code"] = entry.block_reason_code
+            metadata["block_reason_params"] = entry.block_reason_params or {}
+
         pool = get_pool()
         await pool.execute(
             _INSERT_SQL,
@@ -62,7 +67,8 @@ async def write_audit(entry: AuditEntry) -> None:
             entry.tokens_out,
             entry.cost_eur,
             entry.block_reason,
-            json.dumps(entry.metadata) if entry.metadata is not None else None,
+            # Pula bramki nie ma kodeka jsonb (zob. app_settings.py) — tu tekst JSON.
+            json.dumps(metadata),
             entry.data_sensitivity,
             entry.provider_id,
         )
@@ -78,6 +84,8 @@ async def write_audit(entry: AuditEntry) -> None:
                     "call_id": entry.call_id,
                     "policy_id": entry.policy_id,
                     "block_reason": entry.block_reason,
+                    "block_reason_code": entry.block_reason_code,
+                    "block_reason_params": entry.block_reason_params or {},
                     "model_used": entry.model_used,
                     "cost_eur": entry.cost_eur,
                     "latency_ms": entry.latency_ms,

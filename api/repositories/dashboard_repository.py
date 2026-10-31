@@ -65,7 +65,7 @@ async def recent_blocks(days: int, recent_n: int):
     pool = get_pool()
     return await pool.fetch(
         """SELECT time, agent_name, event_type, policy_result,
-                  pii_categories, block_reason
+                  pii_categories, block_reason, metadata
            FROM audit_log
            WHERE policy_result IN ('blocked', 'oversight_required', 'error')
              AND time > NOW() - ($1 || ' days')::INTERVAL

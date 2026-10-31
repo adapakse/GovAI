@@ -14,6 +14,7 @@ from jose import JWTError, jwt
 
 from config import settings
 from database import get_pool
+from i18n import t
 from services import settings_service
 
 logger = logging.getLogger(__name__)
@@ -52,7 +53,7 @@ def decode_access_token(token: str) -> dict:
     """
     payload = jwt.decode(token, settings.jwt_secret, algorithms=[settings.jwt_algorithm])
     if payload.get("type") != "access":
-        raise JWTError("Nieprawidłowy typ tokenu")
+        raise JWTError(t("auth.errors.invalid_token_type"))
     return payload
 
 # ── Refresh token ─────────────────────────────────────────────────────────────
@@ -112,7 +113,7 @@ async def revoke_all_user_tokens(user_id: str) -> None:
 async def get_user_by_email(email: str) -> Optional[dict]:
     pool = get_pool()
     row = await pool.fetchrow(
-        "SELECT id, email, full_name, role, status, password_hash FROM users WHERE email = $1",
+        "SELECT id, email, full_name, role, status, password_hash, locale FROM users WHERE email = $1",
         email.lower().strip(),
     )
     return dict(row) if row else None
@@ -120,12 +121,19 @@ async def get_user_by_email(email: str) -> Optional[dict]:
 async def get_user_by_id(user_id: str) -> Optional[dict]:
     pool = get_pool()
     row = await pool.fetchrow(
-        """SELECT id, email, full_name, role, status, department, phone,
+        """SELECT id, email, full_name, role, status, department, phone, locale,
                   last_login_at, created_at, updated_at
            FROM users WHERE id = $1""",
         user_id,
     )
     return dict(row) if row else None
+
+async def update_user_locale(user_id: str, locale: Optional[str]) -> None:
+    """Język interfejsu użytkownika; None = domyślny język instancji."""
+    pool = get_pool()
+    await pool.execute(
+        "UPDATE users SET locale = $2, updated_at = NOW() WHERE id = $1", user_id, locale,
+    )
 
 async def update_last_login(user_id: str) -> None:
     pool = get_pool()

@@ -1,30 +1,29 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { api, Setting, SettingHistoryEntry } from '@/lib/api';
 import { useAuth } from '@/components/AuthProvider';
+import { useFormat } from '@/lib/format';
+import { LOCALES, LOCALE_NAMES } from '@/i18n/locales';
 
+// Tytuły i opisy kategorii: settings.categories.<cat>.title/desc
 const CATEGORY_ORDER = [
   'pricing', 'budget', 'oversight', 'intervals',
-  'models', 'security', 'pagination', 'compliance',
+  'models', 'security', 'pagination', 'compliance', 'i18n',
 ];
 
-const CATEGORY_META: Record<string, { title: string; desc: string }> = {
-  pricing:    { title: 'Cennik i koszty',        desc: 'Stawki modeli i przelicznik walutowy używane do wyceny wywołań.' },
-  budget:     { title: 'Budżety',                desc: 'Domyślne limity i progi alertów kosztowych dla nowych agentów.' },
-  oversight:  { title: 'Nadzór',                 desc: 'Progi i limity kolejki nadzoru człowieka (art. 14 EU AI Act).' },
-  intervals:  { title: 'Interwały',              desc: 'Częstotliwość zadań tła (odświeżanie polityk, monitor TTL).' },
-  models:     { title: 'Modele domyślne',        desc: 'Domyślne modele i parametry wywołań LLM.' },
-  security:   { title: 'Bezpieczeństwo',         desc: 'Tokeny, hashowanie haseł i progi wykrywania PII.' },
-  pagination: { title: 'Paginacja i okna czasowe', desc: 'Domyślne i maksymalne rozmiary list oraz zakresy dni/godzin.' },
-  compliance: { title: 'Compliance',             desc: 'Terminy luk zgodności i limity narracji raportów.' },
-};
+// Parametr języka domyślnego — edytowany listą wyboru, po zapisie przeładowanie strony.
+const DEFAULT_LOCALE_KEY = 'i18n.default_locale';
 
-function fmtDate(iso: string | null | undefined): string {
-  if (!iso) return '—';
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return '—';
-  return d.toLocaleString('pl-PL', { dateStyle: 'medium', timeStyle: 'short' });
+function useFmtDate() {
+  const fmt = useFormat();
+  return (iso: string | null | undefined): string => {
+    if (!iso) return '—';
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return '—';
+    return fmt.dateTime(d, { dateStyle: 'medium', timeStyle: 'short' });
+  };
 }
 
 function fmtVal(v: unknown): string {
@@ -34,6 +33,8 @@ function fmtVal(v: unknown): string {
 
 // ── Historia zmian parametru ──────────────────────────────────────────────────
 function SettingHistory({ settingKey }: { settingKey: string }) {
+  const t = useTranslations('settings');
+  const fmtDate = useFmtDate();
   const [entries, setEntries] = useState<SettingHistoryEntry[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
@@ -48,16 +49,16 @@ function SettingHistory({ settingKey }: { settingKey: string }) {
     return () => { cancelled = true; };
   }, [settingKey]);
 
-  if (loading) return <p className="text-xs text-mgray/60 italic">Ładowanie historii...</p>;
+  if (loading) return <p className="text-xs text-mgray/60 italic">{t('history.loading')}</p>;
   if (err) return <p className="text-xs text-red-400">{err}</p>;
-  if (!entries || entries.length === 0) return <p className="text-xs text-mgray/60 italic">Brak zarejestrowanych zmian.</p>;
+  if (!entries || entries.length === 0) return <p className="text-xs text-mgray/60 italic">{t('history.empty')}</p>;
 
   return (
     <ul className="space-y-1.5">
       {entries.map(e => (
         <li key={e.id} className="text-xs text-mgray flex flex-wrap gap-x-2">
           <span className="text-mgray/50">{fmtDate(e.updated_at)}</span>
-          <span>{e.updated_by ?? 'nieznany'}:</span>
+          <span>{e.updated_by ?? t('history.unknownUser')}:</span>
           <code className="text-mgray/70">{fmtVal(e.old_value)}</code>
           <span className="text-mgray/40">→</span>
           <code className="text-white/80">{fmtVal(e.new_value)}</code>
@@ -71,7 +72,10 @@ function SettingHistory({ settingKey }: { settingKey: string }) {
 function SettingRow({ setting, canEdit, onSaved }: {
   setting: Setting; canEdit: boolean; onSaved: (s: Setting) => void;
 }) {
+  const t = useTranslations('settings');
+  const fmtDate = useFmtDate();
   const isJson = setting.value_type === 'json';
+  const isLocale = setting.key === DEFAULT_LOCALE_KEY;
   const initial = isJson ? JSON.stringify(setting.value, null, 2) : setting.value;
   const editable = canEdit && setting.editable;
 
@@ -90,7 +94,7 @@ function SettingRow({ setting, canEdit, onSaved }: {
       let payload: unknown;
       if (isJson) {
         try { payload = JSON.parse(draft as string); }
-        catch { setErr('Nieprawidłowy JSON'); setSaving(false); return; }
+        catch { setErr(t('row.invalidJson')); setSaving(false); return; }
       } else if (setting.value_type === 'bool') {
         payload = nextValue ?? draft;
       } else if (setting.value_type === 'int' || setting.value_type === 'number') {
@@ -99,6 +103,8 @@ function SettingRow({ setting, canEdit, onSaved }: {
         payload = draft;
       }
       const updated = await api.settings.update(setting.key, payload);
+      // Zmiana języka domyślnego instancji — przeładuj, żeby UI wczytało nowy język.
+      if (isLocale) { window.location.reload(); return; }
       onSaved(updated);
       if (isJson) setDraft(JSON.stringify(updated.value, null, 2));
       else setDraft(updated.value as never);
@@ -121,7 +127,7 @@ function SettingRow({ setting, canEdit, onSaved }: {
           <code className="text-[10px] text-mgray/40 font-mono">{setting.key}</code>
           {!setting.editable && (
             <span className="text-[10px] px-1.5 py-0.5 rounded bg-orange-900/40 text-orange-300/90">
-              zablokowane
+              {t('row.locked')}
             </span>
           )}
         </div>
@@ -129,16 +135,16 @@ function SettingRow({ setting, canEdit, onSaved }: {
           <p className="text-xs text-mgray mt-0.5 leading-relaxed">{setting.description}</p>
         )}
         <div className="flex gap-3 mt-1 text-[10px] text-mgray/40 flex-wrap items-center">
-          {setting.unit && <span>jednostka: {setting.unit}</span>}
-          {range && <span>zakres: {range}</span>}
+          {setting.unit && <span>{t('row.unit', { unit: setting.unit })}</span>}
+          {range && <span>{t('row.range', { range })}</span>}
           {setting.updated_by && (
-            <span>ost. zmiana: {setting.updated_by} · {fmtDate(setting.updated_at)}</span>
+            <span>{t('row.lastChange', { user: setting.updated_by, date: fmtDate(setting.updated_at) })}</span>
           )}
           <button
             onClick={() => setShowHistory(v => !v)}
             className="text-mgray/50 hover:text-teal underline underline-offset-2"
           >
-            {showHistory ? 'ukryj historię' : 'historia'}
+            {showHistory ? t('row.hideHistory') : t('row.showHistory')}
           </button>
         </div>
         {showHistory && (
@@ -163,6 +169,17 @@ function SettingRow({ setting, canEdit, onSaved }: {
               draft ? 'translate-x-5' : 'translate-x-0.5'
             }`} />
           </button>
+        ) : isLocale ? (
+          <select
+            disabled={!editable}
+            value={String(draft ?? '')}
+            onChange={e => setDraft(e.target.value)}
+            className="w-44 bg-dark border border-blue/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-teal disabled:opacity-50"
+          >
+            {LOCALES.map(code => (
+              <option key={code} value={code}>{LOCALE_NAMES[code]}</option>
+            ))}
+          </select>
         ) : isJson ? (
           <textarea
             rows={6}
@@ -190,7 +207,7 @@ function SettingRow({ setting, canEdit, onSaved }: {
             disabled={saving}
             className="px-3 py-1.5 bg-teal text-dark text-xs font-semibold rounded-lg hover:bg-teal/90 disabled:opacity-40"
           >
-            {saving ? '...' : '✓ Zapisz'}
+            {saving ? '...' : t('row.save')}
           </button>
         )}
       </div>
@@ -200,6 +217,7 @@ function SettingRow({ setting, canEdit, onSaved }: {
 
 // ── Strona ────────────────────────────────────────────────────────────────────
 export default function SettingsPage() {
+  const t = useTranslations('settings');
   const { user } = useAuth();
   const canEdit = user?.role === 'it_admin';
 
@@ -231,9 +249,9 @@ export default function SettingsPage() {
     setReloading(true); setReloadMsg(null);
     try {
       await api.settings.reload();
-      setReloadMsg('Cache przeładowany.');
+      setReloadMsg(t('reload.done'));
     } catch (e) {
-      setReloadMsg(`Błąd: ${String(e)}`);
+      setReloadMsg(t('reload.error', { error: String(e) }));
     } finally {
       setReloading(false);
       setTimeout(() => setReloadMsg(null), 4000);
@@ -261,10 +279,9 @@ export default function SettingsPage() {
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold text-white">Parametry systemu</h1>
+          <h1 className="text-2xl font-bold text-white">{t('title')}</h1>
           <p className="text-mgray text-sm mt-1">
-            Konfiguracja operacyjna bez zmian w kodzie. Zmiany aktywne natychmiast
-            (gateway/API odświeżają wartości w ciągu 60s).
+            {t('subtitle')}
           </p>
         </div>
         {canEdit && (
@@ -275,7 +292,7 @@ export default function SettingsPage() {
               disabled={reloading}
               className="px-3 py-1.5 bg-navy border border-blue/30 text-white text-xs font-semibold rounded-lg hover:border-teal disabled:opacity-40"
             >
-              {reloading ? 'Przeładowuję...' : '⟳ Przeładuj cache teraz'}
+              {reloading ? t('reload.running') : t('reload.button')}
             </button>
           </div>
         )}
@@ -283,8 +300,10 @@ export default function SettingsPage() {
 
       {!canEdit && (
         <div className="bg-navy border border-orange-700/40 rounded-lg px-5 py-3 text-sm text-orange-300/90">
-          Tryb podglądu — edycja parametrów wymaga roli <strong>it_admin</strong>.
-          Twoja rola: <strong>{user?.role ?? '—'}</strong>.
+          {t.rich('readOnly', {
+            b: (c) => <strong>{c}</strong>,
+            role: user?.role ?? '—',
+          })}
         </div>
       )}
 
@@ -292,21 +311,23 @@ export default function SettingsPage() {
         type="text"
         value={query}
         onChange={e => setQuery(e.target.value)}
-        placeholder="Szukaj parametru (nazwa, klucz, opis)..."
+        placeholder={t('searchPlaceholder')}
         className="w-full max-w-md bg-navy border border-blue/30 rounded-lg px-3 py-2 text-sm text-white placeholder:text-mgray/50 focus:outline-none focus:border-teal"
       />
 
       {loading ? (
-        <div className="text-mgray animate-pulse py-8">Ładowanie...</div>
+        <div className="text-mgray animate-pulse py-8">{t('loading')}</div>
       ) : categories.length === 0 ? (
-        <div className="text-mgray text-sm py-8">Brak parametrów pasujących do „{query}”.</div>
+        <div className="text-mgray text-sm py-8">{t('noResults', { query })}</div>
       ) : (
         categories.map(cat => (
           <div key={cat} className="bg-navy border border-blue/30 rounded-xl overflow-hidden">
             <div className="px-5 py-3 border-b border-blue/20">
-              <h2 className="text-white font-semibold text-sm">{CATEGORY_META[cat]?.title ?? cat}</h2>
-              {CATEGORY_META[cat]?.desc && (
-                <p className="text-xs text-mgray mt-0.5">{CATEGORY_META[cat].desc}</p>
+              <h2 className="text-white font-semibold text-sm">
+                {t.has(`categories.${cat}.title`) ? t(`categories.${cat}.title`) : cat}
+              </h2>
+              {t.has(`categories.${cat}.desc`) && (
+                <p className="text-xs text-mgray mt-0.5">{t(`categories.${cat}.desc`)}</p>
               )}
             </div>
             <div>

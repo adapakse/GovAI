@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, field_validator
 
 from dependencies.auth import CurrentUser, get_current_user, require_role
+from i18n import t
 from repositories import agents_repository as agents_repo
 from repositories import compliance_repository as compliance_repo
 from services import settings_service
@@ -34,7 +35,7 @@ class AgentCreate(BaseModel):
     @classmethod
     def name_not_empty(cls, v: str) -> str:
         if not v.strip():
-            raise ValueError("Nazwa agenta nie może być pusta")
+            raise ValueError(t("agents.errors.name_empty"))
         return v.strip()
 
 
@@ -81,7 +82,7 @@ class AgentStatusUpdate(BaseModel):
     def valid_status(cls, v: str) -> str:
         allowed = {"active", "suspended", "quarantined", "retired"}
         if v not in allowed:
-            raise ValueError(f"Nieprawidłowy status. Dozwolone: {allowed}")
+            raise ValueError(t("agents.errors.invalid_status", allowed=allowed))
         return v
 
 
@@ -144,7 +145,7 @@ async def get_agent(agent_id: str, user: CurrentUser = Depends(get_current_user)
     """Szczegóły agenta."""
     row = await agents_repo.get_agent_by_id(agent_id)
     if not row:
-        raise HTTPException(404, f"Agent '{agent_id}' nie istnieje")
+        raise HTTPException(404, t("agents.errors.not_found", agent_id=agent_id))
     return _row_to_dict(row)
 
 
@@ -160,7 +161,7 @@ async def update_status(
     """
     row = await agents_repo.get_agent_status(agent_id)
     if not row:
-        raise HTTPException(404, f"Agent '{agent_id}' nie istnieje")
+        raise HTTPException(404, t("agents.errors.not_found", agent_id=agent_id))
 
     await agents_repo.update_status(agent_id, body.status)
     logger.info("Status agenta %s zmieniony: %s → %s", row["name"], row["status"], body.status)
@@ -180,7 +181,7 @@ async def update_registry(
     import json as _json
     row = await agents_repo.get_agent_id_only(agent_id)
     if not row:
-        raise HTTPException(404, f"Agent '{agent_id}' nie istnieje")
+        raise HTTPException(404, t("agents.errors.not_found", agent_id=agent_id))
 
     simple_fields = [
         "version", "last_reviewed_at", "next_review_date",
@@ -216,7 +217,7 @@ async def update_registry(
     compliance_decl_native = data.compliance_decl
 
     if not simple_values and not array_values and compliance_decl_native is None:
-        raise HTTPException(400, "Brak pól do aktualizacji")
+        raise HTTPException(400, t("common.errors.no_fields_to_update"))
 
     await agents_repo.update_registry(
         agent_id, simple_values, array_values, compliance_decl_native,
@@ -236,7 +237,7 @@ async def get_compliance(agent_id: str, user: CurrentUser = Depends(get_current_
     """
     row = await agents_repo.get_agent_id_only(agent_id)
     if not row:
-        raise HTTPException(404, f"Agent '{agent_id}' nie istnieje")
+        raise HTTPException(404, t("agents.errors.not_found", agent_id=agent_id))
 
     full_row = await agents_repo.get_agent_by_id(agent_id)
     agent = _row_to_dict(full_row)
@@ -283,7 +284,7 @@ async def get_stats(
 
     agent = await agents_repo.get_agent_name(agent_id)
     if not agent:
-        raise HTTPException(404, f"Agent '{agent_id}' nie istnieje")
+        raise HTTPException(404, t("agents.errors.not_found", agent_id=agent_id))
 
     stats = await agents_repo.fetch_stats_totals(agent_id, str(days))
 
@@ -320,12 +321,12 @@ def _row_to_dict(row) -> dict:
 
 def _compliance_summary(report) -> str:
     if report.status == "compliant":
-        return f"Agent '{report.agent_name}' spełnia wymagania EU AI Act."
+        return t("agents.compliance.summary_compliant", name=report.agent_name)
     critical = [g for g in report.gaps if g.severity == "critical"]
     major = [g for g in report.gaps if g.severity == "major"]
     parts = []
     if critical:
-        parts.append(f"{len(critical)} krytyczne luki wymagają natychmiastowego działania")
+        parts.append(t("agents.compliance.summary_critical_gaps", count=len(critical)))
     if major:
-        parts.append(f"{len(major)} ważnych luk do uzupełnienia")
-    return f"Agent '{report.agent_name}' wymaga działań: " + ", ".join(parts) + "."
+        parts.append(t("agents.compliance.summary_major_gaps", count=len(major)))
+    return t("agents.compliance.summary_action_required", name=report.agent_name, parts=", ".join(parts))

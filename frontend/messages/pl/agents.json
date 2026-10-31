@@ -1,0 +1,268 @@
+{
+  "detail": {
+    "breadcrumb": "Agenci",
+    "compliance": {
+      "automatic": "automatyczne",
+      "complianceOfficer": "Oficer compliance",
+      "dataRetention": "Retencja danych",
+      "dataRetentionValue": "{days, plural, one {# dzień} other {# dni}}",
+      "deadline": "Termin: {days, plural, one {# dzień} other {# dni}}",
+      "fillDeclaration": "→ Uzupełnij samo-deklarację w zakładce Rejestr.",
+      "geographicScope": "Zakres geograficzny",
+      "immediately": "NATYCHMIAST",
+      "integrationPoints": "Punkty integracji",
+      "intendedPurpose": "Cel i zakres systemu",
+      "intendedUsers": "Użytkownicy docelowi",
+      "missingLegalBasis": "brak podstawy prawnej",
+      "notFilled": "Nie uzupełniono — zob. zakładka Rejestr",
+      "note": "Notatka: {notes}",
+      "personalData": "Przetwarzanie danych osobowych",
+      "personalDataNo": "Nie",
+      "personalDataYes": "Tak — ",
+      "requirementsHeading": "Wymagania EU AI Act ({met}/{total} spełnione)",
+      "systemProfile": "Profil systemu",
+      "technicalContact": "Kontakt techniczny"
+    },
+    "generateReport": "Generuj raport PDF →",
+    "loading": "Ładowanie...",
+    "oversightRequired": "Nadzór<br></br>wymagany",
+    "profile": {
+      "budgetPerMonth": "Budżet / mies",
+      "budgetValue": "{amount} EUR",
+      "lastReview": "Ostatni przegląd: ",
+      "legalBasis": "Podstawa prawna: ",
+      "model": "Model",
+      "nextReview": "Następny: ",
+      "owner": "Właściciel",
+      "team": "Zespół"
+    },
+    "stats": {
+      "avgLatency": "Śr. latencja",
+      "blocked": "Blokady",
+      "calls": "Wywołania",
+      "oversight": "Do nadzoru",
+      "pii": "Z PII",
+      "piiDetected": "Wykryte PII",
+      "totalCost": "Łączny koszt"
+    },
+    "tabs": {
+      "compliance": "Zgodność AI Act",
+      "registry": "Rejestr",
+      "registryWithCount": "Rejestr ({count} zadeklarowanych)",
+      "stats": "Statystyki 30 dni"
+    }
+  },
+  "form": {
+    "cancel": "Anuluj",
+    "done": "Gotowe",
+    "errors": {
+      "register": "Błąd rejestracji"
+    },
+    "fields": {
+      "description": "Opis agenta (używany do klasyfikacji AI Act)",
+      "descriptionPlaceholder": "Opisz dokładnie co robi agent, jakie decyzje podejmuje, jakie dane przetwarza...",
+      "model": "Model",
+      "monthlyBudget": "Budżet miesięczny (EUR)",
+      "name": "Nazwa agenta",
+      "namePlaceholder": "np. Agent Obsługi Klienta",
+      "owner": "Właściciel",
+      "ownerEmail": "Email właściciela",
+      "ownerEmailPlaceholder": "j.kowalski@firma.pl",
+      "ownerPlaceholder": "Jan Kowalski",
+      "team": "Zespół",
+      "teamPlaceholder": "np. Obsługa Klienta"
+    },
+    "result": {
+      "annexIIICategory": "Kategoria Aneksu III:",
+      "no": "NIE",
+      "oversightRequired": "Nadzór wymagany:",
+      "riskLevel": "Poziom ryzyka:",
+      "yes": "TAK"
+    },
+    "submit": "Zarejestruj + Klasyfikuj",
+    "submitting": "Klasyfikuję...",
+    "subtitle": "Claude automatycznie sklasyfikuje ryzyko AI Act",
+    "success": "Agent zarejestrowany pomyślnie!",
+    "title": "Rejestracja Agenta AI"
+  },
+  "list": {
+    "actions": {
+      "activate": "Aktywuj",
+      "details": "Szczegóły",
+      "suspend": "Zawieś"
+    },
+    "annexIII": "Aneks III: {category}",
+    "columns": {
+      "actions": "Akcje",
+      "model": "Model",
+      "name": "Nazwa",
+      "oversight": "Nadzór",
+      "owner": "Właściciel",
+      "risk": "Ryzyko",
+      "status": "Status"
+    },
+    "count": "{count, plural, one {# agent} few {# agenty} many {# agentów} other {# agenta}}",
+    "countFiltered": "{shown} z {total} agentów",
+    "empty": "Brak agentów",
+    "filters": {
+      "allStatuses": "Wszystkie statusy"
+    },
+    "loading": "Ładowanie...",
+    "noMatches": "Brak agentów pasujących do „{query}”",
+    "oversightRequired": "● Wymagany",
+    "registerButton": "+ Zarejestruj agenta",
+    "searchPlaceholder": "Szukaj — nazwa, model, provider, właściciel, zespół...",
+    "title": "Rejestr Agentów"
+  },
+  "options": {
+    "autoCheck": {
+      "art14_human_oversight": "sprawdzane z pola „Wymaga nadzoru”",
+      "art26_2_human_oversight": "sprawdzane z pola „Wymaga nadzoru”",
+      "art26_6_log_retention": "gwarancja architektoniczna — dziennik audytowy bez mechanizmu kasowania"
+    },
+    "declStatus": {
+      "na": "N/A — nie dotyczy",
+      "no": "✗ Nie — luka",
+      "none": "— nie oceniono —",
+      "partial": "◑ Częściowo",
+      "yes": "✓ Tak — spełnione"
+    },
+    "gdprBasis": {
+      "consent": "Zgoda osoby (art. 6 ust. 1 lit. a)",
+      "contract": "Wykonanie umowy (art. 6 ust. 1 lit. b)",
+      "legal_obligation": "Obowiązek prawny (art. 6 ust. 1 lit. c)",
+      "legitimate_interest": "Prawnie uzasadniony interes (lit. f)",
+      "public_task": "Zadanie publiczne (art. 6 ust. 1 lit. e)",
+      "vital_interests": "Ochrona żywotnych interesów (lit. d)"
+    },
+    "requirementStatus": {
+      "na": "Nie dotyczy",
+      "no": "Luka",
+      "partial": "Częściowo",
+      "undeclared": "Nie ocenione",
+      "yes": "Spełnione"
+    },
+    "riskFilter": {
+      "all": "Wszystkie poziomy ryzyka",
+      "high": "Wysokie ryzyko",
+      "limited": "Ograniczone ryzyko",
+      "minimal": "Minimalne ryzyko",
+      "unacceptable": "Niedopuszczalne ryzyko"
+    },
+    "severity": {
+      "critical": "Krytyczna",
+      "major": "Poważna",
+      "minor": "Drobna"
+    }
+  },
+  "registry": {
+    "autoStatusGap": "✗ Luka",
+    "autoStatusMet": "✓ Spełnione",
+    "automatic": "automatyczne",
+    "declarationsIntro": "Ocena każdego wymagania przez odpowiedzialną osobę — widoczna w raportach PDF i ocenie zgodności. Lista pochodzi z katalogu wymagań EU AI Act (Polityki → Wymagania EU AI Act) dla poziomu ryzyka „{risk}”.",
+    "fields": {
+      "complianceOfficer": "Oficer compliance",
+      "costAlertThreshold": "Próg alertu budżetowego (EUR)",
+      "costAlertThresholdPlaceholder": "np. 160 = alert przy 80%",
+      "dataRetentionDays": "Retencja danych (dni)",
+      "dataRetentionDaysPlaceholder": "np. 365",
+      "gdprLegalBasis": "Podstawa prawna RODO",
+      "geographicScope": "Zakres geograficzny",
+      "geographicScopePlaceholder": "np. PL, UE",
+      "inputModalities": "Modalności wejściowe (lista)",
+      "integrationPoints": "Punkty integracji (każdy w nowej linii)",
+      "integrationPointsPlaceholder": "Core Banking System (CBS)\nCRM Salesforce\nBaza BIK",
+      "intendedPurpose": "Cel i zakres systemu (intended purpose)",
+      "intendedPurposePlaceholder": "Krótki opis do czego system służy i w jakim kontekście jest używany...",
+      "intendedUsers": "Docelowi użytkownicy",
+      "intendedUsersPlaceholder": "np. analitycy kredytowi, pracownicy HR",
+      "lastReviewedAt": "Ostatni przegląd compliance",
+      "modelVersion": "Wersja modelu",
+      "modelVersionPlaceholder": "np. claude-haiku-4-5-20251001",
+      "monthlyBudget": "Miesięczny budżet (EUR)",
+      "nextReviewDate": "Planowany następny przegląd",
+      "outputModalities": "Modalności wyjściowe (lista)",
+      "processesPersonalData": "System przetwarza dane osobowe",
+      "selectPlaceholder": "— wybierz —",
+      "technicalContact": "Kontakt techniczny",
+      "version": "Wersja systemu"
+    },
+    "lastUpdated": "Ostatnia aktualizacja: {date}",
+    "loadingRequirements": "Ładowanie wymagań...",
+    "noRequirements": "Brak zdefiniowanych wymagań dla poziomu ryzyka „{risk}” w katalogu.",
+    "notSelfDeclarable": "Nie podlega samo-deklaracji — wymaga realnego usunięcia problemu.",
+    "notePlaceholder": "Notatka (opcjonalnie) — np. 'Dokumentacja w Confluence, space AI-GOV'",
+    "save": "Zapisz rejestr",
+    "saved": "✓ Zapisano pomyślnie",
+    "saving": "Zapisywanie...",
+    "sections": {
+      "contactsBudget": "Kontakty i budżet",
+      "declarations": "Deklaracje zgodności EU AI Act",
+      "personalData": "Dane osobowe i RODO",
+      "technical": "Dane techniczne",
+      "versionReviews": "Wersja i przeglądy"
+    }
+  },
+  "report": {
+    "annexIII": "Aneks III: {category}",
+    "backToAgent": "← Powrót do agenta",
+    "breadcrumbAgents": "Agenci",
+    "breadcrumbReport": "Raport AI Act",
+    "columns": {
+      "article": "Artykuł",
+      "deadline": "Termin",
+      "requirement": "Wymaganie",
+      "severity": "Waga"
+    },
+    "deadlineDays": "{days, plural, one {# dzień} other {# dni}}",
+    "downloadPdf": "Pobierz PDF",
+    "error": "Błąd generowania raportu: {error}",
+    "errors": {
+      "sessionExpired": "Sesja wygasła"
+    },
+    "footer": "Raport wygenerowany przez GovAI v0.2.0 · EU AI Act (Rozporządzenie UE 2024/1689) · Dokument ma charakter informacyjny. Nie stanowi porady prawnej.",
+    "generatingPdf": "Generuję PDF...",
+    "header": "GovAI · Raport Zgodności EU AI Act · Rozporządzenie (UE) 2024/1689",
+    "immediately": "NATYCHMIAST",
+    "loading": "Generowanie raportu zgodności z AI Act...",
+    "meta": {
+      "generatedAt": "Wygenerowano: ",
+      "model": "Model: ",
+      "owner": "Właściciel: ",
+      "team": "Zespół: "
+    },
+    "noGaps": "Brak zidentyfikowanych luk — wymagania potwierdzone jako spełnione lub nie dotyczące w deklaracjach zgodności (zakładka Rejestr).",
+    "oversightRequired": "◎ Nadzór wymagany",
+    "pdfFilename": "ai-act-raport-{id}.pdf",
+    "print": "Drukuj",
+    "profile": {
+      "annexIIICategory": "Kategoria An. III",
+      "annexIIINone": "Brak",
+      "budgetPerMonth": "Budżet / mies.",
+      "budgetValue": "{amount} EUR",
+      "humanOversight": "Nadzór człowieka",
+      "legalBasis": "Podstawa prawna i klasyfikacja",
+      "model": "Model AI",
+      "oversightNotRequired": "Nie wymagany",
+      "oversightRequired": "WYMAGANY",
+      "ownerEmail": "Email właściciela",
+      "status": "Status"
+    },
+    "risk": "Ryzyko: {risk}",
+    "sections": {
+      "compliance": "4. Ocena Zgodności z EU AI Act",
+      "profile": "2. Profil Systemu AI",
+      "stats": "3. Statystyki Operacyjne (30 dni)",
+      "summary": "1. Streszczenie Wykonawcze"
+    },
+    "stats": {
+      "apiCost": "Koszt API",
+      "avgLatency": "Śr. latencja",
+      "blocked": "Blokady",
+      "blockedValue": "{count} ({rate}%)",
+      "calls": "Wywołania",
+      "oversight": "Do nadzoru",
+      "pii": "Z PII"
+    }
+  }
+}

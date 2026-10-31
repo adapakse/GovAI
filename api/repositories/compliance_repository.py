@@ -10,17 +10,23 @@ from __future__ import annotations
 from typing import Any, Optional
 
 from database import get_pool
+from i18n import get_locale
 
 
 async def list_requirements(
     risk_level: Optional[str] = None,
     active_only: bool = False,
 ):
-    """Lista wymagań — opcjonalnie filtrowana wg risk_level / active."""
+    """Lista wymagań — opcjonalnie filtrowana wg risk_level / active.
+
+    requirement_title / requirement_text są już w języku żądania (tłumaczenie
+    z title_i18n/text_i18n, fallback: kolumna bazowa po polsku) — dzięki temu
+    każdy konsument (router, raporty PDF) dostaje treść we właściwym języku.
+    """
     pool = get_pool()
     conditions = ["1=1"]
-    params: list = []
-    idx = 1
+    params: list = [get_locale()]
+    idx = 2
 
     if risk_level:
         conditions.append(f"risk_level = ${idx}::risk_level")
@@ -29,8 +35,10 @@ async def list_requirements(
         conditions.append("active = true")
 
     return await pool.fetch(
-        f"""SELECT id, risk_level, article_ref, requirement_title,
-                   requirement_text, active, sort_order, created_at,
+        f"""SELECT id, risk_level, article_ref,
+                   COALESCE(NULLIF(title_i18n ->> $1::text, ''), requirement_title) AS requirement_title,
+                   COALESCE(NULLIF(text_i18n  ->> $1::text, ''), requirement_text)  AS requirement_text,
+                   active, sort_order, created_at,
                    default_severity, default_deadline_days, decl_key
             FROM ai_act_requirements
             WHERE {' AND '.join(conditions)}
@@ -102,6 +110,26 @@ async def update_requirement(req_id: str, fields: dict[str, Any]):
         f"UPDATE ai_act_requirements SET {', '.join(updates)} WHERE id = ${idx}",
         *params,
     )
+    return await pool.fetchrow("SELECT * FROM ai_act_requirements WHERE id = $1", req_id)
+
+
+async def set_requirement_translation(req_id: str, locale: str, title: Optional[str], text: Optional[str]):
+    """Zapisuje tłumaczenie tytułu/treści w kolumnach *_i18n (klucz = locale).
+
+    Wartości None są pomijane. Kolumna bazowa (polski) pozostaje bez zmian.
+    Słowniki przekazywane natywnie — pula asyncpg ma kodek jsonb.
+    """
+    pool = get_pool()
+    if title is not None:
+        await pool.execute(
+            "UPDATE ai_act_requirements SET title_i18n = COALESCE(title_i18n, '{}'::jsonb) || $1::jsonb WHERE id = $2",
+            {locale: title}, req_id,
+        )
+    if text is not None:
+        await pool.execute(
+            "UPDATE ai_act_requirements SET text_i18n = COALESCE(text_i18n, '{}'::jsonb) || $1::jsonb WHERE id = $2",
+            {locale: text}, req_id,
+        )
     return await pool.fetchrow("SELECT * FROM ai_act_requirements WHERE id = $1", req_id)
 
 

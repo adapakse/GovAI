@@ -22,6 +22,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Optional
 
+from i18n import localized
+
 # decl_key → funkcja sprawdzająca fakt w rejestrze agenta (nie samo-deklarację).
 # To JEDYNE miejsce z "twardą" regułą — bo to obiektywny stan systemu, a nie
 # oświadczenie, które mogłoby być błędne lub aspiracyjne.
@@ -92,8 +94,9 @@ def assess_compliance(agent: dict, requirements: list[dict]) -> ComplianceReport
 
         items.append(RequirementStatus(
             article=req["article_ref"],
-            title=req["requirement_title"],
-            description=req["requirement_text"],
+            # Treść katalogu w języku żądania (fallback: kolumna bazowa po polsku)
+            title=localized(req.get("title_i18n"), req["requirement_title"]),
+            description=localized(req.get("text_i18n"), req["requirement_text"]),
             status=status,
             severity=req["default_severity"],
             deadline_days=req["default_deadline_days"],

@@ -21,6 +21,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError
 
+from i18n import t
 from services.auth_service import decode_access_token, get_user_by_id
 
 _bearer = HTTPBearer(auto_error=False)
@@ -58,7 +59,7 @@ async def get_current_user(
     if not credentials:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Brak tokenu autoryzacyjnego. Zaloguj się i podaj nagłówek Authorization: Bearer <token>.",
+            detail=t("auth.errors.missing_token"),
             headers={"WWW-Authenticate": "Bearer"},
         )
 
@@ -67,7 +68,7 @@ async def get_current_user(
     except JWTError as exc:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=f"Token nieprawidłowy lub wygasły: {exc}",
+            detail=t("auth.errors.invalid_token", error=exc),
             headers={"WWW-Authenticate": "Bearer"},
         ) from exc
 
@@ -75,11 +76,11 @@ async def get_current_user(
     user = await get_user_by_id(user_id)
 
     if not user:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Użytkownik nie istnieje.")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=t("auth.errors.user_does_not_exist"))
     if user["status"] != "active":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail=f"Konto jest {user['status']}. Skontaktuj się z administratorem.",
+            detail=t("auth.errors.account_status_contact_admin", status=user["status"]),
         )
 
     return CurrentUser(
@@ -100,10 +101,7 @@ def require_role(*roles: str) -> Callable:
         if user.role not in roles:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail=(
-                    f"Twoja rola '{user.role}' nie ma uprawnień do tej operacji. "
-                    f"Wymagane: {', '.join(roles)}."
-                ),
+                detail=t("auth.errors.role_forbidden", role=user.role, required=", ".join(roles)),
             )
         return user
     return _check
@@ -118,7 +116,7 @@ def require_min_level(min_role: str) -> Callable:
         if not user.has_min_level(min_role):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"Wymagana rola co najmniej '{min_role}'.",
+                detail=t("auth.errors.min_role_required", role=min_role),
             )
         return user
     return _check

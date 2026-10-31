@@ -1,0 +1,53 @@
+{
+  "count": "{count, plural, one {# wpis} few {# wpisy} many {# wpisów} other {# wpisu}}",
+  "details": {
+    "blockReason": "Powód blokady",
+    "errorDetails": "Szczegóły błędu",
+    "fields": {
+      "agent": "Agent",
+      "callId": "Call ID",
+      "cost": "Koszt",
+      "eventType": "Typ zdarzenia",
+      "inputHash": "Skrót wejścia",
+      "latency": "Latencja",
+      "piiCategories": "PII kategorie",
+      "result": "Wynik",
+      "taskId": "Task ID"
+    },
+    "title": "Szczegóły wywołania"
+  },
+  "filters": {
+    "days": {
+      "1": "Ostatni dzień",
+      "7": "Ostatnie 7 dni",
+      "30": "Ostatnie 30 dni"
+    },
+    "pii": {
+      "all": "Wszystkie (PII)",
+      "with": "Z wykrytym PII",
+      "without": "Bez PII"
+    },
+    "result": {
+      "all": "Wszystkie wyniki"
+    }
+  },
+  "header": {
+    "subtitle": "Niezmienialny zapis wszystkich wywołań agentów AI",
+    "title": "Dziennik Audytowy"
+  },
+  "table": {
+    "columns": {
+      "agent": "Agent",
+      "details": "Szczegóły",
+      "eventType": "Typ zdarzenia",
+      "latency": "Latencja",
+      "pii": "PII",
+      "result": "Wynik",
+      "time": "Czas"
+    },
+    "empty": "Brak wpisów w tym okresie",
+    "loading": "Ładowanie...",
+    "piiEntities": "{count, plural, one {# encja} few {# encje} many {# encji} other {# encji}}",
+    "show": "Pokaż"
+  }
+}

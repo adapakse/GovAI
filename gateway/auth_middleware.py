@@ -21,6 +21,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 
 from config import settings
 from database import get_pool
+from i18n import t
 
 logger = logging.getLogger(__name__)
 
@@ -56,7 +57,7 @@ class AuthMiddleware(BaseHTTPMiddleware):
                 logger.warning("Gateway: odrzucono JWT: %s", exc)
                 return JSONResponse(
                     status_code=401,
-                    content={"error": "Token nieprawidłowy lub wygasły", "detail": str(exc)},
+                    content={"error": t("errors.auth.invalidToken"), "detail": str(exc)},
                 )
 
         elif api_key_header:
@@ -65,7 +66,7 @@ class AuthMiddleware(BaseHTTPMiddleware):
                 logger.warning("Gateway: odrzucono X-API-Key (nieznany lub wygasły)")
                 return JSONResponse(
                     status_code=401,
-                    content={"error": "Klucz API nieprawidłowy lub wygasły"},
+                    content={"error": t("errors.auth.invalidApiKey")},
                 )
             request.state.auth_api_key_id = key_data["key_id"]
             request.state.auth_agent_id = key_data["agent_id"]
@@ -75,8 +76,8 @@ class AuthMiddleware(BaseHTTPMiddleware):
             return JSONResponse(
                 status_code=401,
                 content={
-                    "error": "Brak autoryzacji",
-                    "detail": "Wymagany nagłówek Authorization: Bearer <token> lub X-API-Key: <key>",
+                    "error": t("errors.auth.missing"),
+                    "detail": t("errors.auth.missingDetail"),
                 },
             )
 

@@ -12,7 +12,8 @@ from database import get_pool
 
 _SELECT_COLS = """
     key, value, value_type, category, label, description, unit,
-    min_value, max_value, editable, updated_by, updated_at
+    min_value, max_value, editable, updated_by, updated_at,
+    label_i18n, description_i18n, unit_i18n
 """
 
 

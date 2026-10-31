@@ -6,8 +6,10 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, Query, WebSocket, WebSocketDisconnect
 from dependencies.auth import CurrentUser, get_current_user
+from i18n import t
 from repositories import dashboard_repository as dashboard_repo
 from services import settings_service
+from services.block_reasons import localize_block_reason
 
 logger = logging.getLogger(__name__)
 router = APIRouter(tags=["dashboard"])
@@ -79,7 +81,7 @@ async def live_feed(websocket: WebSocket):
     await websocket.accept()
 
     if _redis is None:
-        await websocket.send_json({"type": "error", "message": "Redis niedostępny"})
+        await websocket.send_json({"type": "error", "message": t("dashboard.errors.redis_unavailable")})
         await websocket.close()
         return
 
@@ -97,6 +99,11 @@ async def live_feed(websocket: WebSocket):
                 except Exception:
                     payload = {"raw": message["data"]}
 
+                # Powód blokady w języku klienta WS — kod i parametry gateway
+                # publikuje w payloadzie (block_reason_code / block_reason_params).
+                if isinstance(payload, dict) and "block_reason" in payload:
+                    payload["block_reason"] = localize_block_reason(payload.get("block_reason"), payload)
+
                 await websocket.send_json({
                     "type": message["channel"],
                     "payload": payload,
@@ -110,6 +117,11 @@ async def live_feed(websocket: WebSocket):
 
 def _row_to_dict(row) -> dict:
     d = dict(row)
+    metadata = d.pop("metadata", None)
+    if "block_reason" in d:
+        d["block_reason"] = localize_block_reason(
+            d["block_reason"], metadata if isinstance(metadata, dict) else None,
+        )
     for k, v in d.items():
         if hasattr(v, 'isoformat'):
             d[k] = v.isoformat()

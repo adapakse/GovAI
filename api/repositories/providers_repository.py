@@ -11,11 +11,16 @@ from __future__ import annotations
 from typing import Any, Optional
 
 from database import get_pool
+from i18n import DEFAULT_LOCALE, get_locale
 
-_SELECT_COLS = """id, name, provider_type, model_ids, base_url, api_key_env,
-                  max_data_sensitivity, active, priority, is_healthy,
-                  last_health_check_at, notes, created_by, created_at, updated_at"""
 
+def _notes_col() -> str:
+    """notes w języku żądania (notes_i18n), fallback na kolumnę bazową (polski).
+    Locale pochodzi z białej listy i18n.LOCALES — bezpieczne do wstawienia w SQL."""
+    loc = get_locale()
+    if loc == DEFAULT_LOCALE:
+        return "notes"
+    return f"COALESCE(NULLIF(notes_i18n ->> '{loc}', ''), notes) AS notes"
 
 async def list_providers(active_only: bool = False):
     pool = get_pool()
@@ -23,7 +28,7 @@ async def list_providers(active_only: bool = False):
     return await pool.fetch(
         f"""SELECT id, name, provider_type, model_ids, base_url, api_key_env,
                    max_data_sensitivity, active, priority, is_healthy,
-                   last_health_check_at, notes, created_by, created_at, updated_at
+                   last_health_check_at, {_notes_col()}, created_by, created_at, updated_at
             FROM providers
             {where}
             ORDER BY priority ASC, name ASC"""
@@ -33,9 +38,9 @@ async def list_providers(active_only: bool = False):
 async def get_provider(provider_id: str):
     pool = get_pool()
     return await pool.fetchrow(
-        """SELECT id, name, provider_type, model_ids, base_url, api_key_env,
+        f"""SELECT id, name, provider_type, model_ids, base_url, api_key_env,
                   max_data_sensitivity, active, priority, is_healthy,
-                  last_health_check_at, notes, created_by, created_at, updated_at
+                  last_health_check_at, {_notes_col()}, created_by, created_at, updated_at
            FROM providers WHERE id = $1""",
         provider_id,
     )
@@ -54,13 +59,13 @@ async def insert_provider(
 ):
     pool = get_pool()
     return await pool.fetchrow(
-        """INSERT INTO providers
+        f"""INSERT INTO providers
                (name, provider_type, model_ids, base_url, api_key_env,
                 max_data_sensitivity, priority, notes, created_by)
            VALUES ($1, $2, $3, $4, $5, $6::data_sensitivity_level, $7, $8, $9)
            RETURNING id, name, provider_type, model_ids, base_url, api_key_env,
                      max_data_sensitivity, active, priority, is_healthy,
-                     last_health_check_at, notes, created_by, created_at, updated_at""",
+                     last_health_check_at, {_notes_col()}, created_by, created_at, updated_at""",
         name,
         provider_type,
         model_ids,
@@ -103,8 +108,15 @@ async def update_provider(
         ("priority", priority),
         ("active", active),
         ("is_healthy", is_healthy),
-        ("notes", notes),
     ]
+    # Notatka w języku innym niż polski trafia do notes_i18n[locale] — kolumna
+    # bazowa (polski, źródło tłumaczeń) zostaje nietknięta.
+    if notes is not None and get_locale() != DEFAULT_LOCALE:
+        updates.append(f"notes_i18n = COALESCE(notes_i18n, '{{}}'::jsonb) || ${idx}::jsonb")
+        params.append({get_locale(): notes})
+        idx += 1
+        notes = None
+    simple_fields.append(("notes", notes))
     for field, val in simple_fields:
         if val is not None:
             updates.append(f"{field} = ${idx}")
@@ -131,7 +143,7 @@ async def update_provider(
         f"""UPDATE providers SET {', '.join(updates)} WHERE id = ${idx}
             RETURNING id, name, provider_type, model_ids, base_url, api_key_env,
                       max_data_sensitivity, active, priority, is_healthy,
-                      last_health_check_at, notes, created_by, created_at, updated_at""",
+                      last_health_check_at, {_notes_col()}, created_by, created_at, updated_at""",
         *params,
     )
 

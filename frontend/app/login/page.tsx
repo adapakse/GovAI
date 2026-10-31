@@ -1,9 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { apiLogin, saveSession } from '@/lib/auth';
+import { useTranslations } from 'next-intl';
+import { apiLogin, apiSetLocale, saveSession } from '@/lib/auth';
+import { effectiveLocale, getLocaleCookie, setLocaleCookie } from '@/lib/locale';
+import LanguagePicker from '@/components/LanguagePicker';
 
 export default function LoginPage() {
+  const t = useTranslations('auth.login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -16,13 +20,23 @@ export default function LoginPage() {
     try {
       const data = await apiLogin(email, password);
       saveSession(data);
+      let user = data.user;
+      // Jawny wybór języka sprzed logowania (przełącznik tutaj albo ?lang= z
+      // landing page) zapisujemy w profilu, jeśli użytkownik nie ma jeszcze
+      // własnego — inaczej po zalogowaniu wygrałby domyślny język instancji.
+      const chosen = getLocaleCookie();
+      if (user.locale === null && chosen && chosen !== user.default_locale) {
+        user = await apiSetLocale(chosen).catch(() => user);
+      }
+      setLocaleCookie(effectiveLocale(user));
       // Twarde przejście, nie router.replace — client-side nawigacja Next.js
       // potrafi oddać z cache'u routera wynik prefetchu sprzed zalogowania
       // (przekierowanie na /login, bo wtedy ciasteczka gai_session jeszcze
       // nie było), co objawia się jako "miganie" z powrotem do pustego logowania.
+      // Pełne przeładowanie renderuje też aplikację już w języku użytkownika.
       window.location.href = '/dashboard';
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Błąd logowania');
+      setError(err instanceof Error ? err.message : t('error'));
     } finally {
       setLoading(false);
     }
@@ -54,14 +68,14 @@ export default function LoginPage() {
             <div className="text-3xl font-bold tracking-tight text-white leading-none">
               Gov<span className="text-teal">AI</span>
             </div>
-            <div className="text-sm text-mgray mt-1">Platforma Zarządzania Agentami AI</div>
+            <div className="text-sm text-mgray mt-1">{t('tagline')}</div>
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-xs text-mgray/70 mb-1.5 uppercase tracking-wider font-semibold">
-              Adres e-mail
+              {t('email')}
             </label>
             <input
               type="email"
@@ -72,13 +86,13 @@ export default function LoginPage() {
               className="w-full px-4 py-2.5 rounded-lg bg-dark border border-blue/40
                          text-white placeholder-mgray/30 focus:outline-none
                          focus:border-teal focus:ring-1 focus:ring-teal/50 transition-colors"
-              placeholder="uzytkownik@kancelaria.local"
+              placeholder={t('emailPlaceholder')}
             />
           </div>
 
           <div>
             <label className="block text-xs text-mgray/70 mb-1.5 uppercase tracking-wider font-semibold">
-              Hasło
+              {t('password')}
             </label>
             <input
               type="password"
@@ -105,12 +119,13 @@ export default function LoginPage() {
                        disabled:opacity-50 disabled:cursor-not-allowed
                        text-white font-semibold transition-colors mt-2"
           >
-            {loading ? 'Logowanie...' : 'Zaloguj się'}
+            {loading ? t('submitting') : t('submit')}
           </button>
         </form>
 
-        <div className="mt-6 pt-5 border-t border-blue/30 text-center text-xs text-mgray/40">
-          EU AI Act Compliance Platform · v0.4.0
+        <div className="mt-6 pt-5 border-t border-blue/30 flex items-center justify-between text-xs text-mgray/40">
+          <span>EU AI Act Compliance Platform · v0.4.0</span>
+          <LanguagePicker mode="compact" />
         </div>
       </div>
     </div>

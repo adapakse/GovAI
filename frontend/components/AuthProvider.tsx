@@ -6,6 +6,7 @@ import {
   AuthUser, clearSession, getAccessToken, getUser,
   apiRefresh, getRefreshToken, saveSession,
 } from '@/lib/auth';
+import { effectiveLocale, getActiveLocale, setLocaleCookie } from '@/lib/locale';
 
 interface AuthCtx {
   user: AuthUser | null;
@@ -35,6 +36,17 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
       // Try to decode stored user
       const stored = getUser();
       if (stored) {
+        // Język z profilu ma pierwszeństwo — jeśli render poszedł w innym
+        // (np. stare ciasteczko na nowym urządzeniu), popraw ciasteczko i przeładuj.
+        // Sesje sprzed wprowadzenia języków nie mają default_locale — pomijamy.
+        if (stored.default_locale !== undefined) {
+          const wanted = effectiveLocale(stored);
+          if (wanted !== getActiveLocale()) {
+            setLocaleCookie(wanted);
+            window.location.reload();
+            return;
+          }
+        }
         setUser(stored);
         setIsLoading(false);
         return;

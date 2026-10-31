@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { api, Policy, AiActRequirement, RiskLevel } from '@/lib/api';
 import SearchBox from '@/components/SearchBox';
 import { matchesQuery } from '@/lib/search';
@@ -9,13 +10,7 @@ type Tab = 'rules' | 'aiact';
 
 const RISK_ORDER: RiskLevel[] = ['unacceptable', 'high', 'limited', 'minimal'];
 
-const RISK_LABEL: Record<RiskLevel, string> = {
-  unacceptable: 'Niedopuszczalne',
-  high:         'Wysokie',
-  limited:      'Ograniczone',
-  minimal:      'Minimalne',
-};
-
+// Etykiety poziomów ryzyka: common.risk.<level>
 const RISK_STYLE: Record<RiskLevel, string> = {
   unacceptable: 'text-red-400 border-red-800 bg-red-900/20',
   high:         'text-orange-300 border-orange-800 bg-orange-900/20',
@@ -23,7 +18,8 @@ const RISK_STYLE: Record<RiskLevel, string> = {
   minimal:      'text-green-400 border-green-800 bg-green-900/20',
 };
 
-const SEVERITY_LABEL: Record<string, string> = { critical: 'Krytyczna', major: 'Poważna', minor: 'Drobna' };
+// Etykiety wag: policies.severity.<severity>
+const SEVERITIES = ['critical', 'major', 'minor'] as const;
 const SEVERITY_BADGE: Record<string, string> = {
   critical: 'bg-red-900/30 text-red-300',
   major:    'bg-orange-900/30 text-orange-300',
@@ -33,6 +29,7 @@ const SEVERITY_BADGE: Record<string, string> = {
 // ── Formularz nowej polityki ──────────────────────────────────────────────────
 
 function NewPolicyForm({ onSaved }: { onSaved: () => void }) {
+  const t = useTranslations('policies');
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
@@ -49,7 +46,7 @@ function NewPolicyForm({ onSaved }: { onSaved: () => void }) {
         level:         'org',
         rule_type:     'deny',
         condition_json: { keywords: form.keywords.split('\n').map(k => k.trim()).filter(Boolean) },
-        action_json:   { reason: form.reason || `Zablokowane przez regułę ${form.policy_code}` },
+        action_json:   { reason: form.reason || t('newRule.defaultReason', { code: form.policy_code }) },
         priority:      parseInt(form.priority) || 10,
         created_by:    'consultant',
       });
@@ -69,56 +66,56 @@ function NewPolicyForm({ onSaved }: { onSaved: () => void }) {
         onClick={() => setOpen(true)}
         className="mt-4 px-4 py-2 border border-dashed border-blue/40 text-teal text-sm rounded-lg hover:border-teal/60 hover:bg-teal/5 transition-colors"
       >
-        + Dodaj nową regułę
+        {t('newRule.addButton')}
       </button>
     );
   }
 
   return (
     <div className="mt-4 bg-dark/60 border border-blue/30 rounded-xl p-5 space-y-4">
-      <div className="font-semibold text-white text-sm">Nowa reguła blokująca</div>
+      <div className="font-semibold text-white text-sm">{t('newRule.title')}</div>
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="text-xs text-mgray mb-1 block">Nazwa *</label>
+          <label className="text-xs text-mgray mb-1 block">{t('newRule.name')}</label>
           <input
             className="w-full bg-navy border border-blue/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-teal"
-            placeholder="np. Blokada eksportu danych"
+            placeholder={t('newRule.namePlaceholder')}
             value={form.name}
             onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
           />
         </div>
         <div>
-          <label className="text-xs text-mgray mb-1 block">Kod reguły</label>
+          <label className="text-xs text-mgray mb-1 block">{t('newRule.code')}</label>
           <input
             className="w-full bg-navy border border-blue/30 rounded-lg px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-teal"
-            placeholder="np. G-003"
+            placeholder={t('newRule.codePlaceholder')}
             value={form.policy_code}
             onChange={e => setForm(f => ({ ...f, policy_code: e.target.value }))}
           />
         </div>
       </div>
       <div>
-        <label className="text-xs text-mgray mb-1 block">Słowa kluczowe (jedno na linię) *</label>
+        <label className="text-xs text-mgray mb-1 block">{t('newRule.keywords')}</label>
         <textarea
           rows={4}
           className="w-full bg-navy border border-blue/30 rounded-lg px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-teal resize-none"
-          placeholder={"eksportuj dane\nexport data\nsend all records"}
+          placeholder={t('newRule.keywordsPlaceholder')}
           value={form.keywords}
           onChange={e => setForm(f => ({ ...f, keywords: e.target.value }))}
         />
       </div>
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="text-xs text-mgray mb-1 block">Komunikat blokady</label>
+          <label className="text-xs text-mgray mb-1 block">{t('newRule.reason')}</label>
           <input
             className="w-full bg-navy border border-blue/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-teal"
-            placeholder="Wykryto niedozwoloną operację"
+            placeholder={t('newRule.reasonPlaceholder')}
             value={form.reason}
             onChange={e => setForm(f => ({ ...f, reason: e.target.value }))}
           />
         </div>
         <div>
-          <label className="text-xs text-mgray mb-1 block">Priorytet (niższy = ważniejszy)</label>
+          <label className="text-xs text-mgray mb-1 block">{t('newRule.priority')}</label>
           <input
             type="number"
             className="w-full bg-navy border border-blue/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-teal"
@@ -133,13 +130,13 @@ function NewPolicyForm({ onSaved }: { onSaved: () => void }) {
           disabled={saving || !form.name || !form.keywords}
           className="px-4 py-2 bg-teal text-dark text-sm font-semibold rounded-lg hover:bg-teal/90 disabled:opacity-40"
         >
-          {saving ? 'Zapisywanie...' : 'Zapisz regułę'}
+          {saving ? t('saving') : t('newRule.save')}
         </button>
         <button
           onClick={() => setOpen(false)}
           className="px-4 py-2 text-mgray text-sm border border-blue/30 rounded-lg hover:bg-blue/10"
         >
-          Anuluj
+          {t('cancel')}
         </button>
       </div>
     </div>
@@ -149,6 +146,7 @@ function NewPolicyForm({ onSaved }: { onSaved: () => void }) {
 // ── Karta pojedynczej polityki ────────────────────────────────────────────────
 
 function PolicyCard({ policy, onChanged }: { policy: Policy; onChanged: () => void }) {
+  const t = useTranslations('policies');
   const [keywords, setKeywords] = useState<string[]>(policy.condition_json?.keywords ?? []);
   const [newKw, setNewKw] = useState('');
   const [saving, setSaving] = useState(false);
@@ -204,7 +202,7 @@ function PolicyCard({ policy, onChanged }: { policy: Policy; onChanged: () => vo
           className={`relative w-10 h-5 rounded-full transition-colors flex-shrink-0 ${
             policy.active ? 'bg-teal' : 'bg-mgray/30'
           }`}
-          title={policy.active ? 'Dezaktywuj' : 'Aktywuj'}
+          title={policy.active ? t('rule.deactivate') : t('rule.activate')}
         >
           <span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-transform ${
             policy.active ? 'translate-x-5' : 'translate-x-0.5'
@@ -217,11 +215,11 @@ function PolicyCard({ policy, onChanged }: { policy: Policy; onChanged: () => vo
         )}
         <span className="font-semibold text-white text-sm">{policy.name}</span>
         <span className="ml-auto text-xs text-mgray/60">
-          Priorytet: {policy.priority} · Zasięg: {policy.level} · v{policy.version}
+          {t('rule.meta', { priority: policy.priority, level: policy.level, version: policy.version })}
         </span>
         {!policy.active && (
           <span className="text-xs text-mgray bg-mgray/10 px-2 py-0.5 rounded border border-mgray/20">
-            NIEAKTYWNA
+            {t('rule.inactive')}
           </span>
         )}
       </div>
@@ -229,14 +227,14 @@ function PolicyCard({ policy, onChanged }: { policy: Policy; onChanged: () => vo
       {/* Komunikat blokady */}
       {policy.action_json?.reason && (
         <div className="px-5 py-2 border-b border-blue/10 text-xs text-mgray/70 italic">
-          Komunikat: „{policy.action_json.reason}"
+          {t('rule.reason', { reason: policy.action_json.reason })}
         </div>
       )}
 
       {/* Słowa kluczowe */}
       <div className="px-5 py-4">
         <div className="text-xs text-mgray mb-2 font-semibold uppercase tracking-wide">
-          Słowa kluczowe ({keywords.length})
+          {t('rule.keywords', { count: keywords.length })}
         </div>
         <div className="flex flex-wrap gap-2 mb-3 min-h-[2rem]">
           {keywords.map(kw => (
@@ -254,7 +252,7 @@ function PolicyCard({ policy, onChanged }: { policy: Policy; onChanged: () => vo
             </span>
           ))}
           {keywords.length === 0 && (
-            <span className="text-xs text-mgray/40 italic">Brak słów kluczowych — reguła nigdy nie aktywuje.</span>
+            <span className="text-xs text-mgray/40 italic">{t('rule.noKeywords')}</span>
           )}
         </div>
 
@@ -262,7 +260,7 @@ function PolicyCard({ policy, onChanged }: { policy: Policy; onChanged: () => vo
         <div className="flex gap-2">
           <input
             className="flex-1 bg-dark border border-blue/30 rounded-lg px-3 py-1.5 text-sm text-white font-mono focus:outline-none focus:border-teal"
-            placeholder="Dodaj słowo kluczowe..."
+            placeholder={t('rule.addKeywordPlaceholder')}
             value={newKw}
             onChange={e => setNewKw(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && addKeyword()}
@@ -272,7 +270,7 @@ function PolicyCard({ policy, onChanged }: { policy: Policy; onChanged: () => vo
             disabled={!newKw.trim()}
             className="px-3 py-1.5 bg-blue/20 border border-blue/30 text-blue-300 text-sm rounded-lg hover:bg-blue/30 disabled:opacity-40"
           >
-            + Dodaj
+            {t('rule.addKeyword')}
           </button>
           {dirty && (
             <button
@@ -280,13 +278,13 @@ function PolicyCard({ policy, onChanged }: { policy: Policy; onChanged: () => vo
               disabled={saving}
               className="px-4 py-1.5 bg-teal text-dark text-sm font-semibold rounded-lg hover:bg-teal/90 disabled:opacity-40"
             >
-              {saving ? '...' : '✓ Zapisz'}
+              {saving ? '...' : t('save')}
             </button>
           )}
         </div>
         {dirty && (
           <p className="text-xs text-yellow-400 mt-2">
-            Niezapisane zmiany · Gateway zastosuje je w ciągu 60s.
+            {t('rule.unsaved')}
           </p>
         )}
       </div>
@@ -297,6 +295,8 @@ function PolicyCard({ policy, onChanged }: { policy: Policy; onChanged: () => vo
 // ── Formularz nowego wymagania AI Act ─────────────────────────────────────────
 
 function NewRequirementForm({ onSaved }: { onSaved: () => void }) {
+  const t = useTranslations('policies');
+  const tc = useTranslations('common');
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
@@ -339,38 +339,38 @@ function NewRequirementForm({ onSaved }: { onSaved: () => void }) {
         onClick={() => setOpen(true)}
         className="mt-3 px-4 py-2 border border-dashed border-blue/40 text-teal text-sm rounded-lg hover:border-teal/60 hover:bg-teal/5 transition-colors w-full"
       >
-        + Dodaj wymaganie
+        {t('newRequirement.addButton')}
       </button>
     );
   }
 
   return (
     <div className="mt-3 bg-dark/60 border border-blue/30 rounded-xl p-4 space-y-3">
-      <div className="font-semibold text-white text-sm">Nowe wymaganie EU AI Act</div>
+      <div className="font-semibold text-white text-sm">{t('newRequirement.title')}</div>
       <div className="grid grid-cols-3 gap-3">
         <div>
-          <label className="text-xs text-mgray mb-1 block">Poziom ryzyka *</label>
+          <label className="text-xs text-mgray mb-1 block">{t('newRequirement.riskLevel')}</label>
           <select
             className="w-full bg-navy border border-blue/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-teal"
             value={form.risk_level}
             onChange={e => setForm(f => ({ ...f, risk_level: e.target.value as RiskLevel }))}
           >
             {RISK_ORDER.map(r => (
-              <option key={r} value={r}>{RISK_LABEL[r]}</option>
+              <option key={r} value={r}>{tc(`risk.${r}`)}</option>
             ))}
           </select>
         </div>
         <div>
-          <label className="text-xs text-mgray mb-1 block">Artykuł *</label>
+          <label className="text-xs text-mgray mb-1 block">{t('newRequirement.article')}</label>
           <input
             className="w-full bg-navy border border-blue/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-teal"
-            placeholder="np. Art. 9 ust. 2"
+            placeholder={t('newRequirement.articlePlaceholder')}
             value={form.article_ref}
             onChange={e => setForm(f => ({ ...f, article_ref: e.target.value }))}
           />
         </div>
         <div>
-          <label className="text-xs text-mgray mb-1 block">Kolejność</label>
+          <label className="text-xs text-mgray mb-1 block">{t('newRequirement.sortOrder')}</label>
           <input
             type="number"
             className="w-full bg-navy border border-blue/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-teal"
@@ -380,39 +380,39 @@ function NewRequirementForm({ onSaved }: { onSaved: () => void }) {
         </div>
       </div>
       <div>
-        <label className="text-xs text-mgray mb-1 block">Tytuł wymagania *</label>
+        <label className="text-xs text-mgray mb-1 block">{t('newRequirement.reqTitle')}</label>
         <input
           className="w-full bg-navy border border-blue/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-teal"
-          placeholder="np. Rejestr systemów AI wysokiego ryzyka"
+          placeholder={t('newRequirement.reqTitlePlaceholder')}
           value={form.requirement_title}
           onChange={e => setForm(f => ({ ...f, requirement_title: e.target.value }))}
         />
       </div>
       <div>
-        <label className="text-xs text-mgray mb-1 block">Opis wymagania *</label>
+        <label className="text-xs text-mgray mb-1 block">{t('newRequirement.reqText')}</label>
         <textarea
           rows={3}
           className="w-full bg-navy border border-blue/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-teal resize-none"
-          placeholder="Szczegółowy opis wymagania i sposobu jego spełnienia..."
+          placeholder={t('newRequirement.reqTextPlaceholder')}
           value={form.requirement_text}
           onChange={e => setForm(f => ({ ...f, requirement_text: e.target.value }))}
         />
       </div>
       <div className="grid grid-cols-3 gap-3">
         <div>
-          <label className="text-xs text-mgray mb-1 block">Waga domyślna</label>
+          <label className="text-xs text-mgray mb-1 block">{t('newRequirement.severity')}</label>
           <select
             className="w-full bg-navy border border-blue/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-teal"
             value={form.default_severity}
             onChange={e => setForm(f => ({ ...f, default_severity: e.target.value as typeof f.default_severity }))}
           >
-            <option value="critical">Krytyczna</option>
-            <option value="major">Poważna</option>
-            <option value="minor">Drobna</option>
+            {SEVERITIES.map(sv => (
+              <option key={sv} value={sv}>{t(`severity.${sv}`)}</option>
+            ))}
           </select>
         </div>
         <div>
-          <label className="text-xs text-mgray mb-1 block">Termin (dni)</label>
+          <label className="text-xs text-mgray mb-1 block">{t('newRequirement.deadlineDays')}</label>
           <input
             type="number"
             className="w-full bg-navy border border-blue/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-teal"
@@ -421,18 +421,17 @@ function NewRequirementForm({ onSaved }: { onSaved: () => void }) {
           />
         </div>
         <div>
-          <label className="text-xs text-mgray mb-1 block">Klucz samo-deklaracji</label>
+          <label className="text-xs text-mgray mb-1 block">{t('newRequirement.declKey')}</label>
           <input
             className="w-full bg-navy border border-blue/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-teal font-mono"
-            placeholder="np. art9_risk_management"
+            placeholder={t('newRequirement.declKeyPlaceholder')}
             value={form.decl_key}
             onChange={e => setForm(f => ({ ...f, decl_key: e.target.value }))}
           />
         </div>
       </div>
       <p className="text-[11px] text-mgray/50 -mt-1">
-        Klucz samo-deklaracji łączy to wymaganie z polem w zakładce Rejestr agenta.
-        Puste = wymaganie nie do samo-zadeklarowania (np. zakaz z art. 5).
+        {t('newRequirement.declKeyHint')}
       </p>
       <div className="flex gap-3">
         <button
@@ -440,10 +439,10 @@ function NewRequirementForm({ onSaved }: { onSaved: () => void }) {
           disabled={saving || !form.article_ref || !form.requirement_title || !form.requirement_text}
           className="px-4 py-2 bg-teal text-dark text-sm font-semibold rounded-lg hover:bg-teal/90 disabled:opacity-40"
         >
-          {saving ? 'Zapisywanie...' : 'Zapisz wymaganie'}
+          {saving ? t('saving') : t('newRequirement.save')}
         </button>
         <button onClick={() => setOpen(false)} className="px-4 py-2 text-mgray text-sm border border-blue/30 rounded-lg hover:bg-blue/10">
-          Anuluj
+          {t('cancel')}
         </button>
       </div>
     </div>
@@ -453,6 +452,7 @@ function NewRequirementForm({ onSaved }: { onSaved: () => void }) {
 // ── Wiersz wymagania ──────────────────────────────────────────────────────────
 
 function RequirementRow({ req, onChanged }: { req: AiActRequirement; onChanged: () => void }) {
+  const t = useTranslations('policies');
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
@@ -491,7 +491,7 @@ function RequirementRow({ req, onChanged }: { req: AiActRequirement; onChanged: 
   }
 
   async function remove() {
-    if (!confirm(`Usunąć wymaganie "${req.requirement_title}"?`)) return;
+    if (!confirm(t('requirement.deleteConfirm', { title: req.requirement_title }))) return;
     try {
       await api.compliance.delete(req.id);
       onChanged();
@@ -508,13 +508,13 @@ function RequirementRow({ req, onChanged }: { req: AiActRequirement; onChanged: 
             className="bg-navy border border-blue/30 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-teal"
             value={form.article_ref}
             onChange={e => setForm(f => ({ ...f, article_ref: e.target.value }))}
-            placeholder="Artykuł"
+            placeholder={t('requirement.article')}
           />
           <input
             className="bg-navy border border-blue/30 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-teal"
             value={form.requirement_title}
             onChange={e => setForm(f => ({ ...f, requirement_title: e.target.value }))}
-            placeholder="Tytuł"
+            placeholder={t('requirement.title')}
           />
         </div>
         <textarea
@@ -529,31 +529,31 @@ function RequirementRow({ req, onChanged }: { req: AiActRequirement; onChanged: 
             value={form.default_severity}
             onChange={e => setForm(f => ({ ...f, default_severity: e.target.value as typeof f.default_severity }))}
           >
-            <option value="critical">Krytyczna</option>
-            <option value="major">Poważna</option>
-            <option value="minor">Drobna</option>
+            {SEVERITIES.map(sv => (
+              <option key={sv} value={sv}>{t(`severity.${sv}`)}</option>
+            ))}
           </select>
           <input
             type="number"
             className="bg-navy border border-blue/30 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-teal"
             value={form.default_deadline_days}
             onChange={e => setForm(f => ({ ...f, default_deadline_days: e.target.value }))}
-            placeholder="Termin (dni)"
+            placeholder={t('newRequirement.deadlineDays')}
           />
           <input
             className="bg-navy border border-blue/30 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-teal font-mono"
             value={form.decl_key}
             onChange={e => setForm(f => ({ ...f, decl_key: e.target.value }))}
-            placeholder="Klucz samo-deklaracji"
+            placeholder={t('newRequirement.declKey')}
           />
         </div>
         <div className="flex gap-2">
           <button onClick={save} disabled={saving}
             className="px-3 py-1 bg-teal text-dark text-xs font-semibold rounded-lg disabled:opacity-40">
-            {saving ? '...' : '✓ Zapisz'}
+            {saving ? '...' : t('save')}
           </button>
           <button onClick={() => setEditing(false)} className="px-3 py-1 text-xs text-mgray border border-blue/20 rounded-lg">
-            Anuluj
+            {t('cancel')}
           </button>
         </div>
       </div>
@@ -570,23 +570,23 @@ function RequirementRow({ req, onChanged }: { req: AiActRequirement; onChanged: 
           <span className="text-xs font-mono font-bold text-teal">{req.article_ref}</span>
           <span className="text-sm font-semibold text-white">{req.requirement_title}</span>
           <span className={`text-[10px] px-1.5 py-0.5 rounded ${SEVERITY_BADGE[req.default_severity]}`}>
-            {SEVERITY_LABEL[req.default_severity]}
+            {t.has(`severity.${req.default_severity}`) ? t(`severity.${req.default_severity}`) : req.default_severity}
           </span>
-          <span className="text-[10px] text-mgray/50">{req.default_deadline_days} dni</span>
+          <span className="text-[10px] text-mgray/50">{t('requirement.days', { count: req.default_deadline_days })}</span>
           {req.decl_key ? (
             <span className="text-[10px] font-mono text-mgray/40">{req.decl_key}</span>
           ) : (
-            <span className="text-[10px] text-orange-400/70">brak samo-deklaracji</span>
+            <span className="text-[10px] text-orange-400/70">{t('requirement.noDeclKey')}</span>
           )}
         </div>
         <p className="text-xs text-mgray mt-0.5 leading-relaxed">{req.requirement_text}</p>
       </div>
       <div className="flex gap-2 flex-shrink-0">
         <button onClick={() => setEditing(true)} className="text-xs text-mgray hover:text-white border border-blue/20 px-2 py-1 rounded transition-colors">
-          Edytuj
+          {t('edit')}
         </button>
         <button onClick={remove} className="text-xs text-red-400/60 hover:text-red-300 border border-red-900/30 px-2 py-1 rounded transition-colors">
-          Usuń
+          {t('delete')}
         </button>
       </div>
     </div>
@@ -596,6 +596,8 @@ function RequirementRow({ req, onChanged }: { req: AiActRequirement; onChanged: 
 // ── Strona główna ─────────────────────────────────────────────────────────────
 
 export default function PoliciesPage() {
+  const t = useTranslations('policies');
+  const tc = useTranslations('common');
   const [tab, setTab] = useState<Tab>('rules');
   const [policies, setPolicies] = useState<Policy[]>([]);
   const [requirements, setRequirements] = useState<AiActRequirement[]>([]);
@@ -635,10 +637,9 @@ export default function PoliciesPage() {
     <div className="space-y-6">
       {/* Nagłówek */}
       <div>
-        <h1 className="text-2xl font-bold text-white">Polityki i Compliance</h1>
+        <h1 className="text-2xl font-bold text-white">{t('title')}</h1>
         <p className="text-mgray text-sm mt-1">
-          Zarządzaj regułami bezpieczeństwa i wymaganiami EU AI Act bez zmian w kodzie.
-          Zmiany reguł aktywne w Gateway w ciągu 60s.
+          {t('subtitle')}
         </p>
       </div>
 
@@ -646,17 +647,16 @@ export default function PoliciesPage() {
       <div className="bg-navy border border-teal/20 rounded-lg px-5 py-3 flex items-center gap-3 text-sm">
         <span className="text-teal text-lg">⚙</span>
         <div>
-          <span className="text-white font-medium">Konfiguracja bez restartu:</span>
+          <span className="text-white font-medium">{t('banner.title')}</span>
           <span className="text-mgray ml-2">
-            Gateway odświeża reguły z bazy co 60 sekund automatycznie.
-            Po zapisaniu zmiany — nic więcej nie trzeba robić.
+            {t('banner.text')}
           </span>
         </div>
       </div>
 
       {/* Zakładki */}
       <div className="flex gap-1 border-b border-blue/20">
-        {([['rules', 'Reguły Bezpieczeństwa'], ['aiact', 'Wymagania EU AI Act']] as const).map(([id, label]) => (
+        {([['rules', t('tabs.rules')], ['aiact', t('tabs.aiact')]] as const).map(([id, label]) => (
           <button
             key={id}
             onClick={() => setTab(id)}
@@ -672,32 +672,31 @@ export default function PoliciesPage() {
       </div>
 
       {loading ? (
-        <div className="text-mgray animate-pulse py-8">Ładowanie...</div>
+        <div className="text-mgray animate-pulse py-8">{t('loading')}</div>
       ) : tab === 'rules' ? (
 
         /* ── TAB: Reguły ── */
         <div className="space-y-4">
           <p className="text-xs text-mgray">
-            Reguły blokujące sprawdzane są w kolejności priorytetu (niższy numer = wyższy priorytet).
-            Pierwsze dopasowanie słowa kluczowego aktywuje blokadę przed wywołaniem modelu.
+            {t('rulesTab.intro')}
           </p>
 
           {policies.length > 0 && (
             <SearchBox
               value={query}
               onChange={setQuery}
-              placeholder="Szukaj reguły — nazwa, kod, słowo kluczowe, powód..."
+              placeholder={t('rulesTab.searchPlaceholder')}
               count={visiblePolicies.length}
               total={policies.length}
             />
           )}
 
           {policies.length === 0 && (
-            <div className="text-center py-10 text-mgray/50">Brak zdefiniowanych reguł.</div>
+            <div className="text-center py-10 text-mgray/50">{t('rulesTab.empty')}</div>
           )}
 
           {policies.length > 0 && visiblePolicies.length === 0 && (
-            <div className="text-center py-10 text-mgray/50">Brak reguł pasujących do „{query}”.</div>
+            <div className="text-center py-10 text-mgray/50">{t('rulesTab.noResults', { query })}</div>
           )}
 
           {visiblePolicies.map(p => (
@@ -712,24 +711,23 @@ export default function PoliciesPage() {
         /* ── TAB: EU AI Act ── */
         <div className="space-y-6">
           <p className="text-xs text-mgray">
-            Wymagania przypisane do poziomów ryzyka. Widoczne w raportach PDF i widoku zgodności agenta.
-            Możesz dodawać własne adnotacje do konkretnych artykułów EU AI Act.
+            {t('aiactTab.intro')}
           </p>
 
           {RISK_ORDER.map(level => (
             <div key={level} className="bg-navy border border-blue/30 rounded-xl overflow-hidden">
               <div className={`px-5 py-3 border-b border-blue/20 flex items-center gap-3 ${RISK_STYLE[level].split(' ')[2]}`}>
-                <span className={`text-xs font-bold px-2 py-0.5 rounded border ${RISK_STYLE[level]}`}>
-                  {RISK_LABEL[level].toUpperCase()}
+                <span className={`text-xs font-bold px-2 py-0.5 rounded border uppercase ${RISK_STYLE[level]}`}>
+                  {tc(`risk.${level}`)}
                 </span>
                 <span className="text-white text-sm font-semibold">
-                  {reqByRisk[level].length} {reqByRisk[level].length === 1 ? 'wymaganie' : 'wymagań'}
+                  {t('aiactTab.count', { count: reqByRisk[level].length })}
                 </span>
               </div>
 
               <div>
                 {reqByRisk[level].length === 0 ? (
-                  <div className="px-5 py-4 text-xs text-mgray/40 italic">Brak wymagań dla tego poziomu.</div>
+                  <div className="px-5 py-4 text-xs text-mgray/40 italic">{t('aiactTab.emptyLevel')}</div>
                 ) : (
                   reqByRisk[level].map(r => (
                     <RequirementRow key={r.id} req={r} onChanged={load} />

@@ -1,0 +1,542 @@
+{
+  "act": {
+    "eyebrow": "Regulacja",
+    "lead": "Część terminów już obowiązuje, część została przesunięta latem 2026 — poniżej stan faktyczny, nie ten sprzed nowelizacji.",
+    "obligations": {
+      "deployer": {
+        "art26p2": {
+          "article": "Art. 26 ust. 2",
+          "mechanism": "Kolejka nadzoru z rolą \"reviewer\" — nie deklaracja, tu GovAI to egzekwuje.",
+          "requirement": "Nadzór człowieka przypisany do kompetentnej, uprawnionej osoby."
+        },
+        "art26p5": {
+          "article": "Art. 26 ust. 5",
+          "mechanism": "Statystyki wywołań agenta dostępne w panelu — sam obowiązek informowania dostawcy to dziś samo-deklaracja, nie automat.",
+          "requirement": "Monitorowanie działania systemu i informowanie dostawcy o ryzykach/incydentach."
+        },
+        "art26p6": {
+          "article": "Art. 26 ust. 6",
+          "mechanism": "Niezmienny dziennik audytowy bez mechanizmu auto-kasowania — stała gwarancja architektoniczna, nie deklaracja per agent.",
+          "requirement": "Przechowywanie automatycznych logów min. 6 miesięcy."
+        },
+        "art26p8": {
+          "article": "Art. 26 ust. 8",
+          "mechanism": "Pole rejestru agenta (to samo, co przy Art. 49).",
+          "requirement": "Weryfikacja rejestracji systemu w unijnej bazie (dot. podmiotów publicznych)."
+        },
+        "art27": {
+          "mechanism": "Dziś tylko pole do samo-deklaracji — brak dedykowanego kreatora FRIA.",
+          "requirement": "Ocena wpływu na prawa podstawowe (FRIA) — dotyczy podmiotów publicznych oraz oceny zdolności kredytowej i ryzyka ubezpieczeniowego."
+        },
+        "scope": "Art. 26-27 — też grudzień 2027, ta sama nowelizacja",
+        "title": "Wysokie ryzyko — podmiot wdrażający (deployer)"
+      },
+      "headers": {
+        "article": "Artykuł",
+        "mechanism": "Mechanizm w GovAI",
+        "priority": "Priorytet",
+        "requirement": "Wymóg",
+        "verification": "Weryfikacja"
+      },
+      "intro": "To nie jest statyczna lista sprzedażowa — większość wierszy poniżej to ten sam katalog wymagań, który silnik oceny zgodności GovAI konfrontuje z rejestrem każdego agenta, wiersz po wierszu. Kolumna \"Weryfikacja\" pokazuje, czy status pochodzi z obiektywnego faktu systemowego (<span class=\"mono\">auto</span>), czy z jawnej samo-deklaracji (<span class=\"mono\">deklaracja</span>) — bez deklaracji wymaganie liczy się jako luka, nie jako domyślny \"zielony ptaszek\". Rozdzieliliśmy obowiązki dostawcy systemu AI (Art. 9-17) od obowiązków podmiotu wdrażającego / deployera (Art. 26-27) — większość organizacji korzystających z GovAI wdraża agenty zbudowane na modelach zewnętrznych, więc prawnie jest bliżej roli deployera niż dostawcy. Który status faktycznie ma dana organizacja, zależy od konkretnego przypadku.",
+      "limited": {
+        "art50p1": {
+          "article": "Art. 50 ust. 1",
+          "requirement": "Informowanie użytkownika o interakcji z AI."
+        },
+        "art50p4": {
+          "article": "Art. 50 ust. 4",
+          "requirement": "Maszynowo czytelne oznaczanie treści generowanych przez AI."
+        },
+        "scope": "Art. 50 — obowiązki przejrzystości",
+        "title": "Ograniczone ryzyko"
+      },
+      "mechanismSelfDeclaration": "Samo-deklaracja w rejestrze agenta.",
+      "note": "<strong>Katalog jest edytowalny, nie zaszyty na stałe.</strong> Konsultant compliance może dodać nowy wymóg, zmienić termin albo priorytet z poziomu panelu — gdy zmieni się interpretacja przepisu albo pojawi wytyczna Komisji, katalog się aktualizuje bez zmiany kodu. Art. 26 ust. 2 i ust. 6 są sprawdzane automatycznie z rejestru, reszta to samo-deklaracja. Świadomie pomijamy dziś: Art. 12 (rejestrowanie zdarzeń — funkcjonalnie pokryte przez dziennik audytowy, ale bez osobnego wiersza w katalogu luk), Art. 16 (ogólny obowiązek zgodności dostawcy), Art. 4 (kompetencje AI — złagodzony przez Digital Omnibus z \"zapewnienia\" na \"wspieranie\"), Art. 53 (obowiązki GPAI — dotyczą dostawców modeli, nie użytkowników GovAI) oraz Art. 72 (monitorowanie po wprowadzeniu do obrotu — obowiązek dostawcy modelu/systemu, nie operatora agenta).",
+      "priority": {
+        "critical": "Krytyczny",
+        "critical30": "Krytyczny · 30 dni",
+        "critical60": "Krytyczny · 60 dni",
+        "critical90": "Krytyczny · 90 dni",
+        "major30": "Ważny · 30 dni",
+        "major60": "Ważny · 60 dni",
+        "major90": "Ważny · 90 dni",
+        "major90Narrow": "Ważny · 90 dni, wąski zakres",
+        "minor180": "Drobny · 180 dni"
+      },
+      "provider": {
+        "art10": {
+          "mechanism": "Rejestr: kategorie danych, podstawa prawna GDPR, okres retencji.",
+          "requirement": "Jakość i zarządzanie danymi treningowymi/wejściowymi."
+        },
+        "art11": {
+          "mechanism": "Generator raportów PDF per agent — narracja pisana z danych rejestru i audytu.",
+          "requirement": "Kompletna dokumentacja techniczna zgodna z Załącznikiem IV."
+        },
+        "art13": {
+          "mechanism": "Rejestr: przeznaczenie, odbiorcy, zakres geograficzny agenta.",
+          "requirement": "Przejrzystość operacyjna wobec użytkowników systemu."
+        },
+        "art14": {
+          "mechanism": "Kolejka nadzoru w ścieżce wywołania — nie tylko deklaracja, tu GovAI sam to egzekwuje.",
+          "requirement": "Nadzór człowieka — możliwość zatrzymania lub cofnięcia decyzji."
+        },
+        "art15": {
+          "mechanism": "Samo-deklaracja + statystyki wywołań agenta z dziennika audytowego.",
+          "requirement": "Dokładność i odporność systemu przez cały cykl życia."
+        },
+        "art17": {
+          "requirement": "System zarządzania jakością u dostawcy."
+        },
+        "art43": {
+          "requirement": "Ocena zgodności przed wprowadzeniem do użytku."
+        },
+        "art49": {
+          "requirement": "Rejestracja w unijnej bazie danych systemów AI."
+        },
+        "art9": {
+          "mechanism": "Pole rejestru + samo-deklaracja stanu zarządzania ryzykiem.",
+          "requirement": "System zarządzania ryzykiem przez cały cykl życia agenta."
+        },
+        "scope": "Art. 9-17 — termin: grudzień 2027",
+        "title": "Wysokie ryzyko — dostawca systemu"
+      },
+      "source": {
+        "autoArchitecture": "auto · architektura",
+        "autoClassification": "auto · klasyfikacja",
+        "autoSystemField": "auto · pole systemowe",
+        "declared": "deklaracja w rejestrze",
+        "partial": "częściowe — do rozbudowy"
+      },
+      "title": "Mapa obowiązków: który artykuł, jaki mechanizm w GovAI, skąd wiadomo, że jest spełniony.",
+      "unacceptable": {
+        "art5": {
+          "mechanism": "Klasyfikator ryzyka flaguje \"unacceptable\" przy rejestracji agenta, przed wdrożeniem.",
+          "requirement": "Bezwzględny zakaz stosowania — manipulacja podprogowa, scoring społeczny, biometria w czasie rzeczywistym."
+        },
+        "scope": "Art. 5 — systemy zakazane w całości",
+        "title": "Ryzyko niedopuszczalne"
+      }
+    },
+    "omnibusNote": "<strong>Digital Omnibus AI (Rozporządzenie UE 2026/1744, w mocy od 27.07.2026) przesunął pełne obowiązki wysokiego ryzyka z 2 sierpnia 2026 na 2 grudnia 2027</strong> (systemy samodzielne z Załącznika III) i na 2 sierpnia 2028 dla AI wbudowanej w regulowane produkty. Art. 5 (zakazy), Art. 50 (przejrzystość) i obowiązki GPAI zostały terminowo bez zmian.",
+    "penalties": {
+      "highRisk": {
+        "amount": "15 mln € / 3%",
+        "text": "za większość pozostałych obowiązków wysokiego ryzyka: zarządzanie ryzykiem, dane, nadzór, logowanie."
+      },
+      "misinformation": {
+        "amount": "7,5 mln € / 1%",
+        "text": "za dostarczenie nieprawidłowych, niepełnych lub wprowadzających w błąd informacji organom."
+      },
+      "note": "Dla MŚP i startupów kary są ograniczone do niższej z dwóch wartości (kwota stała lub procent) — ale same obowiązki się nie zmniejszają.",
+      "prohibited": {
+        "amount": "35 mln € / 7%",
+        "text": "globalnego rocznego obrotu, w zależności co wyższe — za praktyki zakazane (Art. 5)."
+      },
+      "title": "Kary są warstwowe — i realne."
+    },
+    "timeline": {
+      "aug2025": {
+        "date": "SIE 2025",
+        "text": "Dostawcy modeli GPAI muszą spełniać wymogi przejrzystości i zarządzania ryzykiem.",
+        "title": "Obowiązki modeli ogólnego przeznaczenia"
+      },
+      "aug2026": {
+        "date": "SIE 2026",
+        "text": "Chatboty, treści syntetyczne i deepfake muszą być oznaczone — termin utrzymany mimo nowelizacji.",
+        "title": "Przejrzystość (Art. 50) w mocy"
+      },
+      "aug2028": {
+        "date": "SIE 2028",
+        "text": "AI wysokiego ryzyka wbudowana w regulowane produkty (wyroby medyczne, pojazdy) — pierwotnie sierpień 2027, przesunięte o 12 miesięcy. AI w maszynach w większości wyjęta spod tego reżimu na rzecz Rozporządzenia o Maszynach.",
+        "title": "Wbudowane systemy wysokiego ryzyka"
+      },
+      "dec2026": {
+        "date": "GRU 2026",
+        "text": "Zakaz generowania treści intymnych bez zgody i CSAM (nowy w Art. 5) oraz koniec 4-miesięcznego okresu przejściowego na znakowanie wodne z Art. 50 ust. 2.",
+        "title": "Nowy zakaz + koniec okresu przejściowego"
+      },
+      "dec2027": {
+        "date": "GRU 2027",
+        "text": "Pełne obowiązki z Załącznika III: zarządzanie ryzykiem, nadzór człowieka, logowanie, dokumentacja. Pierwotnie sierpień 2026 — przesunięte Digital Omnibus o 16 miesięcy.",
+        "title": "Systemy wysokiego ryzyka w mocy — przesunięte"
+      },
+      "feb2025": {
+        "date": "LUT 2025",
+        "text": "Art. 5 — manipulacyjne, wykorzystujące i punktujące społecznie zastosowania AI są już nielegalne.",
+        "title": "Zakaz praktyk niedopuszczalnych"
+      },
+      "now": "Teraz"
+    },
+    "title": "Termin przesunięty przez Digital Omnibus. Obowiązek nie zniknął."
+  },
+  "chat": {
+    "close": "Zamknij",
+    "cta": "Napisz do nas",
+    "status": "Zwykle odpowiada w kilka godzin",
+    "team": "Zespół GovAI",
+    "text": "Masz pytanie o zgodność z AI Act, wdrożenie albo cennik? Napisz do nas — odpowiadamy w ciągu jednego dnia roboczego.",
+    "toggle": "Masz pytanie?"
+  },
+  "compare": {
+    "blocks": {
+      "label": "Blokuje naruszenie na żywo"
+    },
+    "evidence": {
+      "docs": "Wygenerowane dokumenty",
+      "govai": "Niezmienny dziennik decyzji ze znacznikiem czasu",
+      "label": "Dowód na audyt",
+      "manual": "To, co ktoś zapisał"
+    },
+    "eyebrow": "Dlaczego egzekwowanie, nie dokumentacja",
+    "gapVsEnforcement": {
+      "docs": "Panel pokazuje luki, ruch płynie dalej bez zmian",
+      "govai": "Ten sam status luki steruje kolejką nadzoru i routingiem na żywo",
+      "label": "Ocena luk vs. egzekwowanie",
+      "manual": "Rozłączone — arkusz nikogo nie blokuje"
+    },
+    "headers": {
+      "docPlatforms": "Platformy dokumentacyjne",
+      "manual": "Proces ręczny"
+    },
+    "isolation": {
+      "docs": "Zawsze współdzielony SaaS, bez wyboru",
+      "govai": "Ty wybierasz: dedykowana instancja albo multi-tenant z izolacją logiczną",
+      "label": "Izolacja danych",
+      "manual": "To, co już masz"
+    },
+    "lead": "Większość narzędzi do AI Act kończy na generowaniu papierów. GovAI stoi w ścieżce requestu.",
+    "no": "Nie",
+    "oversight": {
+      "docs": "Śledzona jako zadanie",
+      "govai": "Wbudowana w ścieżkę wywołania",
+      "label": "Kolejka nadzoru człowieka",
+      "manual": "Ad hoc, mailem"
+    },
+    "title": "Dokumentacja dowodzi, że chciałeś być zgodny. Egzekwowanie dowodzi, że byłeś.",
+    "where": {
+      "docs": "Po wywołaniu, na podstawie logów",
+      "govai": "Zanim wywołanie dotrze do dostawcy",
+      "label": "Gdzie działa",
+      "manual": "Po incydencie, jeśli w ogóle"
+    },
+    "yes": "Tak"
+  },
+  "contact": {
+    "company": "Firma",
+    "companyPlaceholder": "Nazwa firmy",
+    "email": "Email służbowy",
+    "emailPlaceholder": "jan@firma.pl",
+    "error": "✕ Coś poszło nie tak. Spróbuj ponownie lub napisz bezpośrednio na kontakt@govai.pl",
+    "eyebrow": "Kontakt",
+    "lead": "Odpowiadamy w ciągu jednego dnia roboczego. Wolisz napisać bezpośrednio? <a href=\"mailto:kontakt@govai.pl\" class=\"contact-email-link\">kontakt@govai.pl</a>",
+    "message": "Wiadomość",
+    "messagePlaceholder": "Opisz krótko swoje potrzeby lub zadaj pytanie…",
+    "name": "Imię i nazwisko",
+    "namePlaceholder": "Jan Kowalski",
+    "optional": "(opcjonalnie)",
+    "phone": "Telefon",
+    "sending": "Wysyłanie…",
+    "submit": "Wyślij zapytanie",
+    "success": "✓ Dziękujemy! Odezwiemy się wkrótce.",
+    "title": "Napisz do nas"
+  },
+  "cta": {
+    "lead": "30-minutowa rozmowa. Sklasyfikujemy jednego realnego agenta na żywo.",
+    "title": "Zobacz swojego pierwszego agenta pod egzekwowaniem — w tym tygodniu."
+  },
+  "faq": {
+    "checklist": {
+      "a": "Nie. Narzędzia typu checklista i dokumentacja mówią, co powinieneś był zrobić. GovAI egzekwuje politykę na faktycznym wywołaniu API, zanim dostawca modelu je zobaczy — dziennik audytowy jest efektem ubocznym, nie głównym produktem.",
+      "q": "Czy GovAI to kolejne narzędzie-checklista do zgodności?"
+    },
+    "deadlines": {
+      "a": "Zakaz praktyk niedopuszczalnych z Art. 5 obowiązuje od lutego 2025, obowiązki GPAI od sierpnia 2025, przejrzystość z Art. 50 od sierpnia 2026 — te terminy są dziś aktualne. Pełne obowiązki wysokiego ryzyka z Załącznika III zostały przesunięte przez Digital Omnibus (Rozporządzenie 2026/1744) z sierpnia 2026 na grudzień 2027 — to nadal nadchodzi, nie jest już \"teraz\".",
+      "q": "Które terminy AI Act faktycznie nas dziś dotyczą?"
+    },
+    "gatewayOnly": {
+      "a": "Nie — to dwie warstwy tego samego systemu. Najpierw agent trafia do rejestru i dostaje klasyfikację ryzyka oraz ocenę luk wobec konkretnych artykułów AI Act (jak w narzędziach dokumentacyjnych). Dopiero ta sama klasyfikacja jest egzekwowana na żywo na bramce — więc status \"wymaga nadzoru\" nie jest tylko czerwoną kropką na dashboardzie, tylko realnie wstrzymuje odpowiedź agenta.",
+      "q": "Czy GovAI to tylko bramka nasłuchująca ruch, bez rejestru i oceny ryzyka?"
+    },
+    "onPrem": {
+      "a": "Tak. GovAI wdraża się tak samo na Twojej infrastrukturze albo na dedykowanej instancji, którą hostujemy dla Ciebie — model zgodności się nie zmienia.",
+      "q": "Czy możemy uruchomić GovAI na własnej infrastrukturze?"
+    },
+    "providers": {
+      "a": "Anthropic i DeepSeek od razu po instalacji, plus opcja self-hosted (Bielik) dla danych, które nie powinny opuszczać Twojej infrastruktury. Routing jest automatyczny, na podstawie wrażliwości danych.",
+      "q": "Jakich dostawców modeli obsługuje GovAI?"
+    },
+    "sharedInfra": {
+      "a": "To zależy od wybranego modelu — Ty decydujesz. Dla firm z wyższym wolumenem lub bardziej rygorystycznymi wymogami oferujemy dedykowaną instancję: własną bazę danych, własny dziennik audytowy, nic współdzielonego. Dla mniejszych zespołów, którym zależy na niższym koszcie wejścia, dostępna jest opcja multi-tenant z izolacją logiczną per organizacja. Oba modele korzystają z tego samego silnika oceny zgodności i egzekwowania polityk.",
+      "q": "Czy dzielimy infrastrukturę z innymi klientami GovAI?"
+    },
+    "title": "Pytania, które faktycznie zadają compliance officerowie.",
+    "trial": {
+      "a": "Umów demo, a pokażemy klasyfikację jednego z Twoich realnych agentów na żywo. Warunki pilotażu (długość, zakres, ewentualny rabat referencyjny) ustalamy indywidualnie na tym etapie.",
+      "q": "Czy możemy przetestować GovAI przed zapłatą?"
+    }
+  },
+  "features": {
+    "auditLog": {
+      "example": "Audytor pyta o każdą decyzję dla danego agenta w danym tygodniu — to zapytanie z timestampem, nie projekt rekonstrukcyjny.",
+      "how": "Każda decyzja — dopuszczono, zablokowano, eskalowano — jest zapisywana raz w TimescaleDB i nigdy nie aktualizowana ani usuwana.",
+      "problem": "\"Udowodnij, co się stało 3 marca\" jest niemożliwe, jeśli zapis to modyfikowalna tabela logów, którą ktoś może edytować.",
+      "title": "Niezmienny dziennik audytowy"
+    },
+    "days30": "30 dni",
+    "days60": "60 dni",
+    "deployment": {
+      "example": "Mały zespół startuje na multi-tenant za ułamek kosztu dedykowanej instancji; gdy rośnie wolumen albo wymogi regulacyjne, migruje na dedykowaną VM bez zmiany integracji po stronie agenta.",
+      "how": "GovAI oferuje dwa modele wdrożenia: dedykowaną instancję (własna VM, własna baza, własny dziennik audytowy — pełna izolacja fizyczna) dla firm z wyższym wolumenem lub rygorystycznymi wymogami, oraz tańszą instancję multi-tenant z izolacją logiczną per organizacja dla mniejszych zespołów. Ty wybierasz kompromis koszt/izolacja, nie my za Ciebie.",
+      "mock": {
+        "auditIsolated": "Audit log — izolacja per tenant",
+        "dedicated": "Dedykowana · własna VM",
+        "multiTenant": "Multi-tenant · 1 VM",
+        "postgresIsolated": "Postgres — izolacja per tenant",
+        "redisIsolated": "Redis — izolacja per tenant",
+        "title": "modele wdrożenia"
+      },
+      "problem": "Duża regulowana instytucja i mały zespół prawniczy z pięcioma agentami nie powinny płacić tej samej stawki za infrastrukturę — ale obie potrzebują tego samego silnika oceny zgodności i egzekwowania polityk.",
+      "title": "Model wdrożenia dopasowany do skali firmy"
+    },
+    "eyebrow": "Platforma",
+    "gapEngine": {
+      "example": "agent=credit-scoring → 9 wymogów wysokiego ryzyka → 6 zadeklarowanych, 1 auto-potwierdzony (Art. 14), 2 niezadeklarowane = 2 luki krytyczne do zamknięcia.",
+      "how": "Katalog wymogów (edytowalny przez konsultanta, nie zaszyty w kodzie) jest konfrontowany z rejestrem każdego agenta wymóg po wymogu — status pochodzi albo z obiektywnego faktu systemowego (np. czy nadzór człowieka jest faktycznie włączony), albo z jawnej samo-deklaracji. Brak jednego i drugiego liczy się jako realna luka.",
+      "mock": {
+        "deadline": "termin: gru 2027",
+        "next": {
+          "art11": "<b>Art. 11</b> uzupełnij dokumentację",
+          "art43": "<b>Art. 43</b> ocena zgodności",
+          "art49": "<b>Art. 49</b> rejestracja w bazie UE"
+        },
+        "nextHead": "Następne priorytety",
+        "risk": "Wysokie ryzyko · Zał. III.5b",
+        "score": "<b>7 / 9</b> wymogów wysokiego ryzyka<br>spełnionych — Art. 26/27 liczone osobno",
+        "tiles": {
+          "art10": "Dane i ich zarządzanie",
+          "art11": "Dokumentacja",
+          "art13": "Przejrzystość",
+          "art14": "Nadzór człowieka",
+          "art15": "Dokładność",
+          "art17": "Zarządzanie jakością",
+          "art43": "Ocena zgodności",
+          "art49": "Rejestracja UE",
+          "art9": "Zarządzanie ryzykiem"
+        }
+      },
+      "problem": "Dashboardy \"% zgodności\" zwykle zakładają zgodność tam, gdzie nikt jeszcze nic nie sprawdził — zielony ptaszek z domysłu, nie z faktu.",
+      "title": "Silnik oceny zgodności i luk"
+    },
+    "gateway": {
+      "example": "agent=hiring-copilot → POST /v1/chat/completions → skan → klasyfikacja → routing — zanim Anthropic w ogóle zobaczy treść zapytania.",
+      "how": "GovAI wchodzi w ścieżkę requestu jako endpoint zgodny z OpenAI Chat Completions — zmiana jednego base URL, i każde wywołanie jest sprawdzane zanim dotrze do dostawcy.",
+      "mock": {
+        "intercepted": "↓ przechwycone przez GovAI ↓",
+        "piiScan": "Skan PII",
+        "policyEngine": "Silnik polityk",
+        "source": "Agent AI → POST /v1/chat/completions",
+        "targetProvider": "Provider docelowy"
+      },
+      "problem": "Zespoły najczęściej podłączają agenty wprost do klucza API dostawcy modelu. Nikt nie widzi, co faktycznie wychodzi z organizacji, dopóki już nie wyszło.",
+      "title": "Bramka bezpieczeństwa"
+    },
+    "labels": {
+      "example": "Przykład",
+      "how": "W jaki sposób",
+      "problem": "Jaki problem rozwiązuje"
+    },
+    "lead": "GovAI to nie tylko bramka nasłuchująca ruch. To najpierw rejestr i ocena zgodności — a dopiero ta sama klasyfikacja jest egzekwowana na żywo na każdym wywołaniu.",
+    "oversight": {
+      "example": "agent=support-bot pii=email → policy=oversight_required — odpowiedź czeka na akceptację recenzenta.",
+      "how": "Wywołania oznaczone <span class=\"mono\">oversight_required</span> czekają w kolejce na recenzenta z rolą \"reviewer\", zanim agent dostanie odpowiedź.",
+      "mock": {
+        "approved": "ZATWIERDZONO",
+        "waiting": "CZEKA"
+      },
+      "problem": "Art. 14 wymaga nadzoru człowieka nad decyzjami wysokiego ryzyka — ale \"wyślij komuś maila\" to nie jest proces gotowy na audyt.",
+      "title": "Kolejka nadzoru człowieka"
+    },
+    "rbac": {
+      "example": "Reviewer może zatwierdzić lub odrzucić oznaczone wywołanie, nie widząc konfiguracji dostawców ani rozliczeń organizacji.",
+      "how": "Pięć ról — partner, IT admin, compliance officer, associate, reviewer — każda widzi dokładnie to, czego potrzebuje jej funkcja.",
+      "mock": {
+        "billing": "Rozliczenia",
+        "oversight": "Nadzór",
+        "policies": "Polityki",
+        "role": "Rola"
+      },
+      "problem": "W większości narzędzi jedyną rolą, która faktycznie ma sensowny dostęp, jest \"admin\" — reszta dostaje przekierowanie do skrzynki mailowej.",
+      "title": "Dostęp oparty na rolach"
+    },
+    "registry": {
+      "example": "agent=credit-scoring → status=quarantined → bramka odrzuca kolejne wywołania w ciągu sekund, bez wdrożenia nowej wersji kodu.",
+      "how": "Każdy agent jest rejestrowany z właścicielem, przeznaczeniem, zakresem danych osobowych, podstawą prawną GDPR, kontaktem technicznym i terminem następnego przeglądu — a status (aktywny / zawieszony / kwarantanna / wycofany) jest egzekwowany natychmiast na bramce, nie tylko zapisany w tabeli.",
+      "mock": {
+        "gdprBasis": "Podstawa GDPR",
+        "gdprBasisValue": "Art. 6 ust. 1 lit. f",
+        "owner": "Właściciel",
+        "ownerValue": "Zespół Ryzyka",
+        "quarantine": "Kwarantanna",
+        "version": "Wersja / przegląd"
+      },
+      "problem": "\"Ile mamy agentów AI w firmie i co dokładnie robią\" to pytanie, na które w większości organizacji nikt nie potrafi odpowiedzieć bez obdzwonienia zespołów.",
+      "title": "Rejestr agentów AI"
+    },
+    "reporting": {
+      "example": "GET /agents/credit-scoring/report/pdf → gotowy plik z KPI, rozkładem ryzyka i listą przeglądów po terminie — do ręki audytorowi bez dotykania arkusza.",
+      "how": "Raport PDF — per agent albo dla całej organizacji — łączy dane rejestru, ocenę luk, statystyki wywołań, alerty budżetowe i historię nadzoru, z narracją pisaną automatycznie na podstawie tych danych. Nie pisany osobno po fakcie.",
+      "mock": {
+        "agents": "Agenty w rejestrze",
+        "blocked": "Zablokowanych",
+        "evaluated": "Wywołań ocenionych",
+        "logCoverage": "Pokrycie logu",
+        "oversight": "Skierowanych do nadzoru"
+      },
+      "problem": "Przygotowanie \"dokumentacji technicznej\" dla audytora zwykle oznacza, że ktoś składa dokument z pamięci na tydzień przed terminem.",
+      "title": "Raportowanie zgodności"
+    },
+    "riskClassifier": {
+      "example": "agent=credit-scoring → risk=high (Zał. III) → automatycznie włączone: nadzór człowieka + pełne logowanie.",
+      "how": "Opis agenta trafia do Claude jako klasyfikatora prawnego — wraca poziom ryzyka, kategoria Załącznika III (np. rekrutacja, ocena zdolności kredytowej, infrastruktura krytyczna) i lista kluczowych obowiązków. To dzieje się przy rejestracji, nie jako jednorazowy formularz do wypełnienia raz.",
+      "mock": {
+        "high": "Wysokie",
+        "highPill": "WYSOKIE",
+        "limited": "Ograniczone",
+        "minimal": "Minimalne",
+        "oversight": "Art. 14 nadzór",
+        "required": "wymagany",
+        "unacceptable": "Niedopuszczalne"
+      },
+      "problem": "\"Które obowiązki AI Act dotyczą akurat tego agenta?\" to zwykle pytanie zadane raz, w arkuszu, i nigdy nie zrewidowane, gdy zmienia się sposób użycia agenta.",
+      "title": "Klasyfikator ryzyka AI Act"
+    },
+    "routing": {
+      "example": "pii=email → routing na model self-hosted; wywołanie bez danych osobowych → Anthropic. Kod agenta się nie zmienia.",
+      "how": "Decyzję o routingu podejmuje wrażliwość danych, nie przyzwyczajenie developera — GovAI wybiera Anthropic, DeepSeek albo instancję self-hosted (Bielik) per wywołanie.",
+      "mock": {
+        "lowSensitivity": "niska wrażliwość",
+        "noPii": "brak PII",
+        "selected": "PII → wybrany"
+      },
+      "problem": "Wysyłanie wrażliwych danych do dowolnie skonfigurowanego modelu to incydent zarządzania danymi, który czeka, żeby się zdarzyć.",
+      "title": "Routing wielu dostawców"
+    },
+    "title": "Dziesięć elementów jednego systemu — od rejestru po dziennik audytowy."
+  },
+  "footer": {
+    "actTimeline": "Harmonogram AI Act",
+    "company": "Firma",
+    "contact": "Kontakt",
+    "howItWorks": "Jak to działa",
+    "product": "Produkt",
+    "resources": "Zasoby",
+    "tagline": "Punkt kontrolny między Twoimi agentami a modelem."
+  },
+  "hero": {
+    "badges": {
+      "auditLog": "Niezmienny dziennik audytowy",
+      "deployment": "Dedykowana lub multi-tenant — dopasowane do skali firmy",
+      "openaiApi": "API zgodne z OpenAI",
+      "registry": "Rejestr agentów + ocena luk"
+    },
+    "ctaAct": "Zobacz, co się zmieniło w AI Act",
+    "eyebrow": "Egzekwowanie EU AI Act · Art. 5, Załącznik III, Art. 50",
+    "pipeline": {
+      "agent": "01 Agent",
+      "audit": "05 Audyt",
+      "pii": "02 Skan PII",
+      "policy": "03 Silnik polityk",
+      "routing": "04 Routing"
+    },
+    "subhead": "GovAI to rejestr agentów AI z automatyczną klasyfikacją ryzyka i oceną luk wobec każdego wymogu AI Act — oraz bramka bezpieczeństwa, która tę samą klasyfikację egzekwuje na żywo: skanuje dane osobowe, sprawdza wobec polityki, kieruje do właściwego dostawcy i loguje każde wywołanie, zanim odpowiedź wróci do agenta.",
+    "title": "Zgodność z AI Act dzięki platformie GovAI."
+  },
+  "meta": {
+    "description": "GovAI to rejestr agentów AI z automatyczną klasyfikacją ryzyka i oceną luk wobec EU AI Act oraz bramka bezpieczeństwa, która tę samą klasyfikację egzekwuje na żywo na każdym wywołaniu.",
+    "ogDescription": "Rejestr agentów AI, automatyczna klasyfikacja ryzyka, ocena luk wobec EU AI Act i bramka bezpieczeństwa egzekwująca politykę na żywo.",
+    "ogTitle": "GovAI — egzekwowanie EU AI Act w czasie rzeczywistym",
+    "title": "GovAI — egzekwowanie EU AI Act w czasie rzeczywistym"
+  },
+  "onboarding": {
+    "demo": {
+      "caption1": "Jedna linijka konfiguracji. Reszta kodu agenta — bez zmian.",
+      "caption2": "Claude analizuje opis i proponuje klasyfikację — konsultant tylko zatwierdza.",
+      "caption3": "Reguły per agent, per typ danych — edytowalne bez wdrożenia nowego kodu.",
+      "caption4": "Od pierwszego wywołania: skanowane, egzekwowane, zalogowane — bez ręcznej pracy.",
+      "code2": "(Zał. III.5b, auto)",
+      "step": "wdrożenie · krok"
+    },
+    "eyebrow": "Wdrożenie",
+    "lead": "Bez projektu migracyjnego. GovAI mówi w API, którego Twoje agenty już używają.",
+    "steps": {
+      "pointAgent": {
+        "text": "Zmiana jednego base URL. GovAI mówi w OpenAI Chat Completions API, więc nic więcej się nie zmienia.",
+        "title": "Wskaż agenta na GovAI"
+      },
+      "policies": {
+        "text": "Wybierz, co jest dozwolone, blokowane lub wymaga człowieka — per agent, per typ danych.",
+        "title": "Ustaw polityki"
+      },
+      "production": {
+        "text": "Każde wywołanie od tej chwili jest skanowane, egzekwowane i logowane — automatycznie.",
+        "title": "Wejdź na produkcję z dowodem"
+      },
+      "register": {
+        "text": "Dodaj agenta do rejestru; GovAI proponuje poziom ryzyka AI Act na podstawie sposobu użycia.",
+        "title": "Zarejestruj i sklasyfikuj"
+      }
+    },
+    "title": "Na produkcji tego samego dnia, nie za kwartał."
+  },
+  "pricing": {
+    "enterprise": {
+      "cta": "Porozmawiajmy",
+      "eur": "Sektor publiczny, on-prem, SLA/DR",
+      "features": {
+        "agents": "Nielimitowani agenci",
+        "manager": "Dedykowany opiekun ds. zgodności",
+        "onPrem": "On-prem lub Twoja chmura",
+        "sla": "SLA i dedykowany backup/DR"
+      },
+      "monthly": "Wycena indywidualna",
+      "setup": "Wycena indywidualna",
+      "tagline": "Dla wdrożeń regulowanych, wysokowolumenowych lub on-prem."
+    },
+    "eyebrow": "Cennik",
+    "growth": {
+      "badge": "Najczęściej wybierany",
+      "eur": "≈ €1 080–1 750/mies.",
+      "features": {
+        "agents": "Do 20 agentów w rejestrze",
+        "oversight": "Kolejka nadzoru człowieka",
+        "routing": "Routing wielu dostawców",
+        "support": "Wsparcie priorytetowe"
+      },
+      "setup": "Opłata wdrożeniowa: <b>25 000–40 000 PLN</b> jednorazowo",
+      "tagline": "Dla zespołów prowadzących kilkanaście agentów produkcyjnie."
+    },
+    "lead": "Dedykowana instancja albo multi-tenant z izolacją logiczną — dopasowane do wielkości i budżetu firmy.",
+    "note": "<strong>Cennik wstępny, punkt wyjścia do negocjacji</strong> — pierwszy pilotaż może być świadomie wyceniony niżej.",
+    "perMonth": "PLN/mies.",
+    "starter": {
+      "eur": "≈ €670–1 000/mies.",
+      "features": {
+        "agents": "Do 5 agentów w rejestrze",
+        "multiTenant": "Dostępny też jako multi-tenant — niższy próg wejścia, zapytaj o wycenę",
+        "pii": "Skaner PII i silnik polityk",
+        "support": "Wsparcie standardowe"
+      },
+      "setup": "Opłata wdrożeniowa: <b>15 000–25 000 PLN</b> jednorazowo",
+      "tagline": "Twój pierwszy regulowany agent. Do 5 agentów w rejestrze."
+    },
+    "title": "Cennik skalujący się z rejestrem agentów, nie z liczbą etatów."
+  },
+  "trust": {
+    "catalog": "wymogów AI Act w edytowalnym katalogu oceny luk",
+    "deployment": "modele wdrożenia — dedykowany i multi-tenant, dopasowane do budżetu",
+    "logged": "wywołań logowanych przed odpowiedzią",
+    "policyRefresh": "odświeżenie polityk, bez restartu",
+    "rbac": "ról RBAC: partner → reviewer"
+  }
+}

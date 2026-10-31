@@ -1,0 +1,49 @@
+{
+  "changes": {
+    "text": "Możemy aktualizować tę politykę, jeśli zmieni się sposób działania strony lub wymogi prawne. Aktualna wersja jest zawsze dostępna pod tym adresem.",
+    "title": "Zmiany polityki"
+  },
+  "controller": {
+    "contact": "Kontakt w sprawach ochrony danych:",
+    "intro": "Administratorem danych osobowych przetwarzanych w związku z korzystaniem z tej strony jest:",
+    "title": "Administrator danych"
+  },
+  "cookies": {
+    "text": "Ta strona nie używa plików cookies do śledzenia ani reklam. Jedyne informacje zapisywane lokalnie w Twojej przeglądarce to wybrany motyw kolorystyczny (jasny/ciemny) oraz — jeśli wybierzesz go w przełączniku — język strony, przechowywane w <span class=\"mono\">localStorage</span> — nie opuszczają Twojego urządzenia i nie są nam w żaden sposób przekazywane.",
+    "title": "Pliki cookies i localStorage"
+  },
+  "data": {
+    "form": "Ta strona zbiera dane osobowe wyłącznie wtedy, gdy sam/-a je podasz — poprzez formularz kontaktowy. Formularz prosi o: imię i nazwisko, nazwę firmy, służbowy adres e-mail, opcjonalnie numer telefonu, oraz treść wiadomości.",
+    "noTracking": "Nie prowadzimy na tej stronie śledzenia ani profilowania odwiedzających — nie ma tu narzędzi analitycznych ani reklamowych.",
+    "title": "Jakie dane zbieramy"
+  },
+  "meta": {
+    "description": "Polityka prywatności strony govai.pl — jakie dane zbieramy przez formularz kontaktowy, na jakiej podstawie i jak długo je przechowujemy.",
+    "title": "Polityka prywatności — GovAI"
+  },
+  "purpose": {
+    "text": "Dane z formularza przetwarzamy wyłącznie w celu odpowiedzi na zapytanie i ewentualnego przygotowania oferty handlowej — podstawą prawną jest art. 6 ust. 1 lit. b RODO (działania przed zawarciem umowy, na Twoje żądanie) oraz art. 6 ust. 1 lit. f RODO (nasz prawnie uzasadniony interes w prowadzeniu korespondencji biznesowej).",
+    "title": "Cel i podstawa prawna przetwarzania"
+  },
+  "recipients": {
+    "text": "Do obsługi formularza kontaktowego korzystamy z zewnętrznego dostawcy <strong style=\"color:var(--text)\">Web3Forms</strong>, który pośredniczy w przekazaniu wiadomości z formularza na naszą skrzynkę <span class=\"mono\">kontakt@govai.pl</span>. Web3Forms działa tu jako podmiot przetwarzający dane w naszym imieniu. Poza tym dostawcą nie przekazujemy danych z formularza żadnym innym podmiotom, chyba że wymaga tego prawo.",
+    "title": "Komu przekazujemy dane"
+  },
+  "retention": {
+    "text": "Dane z formularza kontaktowego przechowujemy przez czas niezbędny do obsługi zapytania i prowadzonej korespondencji, a następnie — jeśli nie dojdzie do dalszej współpracy — przez okres uzasadniony ewentualnymi roszczeniami. Jeśli chcesz, żebyśmy usunęli Twoje dane wcześniej, napisz na <a href=\"mailto:kontakt@govai.pl\">kontakt@govai.pl</a>.",
+    "title": "Okres przechowywania"
+  },
+  "rights": {
+    "access": "Prawo dostępu do swoich danych i uzyskania ich kopii",
+    "complaint": "Prawo do wniesienia skargi do Prezesa Urzędu Ochrony Danych Osobowych (PUODO)",
+    "erasure": "Prawo do usunięcia danych (\"prawo do bycia zapomnianym\")",
+    "howTo": "Aby skorzystać z powyższych praw, napisz na <a href=\"mailto:kontakt@govai.pl\">kontakt@govai.pl</a>.",
+    "objection": "Prawo do wniesienia sprzeciwu wobec przetwarzania",
+    "portability": "Prawo do przenoszenia danych",
+    "rectification": "Prawo do sprostowania (poprawienia) danych",
+    "restriction": "Prawo do ograniczenia przetwarzania",
+    "title": "Twoje prawa"
+  },
+  "scope": "Dotyczy strony <span class=\"mono\">govai.pl</span> i <span class=\"mono\">govai.pl/blog.html</span>.",
+  "title": "Polityka prywatności"
+}

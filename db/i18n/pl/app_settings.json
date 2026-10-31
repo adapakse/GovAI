@@ -1,0 +1,159 @@
+{
+  "budget.default_alert_threshold_eur": {
+    "description": "Próg alertu kosztowego dla nowych agentów (0 = wyłączony).",
+    "label": "Domyślny próg alertu",
+    "unit": "EUR"
+  },
+  "budget.default_monthly_eur": {
+    "description": "Budżet przypisywany nowym agentom (0 = brak limitu).",
+    "label": "Domyślny budżet miesięczny",
+    "unit": "EUR"
+  },
+  "compliance.deadline_days": {
+    "description": "Liczba dni na usunięcie poszczególnych luk zgodności high-risk (klucz = pole kontroli).",
+    "label": "Terminy luk compliance (dni)",
+    "unit": "dni"
+  },
+  "compliance.enterprise_report_max_tokens": {
+    "description": "Limit tokenów narracji raportu korporacyjnego.",
+    "label": "Raport enterprise — max tokenów",
+    "unit": "tokeny"
+  },
+  "compliance.report_max_tokens": {
+    "description": "Limit tokenów narracji raportu zgodności agenta.",
+    "label": "Raport agenta — max tokenów",
+    "unit": "tokeny"
+  },
+  "i18n.default_locale": {
+    "description": "Język interfejsu, raportów i komunikatów dla użytkowników, którzy nie wybrali własnego. Kody: pl, en, de, it, es, fr, ro, ru, sl, hr.",
+    "label": "Domyślny język"
+  },
+  "intervals.policy_refresh_seconds": {
+    "description": "Co ile sekund gateway przeładowuje reguły polityk z bazy.",
+    "label": "Odświeżanie polityk",
+    "unit": "sekundy"
+  },
+  "intervals.ttl_monitor_seconds": {
+    "description": "Co ile sekund monitor eskaluje przeterminowane zadania nadzoru.",
+    "label": "Monitor TTL nadzoru",
+    "unit": "sekundy"
+  },
+  "models.classifier_model": {
+    "description": "Model używany do oceny poziomu ryzyka agenta.",
+    "label": "Model klasyfikatora AI Act"
+  },
+  "models.default_agent_model": {
+    "description": "Model przypisywany nowo rejestrowanym agentom.",
+    "label": "Domyślny model agenta"
+  },
+  "models.default_max_tokens": {
+    "description": "Limit tokenów wyjścia, gdy klient go nie poda.",
+    "label": "Domyślny limit tokenów",
+    "unit": "tokeny"
+  },
+  "models.default_temperature": {
+    "description": "Temperatura LLM, gdy klient jej nie poda.",
+    "label": "Domyślna temperatura",
+    "unit": "0–2"
+  },
+  "oversight.history_limit": {
+    "description": "Twardy limit liczby pozycji historii nadzoru.",
+    "label": "Historia nadzoru — limit wierszy",
+    "unit": "wiersze"
+  },
+  "oversight.history_max_days": {
+    "description": "Maksymalny zakres dni dla GET /oversight/history.",
+    "label": "Historia nadzoru — max dni",
+    "unit": "dni"
+  },
+  "oversight.min_review_seconds": {
+    "description": "Poniżej tej liczby sekund przegląd nadzoru oznaczany jest jako pozorny (rubber-stamp).",
+    "label": "Min. czas przeglądu",
+    "unit": "sekundy"
+  },
+  "oversight.ttl_seconds": {
+    "description": "Czas do eskalacji zadania w kolejce nadzoru.",
+    "label": "TTL zadania nadzoru",
+    "unit": "sekundy"
+  },
+  "pagination.audit_default_limit": {
+    "description": "Domyślna liczba wpisów w GET /audit.",
+    "label": "Audyt — domyślny limit",
+    "unit": "wiersze"
+  },
+  "pagination.audit_max_limit": {
+    "description": "Maksymalna liczba wpisów w jednym zapytaniu audytu.",
+    "label": "Audyt — max limit",
+    "unit": "wiersze"
+  },
+  "pagination.dashboard_recent_blocks": {
+    "description": "Liczba ostatnich blokad w alertach pulpitu.",
+    "label": "Dashboard — ostatnie blokady",
+    "unit": "pozycje"
+  },
+  "pagination.dashboard_top_agents": {
+    "description": "Liczba najaktywniejszych agentów na pulpicie.",
+    "label": "Dashboard — top agentów",
+    "unit": "pozycje"
+  },
+  "pagination.default_window_days": {
+    "description": "Domyślny zakres dni dla audytu i dashboardu.",
+    "label": "Domyślne okno (dni)",
+    "unit": "dni"
+  },
+  "pagination.stats_default_days": {
+    "description": "Domyślny zakres GET /agents/{id}/stats.",
+    "label": "Statystyki agenta — domyślne dni",
+    "unit": "dni"
+  },
+  "pagination.stats_max_days": {
+    "description": "Maksymalny zakres statystyk agenta.",
+    "label": "Statystyki agenta — max dni",
+    "unit": "dni"
+  },
+  "pagination.timeline_default_hours": {
+    "description": "Domyślne okno wykresu timeline.",
+    "label": "Timeline — domyślne godziny",
+    "unit": "godziny"
+  },
+  "pagination.timeline_max_hours": {
+    "description": "Maksymalny zakres wykresu timeline.",
+    "label": "Timeline — max godziny",
+    "unit": "godziny"
+  },
+  "pricing.default_rate": {
+    "description": "Stawka [wejście, wyjście] dla modeli spoza mapy.",
+    "label": "Stawka domyślna (USD/1k tok.)",
+    "unit": "USD/1k"
+  },
+  "pricing.model_rates": {
+    "description": "Mapa model → [wejście, wyjście] w USD za 1000 tokenów. Model spoza listy używa stawki domyślnej.",
+    "label": "Stawki modeli (USD/1k tok.)",
+    "unit": "USD/1k"
+  },
+  "pricing.usd_to_eur": {
+    "description": "Mnożnik konwersji kosztów modeli z USD na EUR.",
+    "label": "Kurs USD→EUR",
+    "unit": "mnożnik"
+  },
+  "security.access_token_expire_minutes": {
+    "description": "Czas życia JWT access token.",
+    "label": "Ważność access tokenu",
+    "unit": "minuty"
+  },
+  "security.bcrypt_rounds": {
+    "description": "Koszt hashowania haseł (wyższy = wolniej, bezpieczniej).",
+    "label": "Rundy bcrypt",
+    "unit": "rundy"
+  },
+  "security.pii_confidence_threshold": {
+    "description": "Minimalny poziom pewności Presidio do uznania wykrycia PII.",
+    "label": "Próg pewności PII",
+    "unit": "0–1"
+  },
+  "security.refresh_token_expire_days": {
+    "description": "Czas życia refresh tokenu.",
+    "label": "Ważność refresh tokenu",
+    "unit": "dni"
+  }
+}

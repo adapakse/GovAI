@@ -10,6 +10,7 @@ import app_settings
 from auth_middleware import AuthMiddleware
 from config import settings
 from database import close_pool, fetch_active_policies, init_pool
+from i18n import DEFAULT_LOCALE, match_locale, set_locale
 from oversight import close_redis, init_redis, ttl_monitor_loop
 from pii_scanner import PIIScanner
 from policy_engine import PolicyEngine
@@ -83,7 +84,29 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+class LocaleMiddleware:
+    """Ustawia język żądania (i18n.get_locale) z Accept-Language, a gdy go brak
+    lub jest nieobsługiwany — z domyślnego języka instancji (app_settings
+    i18n.default_locale). Czyste ASGI, żeby contextvar był widoczny w AuthMiddleware
+    i endpointach."""
+
+    def __init__(self, app):
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] in ("http", "websocket"):
+            header = next(
+                (v.decode("latin-1") for k, v in scope.get("headers", []) if k == b"accept-language"),
+                None,
+            )
+            set_locale(match_locale(header) or app_settings.get_str("i18n.default_locale", DEFAULT_LOCALE))
+        await self.app(scope, receive, send)
+
+
+# Kolejność: ostatnio dodany = zewnętrzny. LocaleMiddleware musi otaczać AuthMiddleware,
+# żeby odpowiedzi 401 też były w języku żądania.
 app.add_middleware(AuthMiddleware)
+app.add_middleware(LocaleMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import PolicyBadge from '@/components/PolicyBadge';
 import SearchBox from '@/components/SearchBox';
 import { api, Agent, Provider, PolicyResult } from '@/lib/api';
@@ -15,40 +16,23 @@ const RISK_STYLE: Record<string, string> = {
   high:         'text-orange-300 border-orange-700 bg-orange-900/20',
   unacceptable: 'text-red-300 border-red-700 bg-red-900/20',
 };
-const RISK_PL: Record<string, string> = {
-  minimal: 'MINIMALNE', limited: 'OGRANICZONE',
-  high: 'WYSOKIE', unacceptable: 'NIEDOPUSZCZALNE',
+// Etykiety oczekiwanych wyników: demo.expected.<key>
+const EXPECTED_COLOR: Record<string, string> = {
+  allowed:            'text-green-400',
+  allowed_with_pii:   'text-yellow-400',
+  blocked:            'text-red-400',
+  oversight_required: 'text-orange-400',
 };
 
-const EXPECTED_LABEL: Record<string, { label: string; color: string }> = {
-  allowed:            { label: 'Dozwolone',       color: 'text-green-400' },
-  allowed_with_pii:   { label: 'Dozwolone + PII', color: 'text-yellow-400' },
-  blocked:            { label: 'Zablokowane',     color: 'text-red-400' },
-  oversight_required: { label: 'Do nadzoru',      color: 'text-orange-400' },
-};
-
+// Tytuły i opisy kroków: demo.playbook.steps.<step>.title/desc
 const PLAYBOOK_STEPS = [
-  { step: '1', title: 'Zasil bazę danych historycznych',
-    desc: 'Kliknij "Zasil 30 dni danych" — seeder generuje ~500 wpisów audytowych i ~23 pozycje kolejki nadzoru.',
-    link: null, color: 'border-teal/40 bg-teal/5' },
-  { step: '2', title: 'Sprawdź Pulpit — dane historyczne',
-    desc: 'Przejdź do Pulpitu. Zobaczysz łączne wywołania, blokady, PII, koszty i wykres 24h.',
-    link: '/dashboard', color: 'border-blue/40 bg-blue/5' },
-  { step: '3', title: 'Uruchom scenariusz — pozytywny',
-    desc: 'Kliknij "Uruchom ▶" przy scenariuszu "Zapytanie o ubezpieczenie" (Agent 1).',
-    link: null, color: 'border-green-700/40 bg-green-900/5' },
-  { step: '4', title: 'Uruchom scenariusz z PII',
-    desc: 'Kliknij "Klient podaje PESEL i numer konta". Presidio maskuje dane przed wysłaniem do modelu.',
-    link: '/audit', color: 'border-yellow-700/40 bg-yellow-900/5' },
-  { step: '5', title: 'Uruchom blokadę G-001 i G-002',
-    desc: 'Próba mutacji finansowej → G-001. Atak prompt injection → G-002. Widoczne w Dzienniku.',
-    link: '/audit', color: 'border-red-700/40 bg-red-900/5' },
-  { step: '6', title: 'Kolejka Nadzoru (art. 14)',
-    desc: 'Agent 2 wymaga nadzoru — wywołanie trafia do kolejki. Przejdź do Nadzoru i zatwierdź.',
-    link: '/oversight', color: 'border-orange-700/40 bg-orange-900/5' },
-  { step: '7', title: 'Przetestuj DeepSeek przez GovAI',
-    desc: 'Wybierz agenta DeepSeek i napisz dowolną wiadomość. GovAI przechwytuje ruch, skanuje PII i sprawdza polityki — identycznie jak dla Claude.',
-    link: null, color: 'border-purple-700/40 bg-purple-900/5' },
+  { step: '1', link: null,         color: 'border-teal/40 bg-teal/5' },
+  { step: '2', link: '/dashboard', color: 'border-blue/40 bg-blue/5' },
+  { step: '3', link: null,         color: 'border-green-700/40 bg-green-900/5' },
+  { step: '4', link: '/audit',     color: 'border-yellow-700/40 bg-yellow-900/5' },
+  { step: '5', link: '/audit',     color: 'border-red-700/40 bg-red-900/5' },
+  { step: '6', link: '/oversight', color: 'border-orange-700/40 bg-orange-900/5' },
+  { step: '7', link: null,         color: 'border-purple-700/40 bg-purple-900/5' },
 ];
 
 interface ScenarioMeta { label: string; description: string; expected: string; }
@@ -62,6 +46,7 @@ interface ChatMessage { role: 'user' | 'assistant'; content: string; }
 
 // ── Wolny czat dla agentów bez scenariuszy ────────────────────────────────────
 function FreeChat({ agent }: { agent: Agent }) {
+  const t = useTranslations('demo');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -82,6 +67,7 @@ function FreeChat({ agent }: { agent: Agent }) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept-Language': document.documentElement.lang,
           'X-Agent-ID': agent.id,
           'X-Task-ID': `chat-${Date.now()}`,
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -100,13 +86,13 @@ function FreeChat({ agent }: { agent: Agent }) {
         const reason = typeof detail === 'object' ? detail?.reason : detail;
         setMessages(prev => [...prev, {
           role: 'assistant',
-          content: `🚫 Zablokowane: ${reason ?? 'Polityka bezpieczeństwa GovAI'}`,
+          content: t('chat.blocked', { reason: reason ?? t('chat.defaultBlockReason') }),
         }]);
         setLastMeta({ status: r.status, policy: 'blocked' });
       } else if (data.status === 'awaiting_oversight') {
         setMessages(prev => [...prev, {
           role: 'assistant',
-          content: `⏳ Przekazano do nadzoru człowieka (art. 14 EU AI Act)\nOversight ID: ${data.oversight_id}`,
+          content: t('chat.awaitingOversight', { id: String(data.oversight_id) }),
         }]);
         setLastMeta({ status: r.status, policy: 'oversight_required' });
       } else {
@@ -116,7 +102,7 @@ function FreeChat({ agent }: { agent: Agent }) {
       }
     } catch (e) {
       setMessages(prev => [...prev, {
-        role: 'assistant', content: `Błąd połączenia: ${String(e)}`,
+        role: 'assistant', content: t('chat.connectionError', { error: String(e) }),
       }]);
     } finally {
       setLoading(false);
@@ -129,8 +115,7 @@ function FreeChat({ agent }: { agent: Agent }) {
       <div className="px-5 py-4 min-h-[120px] max-h-80 overflow-y-auto space-y-3">
         {messages.length === 0 && (
           <p className="text-xs text-mgray/50 italic">
-            Wpisz wiadomość poniżej — zostanie przetworzona przez GovAI Gateway
-            (PII scan → polityki → {agent.model_id})
+            {t('chat.emptyHint', { model: agent.model_id })}
           </p>
         )}
         {messages.map((m, i) => (
@@ -163,9 +148,9 @@ function FreeChat({ agent }: { agent: Agent }) {
         <div className="px-5 py-2 flex items-center gap-3 bg-dark/20 text-xs">
           <PolicyBadge result={lastMeta.policy as PolicyResult} />
           <span className="text-mgray">HTTP {lastMeta.status}</span>
-          <a href="/audit" className="text-teal hover:underline ml-auto">→ Dziennik</a>
+          <a href="/audit" className="text-teal hover:underline ml-auto">{t('links.audit')}</a>
           {lastMeta.policy === 'oversight_required' && (
-            <a href="/oversight" className="text-orange-400 hover:underline">→ Nadzór</a>
+            <a href="/oversight" className="text-orange-400 hover:underline">{t('links.oversight')}</a>
           )}
         </div>
       )}
@@ -174,7 +159,7 @@ function FreeChat({ agent }: { agent: Agent }) {
       <div className="px-5 py-4 flex gap-3">
         <input
           className="flex-1 bg-dark border border-blue/30 rounded-lg px-3 py-2 text-sm text-white placeholder:text-mgray/40 focus:outline-none focus:border-teal"
-          placeholder="Napisz wiadomość do agenta..."
+          placeholder={t('chat.placeholder')}
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send()}
@@ -185,14 +170,14 @@ function FreeChat({ agent }: { agent: Agent }) {
           disabled={loading || !input.trim()}
           className="px-4 py-2 bg-teal text-dark text-sm font-semibold rounded-lg hover:bg-teal/90 disabled:opacity-40 transition-colors"
         >
-          Wyślij ▶
+          {t('chat.send')}
         </button>
         {messages.length > 0 && (
           <button
             onClick={() => { setMessages([]); setLastMeta(null); }}
             className="px-3 py-2 text-xs text-mgray hover:text-white border border-blue/20 rounded-lg"
           >
-            Wyczyść
+            {t('chat.clear')}
           </button>
         )}
       </div>
@@ -202,6 +187,8 @@ function FreeChat({ agent }: { agent: Agent }) {
 
 // ── Strona główna ─────────────────────────────────────────────────────────────
 export default function DemoPage() {
+  const t = useTranslations('demo');
+  const tc = useTranslations('common');
   const [agents, setAgents] = useState<Agent[]>([]);
   const [scenarios, setScenarios] = useState<Record<string, Record<string, ScenarioMeta>>>({});
   const [running, setRunning] = useState<string | null>(null);
@@ -230,18 +217,18 @@ export default function DemoPage() {
     setSeedLoading(true); setSeedMsg(null);
     try {
       const data = await api.demo.seed();
-      setSeedMsg({ type: 'ok', text: data.message ?? `Zasiano ${data.seeded_audit_entries} wpisów.` });
+      setSeedMsg({ type: 'ok', text: data.message ?? t('seed.seededEntries', { count: data.seeded_audit_entries ?? 0 }) });
       await fetchSeedStatus();
     } catch (e) { setSeedMsg({ type: 'err', text: String(e) }); }
     finally { setSeedLoading(false); }
   }
 
   async function reset() {
-    if (!confirm('Usunąć WSZYSTKIE dane demo (audyt, nadzór, flota agentów)?')) return;
+    if (!confirm(t('seed.resetConfirm'))) return;
     setSeedLoading(true); setSeedMsg(null);
     try {
       const data = await api.demo.reset();
-      setSeedMsg({ type: 'ok', text: `Usunięto ${data.deleted_audit_entries} audytów, ${data.deleted_oversight_entries} nadzoru i ${data.deleted_fleet_agents} agentów floty.` });
+      setSeedMsg({ type: 'ok', text: t('seed.resetDone', { audit: data.deleted_audit_entries, oversight: data.deleted_oversight_entries, fleet: data.deleted_fleet_agents }) });
       await fetchSeedStatus();
     } catch (e) { setSeedMsg({ type: 'err', text: String(e) }); }
     finally { setSeedLoading(false); }
@@ -251,7 +238,7 @@ export default function DemoPage() {
     setFleetLoading(true); setSeedMsg(null);
     try {
       const data = await api.demo.seedFleet();
-      setSeedMsg({ type: 'ok', text: data.message ?? `Zasiano ${data.seeded_agents} agentów.` });
+      setSeedMsg({ type: 'ok', text: data.message ?? t('fleet.seededAgents', { count: data.seeded_agents ?? 0 }) });
       await fetchSeedStatus();
       await api.agents.list({ status: 'active' }).then(setAgents).catch(() => {});
     } catch (e) { setSeedMsg({ type: 'err', text: String(e) }); }
@@ -274,10 +261,10 @@ export default function DemoPage() {
     const gw = result.gateway_response;
     if (result.policy_result === 'blocked') {
       const detail = gw.detail as Record<string, unknown> | undefined;
-      return detail?.reason as string ?? gw.reason as string ?? 'Zablokowane przez politykę.';
+      return detail?.reason as string ?? gw.reason as string ?? t('result.blockedByPolicy');
     }
     if (result.policy_result === 'oversight_required')
-      return `Decyzja skierowana do nadzoru.\nOversight ID: ${gw.oversight_id ?? '—'}\n\n${gw.message ?? ''}`;
+      return t('result.sentToOversight', { id: String(gw.oversight_id ?? '—'), message: String(gw.message ?? '') });
     if (result.policy_result === 'error') {
       const detail = gw.detail;
       if (typeof detail === 'string') return detail;
@@ -305,10 +292,9 @@ export default function DemoPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-white">Symulator Agentów AI</h1>
+        <h1 className="text-2xl font-bold text-white">{t('title')}</h1>
         <p className="text-mgray text-sm mt-1">
-          Każde wywołanie przechodzi przez GovAI Gateway → PII scan → Policy engine → model AI.
-          Wyniki widoczne w Dzienniku i kolejce Nadzoru.
+          {t('subtitle')}
         </p>
       </div>
 
@@ -316,18 +302,18 @@ export default function DemoPage() {
       <div className="bg-navy border border-blue/30 rounded-xl p-5 space-y-4">
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
-            <h2 className="text-white font-semibold">Dane Demo (30 dni historycznych)</h2>
-            <p className="text-xs text-mgray mt-0.5">Seeder generuje ~500 wpisów audytowych i 23 pozycje kolejki.</p>
+            <h2 className="text-white font-semibold">{t('seed.title')}</h2>
+            <p className="text-xs text-mgray mt-0.5">{t('seed.desc')}</p>
           </div>
           {seedStatus && (
             <div className="flex items-center gap-2">
               <span className={`text-xs font-semibold px-2 py-0.5 rounded border ${
                 seedStatus.seeded ? 'text-green-400 border-green-700 bg-green-900/20' : 'text-mgray border-mgray/30'
               }`}>
-                {seedStatus.seeded ? '● Zasiano' : '○ Pusto'}
+                {seedStatus.seeded ? t('seed.statusSeeded') : t('seed.statusEmpty')}
               </span>
               {seedStatus.seeded && (
-                <span className="text-xs text-mgray">{seedStatus.audit_entries} audytów · {seedStatus.oversight_items} nadzoru</span>
+                <span className="text-xs text-mgray">{t('seed.counts', { audit: seedStatus.audit_entries, oversight: seedStatus.oversight_items })}</span>
               )}
             </div>
           )}
@@ -335,15 +321,15 @@ export default function DemoPage() {
         <div className="flex items-center gap-3 flex-wrap">
           <button onClick={seed} disabled={seedLoading}
             className="px-4 py-2 bg-teal text-dark text-sm font-semibold rounded-lg hover:bg-teal/90 disabled:opacity-40">
-            {seedLoading ? '⏳ Ładowanie...' : '▦ Zasil 30 dni danych'}
+            {seedLoading ? t('loading') : t('seed.button')}
           </button>
           <button onClick={reset} disabled={seedLoading}
             className="px-4 py-2 bg-red-900/30 border border-red-700 text-red-300 text-sm font-semibold rounded-lg hover:bg-red-900/50 disabled:opacity-40">
-            ✕ Resetuj dane
+            {t('seed.reset')}
           </button>
           <button onClick={fetchSeedStatus} disabled={seedLoading}
             className="px-3 py-2 text-xs text-mgray hover:text-white border border-blue/20 rounded-lg">
-            ↻ Odśwież
+            {t('seed.refresh')}
           </button>
         </div>
         {seedMsg && (
@@ -355,22 +341,20 @@ export default function DemoPage() {
         {/* Flota demonstracyjna — skala rejestru */}
         <div className="border-t border-blue/20 pt-4 flex items-center justify-between flex-wrap gap-3">
           <div className="max-w-md">
-            <h3 className="text-white font-semibold text-sm">Flota demonstracyjna (skala)</h3>
+            <h3 className="text-white font-semibold text-sm">{t('fleet.title')}</h3>
             <p className="text-xs text-mgray mt-0.5">
-              Dodaje 50 agentów rozproszonych po działach, z celowymi lukami zgodności
-              (high-risk bez nadzoru, zaległe przeglądy, praktyki niedopuszczalne art. 5).
-              Pokazuje, że przy skali ręczne panowanie nad AI Act jest niewykonalne.
+              {t('fleet.desc')}
             </p>
           </div>
           <div className="flex items-center gap-2">
             {seedStatus && seedStatus.fleet_agents > 0 && (
               <span className="text-xs font-semibold px-2 py-0.5 rounded border text-orange-400 border-orange-700 bg-orange-900/20">
-                {seedStatus.fleet_agents} agentów floty
+                {t('fleet.count', { count: seedStatus.fleet_agents })}
               </span>
             )}
             <button onClick={seedFleet} disabled={fleetLoading || seedLoading}
               className="px-4 py-2 bg-teal text-dark text-sm font-semibold rounded-lg hover:bg-teal/90 disabled:opacity-40">
-              {fleetLoading ? '⏳ Ładowanie...' : '▦ Zasil flotę (50 agentów)'}
+              {fleetLoading ? t('loading') : t('fleet.button')}
             </button>
           </div>
         </div>
@@ -380,12 +364,12 @@ export default function DemoPage() {
       <div className="bg-navy border border-blue/30 rounded-xl overflow-hidden">
         <button onClick={() => setPlaybookOpen(o => !o)}
           className="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-blue/10">
-          <span className="font-semibold text-white">📋 Przewodnik Demo — 7 kroków</span>
-          <span className="text-mgray text-sm">{playbookOpen ? '▲ zwiń' : '▼ rozwiń'}</span>
+          <span className="font-semibold text-white">{t('playbook.title')}</span>
+          <span className="text-mgray text-sm">{playbookOpen ? t('playbook.collapse') : t('playbook.expand')}</span>
         </button>
         {playbookOpen && (
           <div className="px-5 pb-5 space-y-3 border-t border-blue/20">
-            <p className="text-xs text-mgray pt-3">Przeprowadź prezentację krok po kroku.</p>
+            <p className="text-xs text-mgray pt-3">{t('playbook.intro')}</p>
             {PLAYBOOK_STEPS.map(s => (
               <div key={s.step} className={`border rounded-lg px-4 py-3 flex gap-4 ${s.color}`}>
                 <div className="w-7 h-7 rounded-full bg-blue/30 text-white text-sm font-bold flex items-center justify-center flex-shrink-0">
@@ -393,10 +377,10 @@ export default function DemoPage() {
                 </div>
                 <div>
                   <div className="flex items-center gap-3 flex-wrap">
-                    <span className="text-sm font-semibold text-white">{s.title}</span>
-                    {s.link && <a href={s.link} className="text-xs text-teal hover:underline">Przejdź →</a>}
+                    <span className="text-sm font-semibold text-white">{t(`playbook.steps.${s.step}.title`)}</span>
+                    {s.link && <a href={s.link} className="text-xs text-teal hover:underline">{t('playbook.go')}</a>}
                   </div>
-                  <p className="text-xs text-mgray mt-1 leading-relaxed">{s.desc}</p>
+                  <p className="text-xs text-mgray mt-1 leading-relaxed">{t(`playbook.steps.${s.step}.desc`)}</p>
                 </div>
               </div>
             ))}
@@ -409,18 +393,18 @@ export default function DemoPage() {
         <SearchBox
           value={query}
           onChange={setQuery}
-          placeholder="Szukaj agenta — nazwa, model, provider (np. bielik, ollama), zespół..."
+          placeholder={t('searchPlaceholder')}
           count={shownCount}
           total={agents.length}
         />
       </div>
 
       {shownCount === 0 && !query && (
-        <div className="text-mgray/50 text-sm py-4">Brak aktywnych agentów.</div>
+        <div className="text-mgray/50 text-sm py-4">{t('noAgents')}</div>
       )}
       {shownCount === 0 && query && (
         <div className="text-mgray text-sm py-4">
-          Brak agentów pasujących do „{query}”.
+          {t('noResults', { query })}
         </div>
       )}
 
@@ -431,8 +415,8 @@ export default function DemoPage() {
             <div className="flex-1">
               <div className="flex items-center gap-3 flex-wrap">
                 <span className="font-semibold text-white">{agent.name}</span>
-                <span className={`text-xs font-semibold px-2 py-0.5 rounded border ${RISK_STYLE[agent.risk_level]}`}>
-                  {RISK_PL[agent.risk_level]}
+                <span className={`text-xs font-semibold px-2 py-0.5 rounded border uppercase ${RISK_STYLE[agent.risk_level]}`}>
+                  {tc(`risk.${agent.risk_level}`)}
                 </span>
                 <span className="text-xs text-mgray/50 font-mono">{agent.id.slice(0, 8)}...</span>
                 <span className="text-xs text-mgray/50 font-mono">{agent.model_id}</span>
@@ -446,20 +430,20 @@ export default function DemoPage() {
               const isRunning = running === runKey;
               const result = results[runKey];
               const error  = errors[runKey];
-              const exp    = EXPECTED_LABEL[meta.expected];
+              const expColor = EXPECTED_COLOR[meta.expected];
               return (
                 <div key={key} className="px-5 py-4">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap mb-1">
                         <span className="text-sm font-semibold text-white">{meta.label}</span>
-                        {exp && <span className={`text-xs font-semibold ${exp.color}`}>→ oczekiwane: {exp.label}</span>}
+                        {expColor && <span className={`text-xs font-semibold ${expColor}`}>{t('result.expected', { label: t(`expected.${meta.expected}`) })}</span>}
                       </div>
                       <p className="text-xs text-mgray leading-relaxed">{meta.description}</p>
                     </div>
                     <button onClick={() => run(agent.id, key)} disabled={!!running}
                       className="flex-shrink-0 px-4 py-2 bg-teal text-dark text-sm font-semibold rounded-lg hover:bg-teal/90 disabled:opacity-40">
-                      {isRunning ? '⏳ Wywołuję...' : 'Uruchom ▶'}
+                      {isRunning ? t('result.running') : t('result.run')}
                     </button>
                   </div>
                   {error && <div className="mt-3 bg-red-900/20 border border-red-700 rounded-lg px-4 py-3 text-xs text-red-300">{error}</div>}
@@ -468,22 +452,22 @@ export default function DemoPage() {
                       <div className="bg-dark/60 px-4 py-2 flex items-center gap-3 flex-wrap border-b border-blue/20">
                         <PolicyBadge result={result.policy_result as PolicyResult} />
                         <span className="text-xs text-mgray">HTTP {result.http_status}</span>
-                        <span className="text-xs text-mgray/50 font-mono truncate">task: {result.task_id.slice(0, 8)}...</span>
+                        <span className="text-xs text-mgray/50 font-mono truncate">{t('result.task', { id: result.task_id.slice(0, 8) })}</span>
                         {(result.policy_result === result.expected ||
                           (result.expected === 'allowed_with_pii' && result.policy_result === 'allowed'))
-                          ? <span className="ml-auto text-xs text-green-400 font-semibold">✓ zgodne</span>
-                          : <span className="ml-auto text-xs text-yellow-400">≠ nieoczekiwany</span>}
+                          ? <span className="ml-auto text-xs text-green-400 font-semibold">{t('result.match')}</span>
+                          : <span className="ml-auto text-xs text-yellow-400">{t('result.mismatch')}</span>}
                       </div>
                       <div className="px-4 py-3 bg-dark/40">
-                        <div className="text-xs text-mgray/60 mb-1.5">Odpowiedź gateway:</div>
+                        <div className="text-xs text-mgray/60 mb-1.5">{t('result.gatewayResponse')}</div>
                         <pre className="text-xs text-lgray leading-relaxed whitespace-pre-wrap break-words max-h-48 overflow-y-auto">
                           {extractContent(result)}
                         </pre>
                       </div>
                       <div className="px-4 py-2 bg-dark/20 border-t border-blue/10 flex gap-4 text-xs">
-                        <a href="/audit" className="text-teal hover:underline">→ Dziennik audytowy</a>
+                        <a href="/audit" className="text-teal hover:underline">{t('links.auditLog')}</a>
                         {result.policy_result === 'oversight_required' && (
-                          <a href="/oversight" className="text-orange-400 hover:underline">→ Kolejka nadzoru</a>
+                          <a href="/oversight" className="text-orange-400 hover:underline">{t('links.oversightQueue')}</a>
                         )}
                       </div>
                     </div>
@@ -500,7 +484,7 @@ export default function DemoPage() {
         <>
           <div className="flex items-center gap-3">
             <div className="flex-1 h-px bg-blue/20" />
-            <span className="text-xs text-mgray px-2">Wolny czat — bezpośrednie wywołanie przez Gateway</span>
+            <span className="text-xs text-mgray px-2">{t('chat.sectionTitle')}</span>
             <div className="flex-1 h-px bg-blue/20" />
           </div>
           {chatAgents.map(agent => (
@@ -509,8 +493,8 @@ export default function DemoPage() {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 flex-wrap">
                     <span className="font-semibold text-white">{agent.name}</span>
-                    <span className={`text-xs font-semibold px-2 py-0.5 rounded border ${RISK_STYLE[agent.risk_level]}`}>
-                      {RISK_PL[agent.risk_level]}
+                    <span className={`text-xs font-semibold px-2 py-0.5 rounded border uppercase ${RISK_STYLE[agent.risk_level]}`}>
+                      {tc(`risk.${agent.risk_level}`)}
                     </span>
                     <span className="text-xs font-mono text-teal/70 border border-teal/20 px-2 py-0.5 rounded">
                       {agent.model_id}
@@ -518,7 +502,7 @@ export default function DemoPage() {
                   </div>
                   <p className="text-xs text-mgray mt-1">{agent.description}</p>
                   <p className="text-xs text-mgray/50 mt-1">
-                    Wolny czat · GovAI Gateway → PII scan → polityki → {agent.model_id}
+                    {t('chat.pipeline', { model: agent.model_id })}
                   </p>
                 </div>
               </div>

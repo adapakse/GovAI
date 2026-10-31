@@ -34,6 +34,9 @@ class PolicyDecision:
     result: Literal["allowed", "blocked", "oversight_required"]
     reason: str
     policy_id: Optional[str] = None
+    # Kod i parametry powodu (blockReasons.<code>) — do tłumaczenia w API.
+    reason_code: Optional[str] = None
+    reason_params: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -71,6 +74,10 @@ class AuditEntry:
     cost_eur: Optional[float] = None
     output_hash: Optional[str] = None
     block_reason: Optional[str] = None
+    # Kod powodu (blockReasons.<code>) + parametry — zapisywane w metadata
+    # (block_reason_code / block_reason_params), API tłumaczy z nich block_reason.
+    block_reason_code: Optional[str] = None
+    block_reason_params: dict[str, Any] = field(default_factory=dict)
     policy_id: Optional[str] = None
     data_sensitivity: Optional[str] = None
     provider_id: Optional[str] = None
