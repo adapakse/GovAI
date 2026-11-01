@@ -10,6 +10,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+from i18n import LOCALES, is_locale, t
 from repositories import settings_repository as repo
 
 logger = logging.getLogger(__name__)
@@ -75,24 +76,28 @@ def coerce(value_type: str, raw: Any) -> Any:
 
 
 def validate(meta: dict, value: Any) -> None:
-    """Waliduje typ i zakres min/max. Rzuca ValueError z komunikatem PL."""
+    """Waliduje typ i zakres min/max. Rzuca ValueError z komunikatem w języku żądania."""
     vt = meta["value_type"]
     if vt in ("int", "number"):
         num = float(value)
         lo, hi = meta.get("min_value"), meta.get("max_value")
         if lo is not None and num < float(lo):
-            raise ValueError(f"Wartość {num} poniżej minimum {lo}")
+            raise ValueError(t("settings.errors.below_min", value=num, min=lo))
         if hi is not None and num > float(hi):
-            raise ValueError(f"Wartość {num} powyżej maksimum {hi}")
+            raise ValueError(t("settings.errors.above_max", value=num, max=hi))
     elif vt == "bool":
         if not isinstance(value, bool):
-            raise ValueError("Oczekiwano wartości logicznej")
+            raise ValueError(t("settings.errors.expected_bool"))
     elif vt == "string":
         if not isinstance(value, str):
-            raise ValueError("Oczekiwano tekstu")
+            raise ValueError(t("settings.errors.expected_string"))
     elif vt == "json":
         if not isinstance(value, (dict, list)):
-            raise ValueError("Oczekiwano obiektu lub listy JSON")
+            raise ValueError(t("settings.errors.expected_json"))
+
+    # Reguły per klucz (poza typem i zakresem)
+    if meta.get("key") == "i18n.default_locale" and not is_locale(value):
+        raise ValueError(t("settings.errors.invalid_locale", allowed=", ".join(LOCALES)))
 
 
 async def set_value(key: str, raw_value: Any, meta: dict, updated_by: str) -> dict:

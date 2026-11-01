@@ -1,0 +1,84 @@
+{
+  "agentStatus": {
+    "active": "Aktywny",
+    "quarantined": "Kwarantanna",
+    "retired": "Wycofany",
+    "suspended": "Zawieszony"
+  },
+  "components": {
+    "liveFeed": {
+      "connected": "Połączono",
+      "disconnected": "Rozłączono",
+      "events": {
+        "auditBlocked": "BLOKADA",
+        "auditError": "BŁĄD",
+        "auditNewCall": "WYWOŁANIE",
+        "oversightEscalated": "ESKALACJA",
+        "oversightPending": "NADZÓR"
+      },
+      "title": "Zdarzenia real-time",
+      "waiting": "Oczekiwanie na zdarzenia..."
+    },
+    "oversightModal": {
+      "actions": {
+        "approved": "✓ Zatwierdź",
+        "escalated": "↑ Eskaluj",
+        "rejected": "✕ Odrzuć"
+      },
+      "agentDecision": "Decyzja agenta",
+      "cancel": "Anuluj",
+      "commentOptional": "Opcjonalny komentarz...",
+      "commentRequired": "Komentarz jest wymagany przy odrzuceniu lub eskalacji.",
+      "decisionType": "Typ decyzji:",
+      "justificationRequired": "Uzasadnienie (wymagane)",
+      "rubberStampWarning": "⚠ Czas przeglądu jest mierzony od momentu otwarcia tego okna. Decyzja w czasie krótszym niż 10 sekund zostanie oznaczona jako pozorny nadzór.",
+      "save": "Zapisz decyzję",
+      "saveError": "Błąd zapisu decyzji",
+      "saved": "Zapisano: {action}",
+      "saving": "Zapisywanie...",
+      "submitted": "Zgłoszone:",
+      "taskId": "Task ID: {id}",
+      "timeLeft": "Pozostały czas",
+      "timer": "{mins}m {secs}s",
+      "yourDecision": "Twoja decyzja"
+    },
+    "searchBox": {
+      "clear": "Wyczyść",
+      "placeholder": "Szukaj..."
+    }
+  },
+  "language": {
+    "instanceDefault": "Domyślny instancji ({language})",
+    "label": "Język"
+  },
+  "oversightStatus": {
+    "approved": "Zatwierdzone",
+    "escalated": "Eskalowane",
+    "pending": "Oczekujące",
+    "rejected": "Odrzucone"
+  },
+  "policyResult": {
+    "allowed": "Dozwolone",
+    "blocked": "Zablokowane",
+    "error": "Błąd",
+    "oversight_required": "Do nadzoru",
+    "short": {
+      "allowed": "OK",
+      "blocked": "BLOKADA",
+      "error": "BŁĄD",
+      "oversight_required": "NADZÓR"
+    }
+  },
+  "risk": {
+    "high": "Wysokie",
+    "limited": "Ograniczone",
+    "minimal": "Minimalne",
+    "short": {
+      "high": "WYSOKIE",
+      "limited": "OGRANICZONE",
+      "minimal": "MINIMALNE",
+      "unacceptable": "NIEDOPUSZCZALNE"
+    },
+    "unacceptable": "Niedopuszczalne"
+  }
+}

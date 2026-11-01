@@ -1,21 +1,17 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { api, Provider, DataSensitivityLevel, ProviderType } from '@/lib/api';
 import SearchBox from '@/components/SearchBox';
 import { matchesQuery } from '@/lib/search';
+import { useFormat } from '@/lib/format';
 
 // ── Stałe ─────────────────────────────────────────────────────────────────────
 
 const SENSITIVITY_ORDER: DataSensitivityLevel[] = ['public', 'internal', 'confidential', 'privileged'];
 
-const SENSITIVITY_LABEL: Record<DataSensitivityLevel, string> = {
-  public:       'Publiczny',
-  internal:     'Wewnętrzny',
-  confidential: 'Poufny',
-  privileged:   'Uprzywilejowany',
-};
-
+// Etykiety poziomów wrażliwości: providers.sensitivity.<level>
 const SENSITIVITY_STYLE: Record<DataSensitivityLevel, string> = {
   public:       'text-green-400 border-green-800 bg-green-900/20',
   internal:     'text-blue-300 border-blue-800 bg-blue-900/20',
@@ -36,16 +32,7 @@ const TYPE_ICON: Record<string, string> = {
   custom:    '◎',
 };
 
-const TYPE_LABEL: Record<string, string> = {
-  anthropic: 'Anthropic',
-  openai:    'OpenAI',
-  deepseek:  'DeepSeek',
-  google:    'Google',
-  ollama:    'Ollama (on-prem)',
-  vllm:      'vLLM (on-prem)',
-  bielik:    'Bielik (on-prem)',
-  custom:    'Custom / inny',
-};
+// Etykiety typów providerów: providers.types.<type>
 
 // ── Formularz dodawania providera ─────────────────────────────────────────────
 
@@ -61,6 +48,7 @@ const EMPTY_FORM = {
 };
 
 function AddProviderForm({ onSaved }: { onSaved: () => void }) {
+  const t = useTranslations('providers');
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
@@ -99,7 +87,7 @@ function AddProviderForm({ onSaved }: { onSaved: () => void }) {
         onClick={() => setOpen(true)}
         className="px-4 py-2 border border-dashed border-blue/40 text-teal text-sm rounded-lg hover:border-teal/60 hover:bg-teal/5 transition-colors"
       >
-        + Dodaj providera
+        {t('form.addButton')}
       </button>
     );
   }
@@ -108,27 +96,27 @@ function AddProviderForm({ onSaved }: { onSaved: () => void }) {
 
   return (
     <div className="bg-dark/60 border border-blue/30 rounded-xl p-5 space-y-4">
-      <div className="font-semibold text-white text-sm">Nowy provider LLM</div>
+      <div className="font-semibold text-white text-sm">{t('form.title')}</div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="text-xs text-mgray mb-1 block">Nazwa *</label>
+          <label className="text-xs text-mgray mb-1 block">{t('form.name')}</label>
           <input
             className="w-full bg-navy border border-blue/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-teal"
-            placeholder="np. Anthropic Claude (Cloud)"
+            placeholder={t('form.namePlaceholder')}
             value={form.name}
             onChange={e => f('name', e.target.value)}
           />
         </div>
         <div>
-          <label className="text-xs text-mgray mb-1 block">Typ *</label>
+          <label className="text-xs text-mgray mb-1 block">{t('form.type')}</label>
           <select
             className="w-full bg-navy border border-blue/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-teal"
             value={form.provider_type}
             onChange={e => f('provider_type', e.target.value as ProviderType)}
           >
-            {PROVIDER_TYPES.map(t => (
-              <option key={t} value={t}>{TYPE_ICON[t]} {TYPE_LABEL[t]}</option>
+            {PROVIDER_TYPES.map(pt => (
+              <option key={pt} value={pt}>{TYPE_ICON[pt]} {t(`types.${pt}`)}</option>
             ))}
           </select>
         </div>
@@ -136,19 +124,19 @@ function AddProviderForm({ onSaved }: { onSaved: () => void }) {
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="text-xs text-mgray mb-1 block">Max wrażliwość danych *</label>
+          <label className="text-xs text-mgray mb-1 block">{t('form.maxSensitivity')}</label>
           <select
             className="w-full bg-navy border border-blue/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-teal"
             value={form.max_data_sensitivity}
             onChange={e => f('max_data_sensitivity', e.target.value as DataSensitivityLevel)}
           >
             {SENSITIVITY_ORDER.map(s => (
-              <option key={s} value={s}>{SENSITIVITY_LABEL[s]}</option>
+              <option key={s} value={s}>{t(`sensitivity.${s}`)}</option>
             ))}
           </select>
         </div>
         <div>
-          <label className="text-xs text-mgray mb-1 block">Priorytet (niższy = preferowany)</label>
+          <label className="text-xs text-mgray mb-1 block">{t('form.priority')}</label>
           <input
             type="number"
             className="w-full bg-navy border border-blue/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-teal"
@@ -159,7 +147,7 @@ function AddProviderForm({ onSaved }: { onSaved: () => void }) {
       </div>
 
       <div>
-        <label className="text-xs text-mgray mb-1 block">Obsługiwane modele (jeden na linię) *</label>
+        <label className="text-xs text-mgray mb-1 block">{t('form.models')}</label>
         <textarea
           rows={3}
           className="w-full bg-navy border border-blue/30 rounded-lg px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-teal resize-none"
@@ -171,7 +159,7 @@ function AddProviderForm({ onSaved }: { onSaved: () => void }) {
 
       {needsUrl && (
         <div>
-          <label className="text-xs text-mgray mb-1 block">Base URL *</label>
+          <label className="text-xs text-mgray mb-1 block">{t('form.baseUrl')}</label>
           <input
             className="w-full bg-navy border border-blue/30 rounded-lg px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-teal"
             placeholder="http://ollama:11434"
@@ -182,7 +170,7 @@ function AddProviderForm({ onSaved }: { onSaved: () => void }) {
       )}
 
       <div>
-        <label className="text-xs text-mgray mb-1 block">Zmienna środowiskowa z kluczem API</label>
+        <label className="text-xs text-mgray mb-1 block">{t('form.apiKeyEnv')}</label>
         <input
           className="w-full bg-navy border border-blue/30 rounded-lg px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-teal"
           placeholder="ANTHROPIC_API_KEY"
@@ -190,16 +178,16 @@ function AddProviderForm({ onSaved }: { onSaved: () => void }) {
           onChange={e => f('api_key_env', e.target.value)}
         />
         <p className="text-xs text-mgray/50 mt-1">
-          Nazwa zmiennej w `.env` kontenera Gateway. Klucz nigdy nie opuszcza serwera.
+          {t('form.apiKeyEnvHint')}
         </p>
       </div>
 
       <div>
-        <label className="text-xs text-mgray mb-1 block">Notatka / zastrzeżenia prawne</label>
+        <label className="text-xs text-mgray mb-1 block">{t('form.notes')}</label>
         <textarea
           rows={2}
           className="w-full bg-navy border border-blue/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-teal resize-none"
-          placeholder="np. Wymaga DPA. Nie używać dla danych objętych tajemnicą adwokacką."
+          placeholder={t('form.notesPlaceholder')}
           value={form.notes}
           onChange={e => f('notes', e.target.value)}
         />
@@ -211,13 +199,13 @@ function AddProviderForm({ onSaved }: { onSaved: () => void }) {
           disabled={saving || !form.name || !form.model_ids.trim()}
           className="px-4 py-2 bg-teal text-dark text-sm font-semibold rounded-lg hover:bg-teal/90 disabled:opacity-40"
         >
-          {saving ? 'Zapisywanie...' : 'Zapisz providera'}
+          {saving ? t('form.saving') : t('form.save')}
         </button>
         <button
           onClick={() => setOpen(false)}
           className="px-4 py-2 text-mgray text-sm border border-blue/30 rounded-lg hover:bg-blue/10"
         >
-          Anuluj
+          {t('form.cancel')}
         </button>
       </div>
     </div>
@@ -227,6 +215,8 @@ function AddProviderForm({ onSaved }: { onSaved: () => void }) {
 // ── Karta providera ───────────────────────────────────────────────────────────
 
 function ProviderCard({ provider, onChanged }: { provider: Provider; onChanged: () => void }) {
+  const t = useTranslations('providers');
+  const fmt = useFormat();
   const [toggling, setToggling] = useState(false);
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -288,7 +278,7 @@ function ProviderCard({ provider, onChanged }: { provider: Provider; onChanged: 
   }
 
   async function remove() {
-    if (!confirm(`Usunąć providera "${provider.name}"?\n\nTa operacja jest nieodwracalna.`)) return;
+    if (!confirm(t('card.deleteConfirm', { name: provider.name }))) return;
     setDeleting(true);
     try {
       await api.providers.delete(provider.id);
@@ -314,7 +304,7 @@ function ProviderCard({ provider, onChanged }: { provider: Provider; onChanged: 
           className={`relative w-10 h-5 rounded-full transition-colors flex-shrink-0 ${
             provider.active ? 'bg-teal' : 'bg-mgray/30'
           }`}
-          title={provider.active ? 'Dezaktywuj' : 'Aktywuj'}
+          title={provider.active ? t('card.deactivate') : t('card.activate')}
         >
           <span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-transform ${
             provider.active ? 'translate-x-5' : 'translate-x-0.5'
@@ -322,31 +312,34 @@ function ProviderCard({ provider, onChanged }: { provider: Provider; onChanged: 
         </button>
 
         {/* Type icon + name */}
-        <span className="text-lg" title={TYPE_LABEL[provider.provider_type]}>
+        <span className="text-lg" title={t.has(`types.${provider.provider_type}`) ? t(`types.${provider.provider_type}`) : provider.provider_type}>
           {TYPE_ICON[provider.provider_type] ?? '◎'}
         </span>
         <span className="font-semibold text-white text-sm">{provider.name}</span>
 
         {/* Sensitivity badge */}
         <span className={`text-xs font-bold px-2 py-0.5 rounded border ${sensitivityStyle}`}>
-          {SENSITIVITY_LABEL[provider.max_data_sensitivity]}
+          {t(`sensitivity.${provider.max_data_sensitivity}`)}
         </span>
 
         {/* Health */}
         <button
           onClick={toggleHealth}
-          title={provider.is_healthy ? 'Zdrowy — kliknij aby oznaczyć jako niezdrowy' : 'Niezdrowy — kliknij aby oznaczyć jako zdrowy'}
+          title={provider.is_healthy ? t('card.healthyHint') : t('card.unhealthyHint')}
           className={`text-xs px-2 py-0.5 rounded border transition-colors ${
             provider.is_healthy
               ? 'text-green-400 border-green-800 bg-green-900/20 hover:bg-green-900/40'
               : 'text-red-400 border-red-800 bg-red-900/20 hover:bg-red-900/40'
           }`}
         >
-          {provider.is_healthy ? '● Zdrowy' : '✖ Niezdrowy'}
+          {provider.is_healthy ? t('card.healthy') : t('card.unhealthy')}
         </button>
 
         <span className="ml-auto text-xs text-mgray/50">
-          Priorytet: {provider.priority} · {TYPE_LABEL[provider.provider_type]}
+          {t('card.priorityType', {
+            priority: provider.priority,
+            type: t.has(`types.${provider.provider_type}`) ? t(`types.${provider.provider_type}`) : '',
+          })}
         </span>
       </div>
 
@@ -355,7 +348,7 @@ function ProviderCard({ provider, onChanged }: { provider: Provider; onChanged: 
         <div className="px-5 py-4 space-y-3">
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs text-mgray mb-1 block">Nazwa</label>
+              <label className="text-xs text-mgray mb-1 block">{t('card.name')}</label>
               <input
                 className="w-full bg-navy border border-blue/30 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-teal"
                 value={form.name}
@@ -363,20 +356,20 @@ function ProviderCard({ provider, onChanged }: { provider: Provider; onChanged: 
               />
             </div>
             <div>
-              <label className="text-xs text-mgray mb-1 block">Max wrażliwość</label>
+              <label className="text-xs text-mgray mb-1 block">{t('card.maxSensitivity')}</label>
               <select
                 className="w-full bg-navy border border-blue/30 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-teal"
                 value={form.max_data_sensitivity}
                 onChange={e => f('max_data_sensitivity', e.target.value)}
               >
                 {SENSITIVITY_ORDER.map(s => (
-                  <option key={s} value={s}>{SENSITIVITY_LABEL[s]}</option>
+                  <option key={s} value={s}>{t(`sensitivity.${s}`)}</option>
                 ))}
               </select>
             </div>
           </div>
           <div>
-            <label className="text-xs text-mgray mb-1 block">Modele (jeden na linię)</label>
+            <label className="text-xs text-mgray mb-1 block">{t('card.models')}</label>
             <textarea
               rows={3}
               className="w-full bg-navy border border-blue/30 rounded-lg px-3 py-1.5 text-sm text-white font-mono focus:outline-none focus:border-teal resize-none"
@@ -386,7 +379,7 @@ function ProviderCard({ provider, onChanged }: { provider: Provider; onChanged: 
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs text-mgray mb-1 block">Base URL</label>
+              <label className="text-xs text-mgray mb-1 block">{t('card.baseUrl')}</label>
               <input
                 className="w-full bg-navy border border-blue/30 rounded-lg px-3 py-1.5 text-sm text-white font-mono focus:outline-none focus:border-teal"
                 value={form.base_url}
@@ -394,7 +387,7 @@ function ProviderCard({ provider, onChanged }: { provider: Provider; onChanged: 
               />
             </div>
             <div>
-              <label className="text-xs text-mgray mb-1 block">Zmienna klucza API</label>
+              <label className="text-xs text-mgray mb-1 block">{t('card.apiKeyEnv')}</label>
               <input
                 className="w-full bg-navy border border-blue/30 rounded-lg px-3 py-1.5 text-sm text-white font-mono focus:outline-none focus:border-teal"
                 value={form.api_key_env}
@@ -404,7 +397,7 @@ function ProviderCard({ provider, onChanged }: { provider: Provider; onChanged: 
           </div>
           <div className="grid grid-cols-4 gap-3">
             <div>
-              <label className="text-xs text-mgray mb-1 block">Priorytet</label>
+              <label className="text-xs text-mgray mb-1 block">{t('card.priority')}</label>
               <input
                 type="number"
                 className="w-full bg-navy border border-blue/30 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-teal"
@@ -413,7 +406,7 @@ function ProviderCard({ provider, onChanged }: { provider: Provider; onChanged: 
               />
             </div>
             <div className="col-span-3">
-              <label className="text-xs text-mgray mb-1 block">Notatki</label>
+              <label className="text-xs text-mgray mb-1 block">{t('card.notes')}</label>
               <input
                 className="w-full bg-navy border border-blue/30 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-teal"
                 value={form.notes}
@@ -424,10 +417,10 @@ function ProviderCard({ provider, onChanged }: { provider: Provider; onChanged: 
           <div className="flex gap-2">
             <button onClick={saveEdit} disabled={saving}
               className="px-3 py-1.5 bg-teal text-dark text-sm font-semibold rounded-lg disabled:opacity-40">
-              {saving ? '...' : '✓ Zapisz'}
+              {saving ? '...' : t('card.save')}
             </button>
             <button onClick={() => setEditing(false)} className="px-3 py-1.5 text-mgray text-sm border border-blue/20 rounded-lg">
-              Anuluj
+              {t('card.cancel')}
             </button>
           </div>
         </div>
@@ -436,7 +429,7 @@ function ProviderCard({ provider, onChanged }: { provider: Provider; onChanged: 
           {/* Model IDs */}
           <div>
             <div className="text-xs text-mgray mb-1.5 font-semibold uppercase tracking-wide">
-              Obsługiwane modele
+              {t('card.supportedModels')}
             </div>
             <div className="flex flex-wrap gap-1.5">
               {provider.model_ids.map(m => (
@@ -445,7 +438,7 @@ function ProviderCard({ provider, onChanged }: { provider: Provider; onChanged: 
                 </span>
               ))}
               {provider.model_ids.length === 0 && (
-                <span className="text-xs text-mgray/40 italic">Brak zdefiniowanych modeli</span>
+                <span className="text-xs text-mgray/40 italic">{t('card.noModels')}</span>
               )}
             </div>
           </div>
@@ -453,13 +446,13 @@ function ProviderCard({ provider, onChanged }: { provider: Provider; onChanged: 
           {/* Connection info */}
           <div className="flex gap-4 text-xs text-mgray/60">
             {provider.base_url && (
-              <span>URL: <code className="text-blue-300">{provider.base_url}</code></span>
+              <span>{t.rich('card.url', { url: provider.base_url, code: (c) => <code className="text-blue-300">{c}</code> })}</span>
             )}
             {provider.api_key_env && (
-              <span>Klucz: <code className="text-teal/70">${provider.api_key_env}</code></span>
+              <span>{t.rich('card.key', { env: provider.api_key_env, code: (c) => <code className="text-teal/70">{c}</code> })}</span>
             )}
             {provider.last_health_check_at && (
-              <span>Ostatni check: {new Date(provider.last_health_check_at).toLocaleDateString('pl-PL')}</span>
+              <span>{t('card.lastCheck', { date: fmt.date(provider.last_health_check_at) })}</span>
             )}
           </div>
 
@@ -474,11 +467,11 @@ function ProviderCard({ provider, onChanged }: { provider: Provider; onChanged: 
           <div className="flex gap-2 pt-1">
             <button onClick={() => setEditing(true)}
               className="text-xs text-mgray hover:text-white border border-blue/20 px-3 py-1 rounded transition-colors">
-              Edytuj
+              {t('card.edit')}
             </button>
             <button onClick={remove} disabled={deleting}
               className="text-xs text-red-400/60 hover:text-red-300 border border-red-900/30 px-3 py-1 rounded transition-colors disabled:opacity-40">
-              {deleting ? '...' : 'Usuń'}
+              {deleting ? '...' : t('card.delete')}
             </button>
           </div>
         </div>
@@ -490,6 +483,7 @@ function ProviderCard({ provider, onChanged }: { provider: Provider; onChanged: 
 // ── Strona główna ─────────────────────────────────────────────────────────────
 
 export default function ProvidersPage() {
+  const t = useTranslations('providers');
   const [providers, setProviders] = useState<Provider[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState('');
@@ -527,32 +521,28 @@ export default function ProvidersPage() {
       {/* Nagłówek */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white">Providerzy LLM</h1>
+          <h1 className="text-2xl font-bold text-white">{t('title')}</h1>
           <p className="text-mgray text-sm mt-1">
-            Zarządzaj dostawcami modeli językowych. Gateway automatycznie wybiera
-            providera o wymaganym poziomie ochrony danych.
+            {t('subtitle')}
           </p>
         </div>
         <div className="flex gap-3 text-xs text-right flex-shrink-0">
           <div className="bg-dark border border-blue/20 rounded-lg px-3 py-2">
             <div className="text-white font-bold text-lg">{activeCount}</div>
-            <div className="text-mgray">aktywnych</div>
+            <div className="text-mgray">{t('stats.active')}</div>
           </div>
           <div className="bg-dark border border-green-900/30 rounded-lg px-3 py-2">
             <div className="text-green-400 font-bold text-lg">{healthyCount}</div>
-            <div className="text-mgray">zdrowych</div>
+            <div className="text-mgray">{t('stats.healthy')}</div>
           </div>
         </div>
       </div>
 
       {/* Banner — routing logic */}
       <div className="bg-navy border border-purple-900/30 rounded-lg px-5 py-3 text-xs text-mgray/80 leading-relaxed">
-        <span className="text-purple-300 font-semibold">Logika routingu: </span>
-        Każde wywołanie agenta jest klasyfikowane pod kątem wrażliwości danych
-        (public → internal → confidential → privileged).
-        Gateway wybiera aktywnego, zdrowego providera z&nbsp;najniższym priorytetem,
-        który obsługuje wymagany poziom lub wyższy.
-        Dane uprzywilejowane (tajemnica adwokacka) kierowane są wyłącznie do providerów on-prem.
+        {t.rich('routingInfo', {
+          title: (c) => <span className="text-purple-300 font-semibold">{c}</span>,
+        })}
       </div>
 
       {/* Formularz dodawania */}
@@ -564,7 +554,7 @@ export default function ProvidersPage() {
           <SearchBox
             value={query}
             onChange={setQuery}
-            placeholder="Szukaj providera — nazwa, typ, model, base_url..."
+            placeholder={t('searchPlaceholder')}
             count={visible.length}
             total={providers.length}
           />
@@ -572,14 +562,14 @@ export default function ProvidersPage() {
       )}
 
       {loading ? (
-        <div className="text-mgray animate-pulse py-8">Ładowanie providerów...</div>
+        <div className="text-mgray animate-pulse py-8">{t('loading')}</div>
       ) : providers.length === 0 ? (
         <div className="text-center py-12 text-mgray/40">
-          Brak zdefiniowanych providerów. Dodaj pierwszego powyżej.
+          {t('empty')}
         </div>
       ) : visible.length === 0 ? (
         <div className="text-center py-12 text-mgray/50">
-          Brak providerów pasujących do „{query}”.
+          {t('noResults', { query })}
         </div>
       ) : (
         /* Grupowanie wg max_data_sensitivity */
@@ -591,11 +581,11 @@ export default function ProvidersPage() {
             return (
               <div key={level}>
                 <div className="flex items-center gap-3 mb-3">
-                  <span className={`text-xs font-bold px-2 py-1 rounded border ${style}`}>
-                    {SENSITIVITY_LABEL[level].toUpperCase()}
+                  <span className={`text-xs font-bold px-2 py-1 rounded border uppercase ${style}`}>
+                    {t(`sensitivity.${level}`)}
                   </span>
                   <div className="h-px flex-1 bg-blue/10" />
-                  <span className="text-xs text-mgray/50">{group.length} provider{group.length !== 1 ? 'ów' : ''}</span>
+                  <span className="text-xs text-mgray/50">{t('groupCount', { count: group.length })}</span>
                 </div>
                 <div className="space-y-3">
                   {group.map(p => (

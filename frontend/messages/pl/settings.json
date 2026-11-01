@@ -1,0 +1,67 @@
+{
+  "categories": {
+    "budget": {
+      "desc": "Domyślne limity i progi alertów kosztowych dla nowych agentów.",
+      "title": "Budżety"
+    },
+    "compliance": {
+      "desc": "Terminy luk zgodności i limity narracji raportów.",
+      "title": "Compliance"
+    },
+    "i18n": {
+      "desc": "Domyślny język interfejsu, raportów i komunikatów instancji.",
+      "title": "Język"
+    },
+    "intervals": {
+      "desc": "Częstotliwość zadań tła (odświeżanie polityk, monitor TTL).",
+      "title": "Interwały"
+    },
+    "models": {
+      "desc": "Domyślne modele i parametry wywołań LLM.",
+      "title": "Modele domyślne"
+    },
+    "oversight": {
+      "desc": "Progi i limity kolejki nadzoru człowieka (art. 14 EU AI Act).",
+      "title": "Nadzór"
+    },
+    "pagination": {
+      "desc": "Domyślne i maksymalne rozmiary list oraz zakresy dni/godzin.",
+      "title": "Paginacja i okna czasowe"
+    },
+    "pricing": {
+      "desc": "Stawki modeli i przelicznik walutowy używane do wyceny wywołań.",
+      "title": "Cennik i koszty"
+    },
+    "security": {
+      "desc": "Tokeny, hashowanie haseł i progi wykrywania PII.",
+      "title": "Bezpieczeństwo"
+    }
+  },
+  "history": {
+    "empty": "Brak zarejestrowanych zmian.",
+    "loading": "Ładowanie historii...",
+    "unknownUser": "nieznany"
+  },
+  "loading": "Ładowanie...",
+  "noResults": "Brak parametrów pasujących do „{query}”.",
+  "readOnly": "Tryb podglądu — edycja parametrów wymaga roli <b>it_admin</b>. Twoja rola: <b>{role}</b>.",
+  "reload": {
+    "button": "⟳ Przeładuj cache teraz",
+    "done": "Cache przeładowany.",
+    "error": "Błąd: {error}",
+    "running": "Przeładowuję..."
+  },
+  "row": {
+    "hideHistory": "ukryj historię",
+    "invalidJson": "Nieprawidłowy JSON",
+    "lastChange": "ost. zmiana: {user} · {date}",
+    "locked": "zablokowane",
+    "range": "zakres: {range}",
+    "save": "✓ Zapisz",
+    "showHistory": "historia",
+    "unit": "jednostka: {unit}"
+  },
+  "searchPlaceholder": "Szukaj parametru (nazwa, klucz, opis)...",
+  "subtitle": "Konfiguracja operacyjna bez zmian w kodzie. Zmiany aktywne natychmiast (gateway/API odświeżają wartości w ciągu 60s).",
+  "title": "Parametry systemu"
+}

@@ -1,0 +1,5 @@
+{
+  "agentDecision": "Agent '{agent}' przetwarza zapytanie i czeka na zatwierdzenie przez recenzenta. Treść zapytania (skrócona): {content}...",
+  "awaitingMessage": "Wywołanie agenta '{agent}' zostało wstrzymane — wymagane zatwierdzenie przez recenzenta zgodnie z EU AI Act.",
+  "decisionType": "Wywołanie agenta {risk}"
+}

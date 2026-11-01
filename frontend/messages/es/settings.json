@@ -1,0 +1,67 @@
+{
+  "categories": {
+    "budget": {
+      "desc": "Límites predeterminados y umbrales de alerta de costes para nuevos agentes.",
+      "title": "Presupuestos"
+    },
+    "compliance": {
+      "desc": "Plazos de las carencias de cumplimiento y límites de la narrativa de los informes.",
+      "title": "Cumplimiento"
+    },
+    "i18n": {
+      "desc": "Idioma predeterminado de la interfaz, los informes y los mensajes de la instancia.",
+      "title": "Idioma"
+    },
+    "intervals": {
+      "desc": "Frecuencia de las tareas en segundo plano (recarga de políticas, monitor de TTL).",
+      "title": "Intervalos"
+    },
+    "models": {
+      "desc": "Modelos predeterminados y parámetros de las llamadas al LLM.",
+      "title": "Modelos predeterminados"
+    },
+    "oversight": {
+      "desc": "Umbrales y límites de la cola de supervisión humana (art. 14 del EU AI Act).",
+      "title": "Supervisión"
+    },
+    "pagination": {
+      "desc": "Tamaños predeterminados y máximos de las listas y rangos de días/horas.",
+      "title": "Paginación y ventanas temporales"
+    },
+    "pricing": {
+      "desc": "Tarifas de los modelos y tipo de cambio utilizados para calcular el coste de las llamadas.",
+      "title": "Tarifas y costes"
+    },
+    "security": {
+      "desc": "Tokens, hash de contraseñas y umbrales de detección de datos personales.",
+      "title": "Seguridad"
+    }
+  },
+  "history": {
+    "empty": "No hay cambios registrados.",
+    "loading": "Cargando historial...",
+    "unknownUser": "desconocido"
+  },
+  "loading": "Cargando...",
+  "noResults": "No hay parámetros que coincidan con «{query}».",
+  "readOnly": "Modo de solo lectura — la edición de parámetros requiere el rol <b>it_admin</b>. Su rol: <b>{role}</b>.",
+  "reload": {
+    "button": "⟳ Recargar la caché ahora",
+    "done": "Caché recargada.",
+    "error": "Error: {error}",
+    "running": "Recargando..."
+  },
+  "row": {
+    "hideHistory": "ocultar historial",
+    "invalidJson": "JSON no válido",
+    "lastChange": "último cambio: {user} · {date}",
+    "locked": "bloqueado",
+    "range": "rango: {range}",
+    "save": "✓ Guardar",
+    "showHistory": "historial",
+    "unit": "unidad: {unit}"
+  },
+  "searchPlaceholder": "Buscar parámetro (nombre, clave, descripción)...",
+  "subtitle": "Configuración operativa sin modificar el código. Los cambios se aplican de inmediato (la pasarela y la API recargan los valores en un plazo de 60 s).",
+  "title": "Parámetros del sistema"
+}

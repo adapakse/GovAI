@@ -1,0 +1,84 @@
+{
+  "agentStatus": {
+    "active": "Aktivan",
+    "quarantined": "Karantena",
+    "retired": "Povučen",
+    "suspended": "Suspendiran"
+  },
+  "components": {
+    "liveFeed": {
+      "connected": "Povezano",
+      "disconnected": "Veza prekinuta",
+      "events": {
+        "auditBlocked": "BLOKADA",
+        "auditError": "POGREŠKA",
+        "auditNewCall": "POZIV",
+        "oversightEscalated": "ESKALACIJA",
+        "oversightPending": "NADZOR"
+      },
+      "title": "Događaji u stvarnom vremenu",
+      "waiting": "Čekanje na događaje..."
+    },
+    "oversightModal": {
+      "actions": {
+        "approved": "✓ Odobri",
+        "escalated": "↑ Eskaliraj",
+        "rejected": "✕ Odbij"
+      },
+      "agentDecision": "Odluka agenta",
+      "cancel": "Odustani",
+      "commentOptional": "Neobvezni komentar...",
+      "commentRequired": "Komentar je obvezan pri odbijanju ili eskalaciji.",
+      "decisionType": "Vrsta odluke:",
+      "justificationRequired": "Obrazloženje (obvezno)",
+      "rubberStampWarning": "⚠ Vrijeme pregleda mjeri se od trenutka otvaranja ovog prozora. Odluka donesena za manje od 10 sekundi bit će označena kao prividni nadzor.",
+      "save": "Spremi odluku",
+      "saveError": "Pogreška pri spremanju odluke",
+      "saved": "Spremljeno: {action}",
+      "saving": "Spremanje...",
+      "submitted": "Podneseno:",
+      "taskId": "Task ID: {id}",
+      "timeLeft": "Preostalo vrijeme",
+      "timer": "{mins} min {secs} s",
+      "yourDecision": "Vaša odluka"
+    },
+    "searchBox": {
+      "clear": "Očisti",
+      "placeholder": "Pretraživanje..."
+    }
+  },
+  "language": {
+    "instanceDefault": "Zadano za instancu ({language})",
+    "label": "Jezik"
+  },
+  "oversightStatus": {
+    "approved": "Odobreno",
+    "escalated": "Eskalirano",
+    "pending": "Na čekanju",
+    "rejected": "Odbijeno"
+  },
+  "policyResult": {
+    "allowed": "Dopušteno",
+    "blocked": "Blokirano",
+    "error": "Pogreška",
+    "oversight_required": "Potreban nadzor",
+    "short": {
+      "allowed": "OK",
+      "blocked": "BLOKADA",
+      "error": "POGREŠKA",
+      "oversight_required": "NADZOR"
+    }
+  },
+  "risk": {
+    "high": "Visoki",
+    "limited": "Ograničeni",
+    "minimal": "Minimalni",
+    "short": {
+      "high": "VISOKI",
+      "limited": "OGRANIČENI",
+      "minimal": "MINIMALNI",
+      "unacceptable": "NEPRIHVATLJIVI"
+    },
+    "unacceptable": "Neprihvatljivi"
+  }
+}

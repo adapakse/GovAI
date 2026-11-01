@@ -1,0 +1,159 @@
+{
+  "budget.default_alert_threshold_eur": {
+    "description": "Pragul de alertă privind costurile pentru agenții noi (0 = dezactivat).",
+    "label": "Prag de alertă implicit",
+    "unit": "EUR"
+  },
+  "budget.default_monthly_eur": {
+    "description": "Bugetul atribuit agenților noi (0 = fără limită).",
+    "label": "Buget lunar implicit",
+    "unit": "EUR"
+  },
+  "compliance.deadline_days": {
+    "description": "Numărul de zile pentru remedierea fiecărei lacune de conformitate pentru sistemele cu risc ridicat (cheie = câmp de control).",
+    "label": "Termene pentru lacunele de conformitate (zile)",
+    "unit": "zile"
+  },
+  "compliance.enterprise_report_max_tokens": {
+    "description": "Limita de tokenuri pentru narațiunea raportului la nivel de întreprindere.",
+    "label": "Raport enterprise — tokenuri max.",
+    "unit": "tokenuri"
+  },
+  "compliance.report_max_tokens": {
+    "description": "Limita de tokenuri pentru narațiunea raportului de conformitate al agentului.",
+    "label": "Raport agent — tokenuri max.",
+    "unit": "tokenuri"
+  },
+  "i18n.default_locale": {
+    "description": "Limba interfeței, a rapoartelor și a mesajelor pentru utilizatorii care nu și-au ales propria limbă. Coduri: pl, en, de, it, es, fr, ro, ru, sl, hr.",
+    "label": "Limba implicită"
+  },
+  "intervals.policy_refresh_seconds": {
+    "description": "La câte secunde gateway-ul reîncarcă regulile politicilor din baza de date.",
+    "label": "Reîncărcarea politicilor",
+    "unit": "secunde"
+  },
+  "intervals.ttl_monitor_seconds": {
+    "description": "La câte secunde monitorul escaladează sarcinile de supraveghere expirate.",
+    "label": "Monitor TTL supraveghere",
+    "unit": "secunde"
+  },
+  "models.classifier_model": {
+    "description": "Modelul utilizat pentru evaluarea nivelului de risc al agentului.",
+    "label": "Modelul clasificatorului AI Act"
+  },
+  "models.default_agent_model": {
+    "description": "Modelul atribuit agenților nou înregistrați.",
+    "label": "Modelul implicit al agentului"
+  },
+  "models.default_max_tokens": {
+    "description": "Limita de tokenuri de ieșire atunci când clientul nu o specifică.",
+    "label": "Limita implicită de tokenuri",
+    "unit": "tokenuri"
+  },
+  "models.default_temperature": {
+    "description": "Temperatura LLM atunci când clientul nu o specifică.",
+    "label": "Temperatura implicită",
+    "unit": "0–2"
+  },
+  "oversight.history_limit": {
+    "description": "Limita strictă a numărului de elemente din istoricul supravegherii.",
+    "label": "Istoric supraveghere — limită rânduri",
+    "unit": "rânduri"
+  },
+  "oversight.history_max_days": {
+    "description": "Intervalul maxim de zile pentru GET /oversight/history.",
+    "label": "Istoric supraveghere — zile max.",
+    "unit": "zile"
+  },
+  "oversight.min_review_seconds": {
+    "description": "Sub acest număr de secunde, revizuirea de supraveghere este marcată drept aparentă (rubber-stamp).",
+    "label": "Timp minim de revizuire",
+    "unit": "secunde"
+  },
+  "oversight.ttl_seconds": {
+    "description": "Timpul până la escaladarea unei sarcini din coada de supraveghere.",
+    "label": "TTL sarcină de supraveghere",
+    "unit": "secunde"
+  },
+  "pagination.audit_default_limit": {
+    "description": "Numărul implicit de înregistrări în GET /audit.",
+    "label": "Audit — limită implicită",
+    "unit": "rânduri"
+  },
+  "pagination.audit_max_limit": {
+    "description": "Numărul maxim de înregistrări într-o singură interogare de audit.",
+    "label": "Audit — limită max.",
+    "unit": "rânduri"
+  },
+  "pagination.dashboard_recent_blocks": {
+    "description": "Numărul celor mai recente blocări afișate în alertele tabloului de bord.",
+    "label": "Tablou de bord — blocări recente",
+    "unit": "elemente"
+  },
+  "pagination.dashboard_top_agents": {
+    "description": "Numărul celor mai activi agenți afișați pe tabloul de bord.",
+    "label": "Tablou de bord — agenți de top",
+    "unit": "elemente"
+  },
+  "pagination.default_window_days": {
+    "description": "Intervalul implicit de zile pentru audit și tabloul de bord.",
+    "label": "Fereastră implicită (zile)",
+    "unit": "zile"
+  },
+  "pagination.stats_default_days": {
+    "description": "Intervalul implicit pentru GET /agents/{id}/stats.",
+    "label": "Statistici agent — zile implicite",
+    "unit": "zile"
+  },
+  "pagination.stats_max_days": {
+    "description": "Intervalul maxim al statisticilor agentului.",
+    "label": "Statistici agent — zile max.",
+    "unit": "zile"
+  },
+  "pagination.timeline_default_hours": {
+    "description": "Fereastra implicită a graficului cronologic.",
+    "label": "Cronologie — ore implicite",
+    "unit": "ore"
+  },
+  "pagination.timeline_max_hours": {
+    "description": "Intervalul maxim al graficului cronologic.",
+    "label": "Cronologie — ore max.",
+    "unit": "ore"
+  },
+  "pricing.default_rate": {
+    "description": "Tariful [intrare, ieșire] pentru modelele care nu figurează în tabel.",
+    "label": "Tarif implicit (USD/1k tok.)",
+    "unit": "USD/1k"
+  },
+  "pricing.model_rates": {
+    "description": "Tabel model → [intrare, ieșire] în USD per 1000 de tokenuri. Un model care nu figurează în listă utilizează tariful implicit.",
+    "label": "Tarifele modelelor (USD/1k tok.)",
+    "unit": "USD/1k"
+  },
+  "pricing.usd_to_eur": {
+    "description": "Coeficientul de conversie a costurilor modelelor din USD în EUR.",
+    "label": "Curs USD→EUR",
+    "unit": "coeficient"
+  },
+  "security.access_token_expire_minutes": {
+    "description": "Durata de valabilitate a JWT access token.",
+    "label": "Valabilitatea access tokenului",
+    "unit": "minute"
+  },
+  "security.bcrypt_rounds": {
+    "description": "Costul hashing-ului parolelor (mai mare = mai lent, mai sigur).",
+    "label": "Runde bcrypt",
+    "unit": "runde"
+  },
+  "security.pii_confidence_threshold": {
+    "description": "Nivelul minim de încredere Presidio pentru ca o detectare de date personale să fie validată.",
+    "label": "Prag de încredere pentru date personale",
+    "unit": "0–1"
+  },
+  "security.refresh_token_expire_days": {
+    "description": "Durata de valabilitate a refresh tokenului.",
+    "label": "Valabilitatea refresh tokenului",
+    "unit": "zile"
+  }
+}

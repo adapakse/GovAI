@@ -1,0 +1,5 @@
+{
+  "agentDecision": "Agent '{agent}' obrađuje upit i čeka odobrenje recenzenta. Sadržaj upita (skraćeno): {content}...",
+  "awaitingMessage": "Poziv agenta '{agent}' je zadržan — potrebno je odobrenje recenzenta u skladu s EU AI Actom.",
+  "decisionType": "Poziv agenta {risk}"
+}

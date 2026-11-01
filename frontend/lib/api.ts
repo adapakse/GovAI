@@ -1,12 +1,16 @@
 import { clearSession, ensureFreshToken } from './auth';
+import { getActiveLocale } from './locale';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
 export const WS  = process.env.NEXT_PUBLIC_WS_URL  ?? 'ws://localhost:8000';
 
 export async function authHeaders(): Promise<Record<string, string>> {
   const token = await ensureFreshToken();
-  if (!token) return { 'Content-Type': 'application/json' };
-  return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
+  // Accept-Language: API i gateway zwracają komunikaty (błędy, raporty, etykiety
+  // z katalogów w bazie) w języku aktywnym w UI.
+  const base = { 'Content-Type': 'application/json', 'Accept-Language': getActiveLocale() };
+  if (!token) return base;
+  return { ...base, 'Authorization': `Bearer ${token}` };
 }
 
 export function handle401() {
@@ -19,7 +23,7 @@ async function get<T>(path: string): Promise<T> {
     cache: 'no-store',
     headers: await authHeaders(),
   });
-  if (r.status === 401) { handle401(); throw new Error('Sesja wygasła'); }
+  if (r.status === 401) { handle401(); throw new Error('HTTP 401'); }
   if (!r.ok) throw new Error(`GET ${path} → ${r.status}`);
   return r.json();
 }
@@ -30,7 +34,7 @@ async function post<T>(path: string, body?: unknown): Promise<T> {
     headers: await authHeaders(),
     body: body !== undefined ? JSON.stringify(body) : undefined,
   });
-  if (r.status === 401) { handle401(); throw new Error('Sesja wygasła'); }
+  if (r.status === 401) { handle401(); throw new Error('HTTP 401'); }
   if (!r.ok) {
     const err = await r.json().catch(() => ({}));
     throw new Error(err?.detail ?? `POST ${path} → ${r.status}`);
@@ -44,7 +48,7 @@ async function patch<T>(path: string, body: unknown): Promise<T> {
     headers: await authHeaders(),
     body: JSON.stringify(body),
   });
-  if (r.status === 401) { handle401(); throw new Error('Sesja wygasła'); }
+  if (r.status === 401) { handle401(); throw new Error('HTTP 401'); }
   if (!r.ok) throw new Error(`PATCH ${path} → ${r.status}`);
   return r.json();
 }
@@ -55,7 +59,7 @@ async function put<T>(path: string, body: unknown): Promise<T> {
     headers: await authHeaders(),
     body: JSON.stringify(body),
   });
-  if (r.status === 401) { handle401(); throw new Error('Sesja wygasła'); }
+  if (r.status === 401) { handle401(); throw new Error('HTTP 401'); }
   if (!r.ok) {
     const err = await r.json().catch(() => ({}));
     throw new Error(err?.detail ?? `PUT ${path} → ${r.status}`);
@@ -68,7 +72,7 @@ async function del<T>(path: string): Promise<T> {
     method: 'DELETE',
     headers: await authHeaders(),
   });
-  if (r.status === 401) { handle401(); throw new Error('Sesja wygasła'); }
+  if (r.status === 401) { handle401(); throw new Error('HTTP 401'); }
   if (!r.ok) throw new Error(`DELETE ${path} → ${r.status}`);
   return r.json();
 }

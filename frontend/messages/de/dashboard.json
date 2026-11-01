@@ -1,0 +1,48 @@
+{
+  "alerts": {
+    "empty": "Keine Warnungen in diesem Zeitraum",
+    "title": "Letzte Sicherheitsereignisse",
+    "viewAudit": "Audit-Log anzeigen →"
+  },
+  "byAgent": {
+    "title": "Aufrufe nach KI-Agent"
+  },
+  "chart": {
+    "allowed": "Zulässig",
+    "blocked": "Blockiert",
+    "noData": "Keine Daten",
+    "total": "Gesamt"
+  },
+  "cost": {
+    "byAgent": "Kosten nach KI-Agent (7 Tage)",
+    "note": "nur Token-Kosten von Anthropic",
+    "total": "Gesamtkosten (7 Tage)"
+  },
+  "header": {
+    "subtitle": "Letzte 7 Tage · Aktualisierung alle 30 s",
+    "title": "Betriebs-Dashboard"
+  },
+  "kpi": {
+    "activeAgents": "Aktive KI-Agenten",
+    "activeAgentsSub": "{count} mit hohem Risiko",
+    "blocked": "Blockierungen",
+    "blockedSub": "{rate}% aller Aufrufe",
+    "calls": "Aufrufe (7 Tage)",
+    "callsSub": "Ø Latenz {latency} ms",
+    "infraErrors": "Infrastrukturfehler",
+    "infraErrorsSub": "kein Modellanbieter / LLM-Fehler",
+    "pendingOversight": "Wartet auf Aufsicht",
+    "pendingOversightSub": "Entscheidung eines Prüfers erforderlich"
+  },
+  "loadError": "Fehler beim Laden der Daten.",
+  "loading": "Dashboard wird geladen...",
+  "stats": {
+    "oversight": "Zur Aufsicht",
+    "pii": "Erkennungen personenbez. Daten"
+  },
+  "timeline": {
+    "empty": "Keine Daten in den letzten 24 h",
+    "refresh": "Aktualisierung alle 30 s",
+    "title": "Aufrufe nach Stunde (letzte 24 h)"
+  }
+}

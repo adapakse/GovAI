@@ -1,0 +1,84 @@
+{
+  "agentStatus": {
+    "active": "Attivo",
+    "quarantined": "In quarantena",
+    "retired": "Dismesso",
+    "suspended": "Sospeso"
+  },
+  "components": {
+    "liveFeed": {
+      "connected": "Connesso",
+      "disconnected": "Disconnesso",
+      "events": {
+        "auditBlocked": "BLOCCO",
+        "auditError": "ERRORE",
+        "auditNewCall": "CHIAMATA",
+        "oversightEscalated": "ESCALATION",
+        "oversightPending": "SORVEGLIANZA"
+      },
+      "title": "Eventi in tempo reale",
+      "waiting": "In attesa di eventi..."
+    },
+    "oversightModal": {
+      "actions": {
+        "approved": "✓ Approva",
+        "escalated": "↑ Escala",
+        "rejected": "✕ Rifiuta"
+      },
+      "agentDecision": "Decisione dell'agente",
+      "cancel": "Annulla",
+      "commentOptional": "Commento facoltativo...",
+      "commentRequired": "Il commento è obbligatorio in caso di rifiuto o escalation.",
+      "decisionType": "Tipo di decisione:",
+      "justificationRequired": "Motivazione (obbligatoria)",
+      "rubberStampWarning": "⚠ Il tempo di revisione viene misurato dall'apertura di questa finestra. Una decisione presa in meno di 10 secondi sarà contrassegnata come sorveglianza apparente.",
+      "save": "Salva decisione",
+      "saveError": "Errore nel salvataggio della decisione",
+      "saved": "Salvato: {action}",
+      "saving": "Salvataggio...",
+      "submitted": "Inviato:",
+      "taskId": "Task ID: {id}",
+      "timeLeft": "Tempo rimanente",
+      "timer": "{mins}m {secs}s",
+      "yourDecision": "La Sua decisione"
+    },
+    "searchBox": {
+      "clear": "Cancella",
+      "placeholder": "Cerca..."
+    }
+  },
+  "language": {
+    "instanceDefault": "Predefinita dell'istanza ({language})",
+    "label": "Lingua"
+  },
+  "oversightStatus": {
+    "approved": "Approvato",
+    "escalated": "Escalato",
+    "pending": "In attesa",
+    "rejected": "Rifiutato"
+  },
+  "policyResult": {
+    "allowed": "Consentito",
+    "blocked": "Bloccato",
+    "error": "Errore",
+    "oversight_required": "Da sorvegliare",
+    "short": {
+      "allowed": "OK",
+      "blocked": "BLOCCO",
+      "error": "ERRORE",
+      "oversight_required": "SORVEGLIANZA"
+    }
+  },
+  "risk": {
+    "high": "Alto",
+    "limited": "Limitato",
+    "minimal": "Minimo",
+    "short": {
+      "high": "ALTO",
+      "limited": "LIMITATO",
+      "minimal": "MINIMO",
+      "unacceptable": "INACCETTABILE"
+    },
+    "unacceptable": "Inaccettabile"
+  }
+}

@@ -1,6 +1,7 @@
 import logging
 import time
 
+from i18n import t
 from models import AgentRecord, PIIScanResult, PolicyDecision
 
 logger = logging.getLogger(__name__)
@@ -56,9 +57,13 @@ class PolicyEngine:
             for kw in keywords:
                 if kw.lower() in text:
                     policy_code = rule.get("policy_code") or "POLICY"
-                    reason = rule.get("action_json", {}).get(
-                        "reason", "Zablokowane przez politykę bezpieczeństwa"
-                    )
+                    # Powód z polityki to treść wpisana przez użytkownika — bez tłumaczenia.
+                    custom_reason = rule.get("action_json", {}).get("reason")
+                    if custom_reason:
+                        reason_code, reason_params = "policy_custom", {"reason": str(custom_reason)}
+                    else:
+                        reason_code, reason_params = "policy_default", {}
+                    reason = t(f"blockReasons.{reason_code}", **reason_params)
                     logger.warning(
                         "Polityka %s aktywowana dla agenta %s (słowo kluczowe: '%s')",
                         policy_code, agent.id, kw,
@@ -67,6 +72,8 @@ class PolicyEngine:
                         result="blocked",
                         reason=reason,
                         policy_id=policy_code,
+                        reason_code=reason_code,
+                        reason_params=reason_params,
                     )
 
         # ── Nadzór człowieka (flaga agenta z rejestru) ────────────────────────
@@ -76,9 +83,9 @@ class PolicyEngine:
             )
             return PolicyDecision(
                 result="oversight_required",
-                reason=(
-                    f"Agent '{agent.name}' klasyfikowany jako ryzyko {agent.risk_level.upper()} "
-                    "zgodnie z EU AI Act — każda decyzja wymaga zatwierdzenia przez człowieka"
+                reason=t(
+                    "policy.oversightRequired",
+                    agent=agent.name, risk=agent.risk_level.upper(),
                 ),
                 policy_id="A-001",
             )

@@ -1,0 +1,43 @@
+{
+  "alerts": {
+    "budgetExceeded": "⚠ Prekoračenje proračuna: <b>{name}</b> — {actual} EUR ({pct} % praga od {threshold} EUR)",
+    "overdueReview": "⚠ Zakašnjela provjera usklađenosti: <b>{name}</b> (rok: {date})",
+    "title": "UPOZORENJA KOJA ZAHTIJEVAJU PAŽNJU"
+  },
+  "dataFrom": "Podaci od: {date} ·",
+  "days": "{days} dana",
+  "download": "↓ Preuzmi PDF",
+  "error": "Pogreška: {error}",
+  "generating": "Generiranje...",
+  "header": {
+    "subtitle": "Korporativno izvješće o usklađenosti s EU AI Actom za cijelu organizaciju",
+    "title": "Izvješća o upravljanju umjetnom inteligencijom"
+  },
+  "kpi": {
+    "agents": "AI agenti",
+    "agentsSub": "u registru",
+    "blocked": "Blokade",
+    "calls": "Pozivi",
+    "cost": "Trošak API-ja",
+    "costSub": "ukupno",
+    "pii": "Incidenti s osobnim podacima",
+    "piiSub": "otkriveno"
+  },
+  "loading": "Učitavanje podataka...",
+  "oversight": {
+    "avgReview": "Prosj. vrijeme pregleda: {minutes} min",
+    "title": "Red čekanja za nadzor (čl. 14.)",
+    "total": "Ukupno zadataka"
+  },
+  "pdfError": "Pogreška pri generiranju PDF-a: {error}",
+  "period": "Razdoblje:",
+  "piiCategories": "Kategorije osobnih podataka",
+  "policyHits": "Aktivacije pravila",
+  "refresh": "osvježi",
+  "riskDistribution": "Raspodjela rizika prema EU AI Actu",
+  "sessionExpired": "Sesija je istekla",
+  "topAgents": {
+    "blockedCost": "{blocked} blokada · {cost} EUR",
+    "title": "Najaktivniji agenti po broju poziva"
+  }
+}

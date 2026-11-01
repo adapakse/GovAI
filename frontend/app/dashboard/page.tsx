@@ -1,15 +1,19 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import { api, DashboardSummary } from '@/lib/api';
 import KpiCard from '@/components/KpiCard';
 import LiveFeed from '@/components/LiveFeed';
+import { useFormat } from '@/lib/format';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   LineChart, Line, CartesianGrid,
 } from 'recharts';
 
 export default function DashboardPage() {
+  const t = useTranslations('dashboard');
+  const fmt = useFormat();
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [timeline, setTimeline] = useState<{ hour: string; total: number; blocked: number }[]>([]);
   const [loading, setLoading] = useState(true);
@@ -30,8 +34,8 @@ export default function DashboardPage() {
     return () => clearInterval(id);
   }, [load]);
 
-  if (loading) return <div className="text-mgray animate-pulse">Ładowanie pulpitu...</div>;
-  if (!summary) return <div className="text-red-400">Błąd ładowania danych.</div>;
+  if (loading) return <div className="text-mgray animate-pulse">{t('loading')}</div>;
+  if (!summary) return <div className="text-red-400">{t('loadError')}</div>;
 
   const { agents, calls, pending_oversight, top_agents, recent_alerts } = summary;
   const blockRate = calls.total_calls > 0
@@ -51,44 +55,44 @@ export default function DashboardPage() {
       {/* Nagłówek */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Pulpit Operacyjny</h1>
-          <p className="text-mgray text-sm mt-0.5">Ostatnie 7 dni · odświeżane co 30s</p>
+          <h1 className="text-2xl font-bold text-white">{t('header.title')}</h1>
+          <p className="text-mgray text-sm mt-0.5">{t('header.subtitle')}</p>
         </div>
         <div className="text-xs text-mgray bg-navy px-3 py-1.5 rounded-full border border-blue/30">
-          {new Date().toLocaleString('pl-PL')}
+          {fmt.dateTime(new Date())}
         </div>
       </div>
 
       {/* KPI */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         <KpiCard
-          label="Aktywni agenci"
+          label={t('kpi.activeAgents')}
           value={agents.active}
-          sub={`${agents.high_risk} wysokiego ryzyka`}
+          sub={t('kpi.activeAgentsSub', { count: agents.high_risk })}
           accent="teal"
         />
         <KpiCard
-          label="Wywołania (7 dni)"
+          label={t('kpi.calls')}
           value={calls.total_calls}
-          sub={`śr. latencja ${calls.avg_latency_ms ?? '—'} ms`}
+          sub={t('kpi.callsSub', { latency: String(calls.avg_latency_ms ?? '—') })}
           accent="green"
         />
         <KpiCard
-          label="Blokady"
+          label={t('kpi.blocked')}
           value={calls.blocked}
-          sub={`${blockRate}% wszystkich wywołań`}
+          sub={t('kpi.blockedSub', { rate: blockRate })}
           accent="red"
         />
         <KpiCard
-          label="Błędy infrastruktury"
+          label={t('kpi.infraErrors')}
           value={calls.errors}
-          sub="brak providera / błąd LLM"
+          sub={t('kpi.infraErrorsSub')}
           accent={calls.errors > 0 ? 'orange' : 'green'}
         />
         <KpiCard
-          label="Oczekuje nadzoru"
+          label={t('kpi.pendingOversight')}
           value={pending_oversight}
-          sub="wymaga decyzji recenzenta"
+          sub={t('kpi.pendingOversightSub')}
           accent={pending_oversight > 0 ? 'orange' : 'green'}
         />
       </div>
@@ -97,9 +101,9 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Wykres top agentów */}
         <div className="lg:col-span-2 bg-navy rounded-lg border border-blue/30 p-4">
-          <div className="text-sm font-semibold text-white mb-4">Wywołania wg agenta</div>
+          <div className="text-sm font-semibold text-white mb-4">{t('byAgent.title')}</div>
           {chartData.length === 0 ? (
-            <div className="text-mgray/50 text-sm text-center py-10">Brak danych</div>
+            <div className="text-mgray/50 text-sm text-center py-10">{t('chart.noData')}</div>
           ) : (
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={chartData} barGap={4}>
@@ -108,7 +112,7 @@ export default function DashboardPage() {
                 <Tooltip
                   contentStyle={{ background: '#0D1B2A', border: '1px solid #1E6FBF', borderRadius: 8, fontSize: 12 }}
                   labelStyle={{ color: '#CBD5E1' }}
-                  formatter={(v: any, name: string): [any, string] => [v, name === 'ok' ? 'Dozwolone' : 'Zablokowane']}
+                  formatter={(v: any, name: string): [any, string] => [v, name === 'ok' ? t('chart.allowed') : t('chart.blocked')]}
                   labelFormatter={(_, payload) => payload?.[0]?.payload?.full ?? ''}
                 />
                 <Bar dataKey="ok" stackId="a" fill="#2D9C61" radius={[0, 0, 4, 4]} name="ok" />
@@ -117,8 +121,8 @@ export default function DashboardPage() {
             </ResponsiveContainer>
           )}
           <div className="flex gap-6 mt-2 text-xs text-mgray">
-            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-green-600 inline-block" />Dozwolone</span>
-            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-red-600 inline-block" />Zablokowane</span>
+            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-green-600 inline-block" />{t('chart.allowed')}</span>
+            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-red-600 inline-block" />{t('chart.blocked')}</span>
           </div>
         </div>
 
@@ -131,11 +135,11 @@ export default function DashboardPage() {
       {/* Wykres timeline (24h) */}
       <div className="bg-navy rounded-lg border border-blue/30 p-4">
         <div className="flex items-center justify-between mb-4">
-          <div className="text-sm font-semibold text-white">Wywołania wg godziny (ostatnie 24h)</div>
-          <div className="text-xs text-mgray/60">odświeżane co 30s</div>
+          <div className="text-sm font-semibold text-white">{t('timeline.title')}</div>
+          <div className="text-xs text-mgray/60">{t('timeline.refresh')}</div>
         </div>
         {timeline.length === 0 ? (
-          <div className="text-center py-8 text-mgray/40 text-sm">Brak danych w ostatnich 24h</div>
+          <div className="text-center py-8 text-mgray/40 text-sm">{t('timeline.empty')}</div>
         ) : (
           <ResponsiveContainer width="100%" height={160}>
             <LineChart data={timeline} margin={{ top: 4, right: 8, bottom: 0, left: -10 }}>
@@ -150,7 +154,7 @@ export default function DashboardPage() {
               <Tooltip
                 contentStyle={{ background: '#0D1B2A', border: '1px solid #1E6FBF', borderRadius: 8, fontSize: 11 }}
                 labelStyle={{ color: '#CBD5E1' }}
-                formatter={(v: number, name: string) => [v, name === 'total' ? 'Ogółem' : 'Zablokowane']}
+                formatter={(v: number, name: string) => [v, name === 'total' ? t('chart.total') : t('chart.blocked')]}
               />
               <Line type="monotone" dataKey="total" stroke="#00B4D8" strokeWidth={2} dot={false} name="total" />
               <Line type="monotone" dataKey="blocked" stroke="#C0392B" strokeWidth={2} dot={false} name="blocked" />
@@ -158,20 +162,20 @@ export default function DashboardPage() {
           </ResponsiveContainer>
         )}
         <div className="flex gap-6 mt-2 text-xs text-mgray">
-          <span className="flex items-center gap-1.5"><span className="w-3 h-0.5 bg-teal inline-block rounded" />Ogółem</span>
-          <span className="flex items-center gap-1.5"><span className="w-3 h-0.5 bg-red-600 inline-block rounded" />Zablokowane</span>
+          <span className="flex items-center gap-1.5"><span className="w-3 h-0.5 bg-teal inline-block rounded" />{t('chart.total')}</span>
+          <span className="flex items-center gap-1.5"><span className="w-3 h-0.5 bg-red-600 inline-block rounded" />{t('chart.blocked')}</span>
         </div>
       </div>
 
       {/* Ostatnie alerty */}
       <div className="bg-navy rounded-lg border border-blue/30">
         <div className="px-5 py-3 border-b border-blue/30 flex items-center justify-between">
-          <span className="text-sm font-semibold text-white">Ostatnie zdarzenia bezpieczeństwa</span>
-          <a href="/audit" className="text-xs text-teal hover:underline">Zobacz dziennik →</a>
+          <span className="text-sm font-semibold text-white">{t('alerts.title')}</span>
+          <a href="/audit" className="text-xs text-teal hover:underline">{t('alerts.viewAudit')}</a>
         </div>
         <div className="divide-y divide-blue/20">
           {recent_alerts.length === 0 && (
-            <div className="px-5 py-6 text-center text-mgray/50 text-sm">Brak alertów w tym okresie</div>
+            <div className="px-5 py-6 text-center text-mgray/50 text-sm">{t('alerts.empty')}</div>
           )}
           {recent_alerts.map((a, i) => (
             <div key={i} className="px-5 py-3 flex items-center gap-4 hover:bg-blue/10">
@@ -184,7 +188,7 @@ export default function DashboardPage() {
                 <div className="text-xs text-mgray truncate">{a.block_reason ?? a.event_type}</div>
               </div>
               <div className="text-xs text-mgray flex-shrink-0">
-                {new Date(a.time).toLocaleTimeString('pl-PL')}
+                {fmt.time(a.time)}
               </div>
             </div>
           ))}
@@ -195,7 +199,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-3 gap-4 text-xs">
         {/* Koszt — z tooltipem rozbicia na agentów */}
         <div className="relative group bg-navy rounded-lg border border-blue/30 px-4 py-3 cursor-default">
-          <div className="text-mgray/70 mb-1">Łączny koszt (7 dni)</div>
+          <div className="text-mgray/70 mb-1">{t('cost.total')}</div>
           <div className="text-white font-semibold text-base">
             {(calls.total_cost_eur ?? 0).toFixed(4)} EUR
           </div>
@@ -203,11 +207,11 @@ export default function DashboardPage() {
           <div className="absolute bottom-full left-0 mb-2 w-64 bg-dark border border-blue/40 rounded-lg shadow-xl
                           opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 z-10">
             <div className="px-3 py-2 border-b border-blue/20 text-mgray/60 text-xs font-semibold uppercase tracking-wide">
-              Koszt wg agenta (7 dni)
+              {t('cost.byAgent')}
             </div>
             <div className="px-3 py-2 space-y-2">
               {top_agents.length === 0 ? (
-                <div className="text-mgray/50">Brak danych</div>
+                <div className="text-mgray/50">{t('chart.noData')}</div>
               ) : (
                 [...top_agents]
                   .sort((a, b) => (b.cost_eur ?? 0) - (a.cost_eur ?? 0))
@@ -236,20 +240,20 @@ export default function DashboardPage() {
               )}
             </div>
             <div className="px-3 py-1.5 border-t border-blue/20 text-mgray/40 text-xs">
-              tylko koszt tokenów Anthropic
+              {t('cost.note')}
             </div>
           </div>
         </div>
 
         {/* Wykrycia PII */}
         <div className="bg-navy rounded-lg border border-blue/30 px-4 py-3">
-          <div className="text-mgray/70 mb-1">Wykrycia PII</div>
+          <div className="text-mgray/70 mb-1">{t('stats.pii')}</div>
           <div className="text-white font-semibold text-base">{calls.pii_calls}</div>
         </div>
 
         {/* Do nadzoru */}
         <div className="bg-navy rounded-lg border border-blue/30 px-4 py-3">
-          <div className="text-mgray/70 mb-1">Do nadzoru</div>
+          <div className="text-mgray/70 mb-1">{t('stats.oversight')}</div>
           <div className="text-white font-semibold text-base">{calls.oversight_required}</div>
         </div>
       </div>

@@ -1,0 +1,13 @@
+{
+  "agentInactive": "Agentul '{agent}' are starea '{status}' și nu poate efectua apeluri.",
+  "agentNotRegistered": "Agentul '{agent_id}' nu este înregistrat în GovAI. Înregistrați agentul înainte de a utiliza gateway-ul de securitate.",
+  "auth": {
+    "invalidApiKey": "Cheie API nevalidă sau expirată",
+    "invalidToken": "Token nevalid sau expirat",
+    "missing": "Lipsește autorizarea",
+    "missingDetail": "Este necesar antetul Authorization: Bearer <token> sau X-API-Key: <key>"
+  },
+  "llmError": "Eroare a modelului lingvistic: {error}",
+  "missingAgentId": "Lipsește antetul X-Agent-ID",
+  "missingMessages": "Solicitarea nu conține mesaje"
+}

@@ -1,0 +1,53 @@
+{
+  "count": "{count, plural, one {# entrada} other {# entradas}}",
+  "details": {
+    "blockReason": "Motivo del bloqueo",
+    "errorDetails": "Detalles del error",
+    "fields": {
+      "agent": "Agente",
+      "callId": "Call ID",
+      "cost": "Coste",
+      "eventType": "Tipo de evento",
+      "inputHash": "Hash de la entrada",
+      "latency": "Latencia",
+      "piiCategories": "Categorías de datos personales",
+      "result": "Resultado",
+      "taskId": "Task ID"
+    },
+    "title": "Detalles de la llamada"
+  },
+  "filters": {
+    "days": {
+      "1": "Último día",
+      "7": "Últimos 7 días",
+      "30": "Últimos 30 días"
+    },
+    "pii": {
+      "all": "Todos (datos personales)",
+      "with": "Con datos personales detectados",
+      "without": "Sin datos personales"
+    },
+    "result": {
+      "all": "Todos los resultados"
+    }
+  },
+  "header": {
+    "subtitle": "Registro inalterable de todas las llamadas de los agentes de IA",
+    "title": "Registro de auditoría"
+  },
+  "table": {
+    "columns": {
+      "agent": "Agente",
+      "details": "Detalles",
+      "eventType": "Tipo de evento",
+      "latency": "Latencia",
+      "pii": "Datos pers.",
+      "result": "Resultado",
+      "time": "Hora"
+    },
+    "empty": "No hay entradas en este período",
+    "loading": "Cargando...",
+    "piiEntities": "{count, plural, one {# entidad} other {# entidades}}",
+    "show": "Mostrar"
+  }
+}

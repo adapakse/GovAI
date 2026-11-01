@@ -1,0 +1,100 @@
+{
+  "chat": {
+    "awaitingOversight": "⏳ Transmis au contrôle humain (art. 14 de l’EU AI Act)\nOversight ID : {id}",
+    "blocked": "🚫 Bloqué : {reason}",
+    "clear": "Effacer",
+    "connectionError": "Erreur de connexion : {error}",
+    "defaultBlockReason": "Politique de sécurité GovAI",
+    "emptyHint": "Saisissez un message ci-dessous — il sera traité par GovAI Gateway (analyse DCP → politiques → {model})",
+    "pipeline": "Chat libre · GovAI Gateway → analyse DCP → politiques → {model}",
+    "placeholder": "Écrivez un message à l’agent...",
+    "sectionTitle": "Chat libre — appel direct via la passerelle",
+    "send": "Envoyer ▶"
+  },
+  "expected": {
+    "allowed": "Autorisé",
+    "allowed_with_pii": "Autorisé + DCP",
+    "blocked": "Bloqué",
+    "oversight_required": "Contrôle requis"
+  },
+  "fleet": {
+    "button": "▦ Alimenter la flotte (50 agents)",
+    "count": "{count, plural, one {# agent de la flotte} other {# agents de la flotte}}",
+    "desc": "Ajoute 50 agents répartis entre les services, avec des lacunes de conformité délibérées (haut risque sans contrôle humain, examens en retard, pratiques interdites de l’art. 5). Démontre qu’à grande échelle, la maîtrise manuelle de l’AI Act est irréalisable.",
+    "seededAgents": "{count, plural, one {# agent généré} other {# agents générés}}.",
+    "title": "Flotte de démonstration (montée en charge)"
+  },
+  "links": {
+    "audit": "→ Journal",
+    "auditLog": "→ Journal d’audit",
+    "oversight": "→ Contrôle",
+    "oversightQueue": "→ File de contrôle"
+  },
+  "loading": "⏳ Chargement...",
+  "noAgents": "Aucun agent actif.",
+  "noResults": "Aucun agent correspondant à « {query} ».",
+  "playbook": {
+    "collapse": "▲ réduire",
+    "expand": "▼ développer",
+    "go": "Aller →",
+    "intro": "Déroulez la présentation étape par étape.",
+    "steps": {
+      "1": {
+        "desc": "Cliquez sur « Alimenter 30 jours de données » — le générateur crée ~500 entrées d’audit et ~23 éléments dans la file de contrôle.",
+        "title": "Alimenter la base de données historiques"
+      },
+      "2": {
+        "desc": "Accédez au Tableau de bord. Vous y verrez le total des appels, les blocages, les DCP, les coûts et le graphique sur 24 h.",
+        "title": "Consulter le Tableau de bord — données historiques"
+      },
+      "3": {
+        "desc": "Cliquez sur « Lancer ▶ » pour le scénario « Demande d’assurance » (Agent 1).",
+        "title": "Lancer un scénario — cas positif"
+      },
+      "4": {
+        "desc": "Cliquez sur « Le client communique son PESEL et son numéro de compte ». Presidio masque les données avant leur envoi au modèle.",
+        "title": "Lancer un scénario avec DCP"
+      },
+      "5": {
+        "desc": "Tentative de mutation financière → G-001. Attaque par injection de prompt → G-002. Visible dans le Journal.",
+        "title": "Déclencher les blocages G-001 et G-002"
+      },
+      "6": {
+        "desc": "L’agent 2 requiert un contrôle humain — l’appel est placé dans la file. Accédez au Contrôle et approuvez.",
+        "title": "File de contrôle (art. 14)"
+      },
+      "7": {
+        "desc": "Sélectionnez l’agent DeepSeek et écrivez un message quelconque. GovAI intercepte le trafic, recherche les DCP et vérifie les politiques — exactement comme pour Claude.",
+        "title": "Tester DeepSeek via GovAI"
+      }
+    },
+    "title": "📋 Guide de démonstration — 7 étapes"
+  },
+  "result": {
+    "blockedByPolicy": "Bloqué par une politique.",
+    "expected": "→ attendu : {label}",
+    "gatewayResponse": "Réponse de la passerelle :",
+    "match": "✓ conforme",
+    "mismatch": "≠ inattendu",
+    "run": "Lancer ▶",
+    "running": "⏳ Appel en cours...",
+    "sentToOversight": "Décision transmise au contrôle humain.\nOversight ID : {id}\n\n{message}",
+    "task": "tâche : {id}..."
+  },
+  "searchPlaceholder": "Rechercher un agent — nom, modèle, fournisseur de modèles (p. ex. bielik, ollama), équipe...",
+  "seed": {
+    "button": "▦ Alimenter 30 jours de données",
+    "counts": "{audit} audits · {oversight} contrôles",
+    "desc": "Le générateur crée ~500 entrées d’audit et 23 éléments de file.",
+    "refresh": "↻ Actualiser",
+    "reset": "✕ Réinitialiser les données",
+    "resetConfirm": "Supprimer TOUTES les données de démonstration (audit, contrôle, flotte d’agents) ?",
+    "resetDone": "{audit} audits, {oversight} contrôles et {fleet} agents de la flotte supprimés.",
+    "seededEntries": "{count, plural, one {# entrée générée} other {# entrées générées}}.",
+    "statusEmpty": "○ Vide",
+    "statusSeeded": "● Alimenté",
+    "title": "Données de démonstration (30 jours d’historique)"
+  },
+  "subtitle": "Chaque appel passe par GovAI Gateway → analyse DCP → moteur de politiques → modèle d’IA. Résultats visibles dans le Journal et la file de Contrôle.",
+  "title": "Simulateur d’agents IA"
+}

@@ -1,0 +1,84 @@
+{
+  "agentStatus": {
+    "active": "Активен",
+    "quarantined": "Карантин",
+    "retired": "Выведен из эксплуатации",
+    "suspended": "Приостановлен"
+  },
+  "components": {
+    "liveFeed": {
+      "connected": "Подключено",
+      "disconnected": "Отключено",
+      "events": {
+        "auditBlocked": "БЛОКИРОВКА",
+        "auditError": "ОШИБКА",
+        "auditNewCall": "ВЫЗОВ",
+        "oversightEscalated": "ЭСКАЛАЦИЯ",
+        "oversightPending": "НАДЗОР"
+      },
+      "title": "События в реальном времени",
+      "waiting": "Ожидание событий..."
+    },
+    "oversightModal": {
+      "actions": {
+        "approved": "✓ Утвердить",
+        "escalated": "↑ Эскалировать",
+        "rejected": "✕ Отклонить"
+      },
+      "agentDecision": "Решение агента",
+      "cancel": "Отмена",
+      "commentOptional": "Комментарий (необязательно)...",
+      "commentRequired": "При отклонении или эскалации комментарий обязателен.",
+      "decisionType": "Тип решения:",
+      "justificationRequired": "Обоснование (обязательно)",
+      "rubberStampWarning": "⚠ Время проверки отсчитывается с момента открытия этого окна. Решение, принятое менее чем за 10 секунд, будет отмечено как формальный надзор.",
+      "save": "Сохранить решение",
+      "saveError": "Ошибка сохранения решения",
+      "saved": "Сохранено: {action}",
+      "saving": "Сохранение...",
+      "submitted": "Поступило:",
+      "taskId": "Task ID: {id}",
+      "timeLeft": "Оставшееся время",
+      "timer": "{mins} мин {secs} с",
+      "yourDecision": "Ваше решение"
+    },
+    "searchBox": {
+      "clear": "Очистить",
+      "placeholder": "Поиск..."
+    }
+  },
+  "language": {
+    "instanceDefault": "По умолчанию для экземпляра ({language})",
+    "label": "Язык"
+  },
+  "oversightStatus": {
+    "approved": "Утверждено",
+    "escalated": "Эскалировано",
+    "pending": "Ожидает",
+    "rejected": "Отклонено"
+  },
+  "policyResult": {
+    "allowed": "Разрешено",
+    "blocked": "Заблокировано",
+    "error": "Ошибка",
+    "oversight_required": "Требует надзора",
+    "short": {
+      "allowed": "OK",
+      "blocked": "БЛОКИРОВКА",
+      "error": "ОШИБКА",
+      "oversight_required": "НАДЗОР"
+    }
+  },
+  "risk": {
+    "high": "Высокий",
+    "limited": "Ограниченный",
+    "minimal": "Минимальный",
+    "short": {
+      "high": "ВЫСОКИЙ",
+      "limited": "ОГРАНИЧЕННЫЙ",
+      "minimal": "МИНИМАЛЬНЫЙ",
+      "unacceptable": "НЕПРИЕМЛЕМЫЙ"
+    },
+    "unacceptable": "Неприемлемый"
+  }
+}

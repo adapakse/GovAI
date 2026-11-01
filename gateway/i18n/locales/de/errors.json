@@ -1,0 +1,13 @@
+{
+  "agentInactive": "KI-Agent '{agent}' hat den Status '{status}' und kann keine Aufrufe ausführen.",
+  "agentNotRegistered": "KI-Agent '{agent_id}' ist in GovAI nicht registriert. Registrieren Sie den KI-Agenten, bevor Sie das Sicherheits-Gateway nutzen.",
+  "auth": {
+    "invalidApiKey": "API-Schlüssel ungültig oder abgelaufen",
+    "invalidToken": "Token ungültig oder abgelaufen",
+    "missing": "Keine Autorisierung",
+    "missingDetail": "Header Authorization: Bearer <token> oder X-API-Key: <key> erforderlich"
+  },
+  "llmError": "Fehler des Sprachmodells: {error}",
+  "missingAgentId": "Header X-Agent-ID fehlt",
+  "missingMessages": "Keine Nachrichten in der Anfrage"
+}

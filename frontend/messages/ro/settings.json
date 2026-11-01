@@ -1,0 +1,67 @@
+{
+  "categories": {
+    "budget": {
+      "desc": "Limite implicite și praguri de alertă privind costurile pentru agenții noi.",
+      "title": "Bugete"
+    },
+    "compliance": {
+      "desc": "Termene pentru lacunele de conformitate și limite pentru narațiunea rapoartelor.",
+      "title": "Conformitate"
+    },
+    "i18n": {
+      "desc": "Limba implicită a interfeței, rapoartelor și mesajelor instanței.",
+      "title": "Limbă"
+    },
+    "intervals": {
+      "desc": "Frecvența sarcinilor de fundal (reîncărcarea politicilor, monitorul TTL).",
+      "title": "Intervale"
+    },
+    "models": {
+      "desc": "Modele implicite și parametrii apelurilor LLM.",
+      "title": "Modele implicite"
+    },
+    "oversight": {
+      "desc": "Praguri și limite ale cozii de supraveghere umană (art. 14 EU AI Act).",
+      "title": "Supraveghere"
+    },
+    "pagination": {
+      "desc": "Dimensiunile implicite și maxime ale listelor și intervalele de zile/ore.",
+      "title": "Paginare și ferestre de timp"
+    },
+    "pricing": {
+      "desc": "Tarifele modelelor și cursul de schimb utilizate pentru evaluarea costului apelurilor.",
+      "title": "Tarife și costuri"
+    },
+    "security": {
+      "desc": "Tokenuri, hashing-ul parolelor și pragurile de detectare a datelor personale.",
+      "title": "Securitate"
+    }
+  },
+  "history": {
+    "empty": "Nicio modificare înregistrată.",
+    "loading": "Se încarcă istoricul...",
+    "unknownUser": "necunoscut"
+  },
+  "loading": "Se încarcă...",
+  "noResults": "Niciun parametru nu corespunde căutării „{query}”.",
+  "readOnly": "Mod de vizualizare — editarea parametrilor necesită rolul <b>it_admin</b>. Rolul dumneavoastră: <b>{role}</b>.",
+  "reload": {
+    "button": "⟳ Reîncărcați cache-ul acum",
+    "done": "Cache-ul a fost reîncărcat.",
+    "error": "Eroare: {error}",
+    "running": "Se reîncarcă..."
+  },
+  "row": {
+    "hideHistory": "ascundeți istoricul",
+    "invalidJson": "JSON nevalid",
+    "lastChange": "ultima modificare: {user} · {date}",
+    "locked": "blocat",
+    "range": "interval: {range}",
+    "save": "✓ Salvați",
+    "showHistory": "istoric",
+    "unit": "unitate: {unit}"
+  },
+  "searchPlaceholder": "Căutați un parametru (nume, cheie, descriere)...",
+  "subtitle": "Configurare operațională fără modificări de cod. Modificările devin active imediat (gateway-ul/API-ul reîncarcă valorile în 60s).",
+  "title": "Parametri de sistem"
+}

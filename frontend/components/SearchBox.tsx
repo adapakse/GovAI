@@ -3,10 +3,12 @@
 // Reużywalne pole wyszukiwania dla długich list.
 // Spójny wygląd (ikona lupy, przycisk czyszczenia, licznik wyników).
 
+import { useTranslations } from 'next-intl';
+
 export default function SearchBox({
   value,
   onChange,
-  placeholder = 'Szukaj...',
+  placeholder,
   count,
   total,
   className = '',
@@ -18,6 +20,7 @@ export default function SearchBox({
   total?: number;   // liczba wszystkich pozycji
   className?: string;
 }) {
+  const t = useTranslations('common.components.searchBox');
   const showCount = count != null && value.trim().length > 0;
   return (
     <div className={`relative flex-1 min-w-[220px] ${className}`}>
@@ -31,7 +34,7 @@ export default function SearchBox({
         type="text"
         value={value}
         onChange={e => onChange(e.target.value)}
-        placeholder={placeholder}
+        placeholder={placeholder ?? t('placeholder')}
         className="w-full bg-navy border border-blue/40 rounded-lg pl-9 pr-20 py-2 text-sm text-white placeholder:text-mgray/50 focus:outline-none focus:border-teal"
       />
       <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2">
@@ -43,7 +46,7 @@ export default function SearchBox({
         {value && (
           <button
             onClick={() => onChange('')}
-            aria-label="Wyczyść"
+            aria-label={t('clear')}
             className="text-mgray/50 hover:text-white w-5 h-5 flex items-center justify-center rounded"
           >
             ✕

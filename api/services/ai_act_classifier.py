@@ -10,6 +10,7 @@ from dataclasses import dataclass, field
 import anthropic
 
 from config import settings
+from i18n import language_name_en, t
 from services import settings_service
 
 logger = logging.getLogger(__name__)
@@ -44,6 +45,13 @@ Odpowiedz TYLKO w formacie JSON (bez markdown, bez komentarzy):
   "key_obligations": ["obowiązek 1", "obowiązek 2", "obowiązek 3"]
 }"""
 
+# Pola tekstowe (uzasadnienie, obowiązki) wracają w języku użytkownika — trafiają
+# do rejestru agenta i raportów. Kody (risk_level, annex_iii_cat) zostają bez zmian.
+_LANGUAGE_INSTRUCTION = (
+    '\n\nWrite the values of "legal_basis" and "key_obligations" in {language}. '
+    'Keep "risk_level" and "annex_iii_cat" as the exact codes listed above.'
+)
+
 
 @dataclass
 class ClassificationResult:
@@ -65,7 +73,7 @@ async def classify_risk(description: str) -> ClassificationResult:
         response = await client.messages.create(
             model=settings_service.get_str("models.classifier_model", settings.classifier_model),
             max_tokens=600,
-            system=CLASSIFICATION_PROMPT,
+            system=CLASSIFICATION_PROMPT + _LANGUAGE_INSTRUCTION.format(language=language_name_en()),
             messages=[{
                 "role": "user",
                 "content": f"Opisz i sklasyfikuj następujący system AI:\n\n{description}",
@@ -93,7 +101,7 @@ async def classify_risk(description: str) -> ClassificationResult:
         return ClassificationResult(
             risk_level="minimal",
             annex_iii_cat=None,
-            legal_basis="Błąd klasyfikacji — wymagana ręczna weryfikacja",
+            legal_basis=t("classifier.fallback.legalBasis"),
             requires_oversight=False,
-            key_obligations=["Ręczna weryfikacja klasyfikacji wymagana"],
+            key_obligations=[t("classifier.fallback.obligation")],
         )

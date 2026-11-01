@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from config import settings
 from database import close_pool, init_pool
+from i18n import DEFAULT_LOCALE, match_locale, set_locale
 from routers import (
     agents, audit, auth, compliance, dashboard, demo, oversight,
     policies, providers, reports, settings as settings_router,
@@ -64,6 +65,25 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+class LocaleMiddleware:
+    """Ustawia język żądania (i18n.get_locale) z Accept-Language, a gdy go brak
+    lub jest nieobsługiwany — z domyślnego języka instancji. Czyste ASGI, żeby
+    contextvar był widoczny w endpointach, zależnościach i walidatorach."""
+
+    def __init__(self, app):
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] in ("http", "websocket"):
+            header = next(
+                (v.decode("latin-1") for k, v in scope.get("headers", []) if k == b"accept-language"),
+                None,
+            )
+            set_locale(match_locale(header) or settings_service.get_str("i18n.default_locale", DEFAULT_LOCALE))
+        await self.app(scope, receive, send)
+
+
+app.add_middleware(LocaleMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.allowed_origins,

@@ -1,0 +1,67 @@
+{
+  "categories": {
+    "budget": {
+      "desc": "Zadana ograničenja i pragovi upozorenja o troškovima za nove agente.",
+      "title": "Proračuni"
+    },
+    "compliance": {
+      "desc": "Rokovi za nedostatke u usklađenosti i ograničenja narativa izvješća.",
+      "title": "Usklađenost"
+    },
+    "i18n": {
+      "desc": "Zadani jezik sučelja, izvješća i poruka instance.",
+      "title": "Jezik"
+    },
+    "intervals": {
+      "desc": "Učestalost pozadinskih zadataka (osvježavanje pravila, TTL monitor).",
+      "title": "Intervali"
+    },
+    "models": {
+      "desc": "Zadani modeli i parametri LLM poziva.",
+      "title": "Zadani modeli"
+    },
+    "oversight": {
+      "desc": "Pragovi i ograničenja reda čekanja za ljudski nadzor (čl. 14. EU AI Acta).",
+      "title": "Nadzor"
+    },
+    "pagination": {
+      "desc": "Zadane i najveće veličine popisa te rasponi dana/sati.",
+      "title": "Paginacija i vremenski okviri"
+    },
+    "pricing": {
+      "desc": "Cijene modela i tečaj valute koji se upotrebljavaju za obračun poziva.",
+      "title": "Cjenik i troškovi"
+    },
+    "security": {
+      "desc": "Tokeni, hashiranje lozinki i pragovi otkrivanja osobnih podataka.",
+      "title": "Sigurnost"
+    }
+  },
+  "history": {
+    "empty": "Nema zabilježenih promjena.",
+    "loading": "Učitavanje povijesti...",
+    "unknownUser": "nepoznato"
+  },
+  "loading": "Učitavanje...",
+  "noResults": "Nema parametara koji odgovaraju upitu „{query}”.",
+  "readOnly": "Način pregleda — za uređivanje parametara potrebna je uloga <b>it_admin</b>. Vaša uloga: <b>{role}</b>.",
+  "reload": {
+    "button": "⟳ Ponovno učitaj predmemoriju",
+    "done": "Predmemorija je ponovno učitana.",
+    "error": "Pogreška: {error}",
+    "running": "Ponovno učitavanje..."
+  },
+  "row": {
+    "hideHistory": "sakrij povijest",
+    "invalidJson": "Neispravan JSON",
+    "lastChange": "posl. promjena: {user} · {date}",
+    "locked": "zaključano",
+    "range": "raspon: {range}",
+    "save": "✓ Spremi",
+    "showHistory": "povijest",
+    "unit": "jedinica: {unit}"
+  },
+  "searchPlaceholder": "Pretraži parametre (naziv, ključ, opis)...",
+  "subtitle": "Operativna konfiguracija bez izmjena koda. Promjene su odmah aktivne (gateway/API osvježavaju vrijednosti u roku od 60 s).",
+  "title": "Parametri sustava"
+}

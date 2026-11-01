@@ -1,0 +1,81 @@
+{
+  "actions": {
+    "closeGap": "Remediați lacuna și actualizați starea în Registru: {title} ({article}).",
+    "completeDeclaration": "Completați autodeclarația în fila Registru: {title} ({article}).",
+    "updateConfig": "Actualizați configurația agentului aferentă: {title} ({article})."
+  },
+  "fallbackNarrative": "Sistemul „{name}” a fost clasificat cu nivelul de risc {risk}. Analiza completă a conformității necesită verificarea de către clasificatorul AI. Vă rugăm să generați din nou raportul.",
+  "fileName": "raport-ai-act-{name}.pdf",
+  "footer": "GovAI v0.2.0 · Raport generat la {date} UTC · Regulamentul (UE) 2024/1689 (EU AI Act). Documentul are caracter informativ și nu constituie consultanță juridică.",
+  "format": {
+    "dateTime": "%d.%m.%Y %H:%M"
+  },
+  "pdf": {
+    "gaps": {
+      "article": "Articol",
+      "beforeDeployment": "Înainte de implementare",
+      "days": "{days} zile",
+      "deadline": "Termen",
+      "none": "Nu au fost identificate lacune — cerințele au fost confirmate ca îndeplinite sau neaplicabile în declarațiile de conformitate (fila Registru).",
+      "requirement": "Cerință",
+      "severity": "Gravitate"
+    },
+    "meta": "Generat la: {date} UTC  ·  Proprietar: {owner}  ·  Echipă: {team}",
+    "noPendingActions": "Nu există acțiuni restante — toate cerințele au fost confirmate.",
+    "profile": {
+      "annexCategory": "Categoria din anexa III",
+      "annexNone": "Niciuna (în afara anexei)",
+      "contact": "Contact",
+      "humanOversight": "Supraveghere umană",
+      "model": "Model AI",
+      "monthlyBudget": "Buget lunar",
+      "oversightNotRequired": "Nu este necesară",
+      "oversightRequired": "NECESARĂ",
+      "owner": "Proprietar",
+      "property": "Proprietate",
+      "status": "Stare",
+      "systemId": "ID-ul sistemului",
+      "team": "Echipă",
+      "value": "Valoare"
+    },
+    "riskLevel": "Nivel de risc: {value}",
+    "sections": {
+      "compliance": "{n}. Evaluarea conformității cu EU AI Act",
+      "legalBasis": "3. Temei juridic și clasificare",
+      "profile": "2. Profilul sistemului AI",
+      "recommendations": "{n}. Recomandări prioritare",
+      "stats": "{n}. Statistici operaționale (ultimele 30 de zile)",
+      "summary": "1. Rezumat executiv"
+    },
+    "stats": {
+      "apiCost": "Cost API (30 de zile)",
+      "apiCostNote": "costuri estimate ale modelului LLM",
+      "avgLatency": "Latență medie",
+      "avgLatencyNote": "timp de răspuns end-to-end",
+      "comment": "Comentariu",
+      "metric": "Indicator",
+      "oversight": "Transmise spre supraveghere",
+      "oversightNote": "politica A-001",
+      "piiCalls": "Apeluri cu date personale",
+      "piiCallsNote": "date cu caracter personal detectate (Presidio)",
+      "policyBlocks": "Blocări de politici",
+      "policyBlocksNote": "G-001 financiare, G-002 prompt injection",
+      "totalCalls": "Total apeluri",
+      "totalCallsNote": "toate solicitările",
+      "value": "Valoare"
+    },
+    "tagline": "Platformă de guvernanță a agenților AI · EU AI Act Compliance",
+    "title": "Raport de conformitate EU AI Act"
+  },
+  "risk": {
+    "high": "Ridicat",
+    "limited": "Limitat",
+    "minimal": "Minim",
+    "unacceptable": "Inacceptabil"
+  },
+  "severity": {
+    "critical": "Critică",
+    "major": "Majoră",
+    "minor": "Minoră"
+  }
+}

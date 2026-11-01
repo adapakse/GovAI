@@ -1,0 +1,5 @@
+{
+  "errors": {
+    "call_not_found": "No se ha encontrado la llamada '{call_id}' en el registro"
+  }
+}

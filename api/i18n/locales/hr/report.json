@@ -1,0 +1,81 @@
+{
+  "actions": {
+    "closeGap": "Otklonite nedostatak i ažurirajte status u Registru: {title} ({article}).",
+    "completeDeclaration": "Ispunite samoprocjenu na kartici Registar: {title} ({article}).",
+    "updateConfig": "Ažurirajte konfiguraciju agenta koja se odnosi na: {title} ({article})."
+  },
+  "fallbackNarrative": "Sustav \"{name}\" klasificiran je na razini rizika {risk}. Potpuna analiza usklađenosti zahtijeva provjeru AI klasifikatora. Molimo ponovno generirajte izvješće.",
+  "fileName": "ai-act-izvjesce-{name}.pdf",
+  "footer": "GovAI v0.2.0 · Izvješće generirano {date} UTC · Uredba (EU) 2024/1689 (EU AI Act). Dokument je informativne naravi i ne predstavlja pravni savjet.",
+  "format": {
+    "dateTime": "%d.%m.%Y %H:%M"
+  },
+  "pdf": {
+    "gaps": {
+      "article": "Članak",
+      "beforeDeployment": "Prije uvođenja",
+      "days": "{days} dana",
+      "deadline": "Rok",
+      "none": "Nisu utvrđeni nedostaci — zahtjevi su u izjavama o usklađenosti potvrđeni kao ispunjeni ili neprimjenjivi (kartica Registar).",
+      "requirement": "Zahtjev",
+      "severity": "Težina"
+    },
+    "meta": "Generirano: {date} UTC  ·  Vlasnik: {owner}  ·  Tim: {team}",
+    "noPendingActions": "Nema otvorenih radnji — svi su zahtjevi potvrđeni.",
+    "profile": {
+      "annexCategory": "Kategorija iz Priloga III.",
+      "annexNone": "Nema (izvan Priloga)",
+      "contact": "Kontakt",
+      "humanOversight": "Ljudski nadzor",
+      "model": "AI model",
+      "monthlyBudget": "Mjesečni proračun",
+      "oversightNotRequired": "Nije potreban",
+      "oversightRequired": "POTREBAN",
+      "owner": "Vlasnik",
+      "property": "Svojstvo",
+      "status": "Status",
+      "systemId": "ID sustava",
+      "team": "Tim",
+      "value": "Vrijednost"
+    },
+    "riskLevel": "Razina rizika: {value}",
+    "sections": {
+      "compliance": "{n}. Procjena usklađenosti s EU AI Actom",
+      "legalBasis": "3. Pravna osnova i klasifikacija",
+      "profile": "2. Profil UI sustava",
+      "recommendations": "{n}. Prioritetne preporuke",
+      "stats": "{n}. Operativna statistika (posljednjih 30 dana)",
+      "summary": "1. Sažetak za upravu"
+    },
+    "stats": {
+      "apiCost": "Trošak API-ja (30 dana)",
+      "apiCostNote": "procijenjeni troškovi LLM modela",
+      "avgLatency": "Prosj. latencija",
+      "avgLatencyNote": "vrijeme odziva end-to-end",
+      "comment": "Komentar",
+      "metric": "Pokazatelj",
+      "oversight": "Upućeno na nadzor",
+      "oversightNote": "pravilo A-001",
+      "piiCalls": "Pozivi s osobnim podacima",
+      "piiCallsNote": "otkriveni osobni podaci (Presidio)",
+      "policyBlocks": "Blokade pravilima",
+      "policyBlocksNote": "G-001 financijske, G-002 prompt injection",
+      "totalCalls": "Ukupno poziva",
+      "totalCallsNote": "svi zahtjevi",
+      "value": "Vrijednost"
+    },
+    "tagline": "Platforma za upravljanje AI agentima · EU AI Act Compliance",
+    "title": "Izvješće o usklađenosti s EU AI Actom"
+  },
+  "risk": {
+    "high": "Visoki",
+    "limited": "Ograničeni",
+    "minimal": "Minimalni",
+    "unacceptable": "Neprihvatljivi"
+  },
+  "severity": {
+    "critical": "Kritična",
+    "major": "Ozbiljna",
+    "minor": "Manja"
+  }
+}

@@ -1,0 +1,268 @@
+{
+  "detail": {
+    "breadcrumb": "Agenți",
+    "compliance": {
+      "automatic": "automat",
+      "complianceOfficer": "Responsabil de conformitate",
+      "dataRetention": "Păstrarea datelor",
+      "dataRetentionValue": "{days, plural, one {# zi} few {# zile} other {# de zile}}",
+      "deadline": "Termen: {days, plural, one {# zi} few {# zile} other {# de zile}}",
+      "fillDeclaration": "→ Completați autodeclarația în fila Registru.",
+      "geographicScope": "Aria geografică",
+      "immediately": "IMEDIAT",
+      "integrationPoints": "Puncte de integrare",
+      "intendedPurpose": "Scopul preconizat și domeniul sistemului",
+      "intendedUsers": "Utilizatori vizați",
+      "missingLegalBasis": "lipsește temeiul juridic",
+      "notFilled": "Necompletat — consultați fila Registru",
+      "note": "Notă: {notes}",
+      "personalData": "Prelucrarea datelor cu caracter personal",
+      "personalDataNo": "Nu",
+      "personalDataYes": "Da — ",
+      "requirementsHeading": "Cerințe EU AI Act ({met}/{total} îndeplinite)",
+      "systemProfile": "Profilul sistemului",
+      "technicalContact": "Contact tehnic"
+    },
+    "generateReport": "Generați raportul PDF →",
+    "loading": "Se încarcă...",
+    "oversightRequired": "Supraveghere<br></br>necesară",
+    "profile": {
+      "budgetPerMonth": "Buget / lună",
+      "budgetValue": "{amount} EUR",
+      "lastReview": "Ultima revizuire: ",
+      "legalBasis": "Temei juridic: ",
+      "model": "Model",
+      "nextReview": "Următoarea: ",
+      "owner": "Proprietar",
+      "team": "Echipă"
+    },
+    "stats": {
+      "avgLatency": "Latență medie",
+      "blocked": "Blocări",
+      "calls": "Apeluri",
+      "oversight": "Pentru supraveghere",
+      "pii": "Cu date personale",
+      "piiDetected": "Date personale detectate",
+      "totalCost": "Cost total"
+    },
+    "tabs": {
+      "compliance": "Conformitate AI Act",
+      "registry": "Registru",
+      "registryWithCount": "Registru ({count} declarate)",
+      "stats": "Statistici 30 de zile"
+    }
+  },
+  "form": {
+    "cancel": "Anulare",
+    "done": "Gata",
+    "errors": {
+      "register": "Eroare la înregistrare"
+    },
+    "fields": {
+      "description": "Descrierea agentului (utilizată pentru clasificarea AI Act)",
+      "descriptionPlaceholder": "Descrieți exact ce face agentul, ce decizii ia, ce date prelucrează...",
+      "model": "Model",
+      "monthlyBudget": "Buget lunar (EUR)",
+      "name": "Numele agentului",
+      "namePlaceholder": "ex. Agent de Asistență Clienți",
+      "owner": "Proprietar",
+      "ownerEmail": "E-mailul proprietarului",
+      "ownerEmailPlaceholder": "j.kowalski@firma.pl",
+      "ownerPlaceholder": "Jan Kowalski",
+      "team": "Echipă",
+      "teamPlaceholder": "ex. Asistență Clienți"
+    },
+    "result": {
+      "annexIIICategory": "Categoria din anexa III:",
+      "no": "NU",
+      "oversightRequired": "Supraveghere necesară:",
+      "riskLevel": "Nivel de risc:",
+      "yes": "DA"
+    },
+    "submit": "Înregistrați + Clasificați",
+    "submitting": "Se clasifică...",
+    "subtitle": "Claude va clasifica automat riscul conform AI Act",
+    "success": "Agentul a fost înregistrat cu succes!",
+    "title": "Înregistrarea agentului AI"
+  },
+  "list": {
+    "actions": {
+      "activate": "Activare",
+      "details": "Detalii",
+      "suspend": "Suspendare"
+    },
+    "annexIII": "Anexa III: {category}",
+    "columns": {
+      "actions": "Acțiuni",
+      "model": "Model",
+      "name": "Nume",
+      "oversight": "Supraveghere",
+      "owner": "Proprietar",
+      "risk": "Risc",
+      "status": "Stare"
+    },
+    "count": "{count, plural, one {# agent} few {# agenți} other {# de agenți}}",
+    "countFiltered": "{shown} din {total} agenți",
+    "empty": "Niciun agent",
+    "filters": {
+      "allStatuses": "Toate stările"
+    },
+    "loading": "Se încarcă...",
+    "noMatches": "Niciun agent nu corespunde căutării „{query}”",
+    "oversightRequired": "● Necesară",
+    "registerButton": "+ Înregistrați un agent",
+    "searchPlaceholder": "Căutare — nume, model, furnizor, proprietar, echipă...",
+    "title": "Registrul agenților"
+  },
+  "options": {
+    "autoCheck": {
+      "art14_human_oversight": "verificat pe baza câmpului „Necesită supraveghere”",
+      "art26_2_human_oversight": "verificat pe baza câmpului „Necesită supraveghere”",
+      "art26_6_log_retention": "garanție arhitecturală — jurnal de audit fără mecanism de ștergere"
+    },
+    "declStatus": {
+      "na": "N/A — nu se aplică",
+      "no": "✗ Nu — lacună",
+      "none": "— neevaluat —",
+      "partial": "◑ Parțial",
+      "yes": "✓ Da — îndeplinit"
+    },
+    "gdprBasis": {
+      "consent": "Consimțământul persoanei vizate (art. 6 alin. (1) lit. (a))",
+      "contract": "Executarea unui contract (art. 6 alin. (1) lit. (b))",
+      "legal_obligation": "Obligație legală (art. 6 alin. (1) lit. (c))",
+      "legitimate_interest": "Interes legitim (lit. (f))",
+      "public_task": "Sarcină de interes public (art. 6 alin. (1) lit. (e))",
+      "vital_interests": "Protejarea intereselor vitale (lit. (d))"
+    },
+    "requirementStatus": {
+      "na": "Nu se aplică",
+      "no": "Lacună",
+      "partial": "Parțial",
+      "undeclared": "Neevaluat",
+      "yes": "Îndeplinit"
+    },
+    "riskFilter": {
+      "all": "Toate nivelurile de risc",
+      "high": "Risc ridicat",
+      "limited": "Risc limitat",
+      "minimal": "Risc minim",
+      "unacceptable": "Risc inacceptabil"
+    },
+    "severity": {
+      "critical": "Critică",
+      "major": "Majoră",
+      "minor": "Minoră"
+    }
+  },
+  "registry": {
+    "autoStatusGap": "✗ Lacună",
+    "autoStatusMet": "✓ Îndeplinit",
+    "automatic": "automat",
+    "declarationsIntro": "Evaluarea fiecărei cerințe de către persoana responsabilă — vizibilă în rapoartele PDF și în evaluarea conformității. Lista provine din catalogul de cerințe EU AI Act (Politici → Cerințe EU AI Act) pentru nivelul de risc „{risk}”.",
+    "fields": {
+      "complianceOfficer": "Responsabil de conformitate",
+      "costAlertThreshold": "Prag de alertă bugetară (EUR)",
+      "costAlertThresholdPlaceholder": "ex. 160 = alertă la 80%",
+      "dataRetentionDays": "Păstrarea datelor (zile)",
+      "dataRetentionDaysPlaceholder": "ex. 365",
+      "gdprLegalBasis": "Temeiul juridic conform RGPD",
+      "geographicScope": "Aria geografică",
+      "geographicScopePlaceholder": "ex. PL, UE",
+      "inputModalities": "Modalități de intrare (listă)",
+      "integrationPoints": "Puncte de integrare (fiecare pe un rând nou)",
+      "integrationPointsPlaceholder": "Core Banking System (CBS)\nCRM Salesforce\nBaza BIK",
+      "intendedPurpose": "Scopul și domeniul sistemului (scop preconizat)",
+      "intendedPurposePlaceholder": "Scurtă descriere a scopului sistemului și a contextului în care este utilizat...",
+      "intendedUsers": "Utilizatori vizați",
+      "intendedUsersPlaceholder": "ex. analiști de credit, angajați HR",
+      "lastReviewedAt": "Ultima revizuire de conformitate",
+      "modelVersion": "Versiunea modelului",
+      "modelVersionPlaceholder": "ex. claude-haiku-4-5-20251001",
+      "monthlyBudget": "Buget lunar (EUR)",
+      "nextReviewDate": "Următoarea revizuire planificată",
+      "outputModalities": "Modalități de ieșire (listă)",
+      "processesPersonalData": "Sistemul prelucrează date cu caracter personal",
+      "selectPlaceholder": "— selectați —",
+      "technicalContact": "Contact tehnic",
+      "version": "Versiunea sistemului"
+    },
+    "lastUpdated": "Ultima actualizare: {date}",
+    "loadingRequirements": "Se încarcă cerințele...",
+    "noRequirements": "Nu există cerințe definite în catalog pentru nivelul de risc „{risk}”.",
+    "notSelfDeclarable": "Nu face obiectul autodeclarării — necesită eliminarea efectivă a problemei.",
+    "notePlaceholder": "Notă (opțional) — ex. „Documentație în Confluence, spațiul AI-GOV”",
+    "save": "Salvați registrul",
+    "saved": "✓ Salvat cu succes",
+    "saving": "Se salvează...",
+    "sections": {
+      "contactsBudget": "Contacte și buget",
+      "declarations": "Declarații de conformitate EU AI Act",
+      "personalData": "Date cu caracter personal și RGPD",
+      "technical": "Date tehnice",
+      "versionReviews": "Versiune și revizuiri"
+    }
+  },
+  "report": {
+    "annexIII": "Anexa III: {category}",
+    "backToAgent": "← Înapoi la agent",
+    "breadcrumbAgents": "Agenți",
+    "breadcrumbReport": "Raport AI Act",
+    "columns": {
+      "article": "Articol",
+      "deadline": "Termen",
+      "requirement": "Cerință",
+      "severity": "Gravitate"
+    },
+    "deadlineDays": "{days, plural, one {# zi} few {# zile} other {# de zile}}",
+    "downloadPdf": "Descărcați PDF",
+    "error": "Eroare la generarea raportului: {error}",
+    "errors": {
+      "sessionExpired": "Sesiunea a expirat"
+    },
+    "footer": "Raport generat de GovAI v0.2.0 · EU AI Act (Regulamentul (UE) 2024/1689) · Documentul are caracter informativ. Nu constituie consultanță juridică.",
+    "generatingPdf": "Se generează PDF-ul...",
+    "header": "GovAI · Raport de conformitate EU AI Act · Regulamentul (UE) 2024/1689",
+    "immediately": "IMEDIAT",
+    "loading": "Se generează raportul de conformitate cu AI Act...",
+    "meta": {
+      "generatedAt": "Generat la: ",
+      "model": "Model: ",
+      "owner": "Proprietar: ",
+      "team": "Echipă: "
+    },
+    "noGaps": "Nu au fost identificate lacune — cerințele au fost confirmate ca îndeplinite sau neaplicabile în declarațiile de conformitate (fila Registru).",
+    "oversightRequired": "◎ Supraveghere necesară",
+    "pdfFilename": "raport-ai-act-{id}.pdf",
+    "print": "Imprimare",
+    "profile": {
+      "annexIIICategory": "Categoria din anexa III",
+      "annexIIINone": "Niciuna",
+      "budgetPerMonth": "Buget / lună",
+      "budgetValue": "{amount} EUR",
+      "humanOversight": "Supraveghere umană",
+      "legalBasis": "Temei juridic și clasificare",
+      "model": "Model AI",
+      "oversightNotRequired": "Nu este necesară",
+      "oversightRequired": "NECESARĂ",
+      "ownerEmail": "E-mailul proprietarului",
+      "status": "Stare"
+    },
+    "risk": "Risc: {risk}",
+    "sections": {
+      "compliance": "4. Evaluarea conformității cu EU AI Act",
+      "profile": "2. Profilul sistemului AI",
+      "stats": "3. Statistici operaționale (30 de zile)",
+      "summary": "1. Rezumat executiv"
+    },
+    "stats": {
+      "apiCost": "Cost API",
+      "avgLatency": "Latență medie",
+      "blocked": "Blocări",
+      "blockedValue": "{count} ({rate}%)",
+      "calls": "Apeluri",
+      "oversight": "Pentru supraveghere",
+      "pii": "Cu date personale"
+    }
+  }
+}

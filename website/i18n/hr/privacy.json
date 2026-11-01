@@ -1,0 +1,49 @@
+{
+  "changes": {
+    "text": "Ovu politiku možemo ažurirati ako se promijeni način rada stranice ili zakonski zahtjevi. Aktualna verzija uvijek je dostupna na ovoj adresi.",
+    "title": "Izmjene politike"
+  },
+  "controller": {
+    "contact": "Kontakt za pitanja zaštite podataka:",
+    "intro": "Voditelj obrade osobnih podataka koji se obrađuju u vezi s korištenjem ove stranice je:",
+    "title": "Voditelj obrade"
+  },
+  "cookies": {
+    "text": "Ova stranica ne upotrebljava kolačiće za praćenje ni oglašavanje. Jedine informacije koje se lokalno pohranjuju u Vašem pregledniku jesu odabrana tema boja (svijetla/tamna) te — ako ga odaberete u izborniku — jezik stranice, pohranjeni u <span class=\"mono\">localStorage</span> — ne napuštaju Vaš uređaj i ni na koji nam se način ne prenose.",
+    "title": "Kolačići i localStorage"
+  },
+  "data": {
+    "form": "Ova stranica prikuplja osobne podatke isključivo kada ih sami unesete — putem kontaktnog obrasca. Obrazac traži: ime i prezime, naziv tvrtke, službenu adresu e-pošte, po želji broj telefona te sadržaj poruke.",
+    "noTracking": "Na ovoj stranici ne pratimo niti profiliramo posjetitelje — ovdje nema analitičkih ni oglašivačkih alata.",
+    "title": "Koje podatke prikupljamo"
+  },
+  "meta": {
+    "description": "Politika privatnosti stranice govai.pl — koje podatke prikupljamo putem kontaktnog obrasca, na kojoj pravnoj osnovi i koliko ih dugo čuvamo.",
+    "title": "Politika privatnosti — GovAI"
+  },
+  "purpose": {
+    "text": "Podatke iz obrasca obrađujemo isključivo u svrhu odgovora na upit i eventualne pripreme poslovne ponude — pravna osnova je članak 6. stavak 1. točka (b) Opće uredbe o zaštiti podataka (GDPR) (radnje prije sklapanja ugovora, na Vaš zahtjev) te članak 6. stavak 1. točka (f) GDPR-a (naš legitimni interes za vođenje poslovne korespondencije).",
+    "title": "Svrha i pravna osnova obrade"
+  },
+  "recipients": {
+    "text": "Za obradu kontaktnog obrasca koristimo vanjskog pružatelja usluge <strong style=\"color:var(--text)\">Web3Forms</strong>, koji posreduje u prijenosu poruka iz obrasca u naš poštanski sandučić <span class=\"mono\">kontakt@govai.pl</span>. Web3Forms ovdje djeluje kao izvršitelj obrade koji obrađuje podatke u naše ime. Osim tom pružatelju usluge, podatke iz obrasca ne prenosimo nijednom drugom subjektu, osim ako to zahtijeva zakon.",
+    "title": "Kome prenosimo podatke"
+  },
+  "retention": {
+    "text": "Podatke iz kontaktnog obrasca čuvamo onoliko dugo koliko je potrebno za obradu upita i vođenje korespondencije, a zatim — ako ne dođe do daljnje suradnje — tijekom razdoblja opravdanog mogućim zahtjevima. Ako želite da Vaše podatke izbrišemo ranije, pišite na <a href=\"mailto:kontakt@govai.pl\">kontakt@govai.pl</a>.",
+    "title": "Razdoblje čuvanja"
+  },
+  "rights": {
+    "access": "Pravo na pristup svojim podacima i dobivanje njihove kopije",
+    "complaint": "Pravo na podnošenje pritužbe predsjedniku Ureda za zaštitu osobnih podataka Republike Poljske (PUODO)",
+    "erasure": "Pravo na brisanje podataka („pravo na zaborav”)",
+    "howTo": "Za ostvarivanje navedenih prava pišite na <a href=\"mailto:kontakt@govai.pl\">kontakt@govai.pl</a>.",
+    "objection": "Pravo na prigovor na obradu",
+    "portability": "Pravo na prenosivost podataka",
+    "rectification": "Pravo na ispravak podataka",
+    "restriction": "Pravo na ograničenje obrade",
+    "title": "Vaša prava"
+  },
+  "scope": "Odnosi se na stranice <span class=\"mono\">govai.pl</span> i <span class=\"mono\">govai.pl/blog.html</span>.",
+  "title": "Politika privatnosti"
+}

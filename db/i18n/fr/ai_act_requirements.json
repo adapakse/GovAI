@@ -1,0 +1,74 @@
+{
+  "high|Art. 10": {
+    "text": "Les jeux de données d’entraînement, de validation et de test doivent satisfaire à des critères de qualité — pertinence, représentativité, absence d’erreurs et exhaustivité. Une documentation des jeux de données est requise.",
+    "title": "Données et gouvernance des données"
+  },
+  "high|Art. 11": {
+    "text": "Avant la mise en service, une documentation technique complète conforme à l’annexe IV de l’EU AI Act est requise. Ce document doit être tenu à jour tout au long du cycle de vie du système.",
+    "title": "Documentation technique"
+  },
+  "high|Art. 13": {
+    "text": "Le système d’IA doit garantir un fonctionnement suffisamment transparent. Les utilisateurs doivent être informés qu’ils interagissent avec un système d’IA et en comprendre le fonctionnement dans la mesure nécessaire au contrôle.",
+    "title": "Transparence et fourniture d’informations"
+  },
+  "high|Art. 14": {
+    "text": "Des mesures permettant à une personne physique de comprendre, de surveiller et d’intervenir dans le fonctionnement du système d’IA sont mises en œuvre. Toute décision du système doit pouvoir être interrompue ou annulée.",
+    "title": "Contrôle humain"
+  },
+  "high|Art. 15": {
+    "text": "Le système doit atteindre un niveau d’exactitude approprié tout au long de son cycle de vie. Des tests de robustesse face aux erreurs, aux attaques et aux données d’entrée inattendues sont requis.",
+    "title": "Exactitude et robustesse"
+  },
+  "high|Art. 17": {
+    "text": "Le fournisseur met en place un système de gestion de la qualité comprenant des politiques, des procédures et des instructions visant à garantir la conformité à l’EU AI Act.",
+    "title": "Système de gestion de la qualité"
+  },
+  "high|Art. 26 ust. 2": {
+    "text": "Le déployeur d’un système à haut risque doit confier le contrôle humain à des personnes physiques disposant des compétences, de la formation, de l’autorité et du soutien nécessaires pour l’exercer.",
+    "title": "Contrôle humain confié à une personne compétente"
+  },
+  "high|Art. 26 ust. 5": {
+    "text": "Le déployeur doit surveiller le fonctionnement du système conformément à la notice d’utilisation et informer le fournisseur ainsi que, le cas échéant, l’autorité de surveillance du marché de tout risque identifié ou de tout incident grave.",
+    "title": "Surveillance du fonctionnement et information du fournisseur"
+  },
+  "high|Art. 26 ust. 6": {
+    "text": "Le déployeur doit conserver les journaux générés automatiquement par le système pendant une période adaptée à la destination du système, d’au moins six mois, sauf disposition contraire du droit de l’Union ou du droit national.",
+    "title": "Conservation des journaux générés automatiquement"
+  },
+  "high|Art. 26 ust. 8": {
+    "text": "Le déployeur qui est une autorité publique doit respecter les obligations d’enregistrement prévues à l’art. 49 et, avant la mise en service du système, vérifier que celui-ci est enregistré dans la base de données de l’UE.",
+    "title": "Vérification de l’enregistrement dans la base de données de l’UE"
+  },
+  "high|Art. 27": {
+    "text": "Avant de déployer un système à haut risque visé à l’annexe III, point 5 b) ou c) (évaluation de la solvabilité, risque en matière d’assurance), ou lorsqu’il s’agit d’un organisme de droit public ou d’une entité privée fournissant des services publics, le déployeur doit procéder à une analyse d’impact sur les droits fondamentaux : description des processus d’utilisation, période et fréquence d’utilisation, catégories de personnes concernées, risques de préjudice pour ces personnes, ainsi que mesures de contrôle humain et mécanismes de recours.",
+    "title": "Analyse d’impact sur les droits fondamentaux (FRIA)"
+  },
+  "high|Art. 43": {
+    "text": "Les systèmes à haut risque visés à l’annexe III doivent faire l’objet d’une évaluation de la conformité (contrôle interne ou par un organisme notifié) avant leur mise en service.",
+    "title": "Évaluation de la conformité"
+  },
+  "high|Art. 49": {
+    "text": "Les systèmes à haut risque doivent être enregistrés dans la base de données de l’UE avant leur mise en service.",
+    "title": "Enregistrement dans la base de données de l’UE"
+  },
+  "high|Art. 9": {
+    "text": "Un agent à haut risque requiert un système de gestion des risques documenté tout au long de son cycle de vie. L’identification, l’analyse et l’évaluation des risques ainsi que la mise en œuvre de mesures d’atténuation sont requises.",
+    "title": "Système de gestion des risques"
+  },
+  "limited|Art. 50 ust. 1": {
+    "text": "Les systèmes destinés à interagir avec des personnes physiques doivent informer l’utilisateur de manière claire, reconnaissable et en temps utile du caractère automatisé du système, sauf si cela ressort clairement du contexte.",
+    "title": "Obligation d’information sur l’IA"
+  },
+  "limited|Art. 50 ust. 4": {
+    "text": "Les contenus textuels, audio et vidéo générés par l’IA doivent être marqués dans un format lisible par machine comme ayant été générés par l’IA.",
+    "title": "Marquage des contenus générés par l’IA"
+  },
+  "minimal|Preambuła 46": {
+    "text": "Aucune exigence légale obligatoire pour les systèmes à risque minimal. Il est recommandé d’appliquer des codes de conduite volontaires et les principes généraux d’une IA digne de confiance (transparence, équité, sécurité).",
+    "title": "Codes de conduite volontaires"
+  },
+  "unacceptable|Art. 5": {
+    "text": "Les pratiques en matière d’IA énumérées à l’art. 5 sont strictement interdites dans l’UE. Il convient de vérifier que le système ne relève d’aucune des catégories interdites (manipulation subliminale, notation sociale, identification biométrique en temps réel).",
+    "title": "Interdiction absolue"
+  }
+}

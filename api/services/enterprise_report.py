@@ -21,6 +21,7 @@ from reportlab.platypus import (
 )
 
 from config import settings
+from i18n import language_name_en, t, t_dict
 from services import settings_service
 from repositories import compliance_repository as compliance_repo
 from database import get_pool
@@ -39,17 +40,24 @@ _F  = "ERpt"
 _FB = "ERpt-Bold"
 
 # ── Stałe ─────────────────────────────────────────────────────────────────────
-_RISK_PL = {"minimal": "Minimalne", "limited": "Ograniczone",
-             "high": "Wysokie", "unacceptable": "Niedopuszczalne"}
 _RISK_HEX = {"minimal": "#2D9C61", "limited": "#1E6FBF",
               "high": "#E67E22", "unacceptable": "#C0392B"}
-_STATUS_PL = {"active": "Aktywny", "suspended": "Zawieszony",
-               "quarantined": "Kwarantanna", "retired": "Wycofany"}
+
+
+def _risk_label(risk: str) -> str:
+    """Etykieta poziomu ryzyka — wspólna z raportem agenta (report.risk.<poziom>)."""
+    return t_dict("report.risk").get(risk, risk)
+
+
+def _status_label(status: str | None) -> str:
+    return t_dict("enterpriseReport.agentStatus").get(status, status or "—")
+
 
 _ENTERPRISE_PROMPT = """\
 Jesteś dyrektorem ds. zgodności AI (Chief AI Compliance Officer) w dużym przedsiębiorstwie.
 Na podstawie poniższych danych operacyjnych za okres {days} dni napisz streszczenie wykonawcze
-dla zarządu (max 320 słów, po polsku, bez nagłówków, ciągły tekst).
+dla zarządu (max 320 słów, bez nagłówków, ciągły tekst).
+Write the summary in {language}.
 
 Dane organizacji:
 {data}
@@ -275,19 +283,17 @@ async def generate_enterprise_narrative(data: dict) -> str:
                 "content": _ENTERPRISE_PROMPT.format(
                     days=days,
                     data=json.dumps(summary, ensure_ascii=False, indent=2),
+                    language=language_name_en(),
                 ),
             }],
         )
         return msg.content[0].text.strip()
     except Exception:
         block_pct = round(blocked / max(total, 1) * 100, 1)
-        return (
-            f"W analizowanym okresie {days} dni organizacja eksploatowała {n_agents} agentów AI, "
-            f"z czego {n_high} klasyfikowanych jako wysokie ryzyko wg EU AI Act. "
-            f"Odnotowano {total} wywołań, z czego {blocked} ({block_pct}%) zostało zablokowanych "
-            f"przez silnik polityk bezpieczeństwa. Wykryto {pii} incydentów z danymi osobowymi. "
-            f"Łączny koszt API wyniósł {float(kpi.get('total_cost') or 0):.2f} EUR. "
-            "Szczegółowa analiza zgodności z EU AI Act wymaga weryfikacji przez właściwy organ compliance."
+        return t(
+            "enterpriseReport.fallbackNarrative",
+            days=days, agents=n_agents, high=n_high, total=total, blocked=blocked,
+            block_pct=block_pct, pii=pii, cost=f"{float(kpi.get('total_cost') or 0):.2f}",
         )
 
 
@@ -423,16 +429,20 @@ def render_enterprise_pdf(data: dict, narrative: str) -> bytes:
     # ══════════════════════════════════════════════════════════════════════════
     # STRONA TYTUŁOWA
     # ══════════════════════════════════════════════════════════════════════════
+    # Format daty z tłumaczeń (strftime, wspólny z raportem agenta) — domyślnie dd.mm.rrrr
+    gen_str = gen_dt.strftime(t("report.format.dateTime"))
+    P = "enterpriseReport.pdf."
+
     story += [
         Spacer(1, 1.5*cm),
         _p("GovAI", S["brand"]),
-        _p("Platforma Zarządzania Agentami AI · EU AI Act Compliance", S["sub"]),
+        _p(t("report.pdf.tagline"), S["sub"]),
         _hr(thick=3, color="#1E6FBF", before=4, after=20),
-        _p(f"Raport Zarządzania AI Przedsiębiorstwa", _s("rt", fontSize=22, fontName=_FB,
+        _p(t(P + "title"), _s("rt", fontSize=22, fontName=_FB,
             leading=28, textColor=colors.HexColor("#0D1B2A"), spaceAfter=6)),
-        _p(f"Okres analizy: ostatnie {days} dni", _s("rp", fontSize=13, leading=18,
+        _p(t(P + "period", days=days), _s("rp", fontSize=13, leading=18,
             textColor=colors.HexColor("#334155"), spaceAfter=4)),
-        _p(f"Wygenerowano: {gen_dt.strftime('%d.%m.%Y %H:%M')} UTC", S["meta"]),
+        _p(t(P + "generated", date=gen_str), S["meta"]),
         Spacer(1, 1.2*cm),
     ]
 
@@ -440,12 +450,12 @@ def render_enterprise_pdf(data: dict, narrative: str) -> bytes:
     n_active = sum(1 for a in agents if a.get("status") == "active")
     n_high   = sum(1 for a in agents if a.get("risk_level") in ("high", "unacceptable"))
     story.append(_kpi_table([
-        ("Agentów AI", str(len(agents)), f"{n_active} aktywnych"),
-        ("Wywołań", f"{total:,}".replace(",", " "), f"ostatnie {days} dni"),
-        ("Blokady", f"{blocked:,}".replace(",", " "),
-         f"{blocked/max(total,1)*100:.1f}% wszystkich"),
-        ("Incydenty PII", str(pii_c), "wykryte dane osobowe"),
-        ("Koszt API", f"{cost:.2f} EUR", f"łącznie {days} dni"),
+        (t(P + "cover.agents"), str(len(agents)), t(P + "cover.agentsActive", n=n_active)),
+        (t(P + "cover.calls"), f"{total:,}".replace(",", " "), t(P + "cover.lastDays", days=days)),
+        (t(P + "cover.blocks"), f"{blocked:,}".replace(",", " "),
+         t(P + "cover.blocksShare", pct=f"{blocked/max(total,1)*100:.1f}")),
+        (t(P + "cover.pii"), str(pii_c), t(P + "cover.piiNote")),
+        (t(P + "cover.apiCost"), f"{cost:.2f} EUR", t(P + "cover.totalDays", days=days)),
     ]))
     story += [
         Spacer(1, 0.8*cm),
@@ -460,13 +470,13 @@ def render_enterprise_pdf(data: dict, narrative: str) -> bytes:
         alert_border = colors.HexColor("#F59E0B")
         alert_lines = []
         for b in alerts:
-            alert_lines.append(
-                f"⚠ Przekroczenie budżetu: {b['name']} — {b['actual']:.2f} EUR"
-                f" ({b['pct']}% progu {b['threshold']:.0f} EUR)"
-            )
+            alert_lines.append(t(
+                P + "alerts.budgetExceeded", name=b["name"], actual=f"{b['actual']:.2f}",
+                pct=b["pct"], threshold=f"{b['threshold']:.0f}",
+            ))
         for o in overdue:
             d = o.get("next_review_date", "")[:10]
-            alert_lines.append(f"⚠ Zaległy przegląd compliance: {o['name']} (termin: {d})")
+            alert_lines.append(t(P + "alerts.overdueReview", name=o["name"], date=d))
 
         alert_data = [[Paragraph(line, S["alert"])] for line in alert_lines]
         at = Table(alert_data, colWidths=[W - lm - rm])
@@ -483,7 +493,7 @@ def render_enterprise_pdf(data: dict, narrative: str) -> bytes:
     # 1. STRESZCZENIE DLA ZARZĄDU
     # ══════════════════════════════════════════════════════════════════════════
     story += [
-        _p("1. Streszczenie dla Zarządu", S["h2"]),
+        _p(t(P + "sections.summary"), S["h2"]),
         _hr(),
         _p(_md(narrative), S["body"]),
         Spacer(1, 0.3*cm),
@@ -492,10 +502,11 @@ def render_enterprise_pdf(data: dict, narrative: str) -> bytes:
     # ══════════════════════════════════════════════════════════════════════════
     # 2. ROZKŁAD RYZYKA
     # ══════════════════════════════════════════════════════════════════════════
-    story += [_p("2. Rozkład Ryzyka EU AI Act", S["h2"]), _hr()]
+    story += [_p(t(P + "sections.riskDistribution"), S["h2"]), _hr()]
 
     risk_order = ["unacceptable", "high", "limited", "minimal"]
-    risk_rows = [["Poziom ryzyka", "Liczba agentów", "Agenci", "Wymaga nadzoru"]]
+    risk_rows = [[t(P + "risk.level"), t(P + "risk.agentCount"),
+                  t(P + "risk.agents"), t(P + "risk.requiresOversight")]]
     for rl in risk_order:
         cnt = rd.get(rl, 0)
         if cnt == 0:
@@ -504,7 +515,7 @@ def render_enterprise_pdf(data: dict, narrative: str) -> bytes:
         oversight_cnt = sum(1 for a in agents
                             if a.get("risk_level") == rl and a.get("requires_oversight"))
         hex_c = _RISK_HEX.get(rl, "#666")
-        label = f'<font color="{hex_c}"><b>{_RISK_PL.get(rl, rl)}</b></font>'
+        label = f'<font color="{hex_c}"><b>{_risk_label(rl)}</b></font>'
         risk_rows.append([label, str(cnt), names, str(oversight_cnt)])
 
     story += [
@@ -515,35 +526,38 @@ def render_enterprise_pdf(data: dict, narrative: str) -> bytes:
     # ══════════════════════════════════════════════════════════════════════════
     # 3. KPI OPERACYJNE
     # ══════════════════════════════════════════════════════════════════════════
-    story += [_p("3. KPI Operacyjne (ostatnie {days} dni)".format(days=days), S["h2"]), _hr()]
+    story += [_p(t(P + "sections.kpi", days=days), S["h2"]), _hr()]
 
     oversight_total = int(oh.get("total") or 0)
     oversight_pend  = int(oh.get("pending") or 0)
     avg_rev = oh.get("avg_review_min")
+    K = P + "kpi."
 
     kpi_rows = [
-        ["Metryka", "Wartość", "Komentarz"],
-        ["Wywołania ogółem",     f"{total:,}".replace(",", " "), "wszystkie agenty"],
-        ["Blokady polityk",      f"{blocked}  ({blocked/max(total,1)*100:.1f}%)",
-                                  "G-001 finansowe, G-002 prompt injection"],
-        ["Skierowane do nadzoru", str(int(kpi.get("oversight") or 0)), "polityka A-001 (art. 14)"],
-        ["Incydenty PII",        str(pii_c), f"łącznie {int(kpi.get('pii_entities') or 0)} encji"],
-        ["Śr. latencja",         f"{float(lat):.0f} ms" if lat else "—", "end-to-end"],
-        ["Maks. latencja",       f"{int(kpi.get('max_latency') or 0)} ms", "najwolniejsze wywołanie"],
-        ["Tokeny wejściowe",     f"{int(kpi.get('tokens_in') or 0):,}".replace(",", " "), "prompt"],
-        ["Tokeny wyjściowe",     f"{int(kpi.get('tokens_out') or 0):,}".replace(",", " "), "completion"],
-        ["Koszt API łącznie",    f"{cost:.4f} EUR", "szacowany koszt modeli LLM"],
-        ["Kolejka nadzoru",      f"{oversight_total} zadań ({oversight_pend} oczekuje)",
-                                  f"śr. czas przeglądu: {float(avg_rev):.1f} min" if avg_rev else "brak danych"],
+        [t(K + "metric"), t(K + "value"), t(K + "comment")],
+        [t(K + "totalCalls"),    f"{total:,}".replace(",", " "), t(K + "totalCallsNote")],
+        [t(K + "policyBlocks"),  f"{blocked}  ({blocked/max(total,1)*100:.1f}%)",
+                                  t(K + "policyBlocksNote")],
+        [t(K + "oversight"),     str(int(kpi.get("oversight") or 0)), t(K + "oversightNote")],
+        [t(K + "pii"),           str(pii_c), t(K + "piiNote", n=int(kpi.get("pii_entities") or 0))],
+        [t(K + "avgLatency"),    f"{float(lat):.0f} ms" if lat else "—", t(K + "avgLatencyNote")],
+        [t(K + "maxLatency"),    f"{int(kpi.get('max_latency') or 0)} ms", t(K + "maxLatencyNote")],
+        [t(K + "tokensIn"),      f"{int(kpi.get('tokens_in') or 0):,}".replace(",", " "), t(K + "tokensInNote")],
+        [t(K + "tokensOut"),     f"{int(kpi.get('tokens_out') or 0):,}".replace(",", " "), t(K + "tokensOutNote")],
+        [t(K + "apiCost"),       f"{cost:.4f} EUR", t(K + "apiCostNote")],
+        [t(K + "oversightQueue"), t(K + "oversightQueueValue", total=oversight_total, pending=oversight_pend),
+                                  t(K + "avgReview", min=f"{float(avg_rev):.1f}") if avg_rev else t(P + "noData")],
     ]
     story += [_tbl(kpi_rows, [5*cm, 4.5*cm, 7*cm]), Spacer(1, 0.4*cm)]
 
     # ══════════════════════════════════════════════════════════════════════════
     # 4. REJESTR AGENTÓW
     # ══════════════════════════════════════════════════════════════════════════
-    story += [PageBreak(), _p("4. Rejestr Agentów AI", S["h2"]), _hr()]
+    story += [PageBreak(), _p(t(P + "sections.registry"), S["h2"]), _hr()]
 
-    agent_rows = [["Agent", "Ryzyko", "Status", "Nadzór", "Wywołania", "Blokady", "Koszt EUR", "Przegląd"]]
+    C = P + "columns."
+    agent_rows = [[t(C + "agent"), t(C + "risk"), t(C + "status"), t(C + "oversight"),
+                   t(C + "calls"), t(C + "blocks"), t(C + "costEur"), t(C + "review")]]
     for a in agents:
         aid = str(a["id"])
         st = asm.get(aid, {})
@@ -553,11 +567,12 @@ def render_enterprise_pdf(data: dict, narrative: str) -> bytes:
         rev     = (a.get("next_review_date") or "")[:10] or "—"
         rl      = a.get("risk_level", "minimal")
         hex_c   = _RISK_HEX.get(rl, "#666")
-        risk_lbl = f'<font color="{hex_c}"><b>{_RISK_PL.get(rl, rl)[:3].upper()}</b></font>'
-        status_lbl = _STATUS_PL.get(a.get("status"), a.get("status", "—"))
+        risk_short = t_dict(P + "riskShort").get(rl, rl[:3].upper())
+        risk_lbl = f'<font color="{hex_c}"><b>{risk_short}</b></font>'
+        status_lbl = _status_label(a.get("status"))
         agent_rows.append([
             a["name"], risk_lbl, status_lbl,
-            "TAK" if a.get("requires_oversight") else "nie",
+            t(P + "yes") if a.get("requires_oversight") else t(P + "no"),
             str(calls), str(blk), f"{cost_a:.4f}", rev,
         ])
 
@@ -569,13 +584,14 @@ def render_enterprise_pdf(data: dict, narrative: str) -> bytes:
     # ══════════════════════════════════════════════════════════════════════════
     # 5. TOP AGENCI
     # ══════════════════════════════════════════════════════════════════════════
-    story += [_p("5. Analiza Aktywności Agentów", S["h2"]), _hr()]
+    story += [_p(t(P + "sections.activity"), S["h2"]), _hr()]
 
     pa = data["per_agent"]
     if pa:
-        story += [_p("Top agenci wg wywołań:", S["h3"])]
+        story += [_p(t(P + "activity.topByCalls"), S["h3"])]
         top_calls = pa[:5]
-        top_rows = [["Agent", "Wywołania", "Blokady", "Nadzór", "PII", "Koszt EUR", "Śr. latencja"]]
+        top_rows = [[t(C + "agent"), t(C + "calls"), t(C + "blocks"), t(C + "oversight"),
+                     t(C + "pii"), t(C + "costEur"), t(C + "avgLatency")]]
         for r in top_calls:
             top_rows.append([
                 r["agent_name"],
@@ -593,8 +609,8 @@ def render_enterprise_pdf(data: dict, narrative: str) -> bytes:
         top_blocked = sorted(pa, key=lambda r: int(r.get("blocked") or 0), reverse=True)[:5]
         top_blocked = [r for r in top_blocked if int(r.get("blocked") or 0) > 0]
         if top_blocked:
-            story += [_p("Top agenci wg blokad:", S["h3"])]
-            blk_rows = [["Agent", "Blokady", "Wywołania", "% blokad"]]
+            story += [_p(t(P + "activity.topByBlocks"), S["h3"])]
+            blk_rows = [[t(C + "agent"), t(C + "blocks"), t(C + "calls"), t(C + "blockRate")]]
             for r in top_blocked:
                 calls_r = int(r.get("calls") or 0)
                 blk_r   = int(r.get("blocked") or 0)
@@ -607,35 +623,36 @@ def render_enterprise_pdf(data: dict, narrative: str) -> bytes:
     # ══════════════════════════════════════════════════════════════════════════
     # 6. INCYDENTY BEZPIECZEŃSTWA
     # ══════════════════════════════════════════════════════════════════════════
-    story += [PageBreak(), _p("6. Incydenty Bezpieczeństwa", S["h2"]), _hr()]
+    story += [PageBreak(), _p(t(P + "sections.incidents"), S["h2"]), _hr()]
+    I = P + "incidents."
 
     if data["pii_cats"]:
-        story += [_p("Wykryte kategorie danych osobowych (PII):", S["h3"])]
-        pii_rows = [["Kategoria PII", "Liczba incydentów"]]
+        story += [_p(t(I + "piiCategories"), S["h3"])]
+        pii_rows = [[t(I + "piiCategory"), t(I + "incidentCount")]]
         for r in data["pii_cats"]:
             pii_rows.append([r["cat"], str(int(r["cnt"]))])
         story += [_tbl(pii_rows, [10*cm, 6.5*cm]), Spacer(1, 0.3*cm)]
     else:
-        story += [_p("Brak wykrytych incydentów PII w analizowanym okresie.", S["body"])]
+        story += [_p(t(I + "noPii"), S["body"])]
 
     if data["policy_hits"]:
-        story += [_p("Aktywacje reguł blokujących:", S["h3"])]
-        ph_rows = [["Polityka (kod)", "Liczba blokad"]]
+        story += [_p(t(I + "policyHits"), S["h3"])]
+        ph_rows = [[t(I + "policyCode"), t(I + "blockCount")]]
         for r in data["policy_hits"]:
             ph_rows.append([r["policy_id"] or "—", str(int(r["cnt"]))])
         story += [_tbl(ph_rows, [10*cm, 6.5*cm]), Spacer(1, 0.3*cm)]
 
     # Kolejka nadzoru
-    story += [_p("Historia kolejki nadzoru człowieka (art. 14):", S["h3"])]
+    story += [_p(t(I + "oversightHistory"), S["h3"])]
     ov_rows = [
-        ["Metryka", "Wartość"],
-        ["Zadania ogółem",   str(int(oh.get("total") or 0))],
-        ["Zatwierdzone",     str(int(oh.get("approved") or 0))],
-        ["Odrzucone",        str(int(oh.get("rejected") or 0))],
-        ["Eskalowane",       str(int(oh.get("escalated") or 0))],
-        ["Oczekujące",       str(int(oh.get("pending") or 0))],
-        ["Śr. czas przeglądu", f"{float(oh.get('avg_review_min') or 0):.1f} min"
-                                if oh.get("avg_review_min") else "brak danych"],
+        [t(K + "metric"),        t(K + "value")],
+        [t(I + "tasksTotal"),    str(int(oh.get("total") or 0))],
+        [t(I + "approved"),      str(int(oh.get("approved") or 0))],
+        [t(I + "rejected"),      str(int(oh.get("rejected") or 0))],
+        [t(I + "escalated"),     str(int(oh.get("escalated") or 0))],
+        [t(I + "pending"),       str(int(oh.get("pending") or 0))],
+        [t(I + "avgReviewTime"), f"{float(oh.get('avg_review_min') or 0):.1f} min"
+                                 if oh.get("avg_review_min") else t(P + "noData")],
     ]
     story += [_tbl(ov_rows, [10*cm, 6.5*cm]), Spacer(1, 0.4*cm)]
 
@@ -651,13 +668,13 @@ def render_enterprise_pdf(data: dict, narrative: str) -> bytes:
         for r in data.get("high_risk_requirements", []) if r.get("decl_key")
     ]
     if high_risk_agents and ARTS:
-        story += [_p("7. Deklaracje Zgodności EU AI Act — Agenci Wysokiego Ryzyka", S["h2"]), _hr()]
+        story += [_p(t(P + "sections.declarations"), S["h2"]), _hr()]
 
         STATUS_ICON = {"yes": "✓", "partial": "◑", "no": "✗", "na": "N/A", "": "—"}
         STATUS_COL  = {"yes": "#166534", "partial": "#92400e", "no": "#991b1b",
                        "na": "#475569", "": "#94a3b8"}
 
-        header = ["Agent"] + [a[1] for a in ARTS]
+        header = [t(C + "agent")] + [a[1] for a in ARTS]
         decl_rows = [header]
         for a in high_risk_agents:
             decl = a.get("compliance_decl") or {}
@@ -673,7 +690,7 @@ def render_enterprise_pdf(data: dict, narrative: str) -> bytes:
         art_w = (W - lm - rm - 4.5*cm) / len(ARTS)
         story += [
             _tbl(decl_rows, [4.5*cm] + [art_w] * len(ARTS)),
-            _p("✓ Spełnione · ◑ Częściowo · ✗ Luka · N/A Nie dotyczy · — Nie oceniono",
+            _p(t(P + "declarationsLegend"),
                _s("leg", fontSize=7.5, textColor=colors.grey)),
             Spacer(1, 0.4*cm),
         ]
@@ -684,21 +701,24 @@ def render_enterprise_pdf(data: dict, narrative: str) -> bytes:
     # ══════════════════════════════════════════════════════════════════════════
     # 8. ZALECENIA
     # ══════════════════════════════════════════════════════════════════════════
-    story += [_p(f"{sec}. Zalecenia Priorytetowe", S["h2"]), _hr()]
+    story += [_p(t(P + "sections.recommendations", n=sec), S["h2"]), _hr()]
 
     recs = _build_recommendations(data)
-    rec_rows = [["#", "Priorytet", "Zalecenie", "Podstawa"]]
+    rec_rows = [["#", t(P + "recommendations.priority"), t(P + "recommendations.recommendation"),
+                 t(P + "recommendations.basis")]]
     for i, r in enumerate(recs, 1):
         rec_rows.append([str(i), r["priority"], r["text"], r["basis"]])
 
-    priority_colors = {"Krytyczny": "#991b1b", "Wysoki": "#92400e", "Średni": "#1e40af"}
+    # Kolor wg kodu priorytetu; etykieta z tłumaczeń (enterpriseReport.priority.<kod>)
+    priority_colors = {"critical": "#991b1b", "high": "#92400e", "medium": "#1e40af"}
+    priority_labels = t_dict("enterpriseReport.priority")
     rec_rich = [rec_rows[0]]
     for ri, row in enumerate(rec_rows[1:], 1):
         prio = row[1]
         col  = priority_colors.get(prio, "#1a1a2e")
         rec_rich.append([
             row[0],
-            f'<font color="{col}"><b>{prio}</b></font>',
+            f'<font color="{col}"><b>{priority_labels.get(prio, prio)}</b></font>',
             row[2], row[3],
         ])
 
@@ -709,12 +729,7 @@ def render_enterprise_pdf(data: dict, narrative: str) -> bytes:
     # ══════════════════════════════════════════════════════════════════════════
     story += [
         _hr(thick=1),
-        _p(
-            f"GovAI v0.2.0 · Raport wygenerowany {gen_dt.strftime('%d.%m.%Y %H:%M')} UTC · "
-            "Rozporządzenie (UE) 2024/1689 (EU AI Act). "
-            "Dokument ma charakter informacyjny i nie stanowi porady prawnej.",
-            S["small"],
-        ),
+        _p(t("report.footer", date=gen_str), S["small"]),
     ]
 
     doc.build(story)
@@ -739,48 +754,51 @@ def _build_recommendations(data: dict) -> list[dict]:
     alerts   = data.get("budget_alerts", [])
     pend     = int(oh.get("pending") or 0)
 
+    # priority = kod (critical/high/medium) — etykieta i kolor nadawane przy renderze
+    R = "enterpriseReport.recommendations."
+
     if [a for a in agents if a.get("risk_level") == "unacceptable"]:
-        recs.append({"priority": "Krytyczny",
-                     "text": "Natychmiast zawiesić agentów klasyfikowanych jako ryzyko NIEDOPUSZCZALNE. Skonsultować się z radcą prawnym.",
+        recs.append({"priority": "critical",
+                     "text": t(R + "suspendUnacceptable"),
                      "basis": "Art. 5 EU AI Act"})
 
     if no_docs:
         names = ", ".join(a["name"] for a in no_docs[:3])
-        recs.append({"priority": "Krytyczny",
-                     "text": f"Brak dokumentacji technicznej (art. 11) dla: {names}. Opracować w ciągu 60 dni.",
+        recs.append({"priority": "critical",
+                     "text": t(R + "missingTechnicalDocs", names=names),
                      "basis": "Art. 11 EU AI Act"})
 
     if no_oversight_decl:
         names = ", ".join(a["name"] for a in no_oversight_decl[:3])
-        recs.append({"priority": "Krytyczny",
-                     "text": f"Wdrożyć procedury nadzoru człowieka dla: {names}.",
+        recs.append({"priority": "critical",
+                     "text": t(R + "implementOversight", names=names),
                      "basis": "Art. 14 EU AI Act"})
 
     if overdue:
         names = ", ".join(a["name"] for a in overdue[:3])
-        recs.append({"priority": "Wysoki",
-                     "text": f"Przeprowadzić zaległe przeglądy compliance dla: {names}.",
-                     "basis": "Wewnętrzna polityka"})
+        recs.append({"priority": "high",
+                     "text": t(R + "overdueReviews", names=names),
+                     "basis": t(R + "basisInternalPolicy")})
 
     if pend > 0:
-        recs.append({"priority": "Wysoki",
-                     "text": f"Rozpatrzyć {pend} oczekujących zadań w kolejce nadzoru.",
+        recs.append({"priority": "high",
+                     "text": t(R + "pendingOversight", n=pend),
                      "basis": "Art. 14 EU AI Act"})
 
     if alerts:
         names = ", ".join(a["name"] for a in alerts[:3])
-        recs.append({"priority": "Wysoki",
-                     "text": f"Przegląd budżetów agentów przekraczających progi alertów: {names}.",
-                     "basis": "Kontrola kosztów"})
+        recs.append({"priority": "high",
+                     "text": t(R + "budgetReview", names=names),
+                     "basis": t(R + "basisCostControl")})
 
     if total > 0 and blocked / total > 0.1:
-        recs.append({"priority": "Średni",
-                     "text": f"Wskaźnik blokad wynosi {blocked/total*100:.1f}% — przejrzeć reguły polityk i dostroić słowa kluczowe.",
+        recs.append({"priority": "medium",
+                     "text": t(R + "highBlockRate", pct=f"{blocked/total*100:.1f}"),
                      "basis": "G-001, G-002"})
 
     if not recs:
-        recs.append({"priority": "Średni",
-                     "text": "Kontynuować monitorowanie agentów. Przeprowadzić kwartalny przegląd compliance.",
-                     "basis": "Najlepsze praktyki"})
+        recs.append({"priority": "medium",
+                     "text": t(R + "keepMonitoring"),
+                     "basis": t(R + "basisBestPractices")})
 
     return recs

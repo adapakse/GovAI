@@ -3,27 +3,31 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/components/AuthProvider';
+import LanguagePicker from '@/components/LanguagePicker';
 
+// label = klucz shell.nav.<label> w messages/<locale>/shell.json
 const NAV = [
-  { href: '/dashboard', label: 'Pulpit',     icon: <DashIcon /> },
-  { href: '/agents',    label: 'Agenci',     icon: <AgentsIcon /> },
-  { href: '/oversight', label: 'Nadzór',     icon: <OversightIcon /> },
-  { href: '/audit',     label: 'Dziennik',   icon: <AuditIcon /> },
-  { href: '/policies',  label: 'Polityki',   icon: <PoliciesIcon /> },
-  { href: '/providers', label: 'Providerzy', icon: <ProvidersIcon /> },
-  { href: '/reports',   label: 'Raporty',    icon: <ReportsIcon /> },
+  { href: '/dashboard', label: 'dashboard', icon: <DashIcon /> },
+  { href: '/agents',    label: 'agents', icon: <AgentsIcon /> },
+  { href: '/oversight', label: 'oversight', icon: <OversightIcon /> },
+  { href: '/audit',     label: 'audit', icon: <AuditIcon /> },
+  { href: '/policies',  label: 'policies', icon: <PoliciesIcon /> },
+  { href: '/providers', label: 'providers', icon: <ProvidersIcon /> },
+  { href: '/reports',   label: 'reports', icon: <ReportsIcon /> },
 ];
 
 const ADMIN_NAV = [
-  { href: '/demo',     label: 'Symulator', icon: <DemoIcon /> },
-  { href: '/settings', label: 'Parametry', icon: <SettingsIcon /> },
+  { href: '/demo',     label: 'demo', icon: <DemoIcon /> },
+  { href: '/settings', label: 'settings', icon: <SettingsIcon /> },
 ];
 
 export default function Sidebar() {
   const path = usePathname();
   const [pendingCount, setPendingCount] = useState(0);
   const { user, logout } = useAuth();
+  const t = useTranslations('shell');
   const isAdminPath = ADMIN_NAV.some(({ href }) => path === href || path.startsWith(href + '/'));
   const [adminOpen, setAdminOpen] = useState(isAdminPath);
 
@@ -38,7 +42,7 @@ export default function Sidebar() {
         if (!token) return;
         const r = await fetch(`${API}/oversight/pending`, {
           cache: 'no-store',
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${token}`, 'Accept-Language': document.documentElement.lang },
         });
         if (r.ok) {
           const data = await r.json();
@@ -100,7 +104,7 @@ export default function Sidebar() {
               <span className={`w-4 h-4 flex-shrink-0 ${active ? 'text-teal' : 'text-mgray/70'}`}>
                 {icon}
               </span>
-              <span className="flex-1 font-medium">{label}</span>
+              <span className="flex-1 font-medium">{t(`nav.${label}`)}</span>
               {showBadge && (
                 <span className="text-xs font-bold bg-orange-500 text-white rounded-full w-5 h-5 flex items-center justify-center">
                   {pendingCount > 9 ? '9+' : pendingCount}
@@ -120,7 +124,7 @@ export default function Sidebar() {
           <span className={`w-4 h-4 flex-shrink-0 ${isAdminPath ? 'text-teal' : 'text-mgray/70'}`}>
             <AdminIcon />
           </span>
-          <span className="flex-1 font-medium text-left">Admin</span>
+          <span className="flex-1 font-medium text-left">{t('nav.admin')}</span>
           <span className={`w-3 h-3 flex-shrink-0 transition-transform ${adminOpen ? 'rotate-90' : ''}`}>
             <ChevronIcon />
           </span>
@@ -140,7 +144,7 @@ export default function Sidebar() {
               <span className={`w-4 h-4 flex-shrink-0 ${active ? 'text-teal' : 'text-mgray/70'}`}>
                 {icon}
               </span>
-              <span className="flex-1 font-medium">{label}</span>
+              <span className="flex-1 font-medium">{t(`nav.${label}`)}</span>
             </Link>
           );
         })}
@@ -151,14 +155,19 @@ export default function Sidebar() {
         {user && (
           <div className="mb-2.5">
             <div className="text-white/80 font-medium truncate">{user.full_name}</div>
-            <div className="text-mgray/50 truncate uppercase tracking-wider text-[10px] mt-0.5">{user.role}</div>
+            <div className="text-mgray/50 truncate uppercase tracking-wider text-[10px] mt-0.5">{t(`roles.${user.role}`)}</div>
+          </div>
+        )}
+        {user && (
+          <div className="mb-2.5">
+            <LanguagePicker mode="user" />
           </div>
         )}
         <button
           onClick={logout}
           className="text-mgray/50 hover:text-govred transition-colors"
         >
-          Wyloguj
+          {t('logout')}
         </button>
         <div className="mt-1 text-[10px] text-mgray/30">EU AI Act 2024/1689</div>
       </div>

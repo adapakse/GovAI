@@ -1,0 +1,81 @@
+{
+  "actions": {
+    "closeGap": "Close the gap and update the status in the Registry: {title} ({article}).",
+    "completeDeclaration": "Complete the self-declaration in the Registry tab: {title} ({article}).",
+    "updateConfig": "Update the agent configuration responsible for: {title} ({article})."
+  },
+  "fallbackNarrative": "System \"{name}\" classified at risk level {risk}. A full compliance analysis requires verification by the AI classifier. Please try generating the report again.",
+  "fileName": "ai-act-report-{name}.pdf",
+  "footer": "GovAI v0.2.0 · Report generated {date} UTC · Regulation (EU) 2024/1689 (EU AI Act). This document is for information purposes only and does not constitute legal advice.",
+  "format": {
+    "dateTime": "%d/%m/%Y %H:%M"
+  },
+  "pdf": {
+    "gaps": {
+      "article": "Article",
+      "beforeDeployment": "Before deployment",
+      "days": "{days} days",
+      "deadline": "Deadline",
+      "none": "No gaps identified — requirements confirmed as met or not applicable in the compliance declarations (Registry tab).",
+      "requirement": "Requirement",
+      "severity": "Severity"
+    },
+    "meta": "Generated: {date} UTC  ·  Owner: {owner}  ·  Team: {team}",
+    "noPendingActions": "No outstanding actions — all requirements confirmed.",
+    "profile": {
+      "annexCategory": "Annex III category",
+      "annexNone": "None (not listed in Annex III)",
+      "contact": "Contact",
+      "humanOversight": "Human oversight",
+      "model": "AI model",
+      "monthlyBudget": "Monthly budget",
+      "oversightNotRequired": "Not required",
+      "oversightRequired": "REQUIRED",
+      "owner": "Owner",
+      "property": "Property",
+      "status": "Status",
+      "systemId": "System ID",
+      "team": "Team",
+      "value": "Value"
+    },
+    "riskLevel": "Risk level: {value}",
+    "sections": {
+      "compliance": "{n}. EU AI Act Compliance Assessment",
+      "legalBasis": "3. Legal Basis and Classification",
+      "profile": "2. AI System Profile",
+      "recommendations": "{n}. Priority Recommendations",
+      "stats": "{n}. Operational Statistics (last 30 days)",
+      "summary": "1. Executive Summary"
+    },
+    "stats": {
+      "apiCost": "API cost (30 days)",
+      "apiCostNote": "estimated LLM model costs",
+      "avgLatency": "Avg. latency",
+      "avgLatencyNote": "end-to-end response time",
+      "comment": "Comment",
+      "metric": "Metric",
+      "oversight": "Referred for oversight",
+      "oversightNote": "policy A-001",
+      "piiCalls": "Calls with PII",
+      "piiCallsNote": "personal data detected (Presidio)",
+      "policyBlocks": "Policy blocks",
+      "policyBlocksNote": "G-001 financial, G-002 prompt injection",
+      "totalCalls": "Total calls",
+      "totalCallsNote": "all requests",
+      "value": "Value"
+    },
+    "tagline": "AI Agent Governance Platform · EU AI Act Compliance",
+    "title": "EU AI Act Compliance Report"
+  },
+  "risk": {
+    "high": "High",
+    "limited": "Limited",
+    "minimal": "Minimal",
+    "unacceptable": "Unacceptable"
+  },
+  "severity": {
+    "critical": "Critical",
+    "major": "Major",
+    "minor": "Minor"
+  }
+}

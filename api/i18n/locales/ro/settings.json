@@ -1,0 +1,13 @@
+{
+  "errors": {
+    "above_max": "Valoarea {value} depășește maximul {max}",
+    "below_min": "Valoarea {value} este sub minimul {min}",
+    "expected_bool": "Se aștepta o valoare logică",
+    "expected_json": "Se aștepta un obiect sau o listă JSON",
+    "expected_string": "Se aștepta un text",
+    "invalid_locale": "Limbă neacceptată. Valori permise: {allowed}",
+    "invalid_value": "Valoare nevalidă: {error}",
+    "not_editable": "Parametrul '{key}' nu este editabil",
+    "not_found": "Parametrul '{key}' nu există"
+  }
+}

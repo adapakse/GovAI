@@ -1,0 +1,13 @@
+{
+  "agentInactive": "L’agent '{agent}' a le statut '{status}' et ne peut pas effectuer d’appels.",
+  "agentNotRegistered": "L’agent '{agent_id}' n’est pas enregistré dans GovAI. Enregistrez l’agent avant d’utiliser la passerelle.",
+  "auth": {
+    "invalidApiKey": "Clé API invalide ou expirée",
+    "invalidToken": "Jeton invalide ou expiré",
+    "missing": "Autorisation manquante",
+    "missingDetail": "En-tête requis : Authorization: Bearer <token> ou X-API-Key: <key>"
+  },
+  "llmError": "Erreur du modèle de langage : {error}",
+  "missingAgentId": "En-tête X-Agent-ID manquant",
+  "missingMessages": "Aucun message dans la requête"
+}

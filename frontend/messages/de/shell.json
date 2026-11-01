@@ -1,0 +1,26 @@
+{
+  "logout": "Abmelden",
+  "meta": {
+    "description": "Konformität mit dem EU AI Act | Sicherheits-Gateway | Menschliche Aufsicht",
+    "title": "GovAI — Plattform für das Management von KI-Agenten"
+  },
+  "nav": {
+    "admin": "Admin",
+    "agents": "KI-Agenten",
+    "audit": "Audit-Log",
+    "dashboard": "Dashboard",
+    "demo": "Simulator",
+    "oversight": "Aufsicht",
+    "policies": "Richtlinien",
+    "providers": "Modellanbieter",
+    "reports": "Berichte",
+    "settings": "Parameter"
+  },
+  "roles": {
+    "associate": "Associate",
+    "compliance_officer": "Compliance Officer",
+    "it_admin": "IT-Administrator",
+    "partner": "Partner",
+    "reviewer": "Prüfer"
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "aiactTab": {
+    "count": "{count, plural, one {# exigence} other {# exigences}}",
+    "emptyLevel": "Aucune exigence pour ce niveau.",
+    "intro": "Exigences associées aux niveaux de risque. Visibles dans les rapports PDF et dans la vue de conformité de l’agent. Vous pouvez ajouter vos propres annotations à des articles précis de l’EU AI Act."
+  },
+  "banner": {
+    "text": "La passerelle recharge automatiquement les règles depuis la base de données toutes les 60 secondes. Une fois la modification enregistrée, aucune autre action n’est nécessaire.",
+    "title": "Configuration sans redémarrage :"
+  },
+  "cancel": "Annuler",
+  "delete": "Supprimer",
+  "edit": "Modifier",
+  "loading": "Chargement...",
+  "newRequirement": {
+    "addButton": "+ Ajouter une exigence",
+    "article": "Article *",
+    "articlePlaceholder": "p. ex. art. 9, paragraphe 2",
+    "deadlineDays": "Échéance (jours)",
+    "declKey": "Clé d’auto-déclaration",
+    "declKeyHint": "La clé d’auto-déclaration relie cette exigence à un champ de l’onglet Registre de l’agent. Vide = exigence non éligible à l’auto-déclaration (p. ex. interdiction de l’art. 5).",
+    "declKeyPlaceholder": "p. ex. art9_risk_management",
+    "reqText": "Description de l’exigence *",
+    "reqTextPlaceholder": "Description détaillée de l’exigence et de la manière d’y satisfaire...",
+    "reqTitle": "Intitulé de l’exigence *",
+    "reqTitlePlaceholder": "p. ex. Registre des systèmes d’IA à haut risque",
+    "riskLevel": "Niveau de risque *",
+    "save": "Enregistrer l’exigence",
+    "severity": "Gravité par défaut",
+    "sortOrder": "Ordre",
+    "title": "Nouvelle exigence de l’EU AI Act"
+  },
+  "newRule": {
+    "addButton": "+ Ajouter une nouvelle règle",
+    "code": "Code de la règle",
+    "codePlaceholder": "p. ex. G-003",
+    "defaultReason": "Bloqué par la règle {code}",
+    "keywords": "Mots-clés (un par ligne) *",
+    "keywordsPlaceholder": "exporter les données\nexport data\nsend all records",
+    "name": "Nom *",
+    "namePlaceholder": "p. ex. Blocage de l’export de données",
+    "priority": "Priorité (plus bas = plus important)",
+    "reason": "Message de blocage",
+    "reasonPlaceholder": "Opération non autorisée détectée",
+    "save": "Enregistrer la règle",
+    "title": "Nouvelle règle de blocage"
+  },
+  "requirement": {
+    "article": "Article",
+    "days": "{count, plural, one {# jour} other {# jours}}",
+    "deleteConfirm": "Supprimer l’exigence « {title} » ?",
+    "noDeclKey": "pas d’auto-déclaration",
+    "title": "Intitulé"
+  },
+  "rule": {
+    "activate": "Activer",
+    "addKeyword": "+ Ajouter",
+    "addKeywordPlaceholder": "Ajouter un mot-clé...",
+    "deactivate": "Désactiver",
+    "inactive": "INACTIVE",
+    "keywords": "Mots-clés ({count})",
+    "meta": "Priorité : {priority} · Portée : {level} · v{version}",
+    "noKeywords": "Aucun mot-clé — la règle ne se déclenchera jamais.",
+    "reason": "Message : « {reason} »",
+    "unsaved": "Modifications non enregistrées · La passerelle les appliquera sous 60 s."
+  },
+  "rulesTab": {
+    "empty": "Aucune règle définie.",
+    "intro": "Les règles de blocage sont évaluées par ordre de priorité (numéro plus bas = priorité plus élevée). La première correspondance de mot-clé déclenche le blocage avant l’appel au modèle.",
+    "noResults": "Aucune règle correspondant à « {query} ».",
+    "searchPlaceholder": "Rechercher une règle — nom, code, mot-clé, motif..."
+  },
+  "save": "✓ Enregistrer",
+  "saving": "Enregistrement...",
+  "severity": {
+    "critical": "Critique",
+    "major": "Majeure",
+    "minor": "Mineure"
+  },
+  "subtitle": "Gérez les règles de sécurité et les exigences de l’EU AI Act sans modifier le code. Les modifications des règles sont actives dans la passerelle sous 60 s.",
+  "tabs": {
+    "aiact": "Exigences de l’EU AI Act",
+    "rules": "Règles de sécurité"
+  },
+  "title": "Politiques et conformité"
+}

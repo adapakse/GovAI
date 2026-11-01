@@ -1,0 +1,7 @@
+{
+  "errors": {
+    "invalid_sensitivity": "Недопустимое значение max_data_sensitivity. Допустимые значения: {allowed}",
+    "invalid_type": "Неизвестный provider_type. Допустимые значения: {allowed}",
+    "not_found": "Поставщик моделей не найден"
+  }
+}

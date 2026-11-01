@@ -1,0 +1,74 @@
+{
+  "high|Art. 10": {
+    "text": "Los conjuntos de datos de entrenamiento, validación y prueba deben cumplir criterios de calidad: pertinencia, representatividad, ausencia de errores e integridad. Se requiere documentar los conjuntos de datos.",
+    "title": "Datos y gobernanza de datos"
+  },
+  "high|Art. 11": {
+    "text": "Antes de su introducción en el mercado o puesta en servicio se requiere una documentación técnica completa conforme al anexo IV del EU AI Act. El documento debe mantenerse actualizado durante todo el ciclo de vida del sistema.",
+    "title": "Documentación técnica"
+  },
+  "high|Art. 13": {
+    "text": "El sistema de IA debe garantizar la transparencia de su funcionamiento. Los usuarios deben ser informados de que interactúan con un sistema de IA y comprender su funcionamiento en la medida necesaria para la supervisión.",
+    "title": "Transparencia y comunicación de información"
+  },
+  "high|Art. 14": {
+    "text": "Medidas implantadas que permitan a una persona física comprender, vigilar e intervenir en el funcionamiento del sistema de IA. Posibilidad de detener o revertir cualquier decisión del sistema.",
+    "title": "Supervisión humana"
+  },
+  "high|Art. 15": {
+    "text": "El sistema debe alcanzar un nivel adecuado de precisión durante todo su ciclo de vida. Se requieren pruebas de solidez frente a errores, ataques y datos de entrada inesperados.",
+    "title": "Precisión, solidez y ciberseguridad"
+  },
+  "high|Art. 17": {
+    "text": "El proveedor establece un sistema de gestión de la calidad que incluya políticas, procedimientos e instrucciones para garantizar el cumplimiento del EU AI Act.",
+    "title": "Sistema de gestión de la calidad"
+  },
+  "high|Art. 26 ust. 2": {
+    "text": "El responsable del despliegue de un sistema de alto riesgo debe encomendar la supervisión humana a personas físicas que tengan la competencia, la formación y la autoridad necesarias, así como el apoyo necesario para ejercerla.",
+    "title": "Supervisión humana encomendada a una persona competente"
+  },
+  "high|Art. 26 ust. 5": {
+    "text": "El responsable del despliegue debe vigilar el funcionamiento del sistema conforme a las instrucciones de uso e informar al proveedor y, en su caso, a la autoridad de vigilancia del mercado de cualquier riesgo detectado o incidente grave.",
+    "title": "Vigilancia del funcionamiento e información al proveedor"
+  },
+  "high|Art. 26 ust. 6": {
+    "text": "El responsable del despliegue debe conservar los archivos de registro generados automáticamente por el sistema durante un período adecuado a la finalidad prevista del sistema, de al menos seis meses, salvo que el Derecho de la Unión o nacional disponga otra cosa.",
+    "title": "Conservación de los archivos de registro automáticos"
+  },
+  "high|Art. 26 ust. 8": {
+    "text": "El responsable del despliegue que sea una autoridad pública debe cumplir las obligaciones de registro del art. 49 y, antes de poner en servicio el sistema, verificar que está registrado en la base de datos de la UE.",
+    "title": "Verificación del registro en la base de datos de la UE"
+  },
+  "high|Art. 27": {
+    "text": "Antes de desplegar un sistema de alto riesgo contemplado en el anexo III, punto 5, letras b) o c) (evaluación de la solvencia, riesgo en seguros), o cuando se trate de un organismo público o de una entidad privada que preste servicios públicos, el responsable del despliegue debe llevar a cabo una evaluación de impacto relativa a los derechos fundamentales: descripción de los procesos de uso, período y frecuencia de uso, categorías de personas afectadas, riesgos de perjuicio para dichas personas, así como medidas de supervisión humana y mecanismos de reclamación.",
+    "title": "Evaluación de impacto relativa a los derechos fundamentales (FRIA)"
+  },
+  "high|Art. 43": {
+    "text": "Los sistemas de alto riesgo del anexo III deben someterse a una evaluación de la conformidad (control interno o por un organismo notificado) antes de su introducción en el mercado o puesta en servicio.",
+    "title": "Evaluación de la conformidad"
+  },
+  "high|Art. 49": {
+    "text": "Los sistemas de alto riesgo deben estar registrados en la base de datos de la UE antes de su introducción en el mercado o puesta en servicio.",
+    "title": "Registro en la base de datos de la UE"
+  },
+  "high|Art. 9": {
+    "text": "Un agente de alto riesgo requiere un sistema de gestión de riesgos documentado durante todo su ciclo de vida. Se requiere la determinación, el análisis y la evaluación de los riesgos, así como la adopción de medidas de gestión de riesgos.",
+    "title": "Sistema de gestión de riesgos"
+  },
+  "limited|Art. 50 ust. 1": {
+    "text": "Los sistemas que interactúan con personas físicas deben informar al usuario de manera clara, distinguible y oportuna de que interactúa con un sistema de IA, salvo que resulte evidente.",
+    "title": "Obligación de informar sobre la IA"
+  },
+  "limited|Art. 50 ust. 4": {
+    "text": "Los contenidos de texto, audio y vídeo generados por IA deben estar marcados en un formato legible por máquina como generados por IA.",
+    "title": "Marcado de los contenidos generados por IA"
+  },
+  "minimal|Preambuła 46": {
+    "text": "No existen requisitos jurídicos obligatorios para los sistemas de riesgo mínimo. Se recomienda aplicar códigos de conducta voluntarios y los principios generales de una IA fiable (transparencia, equidad, seguridad).",
+    "title": "Códigos de conducta voluntarios"
+  },
+  "unacceptable|Art. 5": {
+    "text": "Las prácticas de IA enumeradas en el art. 5 están terminantemente prohibidas en la UE. Se requiere verificar que el sistema no se encuadra en ninguna de las categorías prohibidas (manipulación subliminal, puntuación ciudadana, identificación biométrica remota en tiempo real).",
+    "title": "Prohibición absoluta"
+  }
+}

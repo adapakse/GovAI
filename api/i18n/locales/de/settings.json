@@ -1,0 +1,13 @@
+{
+  "errors": {
+    "above_max": "Wert {value} liegt über dem Maximum {max}",
+    "below_min": "Wert {value} liegt unter dem Minimum {min}",
+    "expected_bool": "Boolescher Wert erwartet",
+    "expected_json": "JSON-Objekt oder -Liste erwartet",
+    "expected_string": "Text erwartet",
+    "invalid_locale": "Nicht unterstützte Sprache. Zulässig: {allowed}",
+    "invalid_value": "Ungültiger Wert: {error}",
+    "not_editable": "Parameter '{key}' ist nicht bearbeitbar",
+    "not_found": "Parameter '{key}' existiert nicht"
+  }
+}

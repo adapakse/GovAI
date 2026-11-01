@@ -1,0 +1,26 @@
+{
+  "logout": "Esci",
+  "meta": {
+    "description": "Conformità all'EU AI Act | Gateway di sicurezza | Sorveglianza umana",
+    "title": "GovAI — Piattaforma di governance degli agenti AI"
+  },
+  "nav": {
+    "admin": "Admin",
+    "agents": "Agenti",
+    "audit": "Log di audit",
+    "dashboard": "Dashboard",
+    "demo": "Simulatore",
+    "oversight": "Sorveglianza",
+    "policies": "Policy",
+    "providers": "Provider",
+    "reports": "Report",
+    "settings": "Parametri"
+  },
+  "roles": {
+    "associate": "Associate",
+    "compliance_officer": "Compliance officer",
+    "it_admin": "Amministratore IT",
+    "partner": "Partner",
+    "reviewer": "Revisore"
+  }
+}

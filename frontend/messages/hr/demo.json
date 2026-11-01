@@ -1,0 +1,100 @@
+{
+  "chat": {
+    "awaitingOversight": "⏳ Proslijeđeno na ljudski nadzor (čl. 14. EU AI Acta)\nOversight ID: {id}",
+    "blocked": "🚫 Blokirano: {reason}",
+    "clear": "Očisti",
+    "connectionError": "Pogreška veze: {error}",
+    "defaultBlockReason": "Sigurnosno pravilo GovAI",
+    "emptyHint": "Upišite poruku u nastavku — obradit će je GovAI Gateway (provjera osobnih podataka → pravila → {model})",
+    "pipeline": "Slobodni chat · GovAI Gateway → provjera osobnih podataka → pravila → {model}",
+    "placeholder": "Napišite poruku agentu...",
+    "sectionTitle": "Slobodni chat — izravan poziv kroz Gateway",
+    "send": "Pošalji ▶"
+  },
+  "expected": {
+    "allowed": "Dopušteno",
+    "allowed_with_pii": "Dopušteno + osobni podaci",
+    "blocked": "Blokirano",
+    "oversight_required": "Potreban nadzor"
+  },
+  "fleet": {
+    "button": "▦ Učitaj flotu (50 agenata)",
+    "count": "{count, plural, one {# agent flote} few {# agenta flote} many {# agenata flote} other {# agenta flote}}",
+    "desc": "Dodaje 50 agenata raspoređenih po odjelima, s namjernim nedostacima u usklađenosti (visokorizični sustavi bez nadzora, zakašnjele provjere, zabranjene prakse iz čl. 5.). Pokazuje da je pri takvom opsegu ručno praćenje AI Acta neizvedivo.",
+    "seededAgents": "Učitano {count, plural, one {# agent} few {# agenta} many {# agenata} other {# agenta}}.",
+    "title": "Demonstracijska flota (opseg)"
+  },
+  "links": {
+    "audit": "→ Zapisnik",
+    "auditLog": "→ Revizijski zapisnik",
+    "oversight": "→ Nadzor",
+    "oversightQueue": "→ Red čekanja za nadzor"
+  },
+  "loading": "⏳ Učitavanje...",
+  "noAgents": "Nema aktivnih agenata.",
+  "noResults": "Nema agenata koji odgovaraju upitu „{query}”.",
+  "playbook": {
+    "collapse": "▲ sažmi",
+    "expand": "▼ proširi",
+    "go": "Idi →",
+    "intro": "Provedite prezentaciju korak po korak.",
+    "steps": {
+      "1": {
+        "desc": "Kliknite \"Učitaj podatke za 30 dana\" — generator stvara ~500 revizijskih zapisa i ~23 stavke u redu čekanja za nadzor.",
+        "title": "Učitajte povijesne podatke u bazu"
+      },
+      "2": {
+        "desc": "Otvorite nadzornu ploču. Vidjet ćete ukupne pozive, blokade, osobne podatke, troškove i grafikon za 24 h.",
+        "title": "Provjerite nadzornu ploču — povijesni podaci"
+      },
+      "3": {
+        "desc": "Kliknite \"Pokreni ▶\" uz scenarij \"Upit o osiguranju\" (Agent 1).",
+        "title": "Pokrenite scenarij — pozitivan"
+      },
+      "4": {
+        "desc": "Kliknite \"Klijent navodi PESEL i broj računa\". Presidio maskira podatke prije slanja modelu.",
+        "title": "Pokrenite scenarij s osobnim podacima"
+      },
+      "5": {
+        "desc": "Pokušaj financijske izmjene → G-001. Napad prompt injectionom → G-002. Vidljivo u zapisniku.",
+        "title": "Pokrenite blokade G-001 i G-002"
+      },
+      "6": {
+        "desc": "Agent 2 zahtijeva nadzor — poziv ulazi u red čekanja. Otvorite Nadzor i odobrite ga.",
+        "title": "Red čekanja za nadzor (čl. 14.)"
+      },
+      "7": {
+        "desc": "Odaberite agenta DeepSeek i napišite bilo koju poruku. GovAI presreće promet, traži osobne podatke i provjerava pravila — jednako kao za Claude.",
+        "title": "Testirajte DeepSeek kroz GovAI"
+      }
+    },
+    "title": "📋 Vodič kroz demonstraciju — 7 koraka"
+  },
+  "result": {
+    "blockedByPolicy": "Blokirano sigurnosnim pravilom.",
+    "expected": "→ očekivano: {label}",
+    "gatewayResponse": "Odgovor gatewaya:",
+    "match": "✓ odgovara",
+    "mismatch": "≠ neočekivano",
+    "run": "Pokreni ▶",
+    "running": "⏳ Pozivanje...",
+    "sentToOversight": "Odluka je upućena na nadzor.\nOversight ID: {id}\n\n{message}",
+    "task": "task: {id}..."
+  },
+  "searchPlaceholder": "Pretraži agente — naziv, model, pružatelj (npr. bielik, ollama), tim...",
+  "seed": {
+    "button": "▦ Učitaj podatke za 30 dana",
+    "counts": "{audit} revizijskih zapisa · {oversight} za nadzor",
+    "desc": "Generator stvara ~500 revizijskih zapisa i 23 stavke u redu čekanja.",
+    "refresh": "↻ Osvježi",
+    "reset": "✕ Poništi podatke",
+    "resetConfirm": "Izbrisati SVE demonstracijske podatke (revizija, nadzor, flota agenata)?",
+    "resetDone": "Izbrisano: {audit} revizijskih zapisa, {oversight} stavki nadzora i {fleet} agenata flote.",
+    "seededEntries": "Učitano {count, plural, one {# zapis} few {# zapisa} many {# zapisa} other {# zapisa}}.",
+    "statusEmpty": "○ Prazno",
+    "statusSeeded": "● Učitano",
+    "title": "Demonstracijski podaci (30 dana povijesti)"
+  },
+  "subtitle": "Svaki poziv prolazi kroz GovAI Gateway → provjera osobnih podataka → mehanizam pravila → AI model. Rezultati su vidljivi u zapisniku i redu čekanja za nadzor.",
+  "title": "Simulator AI agenata"
+}

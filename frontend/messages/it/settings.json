@@ -1,0 +1,67 @@
+{
+  "categories": {
+    "budget": {
+      "desc": "Limiti predefiniti e soglie di avviso sui costi per i nuovi agenti.",
+      "title": "Budget"
+    },
+    "compliance": {
+      "desc": "Scadenze delle lacune di conformità e limiti delle narrative dei report.",
+      "title": "Compliance"
+    },
+    "i18n": {
+      "desc": "Lingua predefinita dell'interfaccia, dei report e dei messaggi dell'istanza.",
+      "title": "Lingua"
+    },
+    "intervals": {
+      "desc": "Frequenza delle attività in background (ricaricamento delle policy, monitor TTL).",
+      "title": "Intervalli"
+    },
+    "models": {
+      "desc": "Modelli predefiniti e parametri delle chiamate LLM.",
+      "title": "Modelli predefiniti"
+    },
+    "oversight": {
+      "desc": "Soglie e limiti della coda di sorveglianza umana (art. 14 EU AI Act).",
+      "title": "Sorveglianza"
+    },
+    "pagination": {
+      "desc": "Dimensioni predefinite e massime degli elenchi e intervalli di giorni/ore.",
+      "title": "Paginazione e finestre temporali"
+    },
+    "pricing": {
+      "desc": "Tariffe dei modelli e tasso di cambio utilizzati per valorizzare le chiamate.",
+      "title": "Listino e costi"
+    },
+    "security": {
+      "desc": "Token, hashing delle password e soglie di rilevamento dei dati personali.",
+      "title": "Sicurezza"
+    }
+  },
+  "history": {
+    "empty": "Nessuna modifica registrata.",
+    "loading": "Caricamento della cronologia...",
+    "unknownUser": "sconosciuto"
+  },
+  "loading": "Caricamento...",
+  "noResults": "Nessun parametro corrispondente a «{query}».",
+  "readOnly": "Modalità di sola lettura — la modifica dei parametri richiede il ruolo <b>it_admin</b>. Il Suo ruolo: <b>{role}</b>.",
+  "reload": {
+    "button": "⟳ Ricarica la cache ora",
+    "done": "Cache ricaricata.",
+    "error": "Errore: {error}",
+    "running": "Ricaricamento..."
+  },
+  "row": {
+    "hideHistory": "nascondi cronologia",
+    "invalidJson": "JSON non valido",
+    "lastChange": "ultima modifica: {user} · {date}",
+    "locked": "bloccato",
+    "range": "intervallo: {range}",
+    "save": "✓ Salva",
+    "showHistory": "cronologia",
+    "unit": "unità: {unit}"
+  },
+  "searchPlaceholder": "Cerca parametro (nome, chiave, descrizione)...",
+  "subtitle": "Configurazione operativa senza modifiche al codice. Le modifiche sono attive immediatamente (gateway/API aggiornano i valori entro 60 s).",
+  "title": "Parametri di sistema"
+}

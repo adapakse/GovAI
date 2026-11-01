@@ -1,0 +1,5 @@
+{
+  "agentDecision": "KI-Agent '{agent}' verarbeitet die Anfrage und wartet auf die Genehmigung durch einen Prüfer. Inhalt der Anfrage (gekürzt): {content}...",
+  "awaitingMessage": "Der Aufruf des KI-Agenten '{agent}' wurde angehalten — gemäß EU AI Act ist eine Genehmigung durch einen Prüfer erforderlich.",
+  "decisionType": "Aufruf des KI-Agenten {risk}"
+}

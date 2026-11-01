@@ -1,0 +1,26 @@
+{
+  "logout": "Deconectare",
+  "meta": {
+    "description": "Conformitate cu EU AI Act | Gateway de securitate | Supraveghere umană",
+    "title": "GovAI — Platformă de guvernanță a agenților AI"
+  },
+  "nav": {
+    "admin": "Administrare",
+    "agents": "Agenți",
+    "audit": "Jurnal",
+    "dashboard": "Tablou de bord",
+    "demo": "Simulator",
+    "oversight": "Supraveghere",
+    "policies": "Politici",
+    "providers": "Furnizori de modele",
+    "reports": "Rapoarte",
+    "settings": "Parametri"
+  },
+  "roles": {
+    "associate": "Associate",
+    "compliance_officer": "Responsabil de conformitate",
+    "it_admin": "Administrator IT",
+    "partner": "Partener",
+    "reviewer": "Evaluator"
+  }
+}

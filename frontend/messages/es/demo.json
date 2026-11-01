@@ -1,0 +1,100 @@
+{
+  "chat": {
+    "awaitingOversight": "⏳ Remitido a supervisión humana (art. 14 del EU AI Act)\nOversight ID: {id}",
+    "blocked": "🚫 Bloqueado: {reason}",
+    "clear": "Borrar",
+    "connectionError": "Error de conexión: {error}",
+    "defaultBlockReason": "Política de seguridad de GovAI",
+    "emptyHint": "Escriba un mensaje a continuación — será procesado por GovAI Gateway (análisis de datos personales → políticas → {model})",
+    "pipeline": "Chat libre · GovAI Gateway → análisis de datos personales → políticas → {model}",
+    "placeholder": "Escriba un mensaje al agente...",
+    "sectionTitle": "Chat libre — llamada directa a través de la pasarela",
+    "send": "Enviar ▶"
+  },
+  "expected": {
+    "allowed": "Permitido",
+    "allowed_with_pii": "Permitido + datos personales",
+    "blocked": "Bloqueado",
+    "oversight_required": "Requiere supervisión"
+  },
+  "fleet": {
+    "button": "▦ Cargar flota (50 agentes)",
+    "count": "{count, plural, one {# agente de la flota} other {# agentes de la flota}}",
+    "desc": "Añade 50 agentes repartidos entre departamentos, con carencias de cumplimiento intencionadas (alto riesgo sin supervisión, revisiones atrasadas, prácticas prohibidas del art. 5). Demuestra que, a escala, el control manual del cumplimiento del AI Act resulta inviable.",
+    "seededAgents": "{count, plural, one {Se ha cargado # agente} other {Se han cargado # agentes}}.",
+    "title": "Flota de demostración (escala)"
+  },
+  "links": {
+    "audit": "→ Registro",
+    "auditLog": "→ Registro de auditoría",
+    "oversight": "→ Supervisión",
+    "oversightQueue": "→ Cola de supervisión"
+  },
+  "loading": "⏳ Cargando...",
+  "noAgents": "No hay agentes activos.",
+  "noResults": "No hay agentes que coincidan con «{query}».",
+  "playbook": {
+    "collapse": "▲ contraer",
+    "expand": "▼ desplegar",
+    "go": "Ir →",
+    "intro": "Realice la presentación paso a paso.",
+    "steps": {
+      "1": {
+        "desc": "Haga clic en «Cargar 30 días de datos» — el generador crea ~500 entradas de auditoría y ~23 elementos en la cola de supervisión.",
+        "title": "Cargar la base de datos histórica"
+      },
+      "2": {
+        "desc": "Vaya al Panel. Verá el total de llamadas, bloqueos, datos personales, costes y el gráfico de 24 h.",
+        "title": "Consultar el Panel — datos históricos"
+      },
+      "3": {
+        "desc": "Haga clic en «Ejecutar ▶» en el escenario «Consulta sobre un seguro» (Agente 1).",
+        "title": "Ejecutar un escenario — positivo"
+      },
+      "4": {
+        "desc": "Haga clic en «El cliente facilita su PESEL y número de cuenta». Presidio enmascara los datos antes de enviarlos al modelo.",
+        "title": "Ejecutar un escenario con datos personales"
+      },
+      "5": {
+        "desc": "Intento de modificación financiera → G-001. Ataque de prompt injection → G-002. Visible en el Registro.",
+        "title": "Activar los bloqueos G-001 y G-002"
+      },
+      "6": {
+        "desc": "El Agente 2 requiere supervisión — la llamada pasa a la cola. Vaya a Supervisión y apruébela.",
+        "title": "Cola de supervisión (art. 14)"
+      },
+      "7": {
+        "desc": "Seleccione el agente DeepSeek y escriba cualquier mensaje. GovAI intercepta el tráfico, analiza los datos personales y comprueba las políticas — exactamente igual que con Claude.",
+        "title": "Probar DeepSeek a través de GovAI"
+      }
+    },
+    "title": "📋 Guía de demostración — 7 pasos"
+  },
+  "result": {
+    "blockedByPolicy": "Bloqueado por una política.",
+    "expected": "→ esperado: {label}",
+    "gatewayResponse": "Respuesta de la pasarela:",
+    "match": "✓ coincide",
+    "mismatch": "≠ inesperado",
+    "run": "Ejecutar ▶",
+    "running": "⏳ Llamando...",
+    "sentToOversight": "Decisión remitida a supervisión.\nOversight ID: {id}\n\n{message}",
+    "task": "task: {id}..."
+  },
+  "searchPlaceholder": "Buscar agente — nombre, modelo, proveedor (p. ej., bielik, ollama), equipo...",
+  "seed": {
+    "button": "▦ Cargar 30 días de datos",
+    "counts": "{audit} auditorías · {oversight} supervisiones",
+    "desc": "El generador crea ~500 entradas de auditoría y 23 elementos en la cola.",
+    "refresh": "↻ Actualizar",
+    "reset": "✕ Restablecer datos",
+    "resetConfirm": "¿Eliminar TODOS los datos de demostración (auditoría, supervisión, flota de agentes)?",
+    "resetDone": "Se han eliminado {audit} auditorías, {oversight} supervisiones y {fleet} agentes de la flota.",
+    "seededEntries": "{count, plural, one {Se ha cargado # entrada} other {Se han cargado # entradas}}.",
+    "statusEmpty": "○ Vacío",
+    "statusSeeded": "● Cargado",
+    "title": "Datos de demostración (30 días de historial)"
+  },
+  "subtitle": "Cada llamada pasa por GovAI Gateway → análisis de datos personales → motor de políticas → modelo de IA. Resultados visibles en el Registro y en la cola de Supervisión.",
+  "title": "Simulador de agentes de IA"
+}

@@ -1,0 +1,48 @@
+{
+  "alerts": {
+    "empty": "Brak alertów w tym okresie",
+    "title": "Ostatnie zdarzenia bezpieczeństwa",
+    "viewAudit": "Zobacz dziennik →"
+  },
+  "byAgent": {
+    "title": "Wywołania wg agenta"
+  },
+  "chart": {
+    "allowed": "Dozwolone",
+    "blocked": "Zablokowane",
+    "noData": "Brak danych",
+    "total": "Ogółem"
+  },
+  "cost": {
+    "byAgent": "Koszt wg agenta (7 dni)",
+    "note": "tylko koszt tokenów Anthropic",
+    "total": "Łączny koszt (7 dni)"
+  },
+  "header": {
+    "subtitle": "Ostatnie 7 dni · odświeżane co 30s",
+    "title": "Pulpit Operacyjny"
+  },
+  "kpi": {
+    "activeAgents": "Aktywni agenci",
+    "activeAgentsSub": "{count} wysokiego ryzyka",
+    "blocked": "Blokady",
+    "blockedSub": "{rate}% wszystkich wywołań",
+    "calls": "Wywołania (7 dni)",
+    "callsSub": "śr. latencja {latency} ms",
+    "infraErrors": "Błędy infrastruktury",
+    "infraErrorsSub": "brak providera / błąd LLM",
+    "pendingOversight": "Oczekuje nadzoru",
+    "pendingOversightSub": "wymaga decyzji recenzenta"
+  },
+  "loadError": "Błąd ładowania danych.",
+  "loading": "Ładowanie pulpitu...",
+  "stats": {
+    "oversight": "Do nadzoru",
+    "pii": "Wykrycia PII"
+  },
+  "timeline": {
+    "empty": "Brak danych w ostatnich 24h",
+    "refresh": "odświeżane co 30s",
+    "title": "Wywołania wg godziny (ostatnie 24h)"
+  }
+}

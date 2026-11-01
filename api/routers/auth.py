@@ -8,6 +8,7 @@ Endpointy publiczne (bez JWT):
 Endpointy wymagające JWT (dowolna rola):
   POST /auth/logout
   GET  /auth/me
+  PUT  /auth/me/locale
 
 Endpointy wymagające roli partner lub it_admin:
   GET    /auth/users
@@ -29,12 +30,14 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from pydantic import BaseModel, field_validator
 
 from dependencies.auth import CurrentUser, get_current_user, require_role
+from i18n import DEFAULT_LOCALE, LOCALES, is_locale, t
 from repositories import auth_repository as auth_repo
+from services import settings_service
 from services.auth_service import (
     change_password, create_api_key, create_refresh_token, create_user,
     get_user_by_email, get_user_by_id, list_users, revoke_refresh_token,
-    update_last_login, update_user, verify_api_key, verify_refresh_token,
-    create_access_token,
+    update_last_login, update_user, update_user_locale, verify_api_key,
+    verify_refresh_token, create_access_token,
 )
 
 logger = logging.getLogger(__name__)
@@ -62,14 +65,14 @@ class UserCreate(BaseModel):
     def valid_role(cls, v: str) -> str:
         allowed = {"partner", "associate", "compliance_officer", "it_admin", "reviewer"}
         if v not in allowed:
-            raise ValueError(f"Nieprawidłowa rola. Dozwolone: {allowed}")
+            raise ValueError(t("auth.errors.invalid_role", allowed=allowed))
         return v
 
     @field_validator("password")
     @classmethod
     def password_strength(cls, v: str) -> str:
         if len(v) < 12:
-            raise ValueError("Hasło musi mieć co najmniej 12 znaków")
+            raise ValueError(t("auth.errors.password_too_short", min=12))
         return v
 
 class UserUpdate(BaseModel):
@@ -85,14 +88,14 @@ class UserUpdate(BaseModel):
         if v is not None:
             allowed = {"partner", "associate", "compliance_officer", "it_admin", "reviewer"}
             if v not in allowed:
-                raise ValueError(f"Nieprawidłowa rola. Dozwolone: {allowed}")
+                raise ValueError(t("auth.errors.invalid_role", allowed=allowed))
         return v
 
     @field_validator("status")
     @classmethod
     def valid_status(cls, v: Optional[str]) -> Optional[str]:
         if v is not None and v not in {"active", "suspended", "pending"}:
-            raise ValueError("Nieprawidłowy status")
+            raise ValueError(t("auth.errors.invalid_status"))
         return v
 
 class PasswordChange(BaseModel):
@@ -102,13 +105,31 @@ class PasswordChange(BaseModel):
     @classmethod
     def password_strength(cls, v: str) -> str:
         if len(v) < 12:
-            raise ValueError("Hasło musi mieć co najmniej 12 znaków")
+            raise ValueError(t("auth.errors.password_too_short", min=12))
         return v
 
 class ApiKeyCreate(BaseModel):
     name: str
     agent_id: Optional[str] = None
     expires_days: Optional[int] = None
+
+class LocaleUpdate(BaseModel):
+    locale: Optional[str] = None      # None = domyślny język instancji
+
+    @field_validator("locale")
+    @classmethod
+    def valid_locale(cls, v: Optional[str]) -> Optional[str]:
+        if v is not None and not is_locale(v):
+            raise ValueError(t("auth.errors.invalid_locale", allowed=", ".join(LOCALES)))
+        return v
+
+
+def _locale_fields(user: dict) -> dict:
+    """Język z profilu + domyślny instancji — frontend wylicza z nich język UI."""
+    return {
+        "locale": user.get("locale"),
+        "default_locale": settings_service.get_str("i18n.default_locale", DEFAULT_LOCALE),
+    }
 
 # ── Endpointy publiczne ────────────────────────────────────────────────────────
 
@@ -122,18 +143,18 @@ async def login(body: LoginRequest, request: Request):
 
     if not user or not user.get("password_hash"):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail="Nieprawidłowy email lub hasło.")
+                            detail=t("auth.errors.invalid_credentials"))
 
     from services.auth_service import verify_password
     if not verify_password(body.password, user["password_hash"]):
         logger.warning("Nieudane logowanie dla: %s (IP: %s)", body.email,
                        request.client.host if request.client else "unknown")
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail="Nieprawidłowy email lub hasło.")
+                            detail=t("auth.errors.invalid_credentials"))
 
     if user["status"] != "active":
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
-                            detail=f"Konto jest {user['status']}.")
+                            detail=t("auth.errors.account_status", status=user["status"]))
 
     user_id = str(user["id"])
     access_token = create_access_token(user_id, str(body.email), str(user["role"]))
@@ -155,6 +176,7 @@ async def login(body: LoginRequest, request: Request):
             "email": str(body.email),
             "full_name": user["full_name"],
             "role": user["role"],
+            **_locale_fields(user),
         },
     }
 
@@ -165,12 +187,12 @@ async def refresh(body: RefreshRequest):
     token_data = await verify_refresh_token(body.refresh_token)
     if not token_data:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail="Refresh token nieprawidłowy lub wygasły.")
+                            detail=t("auth.errors.invalid_refresh_token"))
 
     user = await get_user_by_id(token_data["user_id"])
     if not user or user["status"] != "active":
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail="Konto nieaktywne.")
+                            detail=t("auth.errors.account_inactive"))
 
     access_token = create_access_token(user["id"], user["email"], user["role"])
     return {"access_token": access_token, "token_type": "bearer", "expires_in": 3600}
@@ -182,14 +204,28 @@ async def logout(body: RefreshRequest, user: CurrentUser = Depends(get_current_u
     """Unieważnia refresh token (wylogowanie)."""
     await revoke_refresh_token(body.refresh_token)
     logger.info("Wylogowano: %s", user.email)
-    return {"message": "Wylogowano pomyślnie."}
+    return {"message": t("auth.messages.logged_out")}
 
 
 @router.get("/me")
 async def me(user: CurrentUser = Depends(get_current_user)):
     """Dane aktualnie zalogowanego użytkownika."""
     full = await get_user_by_id(user.id)
-    return full
+    return {**full, **_locale_fields(full)} if full else full
+
+
+@router.put("/me/locale")
+async def set_my_locale(body: LocaleUpdate, user: CurrentUser = Depends(get_current_user)):
+    """Zmiana języka interfejsu zalogowanego użytkownika (null = domyślny instancji)."""
+    await update_user_locale(user.id, body.locale)
+    full = await get_user_by_id(user.id)
+    return {
+        "id": str(full["id"]),
+        "email": full["email"],
+        "full_name": full["full_name"],
+        "role": full["role"],
+        **_locale_fields(full),
+    }
 
 # ── Zarządzanie użytkownikami (partner / it_admin) ────────────────────────────
 
@@ -209,11 +245,11 @@ async def create_new_user(
     """Tworzy nowe konto użytkownika. Tylko partner lub it_admin."""
     existing = await get_user_by_email(str(body.email))
     if existing:
-        raise HTTPException(status_code=409, detail=f"Użytkownik '{body.email}' już istnieje.")
+        raise HTTPException(status_code=409, detail=t("auth.errors.user_exists", email=body.email))
 
     # it_admin nie może tworzyć kont partner
     if user.role == "it_admin" and body.role == "partner":
-        raise HTTPException(status_code=403, detail="it_admin nie może tworzyć kont partner.")
+        raise HTTPException(status_code=403, detail=t("auth.errors.it_admin_cannot_create_partner"))
 
     new_user = await create_user(
         email=str(body.email),
@@ -238,9 +274,9 @@ async def update_existing_user(
     # it_admin nie może edytować partnerów
     target = await get_user_by_id(target_id)
     if not target:
-        raise HTTPException(404, "Użytkownik nie znaleziony.")
+        raise HTTPException(404, t("auth.errors.user_not_found"))
     if user.role == "it_admin" and target.get("role") == "partner":
-        raise HTTPException(403, "it_admin nie może edytować kont partner.")
+        raise HTTPException(403, t("auth.errors.it_admin_cannot_edit_partner"))
 
     updated = await update_user(
         target_id, body.full_name, body.role, body.status, body.department, body.phone,
@@ -257,13 +293,13 @@ async def reset_password(
     """Zmienia hasło użytkownika i unieważnia wszystkie jego sesje."""
     target = await get_user_by_id(target_id)
     if not target:
-        raise HTTPException(404, "Użytkownik nie znaleziony.")
+        raise HTTPException(404, t("auth.errors.user_not_found"))
     if user.role == "it_admin" and target.get("role") == "partner":
-        raise HTTPException(403, "it_admin nie może zmieniać hasła partner.")
+        raise HTTPException(403, t("auth.errors.it_admin_cannot_change_partner_password"))
 
     await change_password(target_id, body.new_password)
     logger.info("Zmieniono hasło dla %s — zmienił: %s", target["email"], user.email)
-    return {"message": "Hasło zmienione. Wszystkie sesje użytkownika zostały unieważnione."}
+    return {"message": t("auth.messages.password_changed_sessions_revoked")}
 
 
 @router.post("/me/password")
@@ -273,7 +309,7 @@ async def change_own_password(
 ):
     """Zmiana własnego hasła przez zalogowanego użytkownika."""
     await change_password(user.id, body.new_password)
-    return {"message": "Hasło zmienione. Zaloguj się ponownie."}
+    return {"message": t("auth.messages.password_changed_relogin")}
 
 # ── Klucze API (it_admin) ─────────────────────────────────────────────────────
 
@@ -313,8 +349,8 @@ async def revoke_api_key(
     """Dezaktywuje klucz API."""
     result = await auth_repo.deactivate_api_key(key_id)
     if result == "UPDATE 0":
-        raise HTTPException(404, "Klucz API nie znaleziony.")
-    return {"message": f"Klucz API {key_id} dezaktywowany."}
+        raise HTTPException(404, t("auth.errors.api_key_not_found"))
+    return {"message": t("auth.messages.api_key_deactivated", key_id=key_id)}
 
 # ── Helper ────────────────────────────────────────────────────────────────────
 

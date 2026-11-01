@@ -1,0 +1,84 @@
+{
+  "agentStatus": {
+    "active": "Actif",
+    "quarantined": "Quarantaine",
+    "retired": "Retiré",
+    "suspended": "Suspendu"
+  },
+  "components": {
+    "liveFeed": {
+      "connected": "Connecté",
+      "disconnected": "Déconnecté",
+      "events": {
+        "auditBlocked": "BLOCAGE",
+        "auditError": "ERREUR",
+        "auditNewCall": "APPEL",
+        "oversightEscalated": "ESCALADE",
+        "oversightPending": "CONTRÔLE"
+      },
+      "title": "Événements en temps réel",
+      "waiting": "En attente d’événements..."
+    },
+    "oversightModal": {
+      "actions": {
+        "approved": "✓ Approuver",
+        "escalated": "↑ Escalader",
+        "rejected": "✕ Rejeter"
+      },
+      "agentDecision": "Décision de l’agent",
+      "cancel": "Annuler",
+      "commentOptional": "Commentaire facultatif...",
+      "commentRequired": "Un commentaire est requis en cas de rejet ou d’escalade.",
+      "decisionType": "Type de décision :",
+      "justificationRequired": "Justification (obligatoire)",
+      "rubberStampWarning": "⚠ La durée de l’examen est mesurée à partir de l’ouverture de cette fenêtre. Une décision prise en moins de 10 secondes sera signalée comme un contrôle de pure forme.",
+      "save": "Enregistrer la décision",
+      "saveError": "Erreur lors de l’enregistrement de la décision",
+      "saved": "Enregistré : {action}",
+      "saving": "Enregistrement...",
+      "submitted": "Soumis :",
+      "taskId": "Task ID : {id}",
+      "timeLeft": "Temps restant",
+      "timer": "{mins} min {secs} s",
+      "yourDecision": "Votre décision"
+    },
+    "searchBox": {
+      "clear": "Effacer",
+      "placeholder": "Rechercher..."
+    }
+  },
+  "language": {
+    "instanceDefault": "Langue par défaut de l’instance ({language})",
+    "label": "Langue"
+  },
+  "oversightStatus": {
+    "approved": "Approuvé",
+    "escalated": "Escaladé",
+    "pending": "En attente",
+    "rejected": "Rejeté"
+  },
+  "policyResult": {
+    "allowed": "Autorisé",
+    "blocked": "Bloqué",
+    "error": "Erreur",
+    "oversight_required": "Contrôle requis",
+    "short": {
+      "allowed": "OK",
+      "blocked": "BLOQUÉ",
+      "error": "ERREUR",
+      "oversight_required": "CONTRÔLE"
+    }
+  },
+  "risk": {
+    "high": "Élevé",
+    "limited": "Limité",
+    "minimal": "Minimal",
+    "short": {
+      "high": "ÉLEVÉ",
+      "limited": "LIMITÉ",
+      "minimal": "MINIMAL",
+      "unacceptable": "INACCEPTABLE"
+    },
+    "unacceptable": "Inacceptable"
+  }
+}

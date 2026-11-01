@@ -1,0 +1,81 @@
+{
+  "actions": {
+    "closeGap": "Устраните пробел и обновите статус в реестре: {title} ({article}).",
+    "completeDeclaration": "Заполните самодекларацию на вкладке «Реестр»: {title} ({article}).",
+    "updateConfig": "Обновите конфигурацию агента, отвечающую за: {title} ({article})."
+  },
+  "fallbackNarrative": "Система «{name}» отнесена к уровню риска {risk}. Полный анализ соответствия требует проверки классификатором ИИ. Пожалуйста, повторите формирование отчёта.",
+  "fileName": "ai-act-report-{name}.pdf",
+  "footer": "GovAI v0.2.0 · Отчёт сформирован {date} UTC · Регламент (ЕС) 2024/1689 (EU AI Act). Документ носит информационный характер и не является юридической консультацией.",
+  "format": {
+    "dateTime": "%d.%m.%Y %H:%M"
+  },
+  "pdf": {
+    "gaps": {
+      "article": "Статья",
+      "beforeDeployment": "До ввода в эксплуатацию",
+      "days": "{days} дн.",
+      "deadline": "Срок",
+      "none": "Пробелы не выявлены — требования подтверждены как выполненные или неприменимые в декларациях соответствия (вкладка «Реестр»).",
+      "requirement": "Требование",
+      "severity": "Значимость"
+    },
+    "meta": "Сформирован: {date} UTC  ·  Владелец: {owner}  ·  Команда: {team}",
+    "noPendingActions": "Невыполненных действий нет — все требования подтверждены.",
+    "profile": {
+      "annexCategory": "Категория Приложения III",
+      "annexNone": "Нет (вне Приложения III)",
+      "contact": "Контакт",
+      "humanOversight": "Человеческий надзор",
+      "model": "Модель ИИ",
+      "monthlyBudget": "Ежемесячный бюджет",
+      "oversightNotRequired": "Не требуется",
+      "oversightRequired": "ТРЕБУЕТСЯ",
+      "owner": "Владелец",
+      "property": "Характеристика",
+      "status": "Статус",
+      "systemId": "ID системы",
+      "team": "Команда",
+      "value": "Значение"
+    },
+    "riskLevel": "Уровень риска: {value}",
+    "sections": {
+      "compliance": "{n}. Оценка соответствия EU AI Act",
+      "legalBasis": "3. Правовое основание и классификация",
+      "profile": "2. Профиль системы ИИ",
+      "recommendations": "{n}. Приоритетные рекомендации",
+      "stats": "{n}. Операционная статистика (последние 30 дней)",
+      "summary": "1. Краткое резюме для руководства"
+    },
+    "stats": {
+      "apiCost": "Стоимость API (30 дней)",
+      "apiCostNote": "расчётные расходы на модель LLM",
+      "avgLatency": "Ср. задержка",
+      "avgLatencyNote": "сквозное время ответа (end-to-end)",
+      "comment": "Комментарий",
+      "metric": "Показатель",
+      "oversight": "Направлено на надзор",
+      "oversightNote": "политика A-001",
+      "piiCalls": "Вызовы с ПДн",
+      "piiCallsNote": "выявленные персональные данные (Presidio)",
+      "policyBlocks": "Блокировки политиками",
+      "policyBlocksNote": "G-001 финансовые операции, G-002 prompt injection",
+      "totalCalls": "Всего вызовов",
+      "totalCallsNote": "все запросы",
+      "value": "Значение"
+    },
+    "tagline": "Платформа управления агентами ИИ · EU AI Act Compliance",
+    "title": "Отчёт о соответствии EU AI Act"
+  },
+  "risk": {
+    "high": "Высокий",
+    "limited": "Ограниченный",
+    "minimal": "Минимальный",
+    "unacceptable": "Неприемлемый"
+  },
+  "severity": {
+    "critical": "Критическая",
+    "major": "Существенная",
+    "minor": "Незначительная"
+  }
+}

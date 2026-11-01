@@ -1,0 +1,7 @@
+{
+  "errors": {
+    "invalid_sensitivity": "Nieprawidłowy max_data_sensitivity. Dozwolone: {allowed}",
+    "invalid_type": "Nieznany provider_type. Dozwolone: {allowed}",
+    "not_found": "Provider nie znaleziony"
+  }
+}

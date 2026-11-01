@@ -1,0 +1,53 @@
+{
+  "count": "{count, plural, one {# vnos} two {# vnosa} few {# vnosi} other {# vnosov}}",
+  "details": {
+    "blockReason": "Razlog blokade",
+    "errorDetails": "Podrobnosti napake",
+    "fields": {
+      "agent": "Agent",
+      "callId": "Call ID",
+      "cost": "Strošek",
+      "eventType": "Vrsta dogodka",
+      "inputHash": "Zgoščena vrednost vhoda",
+      "latency": "Zakasnitev",
+      "piiCategories": "Kategorije PII",
+      "result": "Rezultat",
+      "taskId": "Task ID"
+    },
+    "title": "Podrobnosti klica"
+  },
+  "filters": {
+    "days": {
+      "1": "Zadnji dan",
+      "7": "Zadnjih 7 dni",
+      "30": "Zadnjih 30 dni"
+    },
+    "pii": {
+      "all": "Vsi (PII)",
+      "with": "Z zaznanimi PII",
+      "without": "Brez PII"
+    },
+    "result": {
+      "all": "Vsi rezultati"
+    }
+  },
+  "header": {
+    "subtitle": "Nespremenljiv zapis vseh klicev agentov UI",
+    "title": "Revizijski dnevnik"
+  },
+  "table": {
+    "columns": {
+      "agent": "Agent",
+      "details": "Podrobnosti",
+      "eventType": "Vrsta dogodka",
+      "latency": "Zakasnitev",
+      "pii": "PII",
+      "result": "Rezultat",
+      "time": "Čas"
+    },
+    "empty": "V tem obdobju ni vnosov",
+    "loading": "Nalaganje ...",
+    "piiEntities": "{count, plural, one {# entiteta} two {# entiteti} few {# entitete} other {# entitet}}",
+    "show": "Prikaži"
+  }
+}

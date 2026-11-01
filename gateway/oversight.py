@@ -10,6 +10,7 @@ import redis.asyncio as aioredis
 import app_settings
 from config import settings
 from database import get_pool
+from i18n import t
 from models import AgentRecord
 
 logger = logging.getLogger(__name__)
@@ -56,10 +57,7 @@ async def push_oversight_task(
             user_content = msg.get("content", "")[:500]
             break
 
-    agent_decision = (
-        f"Agent '{agent.name}' przetwarza zapytanie i czeka na zatwierdzenie przez recenzenta. "
-        f"Treść zapytania (skrócona): {user_content[:200]}..."
-    )
+    agent_decision = t("oversight.agentDecision", agent=agent.name, content=user_content[:200])
 
     pool = get_pool()
     await pool.execute(
@@ -72,7 +70,7 @@ async def push_oversight_task(
         oversight_id,
         agent.id,
         task_id,
-        f"Wywołanie agenta {agent.risk_level.upper()}",
+        t("oversight.decisionType", risk=agent.risk_level.upper()),
         agent_decision,
         input_hash,
         ttl_expires_at,

@@ -1,0 +1,84 @@
+{
+  "agentStatus": {
+    "active": "Active",
+    "quarantined": "Quarantined",
+    "retired": "Retired",
+    "suspended": "Suspended"
+  },
+  "components": {
+    "liveFeed": {
+      "connected": "Connected",
+      "disconnected": "Disconnected",
+      "events": {
+        "auditBlocked": "BLOCKED",
+        "auditError": "ERROR",
+        "auditNewCall": "CALL",
+        "oversightEscalated": "ESCALATION",
+        "oversightPending": "OVERSIGHT"
+      },
+      "title": "Real-time events",
+      "waiting": "Waiting for events..."
+    },
+    "oversightModal": {
+      "actions": {
+        "approved": "✓ Approve",
+        "escalated": "↑ Escalate",
+        "rejected": "✕ Reject"
+      },
+      "agentDecision": "Agent decision",
+      "cancel": "Cancel",
+      "commentOptional": "Optional comment...",
+      "commentRequired": "A comment is required when rejecting or escalating.",
+      "decisionType": "Decision type:",
+      "justificationRequired": "Justification (required)",
+      "rubberStampWarning": "⚠ Review time is measured from the moment this window is opened. A decision made in less than 10 seconds will be flagged as rubber-stamp oversight.",
+      "save": "Save decision",
+      "saveError": "Error saving decision",
+      "saved": "Saved: {action}",
+      "saving": "Saving...",
+      "submitted": "Submitted:",
+      "taskId": "Task ID: {id}",
+      "timeLeft": "Time remaining",
+      "timer": "{mins}m {secs}s",
+      "yourDecision": "Your decision"
+    },
+    "searchBox": {
+      "clear": "Clear",
+      "placeholder": "Search..."
+    }
+  },
+  "language": {
+    "instanceDefault": "Instance default ({language})",
+    "label": "Language"
+  },
+  "oversightStatus": {
+    "approved": "Approved",
+    "escalated": "Escalated",
+    "pending": "Pending",
+    "rejected": "Rejected"
+  },
+  "policyResult": {
+    "allowed": "Allowed",
+    "blocked": "Blocked",
+    "error": "Error",
+    "oversight_required": "Requires oversight",
+    "short": {
+      "allowed": "OK",
+      "blocked": "BLOCKED",
+      "error": "ERROR",
+      "oversight_required": "OVERSIGHT"
+    }
+  },
+  "risk": {
+    "high": "High",
+    "limited": "Limited",
+    "minimal": "Minimal",
+    "short": {
+      "high": "HIGH",
+      "limited": "LIMITED",
+      "minimal": "MINIMAL",
+      "unacceptable": "UNACCEPTABLE"
+    },
+    "unacceptable": "Unacceptable"
+  }
+}

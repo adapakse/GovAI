@@ -1,0 +1,10 @@
+{
+  "errors": {
+    "agent_policy_requires_agent_id": "Eine agentenbezogene Richtlinie erfordert agent_id",
+    "invalid_level": "Die Ebene muss org, team oder agent sein",
+    "invalid_rule_type": "Der Regeltyp muss allow, deny oder require_oversight sein",
+    "keywords_not_list": "Das Feld 'keywords' muss eine Liste sein",
+    "not_found": "Richtlinie '{policy_id}' existiert nicht",
+    "team_policy_requires_team": "Eine Team-Richtlinie erfordert das Feld team"
+  }
+}

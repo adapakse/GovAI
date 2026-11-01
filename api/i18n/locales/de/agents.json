@@ -1,0 +1,13 @@
+{
+  "compliance": {
+    "summary_action_required": "KI-Agent '{name}' erfordert Maßnahmen: {parts}.",
+    "summary_compliant": "KI-Agent '{name}' erfüllt die Anforderungen des EU AI Act.",
+    "summary_critical_gaps": "{count} kritische Lücken erfordern sofortiges Handeln",
+    "summary_major_gaps": "{count} schwerwiegende Lücken sind zu schließen"
+  },
+  "errors": {
+    "invalid_status": "Ungültiger Status. Zulässig: {allowed}",
+    "name_empty": "Der Name des KI-Agenten darf nicht leer sein",
+    "not_found": "KI-Agent '{agent_id}' existiert nicht"
+  }
+}

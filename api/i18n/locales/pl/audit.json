@@ -1,0 +1,5 @@
+{
+  "errors": {
+    "call_not_found": "Wywołanie '{call_id}' nie znalezione w dzienniku"
+  }
+}

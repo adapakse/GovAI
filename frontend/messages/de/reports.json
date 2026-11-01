@@ -1,0 +1,43 @@
+{
+  "alerts": {
+    "budgetExceeded": "⚠ Budgetüberschreitung: <b>{name}</b> — {actual} EUR ({pct}% der Schwelle von {threshold} EUR)",
+    "overdueReview": "⚠ Überfällige Compliance-Überprüfung: <b>{name}</b> (Frist: {date})",
+    "title": "WARNUNGEN, DIE AUFMERKSAMKEIT ERFORDERN"
+  },
+  "dataFrom": "Daten vom: {date} ·",
+  "days": "{days} Tage",
+  "download": "↓ PDF herunterladen",
+  "error": "Fehler: {error}",
+  "generating": "Wird erstellt...",
+  "header": {
+    "subtitle": "Unternehmensweiter Konformitätsbericht zum EU AI Act für die gesamte Organisation",
+    "title": "KI-Governance-Berichte"
+  },
+  "kpi": {
+    "agents": "KI-Agenten",
+    "agentsSub": "im Register",
+    "blocked": "Blockierungen",
+    "calls": "Aufrufe",
+    "cost": "API-Kosten",
+    "costSub": "insgesamt",
+    "pii": "Vorfälle mit personenbez. Daten",
+    "piiSub": "erkannt"
+  },
+  "loading": "Daten werden geladen...",
+  "oversight": {
+    "avgReview": "Ø Prüfzeit: {minutes} min",
+    "title": "Aufsichtswarteschlange (Art. 14)",
+    "total": "Aufgaben insgesamt"
+  },
+  "pdfError": "Fehler bei der PDF-Erstellung: {error}",
+  "period": "Zeitraum:",
+  "piiCategories": "Kategorien personenbezogener Daten",
+  "policyHits": "Auslösungen von Richtlinien",
+  "refresh": "aktualisieren",
+  "riskDistribution": "Risikoverteilung nach EU AI Act",
+  "sessionExpired": "Sitzung abgelaufen",
+  "topAgents": {
+    "blockedCost": "{blocked} Blockierungen · {cost} EUR",
+    "title": "Top-KI-Agenten nach Aufrufen"
+  }
+}

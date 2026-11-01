@@ -1,0 +1,29 @@
+{
+  "cta": {
+    "bookDemo": "Umów demo"
+  },
+  "footer": {
+    "home": "Strona główna",
+    "owner": "Właściciel platformy:",
+    "privacy": "Prywatność",
+    "rights": "© 2026 GovAI. Wszelkie prawa zastrzeżone.",
+    "terms": "Regulamin"
+  },
+  "lang": {
+    "label": "Język",
+    "picker": "Język strony"
+  },
+  "nav": {
+    "act": "AI Act",
+    "backHome": "← Strona główna",
+    "blog": "Blog",
+    "faq": "FAQ",
+    "login": "Zaloguj się",
+    "menu": "Menu",
+    "platform": "Platforma",
+    "pricing": "Cennik"
+  },
+  "theme": {
+    "toggle": "Przełącz motyw"
+  }
+}

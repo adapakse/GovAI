@@ -1,0 +1,17 @@
+{
+  "Anthropic Claude (Cloud)": {
+    "notes": "Proveedor externo. Requiere un acuerdo de encargo del tratamiento (DPA). No utilizar para datos amparados por el secreto profesional del abogado."
+  },
+  "Bielik On-Prem (Local)": {
+    "notes": "Modelo local — apto para datos amparados por el secreto profesional del abogado. Actívelo tras iniciar el servidor Ollama."
+  },
+  "DeepSeek (Cloud)": {
+    "notes": "Servidores fuera de la UE (China). Exclusivamente datos públicos — prohibido el tratamiento de datos de clientes."
+  },
+  "Google Gemini (Cloud)": {
+    "notes": "Proveedor externo con EU Data Boundary. Requiere un acuerdo de encargo del tratamiento (DPA). No utilizar para datos privilegiados."
+  },
+  "OpenAI (Cloud)": {
+    "notes": "Proveedor externo. Requiere DPA Enterprise. No utilizar para datos confidenciales."
+  }
+}

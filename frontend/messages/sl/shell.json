@@ -1,0 +1,26 @@
+{
+  "logout": "Odjava",
+  "meta": {
+    "description": "Skladnost z EU AI Act | Varnostni prehod | Človeški nadzor",
+    "title": "GovAI — Platforma za upravljanje agentov UI"
+  },
+  "nav": {
+    "admin": "Skrbništvo",
+    "agents": "Agenti",
+    "audit": "Dnevnik",
+    "dashboard": "Nadzorna plošča",
+    "demo": "Simulator",
+    "oversight": "Nadzor",
+    "policies": "Pravilniki",
+    "providers": "Dobavitelji",
+    "reports": "Poročila",
+    "settings": "Parametri"
+  },
+  "roles": {
+    "associate": "Sodelavec",
+    "compliance_officer": "Pooblaščenec za skladnost",
+    "it_admin": "Skrbnik IT",
+    "partner": "Partner",
+    "reviewer": "Pregledovalec"
+  }
+}

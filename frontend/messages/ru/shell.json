@@ -1,0 +1,26 @@
+{
+  "logout": "Выйти",
+  "meta": {
+    "description": "Соответствие EU AI Act | Шлюз безопасности | Человеческий надзор",
+    "title": "GovAI — Платформа управления агентами ИИ"
+  },
+  "nav": {
+    "admin": "Администрирование",
+    "agents": "Агенты",
+    "audit": "Журнал",
+    "dashboard": "Панель",
+    "demo": "Симулятор",
+    "oversight": "Надзор",
+    "policies": "Политики",
+    "providers": "Поставщики моделей",
+    "reports": "Отчёты",
+    "settings": "Параметры"
+  },
+  "roles": {
+    "associate": "Юрист (Associate)",
+    "compliance_officer": "Специалист по комплаенсу",
+    "it_admin": "ИТ-администратор",
+    "partner": "Партнёр",
+    "reviewer": "Проверяющий"
+  }
+}

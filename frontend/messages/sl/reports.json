@@ -1,0 +1,43 @@
+{
+  "alerts": {
+    "budgetExceeded": "⚠ Prekoračitev proračuna: <b>{name}</b> — {actual} EUR ({pct} % praga {threshold} EUR)",
+    "overdueReview": "⚠ Zamujen pregled skladnosti: <b>{name}</b> (rok: {date})",
+    "title": "OPOZORILA, KI ZAHTEVAJO POZORNOST"
+  },
+  "dataFrom": "Podatki od: {date} ·",
+  "days": "{days} dni",
+  "download": "↓ Prenesi PDF",
+  "error": "Napaka: {error}",
+  "generating": "Ustvarjanje ...",
+  "header": {
+    "subtitle": "Korporativno poročilo o skladnosti z EU AI Act za celotno organizacijo",
+    "title": "Poročila o upravljanju UI"
+  },
+  "kpi": {
+    "agents": "Agenti UI",
+    "agentsSub": "v registru",
+    "blocked": "Blokade",
+    "calls": "Klici",
+    "cost": "Strošek API",
+    "costSub": "skupaj",
+    "pii": "Incidenti PII",
+    "piiSub": "zaznani"
+  },
+  "loading": "Nalaganje podatkov ...",
+  "oversight": {
+    "avgReview": "Povpr. čas pregleda: {minutes} min",
+    "title": "Čakalna vrsta nadzora (člen 14)",
+    "total": "Nalog skupaj"
+  },
+  "pdfError": "Napaka pri ustvarjanju PDF: {error}",
+  "period": "Obdobje:",
+  "piiCategories": "Kategorije PII",
+  "policyHits": "Sprožitve pravilnikov",
+  "refresh": "osveži",
+  "riskDistribution": "Porazdelitev tveganj po EU AI Act",
+  "sessionExpired": "Seja je potekla",
+  "topAgents": {
+    "blockedCost": "{blocked} blokad · {cost} EUR",
+    "title": "Najpogosteje klicani agenti"
+  }
+}

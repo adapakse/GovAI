@@ -11,6 +11,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
 from dependencies.auth import CurrentUser, get_current_user, require_role
+from i18n import t
 from repositories import providers_repository as providers_repo
 
 logger = logging.getLogger(__name__)
@@ -80,7 +81,7 @@ async def get_provider(
 ):
     row = await providers_repo.get_provider(provider_id)
     if not row:
-        raise HTTPException(status_code=404, detail="Provider nie znaleziony")
+        raise HTTPException(status_code=404, detail=t("providers.errors.not_found"))
     return _row_to_dict(row)
 
 
@@ -90,9 +91,9 @@ async def create_provider(
     user: CurrentUser = Depends(_WRITE_ROLES),
 ):
     if body.provider_type not in VALID_TYPES:
-        raise HTTPException(400, f"Nieznany provider_type. Dozwolone: {sorted(VALID_TYPES)}")
+        raise HTTPException(400, t("providers.errors.invalid_type", allowed=sorted(VALID_TYPES)))
     if body.max_data_sensitivity not in VALID_SENSITIVITY:
-        raise HTTPException(400, f"Nieprawidłowy max_data_sensitivity. Dozwolone: {sorted(VALID_SENSITIVITY)}")
+        raise HTTPException(400, t("providers.errors.invalid_sensitivity", allowed=sorted(VALID_SENSITIVITY)))
 
     row = await providers_repo.insert_provider(
         name=body.name,
@@ -117,10 +118,10 @@ async def update_provider(
 ):
     existing = await providers_repo.get_provider_id(provider_id)
     if not existing:
-        raise HTTPException(404, "Provider nie znaleziony")
+        raise HTTPException(404, t("providers.errors.not_found"))
 
     if body.max_data_sensitivity and body.max_data_sensitivity not in VALID_SENSITIVITY:
-        raise HTTPException(400, f"Nieprawidłowy max_data_sensitivity. Dozwolone: {sorted(VALID_SENSITIVITY)}")
+        raise HTTPException(400, t("providers.errors.invalid_sensitivity", allowed=sorted(VALID_SENSITIVITY)))
 
     row = await providers_repo.update_provider(
         provider_id,
@@ -148,7 +149,7 @@ async def delete_provider(
 ):
     row = await providers_repo.delete_provider(provider_id)
     if not row:
-        raise HTTPException(404, "Provider nie znaleziony")
+        raise HTTPException(404, t("providers.errors.not_found"))
     logger.info("Provider '%s' usunięty przez %s", row["name"], user.email)
     return {"deleted": str(row["id"]), "name": row["name"]}
 
@@ -162,5 +163,5 @@ async def update_health(
     """Ręczna aktualizacja stanu zdrowia providera (np. po teście połączenia)."""
     row = await providers_repo.set_health(provider_id, healthy)
     if not row:
-        raise HTTPException(404, "Provider nie znaleziony")
+        raise HTTPException(404, t("providers.errors.not_found"))
     return _row_to_dict(row)

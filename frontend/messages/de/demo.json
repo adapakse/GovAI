@@ -1,0 +1,100 @@
+{
+  "chat": {
+    "awaitingOversight": "⏳ An die menschliche Aufsicht übergeben (Art. 14 EU AI Act)\nOversight ID: {id}",
+    "blocked": "🚫 Blockiert: {reason}",
+    "clear": "Leeren",
+    "connectionError": "Verbindungsfehler: {error}",
+    "defaultBlockReason": "GovAI-Sicherheitsrichtlinie",
+    "emptyHint": "Geben Sie unten eine Nachricht ein — sie wird vom GovAI Gateway verarbeitet (PII-Scan → Richtlinien → {model})",
+    "pipeline": "Freier Chat · GovAI Gateway → PII-Scan → Richtlinien → {model}",
+    "placeholder": "Nachricht an den KI-Agenten schreiben...",
+    "sectionTitle": "Freier Chat — direkter Aufruf über das Gateway",
+    "send": "Senden ▶"
+  },
+  "expected": {
+    "allowed": "Zulässig",
+    "allowed_with_pii": "Zulässig + personenbez. Daten",
+    "blocked": "Blockiert",
+    "oversight_required": "Aufsicht erforderlich"
+  },
+  "fleet": {
+    "button": "▦ Flotte befüllen (50 KI-Agenten)",
+    "count": "{count, plural, one {# KI-Agent der Flotte} other {# KI-Agenten der Flotte}}",
+    "desc": "Fügt 50 über Abteilungen verteilte KI-Agenten mit gezielten Konformitätslücken hinzu (Hochrisiko ohne Aufsicht, überfällige Überprüfungen, verbotene Praktiken nach Art. 5). Zeigt, dass eine manuelle Steuerung der AI-Act-Konformität in dieser Größenordnung nicht machbar ist.",
+    "seededAgents": "{count, plural, one {# KI-Agent} other {# KI-Agenten}} angelegt.",
+    "title": "Demo-Flotte (Skalierung)"
+  },
+  "links": {
+    "audit": "→ Audit-Log",
+    "auditLog": "→ Audit-Log",
+    "oversight": "→ Aufsicht",
+    "oversightQueue": "→ Aufsichtswarteschlange"
+  },
+  "loading": "⏳ Wird geladen...",
+  "noAgents": "Keine aktiven KI-Agenten.",
+  "noResults": "Keine KI-Agenten gefunden für „{query}“.",
+  "playbook": {
+    "collapse": "▲ einklappen",
+    "expand": "▼ ausklappen",
+    "go": "Weiter →",
+    "intro": "Führen Sie die Präsentation Schritt für Schritt durch.",
+    "steps": {
+      "1": {
+        "desc": "Klicken Sie auf „Daten für 30 Tage befüllen“ — der Seeder erzeugt ca. 500 Audit-Einträge und ca. 23 Einträge in der Aufsichtswarteschlange.",
+        "title": "Historische Daten befüllen"
+      },
+      "2": {
+        "desc": "Wechseln Sie zum Dashboard. Sie sehen die Gesamtzahl der Aufrufe, Blockierungen, personenbezogene Daten, Kosten und das 24-h-Diagramm.",
+        "title": "Dashboard prüfen — historische Daten"
+      },
+      "3": {
+        "desc": "Klicken Sie beim Szenario „Versicherungsanfrage“ (Agent 1) auf „Ausführen ▶“.",
+        "title": "Szenario ausführen — positiv"
+      },
+      "4": {
+        "desc": "Klicken Sie auf „Kunde gibt PESEL und Kontonummer an“. Presidio maskiert die Daten vor dem Senden an das Modell.",
+        "title": "Szenario mit personenbezogenen Daten ausführen"
+      },
+      "5": {
+        "desc": "Versuch einer Finanzmanipulation → G-001. Prompt-Injection-Angriff → G-002. Im Audit-Log sichtbar.",
+        "title": "Blockierung G-001 und G-002 auslösen"
+      },
+      "6": {
+        "desc": "Agent 2 erfordert Aufsicht — der Aufruf landet in der Warteschlange. Wechseln Sie zu „Aufsicht“ und genehmigen Sie ihn.",
+        "title": "Aufsichtswarteschlange (Art. 14)"
+      },
+      "7": {
+        "desc": "Wählen Sie den DeepSeek-Agenten und schreiben Sie eine beliebige Nachricht. GovAI fängt den Datenverkehr ab, scannt nach personenbezogenen Daten und prüft die Richtlinien — genau wie bei Claude.",
+        "title": "DeepSeek über GovAI testen"
+      }
+    },
+    "title": "📋 Demo-Leitfaden — 7 Schritte"
+  },
+  "result": {
+    "blockedByPolicy": "Durch Richtlinie blockiert.",
+    "expected": "→ erwartet: {label}",
+    "gatewayResponse": "Antwort des Gateways:",
+    "match": "✓ übereinstimmend",
+    "mismatch": "≠ unerwartet",
+    "run": "Ausführen ▶",
+    "running": "⏳ Wird aufgerufen...",
+    "sentToOversight": "Entscheidung an die Aufsicht weitergeleitet.\nOversight ID: {id}\n\n{message}",
+    "task": "task: {id}..."
+  },
+  "searchPlaceholder": "KI-Agenten suchen — Name, Modell, Modellanbieter (z. B. bielik, ollama), Team...",
+  "seed": {
+    "button": "▦ Daten für 30 Tage befüllen",
+    "counts": "{audit} Audit-Einträge · {oversight} Aufsicht",
+    "desc": "Der Seeder erzeugt ca. 500 Audit-Einträge und 23 Einträge in der Warteschlange.",
+    "refresh": "↻ Aktualisieren",
+    "reset": "✕ Daten zurücksetzen",
+    "resetConfirm": "ALLE Demo-Daten löschen (Audit, Aufsicht, Agentenflotte)?",
+    "resetDone": "{audit} Audit-Einträge, {oversight} Aufsichtseinträge und {fleet} KI-Agenten der Flotte gelöscht.",
+    "seededEntries": "{count, plural, one {# Eintrag} other {# Einträge}} angelegt.",
+    "statusEmpty": "○ Leer",
+    "statusSeeded": "● Befüllt",
+    "title": "Demo-Daten (30 Tage Historie)"
+  },
+  "subtitle": "Jeder Aufruf durchläuft GovAI Gateway → PII-Scan → Policy Engine → KI-Modell. Die Ergebnisse sind im Audit-Log und in der Aufsichtswarteschlange sichtbar.",
+  "title": "KI-Agenten-Simulator"
+}

@@ -1,0 +1,53 @@
+{
+  "count": "{count, plural, one {# zapis} few {# zapisa} many {# zapisa} other {# zapisa}}",
+  "details": {
+    "blockReason": "Razlog blokade",
+    "errorDetails": "Pojedinosti pogreške",
+    "fields": {
+      "agent": "Agent",
+      "callId": "Call ID",
+      "cost": "Trošak",
+      "eventType": "Vrsta događaja",
+      "inputHash": "Sažetak (hash) ulaza",
+      "latency": "Latencija",
+      "piiCategories": "Kategorije osobnih podataka",
+      "result": "Rezultat",
+      "taskId": "Task ID"
+    },
+    "title": "Pojedinosti poziva"
+  },
+  "filters": {
+    "days": {
+      "1": "Posljednji dan",
+      "7": "Posljednjih 7 dana",
+      "30": "Posljednjih 30 dana"
+    },
+    "pii": {
+      "all": "Svi (osobni podaci)",
+      "with": "S otkrivenim osobnim podacima",
+      "without": "Bez osobnih podataka"
+    },
+    "result": {
+      "all": "Svi rezultati"
+    }
+  },
+  "header": {
+    "subtitle": "Nepromjenjivi zapis svih poziva AI agenata",
+    "title": "Revizijski zapisnik"
+  },
+  "table": {
+    "columns": {
+      "agent": "Agent",
+      "details": "Pojedinosti",
+      "eventType": "Vrsta događaja",
+      "latency": "Latencija",
+      "pii": "Osobni podaci",
+      "result": "Rezultat",
+      "time": "Vrijeme"
+    },
+    "empty": "Nema zapisa u ovom razdoblju",
+    "loading": "Učitavanje...",
+    "piiEntities": "{count, plural, one {# entitet} few {# entiteta} many {# entiteta} other {# entiteta}}",
+    "show": "Prikaži"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "errors": {
+    "invalid_sensitivity": "max_data_sensitivity nevalid. Valori permise: {allowed}",
+    "invalid_type": "provider_type necunoscut. Valori permise: {allowed}",
+    "not_found": "Furnizorul de modele nu a fost găsit"
+  }
+}

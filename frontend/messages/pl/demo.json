@@ -1,0 +1,100 @@
+{
+  "chat": {
+    "awaitingOversight": "⏳ Przekazano do nadzoru człowieka (art. 14 EU AI Act)\nOversight ID: {id}",
+    "blocked": "🚫 Zablokowane: {reason}",
+    "clear": "Wyczyść",
+    "connectionError": "Błąd połączenia: {error}",
+    "defaultBlockReason": "Polityka bezpieczeństwa GovAI",
+    "emptyHint": "Wpisz wiadomość poniżej — zostanie przetworzona przez GovAI Gateway (PII scan → polityki → {model})",
+    "pipeline": "Wolny czat · GovAI Gateway → PII scan → polityki → {model}",
+    "placeholder": "Napisz wiadomość do agenta...",
+    "sectionTitle": "Wolny czat — bezpośrednie wywołanie przez Gateway",
+    "send": "Wyślij ▶"
+  },
+  "expected": {
+    "allowed": "Dozwolone",
+    "allowed_with_pii": "Dozwolone + PII",
+    "blocked": "Zablokowane",
+    "oversight_required": "Do nadzoru"
+  },
+  "fleet": {
+    "button": "▦ Zasil flotę (50 agentów)",
+    "count": "{count, plural, one {# agent floty} few {# agentów floty} many {# agentów floty} other {# agenta floty}}",
+    "desc": "Dodaje 50 agentów rozproszonych po działach, z celowymi lukami zgodności (high-risk bez nadzoru, zaległe przeglądy, praktyki niedopuszczalne art. 5). Pokazuje, że przy skali ręczne panowanie nad AI Act jest niewykonalne.",
+    "seededAgents": "Zasiano {count, plural, one {# agenta} few {# agentów} many {# agentów} other {# agenta}}.",
+    "title": "Flota demonstracyjna (skala)"
+  },
+  "links": {
+    "audit": "→ Dziennik",
+    "auditLog": "→ Dziennik audytowy",
+    "oversight": "→ Nadzór",
+    "oversightQueue": "→ Kolejka nadzoru"
+  },
+  "loading": "⏳ Ładowanie...",
+  "noAgents": "Brak aktywnych agentów.",
+  "noResults": "Brak agentów pasujących do „{query}”.",
+  "playbook": {
+    "collapse": "▲ zwiń",
+    "expand": "▼ rozwiń",
+    "go": "Przejdź →",
+    "intro": "Przeprowadź prezentację krok po kroku.",
+    "steps": {
+      "1": {
+        "desc": "Kliknij \"Zasil 30 dni danych\" — seeder generuje ~500 wpisów audytowych i ~23 pozycje kolejki nadzoru.",
+        "title": "Zasil bazę danych historycznych"
+      },
+      "2": {
+        "desc": "Przejdź do Pulpitu. Zobaczysz łączne wywołania, blokady, PII, koszty i wykres 24h.",
+        "title": "Sprawdź Pulpit — dane historyczne"
+      },
+      "3": {
+        "desc": "Kliknij \"Uruchom ▶\" przy scenariuszu \"Zapytanie o ubezpieczenie\" (Agent 1).",
+        "title": "Uruchom scenariusz — pozytywny"
+      },
+      "4": {
+        "desc": "Kliknij \"Klient podaje PESEL i numer konta\". Presidio maskuje dane przed wysłaniem do modelu.",
+        "title": "Uruchom scenariusz z PII"
+      },
+      "5": {
+        "desc": "Próba mutacji finansowej → G-001. Atak prompt injection → G-002. Widoczne w Dzienniku.",
+        "title": "Uruchom blokadę G-001 i G-002"
+      },
+      "6": {
+        "desc": "Agent 2 wymaga nadzoru — wywołanie trafia do kolejki. Przejdź do Nadzoru i zatwierdź.",
+        "title": "Kolejka Nadzoru (art. 14)"
+      },
+      "7": {
+        "desc": "Wybierz agenta DeepSeek i napisz dowolną wiadomość. GovAI przechwytuje ruch, skanuje PII i sprawdza polityki — identycznie jak dla Claude.",
+        "title": "Przetestuj DeepSeek przez GovAI"
+      }
+    },
+    "title": "📋 Przewodnik Demo — 7 kroków"
+  },
+  "result": {
+    "blockedByPolicy": "Zablokowane przez politykę.",
+    "expected": "→ oczekiwane: {label}",
+    "gatewayResponse": "Odpowiedź gateway:",
+    "match": "✓ zgodne",
+    "mismatch": "≠ nieoczekiwany",
+    "run": "Uruchom ▶",
+    "running": "⏳ Wywołuję...",
+    "sentToOversight": "Decyzja skierowana do nadzoru.\nOversight ID: {id}\n\n{message}",
+    "task": "task: {id}..."
+  },
+  "searchPlaceholder": "Szukaj agenta — nazwa, model, provider (np. bielik, ollama), zespół...",
+  "seed": {
+    "button": "▦ Zasil 30 dni danych",
+    "counts": "{audit} audytów · {oversight} nadzoru",
+    "desc": "Seeder generuje ~500 wpisów audytowych i 23 pozycje kolejki.",
+    "refresh": "↻ Odśwież",
+    "reset": "✕ Resetuj dane",
+    "resetConfirm": "Usunąć WSZYSTKIE dane demo (audyt, nadzór, flota agentów)?",
+    "resetDone": "Usunięto {audit} audytów, {oversight} nadzoru i {fleet} agentów floty.",
+    "seededEntries": "Zasiano {count, plural, one {# wpis} few {# wpisy} many {# wpisów} other {# wpisu}}.",
+    "statusEmpty": "○ Pusto",
+    "statusSeeded": "● Zasiano",
+    "title": "Dane Demo (30 dni historycznych)"
+  },
+  "subtitle": "Każde wywołanie przechodzi przez GovAI Gateway → PII scan → Policy engine → model AI. Wyniki widoczne w Dzienniku i kolejce Nadzoru.",
+  "title": "Symulator Agentów AI"
+}

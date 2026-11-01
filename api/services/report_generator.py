@@ -18,6 +18,7 @@ from reportlab.platypus import (
 )
 
 from config import settings
+from i18n import language_name_en, t, t_dict
 from services import settings_service
 from services.compliance import assess_compliance
 from repositories import compliance_repository as compliance_repo
@@ -38,12 +39,9 @@ def _md_to_rl(text: str) -> str:
     text = re.sub(r'\*(.+?)\*',     r'<i>\1</i>', text)
     return text
 
-_RISK_LABELS = {
-    "minimal":      "Minimalne",
-    "limited":      "Ograniczone",
-    "high":         "Wysokie",
-    "unacceptable": "Niedopuszczalne",
-}
+def _risk_label(risk: str) -> str:
+    """Etykieta poziomu ryzyka w języku żądania (report.risk.<poziom>)."""
+    return t_dict("report.risk").get(risk, risk)
 
 _RISK_HEX = {
     "minimal":      "#2D9C61",
@@ -55,7 +53,8 @@ _RISK_HEX = {
 _NARRATIVE_PROMPT = """\
 Jesteś doradcą prawnym specjalizującym się w EU AI Act (Rozporządzenie UE 2024/1689).
 Na podstawie poniższych danych o systemie AI napisz streszczenie wykonawcze do raportu
-zgodności (max 280 słów, po polsku, bez nagłówków, ciągły tekst).
+zgodności (max 280 słów, bez nagłówków, ciągły tekst).
+Write the summary in {language}.
 
 Dane systemu:
 {data}
@@ -69,19 +68,22 @@ Streszczenie powinno:
 Pisz profesjonalnie i konkretnie.\
 """
 
-# Tłumaczenie enuma severity (z ai_act_requirements.default_severity) na etykietę
-# PL do wyświetlenia — czysta prezentacja, nie treść merytoryczna compliance.
-_SEV_LABEL = {"critical": "Krytyczna", "major": "Poważna", "minor": "Drobna"}
+# Etykieta enuma severity (z ai_act_requirements.default_severity) do wyświetlenia
+# — czysta prezentacja, nie treść merytoryczna compliance (report.severity.<kod>).
+def _sev_label(severity: str) -> str:
+    return t_dict("report.severity").get(severity, severity)
 
 
 def _gap_action(g: dict) -> str:
     """Generyczna podpowiedź działania na podstawie statusu/źródła wymagania —
     nie odwołuje się do treści konkretnego artykułu (ta jest w opisie luki)."""
     if g["source"] == "auto":
-        return f"Zaktualizuj konfigurację agenta odpowiadającą za: {g['title']} ({g['article']})."
-    if g["status"] == "undeclared":
-        return f"Uzupełnij samo-deklarację w zakładce Rejestr: {g['title']} ({g['article']})."
-    return f"Zamknij lukę i zaktualizuj status w Rejestrze: {g['title']} ({g['article']})."
+        key = "report.actions.updateConfig"
+    elif g["status"] == "undeclared":
+        key = "report.actions.completeDeclaration"
+    else:
+        key = "report.actions.closeGap"
+    return t(key, title=g["title"], article=g["article"])
 
 
 def _serialize(val):
@@ -186,18 +188,15 @@ async def generate_narrative(report_data: dict) -> str:
             messages=[{
                 "role": "user",
                 "content": _NARRATIVE_PROMPT.format(
-                    data=json.dumps(summary, ensure_ascii=False, indent=2)
+                    data=json.dumps(summary, ensure_ascii=False, indent=2),
+                    language=language_name_en(),
                 ),
             }],
         )
         return msg.content[0].text.strip()
     except Exception:
         risk = agent.get("risk_level", "minimal")
-        return (
-            f"System \"{agent['name']}\" sklasyfikowany jako poziom ryzyka {_RISK_LABELS.get(risk, risk)}. "
-            "Pełna analiza zgodności wymaga weryfikacji przez klasyfikator AI. "
-            "Prosimy ponowić generowanie raportu."
-        )
+        return t("report.fallbackNarrative", name=agent["name"], risk=_risk_label(risk))
 
 
 def _cell(text: str, bold: bool = False) -> Paragraph:
@@ -263,8 +262,11 @@ def render_pdf(report_data: dict, narrative: str) -> bytes:
     gen_dt = datetime.fromisoformat(gen_at)
 
     risk = agent.get("risk_level", "minimal")
-    risk_label = _RISK_LABELS.get(risk, risk)
+    risk_label = _risk_label(risk)
     risk_hex = _RISK_HEX.get(risk, "#666666")
+    # Format daty z tłumaczeń (strftime) — domyślnie liczbowy dd.mm.rrrr
+    gen_str = gen_dt.strftime(t("report.format.dateTime"))
+    P = "report.pdf."
 
     def hr():
         return HRFlowable(width="100%", thickness=0.5,
@@ -273,43 +275,46 @@ def render_pdf(report_data: dict, narrative: str) -> bytes:
     story = [
         Spacer(1, 1*cm),
         Paragraph("GovAI", S["brand"]),
-        Paragraph("Platforma Zarządzania Agentami AI · EU AI Act Compliance", S["sub"]),
+        Paragraph(t(P + "tagline"), S["sub"]),
         HRFlowable(width="100%", thickness=2, color=colors.HexColor("#1E6FBF"),
                    spaceBefore=6, spaceAfter=16),
-        Paragraph("Raport Zgodności EU AI Act", S["h1"]),
+        Paragraph(t(P + "title"), S["h1"]),
         Paragraph(agent["name"], S["aname"]),
         Spacer(1, 0.2*cm),
         Paragraph(
-            f'Poziom ryzyka: <font color="{risk_hex}"><b>{risk_label.upper()}</b></font>',
+            t(P + "riskLevel",
+              value=f'<font color="{risk_hex}"><b>{risk_label.upper()}</b></font>'),
             S["body"],
         ),
         Paragraph(
-            f'Wygenerowano: {gen_dt.strftime("%d.%m.%Y %H:%M")} UTC  ·  '
-            f'Właściciel: {agent.get("owner_name", "—")}  ·  '
-            f'Zespół: {agent.get("team", "—") or "—"}',
+            t(P + "meta", date=gen_str,
+              owner=agent.get("owner_name", "—"),
+              team=agent.get("team", "—") or "—"),
             S["small"],
         ),
         Spacer(1, 0.6*cm),
         # 1. Streszczenie
-        Paragraph("1. Streszczenie Wykonawcze", S["h2"]),
+        Paragraph(t(P + "sections.summary"), S["h2"]),
         hr(),
         Paragraph(_md_to_rl(narrative), S["body"]),
         Spacer(1, 0.4*cm),
         # 2. Profil
-        Paragraph("2. Profil Systemu AI", S["h2"]),
+        Paragraph(t(P + "sections.profile"), S["h2"]),
         hr(),
         _table(
             [
-                ["Właściwość", "Wartość"],
-                ["ID systemu",            str(agent.get("id", "—"))],
-                ["Właściciel",            agent.get("owner_name", "—")],
-                ["Kontakt",               agent.get("owner_email", "—")],
-                ["Zespół",                agent.get("team", "—") or "—"],
-                ["Model AI",              agent.get("model_id", "—")],
-                ["Status",                agent.get("status", "—").upper()],
-                ["Kategoria Aneksu III",  agent.get("annex_iii_cat") or "Brak (nie-aneksowy)"],
-                ["Nadzór człowieka",      "WYMAGANY" if agent.get("requires_oversight") else "Nie wymagany"],
-                ["Budżet miesięczny",     f'{float(agent.get("monthly_budget_eur") or 0):.2f} EUR'],
+                [t(P + "profile.property"),     t(P + "profile.value")],
+                [t(P + "profile.systemId"),     str(agent.get("id", "—"))],
+                [t(P + "profile.owner"),        agent.get("owner_name", "—")],
+                [t(P + "profile.contact"),      agent.get("owner_email", "—")],
+                [t(P + "profile.team"),         agent.get("team", "—") or "—"],
+                [t(P + "profile.model"),        agent.get("model_id", "—")],
+                [t(P + "profile.status"),       agent.get("status", "—").upper()],
+                [t(P + "profile.annexCategory"), agent.get("annex_iii_cat") or t(P + "profile.annexNone")],
+                [t(P + "profile.humanOversight"),
+                 t(P + "profile.oversightRequired") if agent.get("requires_oversight")
+                 else t(P + "profile.oversightNotRequired")],
+                [t(P + "profile.monthlyBudget"), f'{float(agent.get("monthly_budget_eur") or 0):.2f} EUR'],
             ],
             [6*cm, 10*cm],
         ),
@@ -318,7 +323,7 @@ def render_pdf(report_data: dict, narrative: str) -> bytes:
 
     if agent.get("legal_basis"):
         story += [
-            Paragraph("3. Podstawa Prawna i Klasyfikacja", S["h2"]),
+            Paragraph(t(P + "sections.legalBasis"), S["h2"]),
             hr(),
             Paragraph(agent["legal_basis"], S["body"]),
             Spacer(1, 0.4*cm),
@@ -336,17 +341,18 @@ def render_pdf(report_data: dict, narrative: str) -> bytes:
     total_cost = float(stats.get("total_cost") or 0)
 
     story += [
-        Paragraph(f"{sec}. Statystyki Operacyjne (ostatnie 30 dni)", S["h2"]),
+        Paragraph(t(P + "sections.stats", n=sec), S["h2"]),
         hr(),
         _table(
             [
-                ["Metryka", "Wartość", "Komentarz"],
-                ["Wywołania ogółem",       str(total),                        "wszystkie żądania"],
-                ["Blokady polityk",        f"{blocked} ({block_rate})",        "G-001 finansowe, G-002 prompt injection"],
-                ["Skierowane do nadzoru",  str(oversight_cnt),                 "polityka A-001"],
-                ["Wywołania z PII",        str(pii_cnt),                       "wykryte dane osobowe (Presidio)"],
-                ["Śr. latencja",           f"{float(avg_lat):.0f} ms" if avg_lat else "—", "czas odpowiedzi end-to-end"],
-                ["Koszt API (30 dni)",     f"{total_cost:.4f} EUR",            "szacowane koszty modelu LLM"],
+                [t(P + "stats.metric"), t(P + "stats.value"), t(P + "stats.comment")],
+                [t(P + "stats.totalCalls"),  str(total),                 t(P + "stats.totalCallsNote")],
+                [t(P + "stats.policyBlocks"), f"{blocked} ({block_rate})", t(P + "stats.policyBlocksNote")],
+                [t(P + "stats.oversight"),   str(oversight_cnt),         t(P + "stats.oversightNote")],
+                [t(P + "stats.piiCalls"),    str(pii_cnt),               t(P + "stats.piiCallsNote")],
+                [t(P + "stats.avgLatency"),  f"{float(avg_lat):.0f} ms" if avg_lat else "—",
+                 t(P + "stats.avgLatencyNote")],
+                [t(P + "stats.apiCost"),     f"{total_cost:.4f} EUR",    t(P + "stats.apiCostNote")],
             ],
             [5.5*cm, 4.5*cm, 6*cm],
         ),
@@ -357,26 +363,23 @@ def render_pdf(report_data: dict, narrative: str) -> bytes:
     requirements = report_data.get("requirements", [])
     gaps = [r for r in requirements if r["status"] in ("no", "partial", "undeclared")]
 
-    story += [Paragraph(f"{sec}. Ocena Zgodności z EU AI Act", S["h2"]), hr()]
+    story += [Paragraph(t(P + "sections.compliance", n=sec), S["h2"]), hr()]
     if gaps:
         story.append(_table(
-            [["Artykuł", "Wymaganie", "Waga", "Termin"]] +
-            [[g["article"], g["title"], _SEV_LABEL.get(g["severity"], g["severity"]),
-              "Przed wdrożeniem" if g["deadline_days"] == 0 else f"{g['deadline_days']} dni"]
+            [[t(P + "gaps.article"), t(P + "gaps.requirement"), t(P + "gaps.severity"), t(P + "gaps.deadline")]] +
+            [[g["article"], g["title"], _sev_label(g["severity"]),
+              t(P + "gaps.beforeDeployment") if g["deadline_days"] == 0
+              else t(P + "gaps.days", days=g["deadline_days"])]
              for g in gaps],
             [3*cm, 7*cm, 3*cm, 3*cm],
         ))
     else:
-        story.append(Paragraph(
-            "Brak zidentyfikowanych luk — wymagania potwierdzone jako spełnione "
-            "lub nie dotyczące w deklaracjach zgodności (zakładka Rejestr).",
-            S["body"],
-        ))
+        story.append(Paragraph(t(P + "gaps.none"), S["body"]))
     story.append(Spacer(1, 0.4*cm))
     sec += 1
 
     story += [
-        Paragraph(f"{sec}. Zalecenia Priorytetowe", S["h2"]),
+        Paragraph(t(P + "sections.recommendations", n=sec), S["h2"]),
         hr(),
     ]
     if gaps:
@@ -385,17 +388,12 @@ def render_pdf(report_data: dict, narrative: str) -> bytes:
         for i, g in enumerate(ranked, 1):
             story.append(Paragraph(f"{i}. {_gap_action(g)}", S["body"]))
     else:
-        story.append(Paragraph("Brak zaległych działań — wszystkie wymagania potwierdzone.", S["body"]))
+        story.append(Paragraph(t(P + "noPendingActions"), S["body"]))
 
     story += [
         Spacer(1, 0.6*cm),
         HRFlowable(width="100%", thickness=1, color=colors.HexColor("#CBD5E1"), spaceAfter=8),
-        Paragraph(
-            f"GovAI v0.2.0 · Raport wygenerowany {gen_dt.strftime('%d.%m.%Y %H:%M')} UTC · "
-            "Rozporządzenie (UE) 2024/1689 (EU AI Act). "
-            "Dokument ma charakter informacyjny i nie stanowi porady prawnej.",
-            S["small"],
-        ),
+        Paragraph(t("report.footer", date=gen_str), S["small"]),
     ]
 
     doc.build(story)

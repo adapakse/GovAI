@@ -1,0 +1,139 @@
+{
+  "agentStatus": {
+    "active": "Aktiv",
+    "quarantined": "Quarantäne",
+    "retired": "Außer Betrieb",
+    "suspended": "Ausgesetzt"
+  },
+  "fallbackNarrative": "Im analysierten Zeitraum von {days} Tagen betrieb die Organisation {agents} KI-Agenten, von denen {high} nach dem EU AI Act als hochriskant eingestuft sind. Es wurden {total} Aufrufe verzeichnet, von denen {blocked} ({block_pct}%) durch die Engine für Sicherheitsrichtlinien blockiert wurden. Es wurden {pii} Vorfälle mit personenbezogenen Daten erkannt. Die gesamten API-Kosten beliefen sich auf {cost} EUR. Eine detaillierte Konformitätsanalyse nach dem EU AI Act erfordert die Überprüfung durch die zuständige Compliance-Stelle.",
+  "fileName": "govai-enterprise-bericht-{date}.pdf",
+  "pdf": {
+    "activity": {
+      "topByBlocks": "Top-KI-Agenten nach Blockierungen:",
+      "topByCalls": "Top-KI-Agenten nach Aufrufen:"
+    },
+    "alerts": {
+      "budgetExceeded": "⚠ Budgetüberschreitung: {name} — {actual} EUR ({pct}% der Schwelle von {threshold} EUR)",
+      "overdueReview": "⚠ Überfällige Compliance-Überprüfung: {name} (Frist: {date})"
+    },
+    "columns": {
+      "agent": "KI-Agent",
+      "avgLatency": "Ø Latenz",
+      "blockRate": "% Blockierungen",
+      "blocks": "Blockierungen",
+      "calls": "Aufrufe",
+      "costEur": "Kosten EUR",
+      "oversight": "Aufsicht",
+      "pii": "PII",
+      "review": "Überprüfung",
+      "risk": "Risiko",
+      "status": "Status"
+    },
+    "cover": {
+      "agents": "KI-Agenten",
+      "agentsActive": "{n} aktiv",
+      "apiCost": "API-Kosten",
+      "blocks": "Blockierungen",
+      "blocksShare": "{pct}% aller Aufrufe",
+      "calls": "Aufrufe",
+      "lastDays": "letzte {days} Tage",
+      "pii": "Vorfälle mit personenbez. Daten",
+      "piiNote": "erkannte personenbezogene Daten",
+      "totalDays": "insgesamt {days} Tage"
+    },
+    "declarationsLegend": "✓ Erfüllt · ◑ Teilweise · ✗ Lücke · N/A Nicht zutreffend · — Nicht bewertet",
+    "generated": "Erstellt am: {date} UTC",
+    "incidents": {
+      "approved": "Genehmigt",
+      "avgReviewTime": "Ø Prüfzeit",
+      "blockCount": "Anzahl der Blockierungen",
+      "escalated": "Eskaliert",
+      "incidentCount": "Anzahl der Vorfälle",
+      "noPii": "Im analysierten Zeitraum wurden keine Vorfälle mit personenbezogenen Daten erkannt.",
+      "oversightHistory": "Verlauf der Warteschlange für die menschliche Aufsicht (Art. 14):",
+      "pending": "Ausstehend",
+      "piiCategories": "Erkannte Kategorien personenbezogener Daten (PII):",
+      "piiCategory": "PII-Kategorie",
+      "policyCode": "Richtlinie (Code)",
+      "policyHits": "Auslösungen von Blockierungsregeln:",
+      "rejected": "Abgelehnt",
+      "tasksTotal": "Aufgaben insgesamt"
+    },
+    "kpi": {
+      "apiCost": "API-Kosten insgesamt",
+      "apiCostNote": "geschätzte Kosten der LLM-Modelle",
+      "avgLatency": "Ø Latenz",
+      "avgLatencyNote": "End-to-End",
+      "avgReview": "Ø Prüfzeit: {min} min",
+      "comment": "Kommentar",
+      "maxLatency": "Max. Latenz",
+      "maxLatencyNote": "langsamster Aufruf",
+      "metric": "Kennzahl",
+      "oversight": "An die Aufsicht weitergeleitet",
+      "oversightNote": "Richtlinie A-001 (Art. 14)",
+      "oversightQueue": "Aufsichtswarteschlange",
+      "oversightQueueValue": "{total} Aufgaben ({pending} ausstehend)",
+      "pii": "Vorfälle mit personenbez. Daten",
+      "piiNote": "insgesamt {n} Entitäten",
+      "policyBlocks": "Blockierungen durch Richtlinien",
+      "policyBlocksNote": "G-001 Finanzen, G-002 Prompt Injection",
+      "tokensIn": "Eingabe-Tokens",
+      "tokensInNote": "Prompt",
+      "tokensOut": "Ausgabe-Tokens",
+      "tokensOutNote": "Completion",
+      "totalCalls": "Aufrufe insgesamt",
+      "totalCallsNote": "alle KI-Agenten",
+      "value": "Wert"
+    },
+    "no": "nein",
+    "noData": "keine Daten",
+    "period": "Analysezeitraum: letzte {days} Tage",
+    "recommendations": {
+      "basis": "Grundlage",
+      "priority": "Priorität",
+      "recommendation": "Empfehlung"
+    },
+    "risk": {
+      "agentCount": "Anzahl der KI-Agenten",
+      "agents": "KI-Agenten",
+      "level": "Risikostufe",
+      "requiresOversight": "Aufsicht erforderlich"
+    },
+    "riskShort": {
+      "high": "HOCH",
+      "limited": "BEGR",
+      "minimal": "MIN",
+      "unacceptable": "UNANN"
+    },
+    "sections": {
+      "activity": "5. Aktivitätsanalyse der KI-Agenten",
+      "declarations": "7. Konformitätserklärungen zum EU AI Act — Hochrisiko-KI-Agenten",
+      "incidents": "6. Sicherheitsvorfälle",
+      "kpi": "3. Betriebliche KPIs (letzte {days} Tage)",
+      "recommendations": "{n}. Prioritäre Empfehlungen",
+      "registry": "4. Register der KI-Agenten",
+      "riskDistribution": "2. Risikoverteilung nach EU AI Act",
+      "summary": "1. Zusammenfassung für die Geschäftsleitung"
+    },
+    "title": "Unternehmensbericht zur KI-Governance",
+    "yes": "JA"
+  },
+  "priority": {
+    "critical": "Kritisch",
+    "high": "Hoch",
+    "medium": "Mittel"
+  },
+  "recommendations": {
+    "basisBestPractices": "Best Practices",
+    "basisCostControl": "Kostenkontrolle",
+    "basisInternalPolicy": "Interne Richtlinie",
+    "budgetReview": "Überprüfung der Budgets von KI-Agenten, die die Warnschwellen überschreiten: {names}.",
+    "highBlockRate": "Die Blockierungsquote beträgt {pct}% — Richtlinienregeln überprüfen und Schlüsselwörter feinabstimmen.",
+    "implementOversight": "Verfahren der menschlichen Aufsicht einführen für: {names}.",
+    "keepMonitoring": "Überwachung der KI-Agenten fortsetzen. Vierteljährliche Compliance-Überprüfung durchführen.",
+    "missingTechnicalDocs": "Fehlende technische Dokumentation (Art. 11) für: {names}. Innerhalb von 60 Tagen erstellen.",
+    "overdueReviews": "Überfällige Compliance-Überprüfungen durchführen für: {names}.",
+    "pendingOversight": "{n} ausstehende Aufgaben in der Aufsichtswarteschlange bearbeiten.",
+    "suspendUnacceptable": "KI-Agenten mit UNANNEHMBAREM Risiko sofort aussetzen. Rechtsberatung einholen."
+  }
+}

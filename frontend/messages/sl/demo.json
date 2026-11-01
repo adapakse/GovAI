@@ -1,0 +1,100 @@
+{
+  "chat": {
+    "awaitingOversight": "⏳ Posredovano v človeški nadzor (člen 14 EU AI Act)\nOversight ID: {id}",
+    "blocked": "🚫 Blokirano: {reason}",
+    "clear": "Počisti",
+    "connectionError": "Napaka povezave: {error}",
+    "defaultBlockReason": "Varnostni pravilnik GovAI",
+    "emptyHint": "Spodaj vnesite sporočilo — obdelal ga bo GovAI Gateway (pregled PII → pravilniki → {model})",
+    "pipeline": "Prosti klepet · GovAI Gateway → pregled PII → pravilniki → {model}",
+    "placeholder": "Napišite sporočilo agentu ...",
+    "sectionTitle": "Prosti klepet — neposreden klic prek varnostnega prehoda",
+    "send": "Pošlji ▶"
+  },
+  "expected": {
+    "allowed": "Dovoljeno",
+    "allowed_with_pii": "Dovoljeno + PII",
+    "blocked": "Blokirano",
+    "oversight_required": "Zahteva nadzor"
+  },
+  "fleet": {
+    "button": "▦ Napolni floto (50 agentov)",
+    "count": "{count, plural, one {# agent flote} two {# agenta flote} few {# agenti flote} other {# agentov flote}}",
+    "desc": "Doda 50 agentov, razporejenih po oddelkih, z namernimi vrzelmi v skladnosti (visoko tveganje brez nadzora, zamujeni pregledi, prepovedane prakse iz člena 5). Pokaže, da je pri takšnem obsegu ročno obvladovanje AI Act neizvedljivo.",
+    "seededAgents": "{count, plural, one {Ustvarjen je # agent} two {Ustvarjena sta # agenta} few {Ustvarjeni so # agenti} other {Ustvarjenih je # agentov}}.",
+    "title": "Demonstracijska flota (obseg)"
+  },
+  "links": {
+    "audit": "→ Dnevnik",
+    "auditLog": "→ Revizijski dnevnik",
+    "oversight": "→ Nadzor",
+    "oversightQueue": "→ Čakalna vrsta nadzora"
+  },
+  "loading": "⏳ Nalaganje ...",
+  "noAgents": "Ni aktivnih agentov.",
+  "noResults": "Ni agentov, ki bi ustrezali »{query}«.",
+  "playbook": {
+    "collapse": "▲ strni",
+    "expand": "▼ razširi",
+    "go": "Pojdi →",
+    "intro": "Izvedite predstavitev korak za korakom.",
+    "steps": {
+      "1": {
+        "desc": "Kliknite »Napolni 30 dni podatkov« — generator ustvari ~500 revizijskih vnosov in ~23 postavk v čakalni vrsti nadzora.",
+        "title": "Napolnite bazo z zgodovinskimi podatki"
+      },
+      "2": {
+        "desc": "Pojdite na nadzorno ploščo. Videli boste skupno število klicev, blokade, PII, stroške in 24-urni graf.",
+        "title": "Preverite nadzorno ploščo — zgodovinski podatki"
+      },
+      "3": {
+        "desc": "Kliknite »Zaženi ▶« pri scenariju »Poizvedba o zavarovanju« (Agent 1).",
+        "title": "Zaženite scenarij — pozitiven"
+      },
+      "4": {
+        "desc": "Kliknite »Stranka navede PESEL in številko računa«. Presidio podatke zakrije pred pošiljanjem modelu.",
+        "title": "Zaženite scenarij z osebnimi podatki"
+      },
+      "5": {
+        "desc": "Poskus finančne spremembe → G-001. Napad prompt injection → G-002. Vidno v dnevniku.",
+        "title": "Sprožite blokado G-001 in G-002"
+      },
+      "6": {
+        "desc": "Agent 2 zahteva nadzor — klic se uvrsti v čakalno vrsto. Pojdite na Nadzor in ga odobrite.",
+        "title": "Čakalna vrsta nadzora (člen 14)"
+      },
+      "7": {
+        "desc": "Izberite agenta DeepSeek in napišite poljubno sporočilo. GovAI prestreže promet, pregleda PII in preveri pravilnike — enako kot pri Claude.",
+        "title": "Preizkusite DeepSeek prek GovAI"
+      }
+    },
+    "title": "📋 Vodnik po predstavitvi — 7 korakov"
+  },
+  "result": {
+    "blockedByPolicy": "Blokirano s pravilnikom.",
+    "expected": "→ pričakovano: {label}",
+    "gatewayResponse": "Odgovor prehoda:",
+    "match": "✓ ujema se",
+    "mismatch": "≠ nepričakovano",
+    "run": "Zaženi ▶",
+    "running": "⏳ Klicanje ...",
+    "sentToOversight": "Odločitev je bila posredovana v nadzor.\nOversight ID: {id}\n\n{message}",
+    "task": "task: {id}..."
+  },
+  "searchPlaceholder": "Iskanje agenta — ime, model, dobavitelj (npr. bielik, ollama), ekipa ...",
+  "seed": {
+    "button": "▦ Napolni 30 dni podatkov",
+    "counts": "{audit} revizijskih vnosov · {oversight} nadzora",
+    "desc": "Generator ustvari ~500 revizijskih vnosov in 23 postavk v čakalni vrsti.",
+    "refresh": "↻ Osveži",
+    "reset": "✕ Ponastavi podatke",
+    "resetConfirm": "Ali želite izbrisati VSE predstavitvene podatke (revizija, nadzor, flota agentov)?",
+    "resetDone": "Izbrisano: {audit} revizijskih vnosov, {oversight} nadzora in {fleet} agentov flote.",
+    "seededEntries": "{count, plural, one {Ustvarjen je # vnos} two {Ustvarjena sta # vnosa} few {Ustvarjeni so # vnosi} other {Ustvarjenih je # vnosov}}.",
+    "statusEmpty": "○ Prazno",
+    "statusSeeded": "● Napolnjeno",
+    "title": "Predstavitveni podatki (30 dni zgodovine)"
+  },
+  "subtitle": "Vsak klic gre skozi GovAI Gateway → pregled PII → mehanizem pravilnikov → model UI. Rezultati so vidni v dnevniku in čakalni vrsti nadzora.",
+  "title": "Simulator agentov UI"
+}

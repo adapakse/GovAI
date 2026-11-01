@@ -1,0 +1,53 @@
+{
+  "count": "{count, plural, one {# entry} other {# entries}}",
+  "details": {
+    "blockReason": "Block reason",
+    "errorDetails": "Error details",
+    "fields": {
+      "agent": "Agent",
+      "callId": "Call ID",
+      "cost": "Cost",
+      "eventType": "Event type",
+      "inputHash": "Input hash",
+      "latency": "Latency",
+      "piiCategories": "PII categories",
+      "result": "Result",
+      "taskId": "Task ID"
+    },
+    "title": "Call details"
+  },
+  "filters": {
+    "days": {
+      "1": "Last day",
+      "7": "Last 7 days",
+      "30": "Last 30 days"
+    },
+    "pii": {
+      "all": "All (PII)",
+      "with": "With PII detected",
+      "without": "Without PII"
+    },
+    "result": {
+      "all": "All results"
+    }
+  },
+  "header": {
+    "subtitle": "Immutable record of all AI agent calls",
+    "title": "Audit Log"
+  },
+  "table": {
+    "columns": {
+      "agent": "Agent",
+      "details": "Details",
+      "eventType": "Event type",
+      "latency": "Latency",
+      "pii": "PII",
+      "result": "Result",
+      "time": "Time"
+    },
+    "empty": "No entries in this period",
+    "loading": "Loading...",
+    "piiEntities": "{count, plural, one {# entity} other {# entities}}",
+    "show": "Show"
+  }
+}

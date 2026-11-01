@@ -1,0 +1,13 @@
+{
+  "agentInactive": "Agent '{agent}' has status '{status}' and cannot make calls.",
+  "agentNotRegistered": "Agent '{agent_id}' is not registered in GovAI. Register the agent before using the gateway.",
+  "auth": {
+    "invalidApiKey": "API key invalid or expired",
+    "invalidToken": "Token invalid or expired",
+    "missing": "Not authorised",
+    "missingDetail": "Header Authorization: Bearer <token> or X-API-Key: <key> required"
+  },
+  "llmError": "Language model error: {error}",
+  "missingAgentId": "Missing X-Agent-ID header",
+  "missingMessages": "No messages in the request"
+}

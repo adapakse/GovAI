@@ -1,0 +1,139 @@
+{
+  "agentStatus": {
+    "active": "Attivo",
+    "quarantined": "In quarantena",
+    "retired": "Dismesso",
+    "suspended": "Sospeso"
+  },
+  "fallbackNarrative": "Nel periodo analizzato di {days} giorni l'organizzazione ha utilizzato {agents} agenti AI, di cui {high} classificati ad alto rischio ai sensi dell'EU AI Act. Sono state registrate {total} chiamate, di cui {blocked} ({block_pct}%) bloccate dal motore delle policy di sicurezza. Sono stati rilevati {pii} incidenti relativi a dati personali. Il costo API complessivo è stato di {cost} EUR. Un'analisi dettagliata della conformità all'EU AI Act richiede la verifica da parte della funzione compliance competente.",
+  "fileName": "govai-report-enterprise-{date}.pdf",
+  "pdf": {
+    "activity": {
+      "topByBlocks": "Agenti principali per numero di blocchi:",
+      "topByCalls": "Agenti principali per numero di chiamate:"
+    },
+    "alerts": {
+      "budgetExceeded": "⚠ Superamento del budget: {name} — {actual} EUR ({pct}% della soglia di {threshold} EUR)",
+      "overdueReview": "⚠ Revisione di compliance scaduta: {name} (scadenza: {date})"
+    },
+    "columns": {
+      "agent": "Agente",
+      "avgLatency": "Latenza media",
+      "blockRate": "% blocchi",
+      "blocks": "Blocchi",
+      "calls": "Chiamate",
+      "costEur": "Costo EUR",
+      "oversight": "Sorveglianza",
+      "pii": "Dati pers.",
+      "review": "Revisione",
+      "risk": "Rischio",
+      "status": "Stato"
+    },
+    "cover": {
+      "agents": "Agenti AI",
+      "agentsActive": "{n} attivi",
+      "apiCost": "Costo API",
+      "blocks": "Blocchi",
+      "blocksShare": "{pct}% del totale",
+      "calls": "Chiamate",
+      "lastDays": "ultimi {days} giorni",
+      "pii": "Incidenti dati personali",
+      "piiNote": "dati personali rilevati",
+      "totalDays": "totale {days} giorni"
+    },
+    "declarationsLegend": "✓ Soddisfatto · ◑ Parzialmente · ✗ Lacuna · N/A Non applicabile · — Non valutato",
+    "generated": "Generato il: {date} UTC",
+    "incidents": {
+      "approved": "Approvate",
+      "avgReviewTime": "Tempo medio di revisione",
+      "blockCount": "Numero di blocchi",
+      "escalated": "Escalate",
+      "incidentCount": "Numero di incidenti",
+      "noPii": "Nessun incidente relativo a dati personali rilevato nel periodo analizzato.",
+      "oversightHistory": "Cronologia della coda di sorveglianza umana (art. 14):",
+      "pending": "In attesa",
+      "piiCategories": "Categorie di dati personali rilevate:",
+      "piiCategory": "Categoria di dati personali",
+      "policyCode": "Policy (codice)",
+      "policyHits": "Attivazioni delle regole di blocco:",
+      "rejected": "Rifiutate",
+      "tasksTotal": "Attività totali"
+    },
+    "kpi": {
+      "apiCost": "Costo API totale",
+      "apiCostNote": "costo stimato dei modelli LLM",
+      "avgLatency": "Latenza media",
+      "avgLatencyNote": "end-to-end",
+      "avgReview": "tempo medio di revisione: {min} min",
+      "comment": "Commento",
+      "maxLatency": "Latenza massima",
+      "maxLatencyNote": "chiamata più lenta",
+      "metric": "Metrica",
+      "oversight": "Inoltrate alla sorveglianza",
+      "oversightNote": "policy A-001 (art. 14)",
+      "oversightQueue": "Coda di sorveglianza",
+      "oversightQueueValue": "{total} attività ({pending} in attesa)",
+      "pii": "Incidenti dati personali",
+      "piiNote": "{n} entità in totale",
+      "policyBlocks": "Blocchi delle policy",
+      "policyBlocksNote": "G-001 operazioni finanziarie, G-002 prompt injection",
+      "tokensIn": "Token in input",
+      "tokensInNote": "prompt",
+      "tokensOut": "Token in output",
+      "tokensOutNote": "completion",
+      "totalCalls": "Chiamate totali",
+      "totalCallsNote": "tutti gli agenti",
+      "value": "Valore"
+    },
+    "no": "no",
+    "noData": "nessun dato",
+    "period": "Periodo di analisi: ultimi {days} giorni",
+    "recommendations": {
+      "basis": "Fondamento",
+      "priority": "Priorità",
+      "recommendation": "Raccomandazione"
+    },
+    "risk": {
+      "agentCount": "Numero di agenti",
+      "agents": "Agenti",
+      "level": "Livello di rischio",
+      "requiresOversight": "Richiede sorveglianza"
+    },
+    "riskShort": {
+      "high": "ALTO",
+      "limited": "LIM",
+      "minimal": "MIN",
+      "unacceptable": "INAC"
+    },
+    "sections": {
+      "activity": "5. Analisi dell'attività degli agenti",
+      "declarations": "7. Dichiarazioni di conformità EU AI Act — Agenti ad alto rischio",
+      "incidents": "6. Incidenti di sicurezza",
+      "kpi": "3. KPI operativi (ultimi {days} giorni)",
+      "recommendations": "{n}. Raccomandazioni prioritarie",
+      "registry": "4. Registro degli agenti AI",
+      "riskDistribution": "2. Distribuzione del rischio EU AI Act",
+      "summary": "1. Sintesi per il consiglio di amministrazione"
+    },
+    "title": "Report di governance AI aziendale",
+    "yes": "SÌ"
+  },
+  "priority": {
+    "critical": "Critica",
+    "high": "Alta",
+    "medium": "Media"
+  },
+  "recommendations": {
+    "basisBestPractices": "Best practice",
+    "basisCostControl": "Controllo dei costi",
+    "basisInternalPolicy": "Policy interna",
+    "budgetReview": "Rivedere i budget degli agenti che superano le soglie di avviso: {names}.",
+    "highBlockRate": "Il tasso di blocco è pari al {pct}% — rivedere le regole delle policy e perfezionare le parole chiave.",
+    "implementOversight": "Attuare procedure di sorveglianza umana per: {names}.",
+    "keepMonitoring": "Proseguire il monitoraggio degli agenti. Effettuare una revisione di compliance trimestrale.",
+    "missingTechnicalDocs": "Documentazione tecnica (art. 11) mancante per: {names}. Predisporla entro 60 giorni.",
+    "overdueReviews": "Effettuare le revisioni di compliance scadute per: {names}.",
+    "pendingOversight": "Esaminare le {n} attività in attesa nella coda di sorveglianza.",
+    "suspendUnacceptable": "Sospendere immediatamente gli agenti classificati a rischio INACCETTABILE. Consultare un consulente legale."
+  }
+}

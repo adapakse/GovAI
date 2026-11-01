@@ -1,0 +1,26 @@
+{
+  "logout": "Odjava",
+  "meta": {
+    "description": "Usklađenost s EU AI Actom | Sigurnosni pristupnik | Ljudski nadzor",
+    "title": "GovAI — Platforma za upravljanje AI agentima"
+  },
+  "nav": {
+    "admin": "Administracija",
+    "agents": "Agenti",
+    "audit": "Zapisnik",
+    "dashboard": "Nadzorna ploča",
+    "demo": "Simulator",
+    "oversight": "Nadzor",
+    "policies": "Pravila",
+    "providers": "Pružatelji modela",
+    "reports": "Izvješća",
+    "settings": "Parametri"
+  },
+  "roles": {
+    "associate": "Suradnik",
+    "compliance_officer": "Službenik za usklađenost",
+    "it_admin": "IT administrator",
+    "partner": "Partner",
+    "reviewer": "Recenzent"
+  }
+}

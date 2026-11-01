@@ -1,0 +1,8 @@
+{
+  "agent_inactive": "Agent has status '{status}' — call rejected before processing",
+  "llm_error": "Language model error ({provider}): {error}",
+  "no_eligible_provider": "No model provider is able to serve the agent's model '{model}' at the required data sensitivity level '{sensitivity}'. Either no active provider supports this sensitivity level, or none of the eligible providers lists this model (the gateway deliberately does not silently substitute a different model). Contact your administrator — activate a provider that supports this model and sensitivity level, or lower the data sensitivity of the request.",
+  "policy_custom": "{reason}",
+  "policy_default": "Blocked by security policy",
+  "unknown_agent": "Unknown agent_id: {agent_id} — not in the GovAI registry"
+}

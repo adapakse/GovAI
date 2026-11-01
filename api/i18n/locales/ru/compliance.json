@@ -1,0 +1,6 @@
+{
+  "errors": {
+    "invalid_risk_level": "risk_level должен иметь одно из значений: minimal, limited, high или unacceptable",
+    "requirement_not_found": "Требование «{req_id}» не существует"
+  }
+}

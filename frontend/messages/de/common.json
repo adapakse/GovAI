@@ -1,0 +1,84 @@
+{
+  "agentStatus": {
+    "active": "Aktiv",
+    "quarantined": "Quarantäne",
+    "retired": "Außer Betrieb",
+    "suspended": "Ausgesetzt"
+  },
+  "components": {
+    "liveFeed": {
+      "connected": "Verbunden",
+      "disconnected": "Getrennt",
+      "events": {
+        "auditBlocked": "BLOCKIERT",
+        "auditError": "FEHLER",
+        "auditNewCall": "AUFRUF",
+        "oversightEscalated": "ESKALATION",
+        "oversightPending": "AUFSICHT"
+      },
+      "title": "Echtzeit-Ereignisse",
+      "waiting": "Warten auf Ereignisse..."
+    },
+    "oversightModal": {
+      "actions": {
+        "approved": "✓ Genehmigen",
+        "escalated": "↑ Eskalieren",
+        "rejected": "✕ Ablehnen"
+      },
+      "agentDecision": "Entscheidung des KI-Agenten",
+      "cancel": "Abbrechen",
+      "commentOptional": "Optionaler Kommentar...",
+      "commentRequired": "Bei Ablehnung oder Eskalation ist ein Kommentar erforderlich.",
+      "decisionType": "Entscheidungstyp:",
+      "justificationRequired": "Begründung (erforderlich)",
+      "rubberStampWarning": "⚠ Die Prüfzeit wird ab dem Öffnen dieses Fensters gemessen. Eine Entscheidung in weniger als 10 Sekunden wird als Scheinaufsicht gekennzeichnet.",
+      "save": "Entscheidung speichern",
+      "saveError": "Fehler beim Speichern der Entscheidung",
+      "saved": "Gespeichert: {action}",
+      "saving": "Wird gespeichert...",
+      "submitted": "Eingereicht:",
+      "taskId": "Task ID: {id}",
+      "timeLeft": "Verbleibende Zeit",
+      "timer": "{mins}m {secs}s",
+      "yourDecision": "Ihre Entscheidung"
+    },
+    "searchBox": {
+      "clear": "Leeren",
+      "placeholder": "Suchen..."
+    }
+  },
+  "language": {
+    "instanceDefault": "Standard der Instanz ({language})",
+    "label": "Sprache"
+  },
+  "oversightStatus": {
+    "approved": "Genehmigt",
+    "escalated": "Eskaliert",
+    "pending": "Ausstehend",
+    "rejected": "Abgelehnt"
+  },
+  "policyResult": {
+    "allowed": "Zulässig",
+    "blocked": "Blockiert",
+    "error": "Fehler",
+    "oversight_required": "Aufsicht erforderlich",
+    "short": {
+      "allowed": "OK",
+      "blocked": "BLOCKIERT",
+      "error": "FEHLER",
+      "oversight_required": "AUFSICHT"
+    }
+  },
+  "risk": {
+    "high": "Hoch",
+    "limited": "Begrenzt",
+    "minimal": "Minimal",
+    "short": {
+      "high": "HOCH",
+      "limited": "BEGRENZT",
+      "minimal": "MINIMAL",
+      "unacceptable": "UNANNEHMBAR"
+    },
+    "unacceptable": "Unannehmbar"
+  }
+}

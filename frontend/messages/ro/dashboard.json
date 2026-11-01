@@ -1,0 +1,48 @@
+{
+  "alerts": {
+    "empty": "Nicio alertă în această perioadă",
+    "title": "Cele mai recente evenimente de securitate",
+    "viewAudit": "Vedeți jurnalul →"
+  },
+  "byAgent": {
+    "title": "Apeluri pe agent"
+  },
+  "chart": {
+    "allowed": "Permise",
+    "blocked": "Blocate",
+    "noData": "Nu există date",
+    "total": "Total"
+  },
+  "cost": {
+    "byAgent": "Cost pe agent (7 zile)",
+    "note": "doar costul tokenurilor Anthropic",
+    "total": "Cost total (7 zile)"
+  },
+  "header": {
+    "subtitle": "Ultimele 7 zile · actualizare la fiecare 30s",
+    "title": "Tablou de bord operațional"
+  },
+  "kpi": {
+    "activeAgents": "Agenți activi",
+    "activeAgentsSub": "{count} cu risc ridicat",
+    "blocked": "Blocări",
+    "blockedSub": "{rate}% din toate apelurile",
+    "calls": "Apeluri (7 zile)",
+    "callsSub": "latență medie {latency} ms",
+    "infraErrors": "Erori de infrastructură",
+    "infraErrorsSub": "lipsă furnizor de modele / eroare LLM",
+    "pendingOversight": "În așteptarea supravegherii",
+    "pendingOversightSub": "necesită decizia unui evaluator"
+  },
+  "loadError": "Eroare la încărcarea datelor.",
+  "loading": "Se încarcă tabloul de bord...",
+  "stats": {
+    "oversight": "Pentru supraveghere",
+    "pii": "Detectări de date personale"
+  },
+  "timeline": {
+    "empty": "Nu există date în ultimele 24h",
+    "refresh": "actualizare la fiecare 30s",
+    "title": "Apeluri pe oră (ultimele 24h)"
+  }
+}

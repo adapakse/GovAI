@@ -1,0 +1,49 @@
+{
+  "changes": {
+    "text": "Wir können diese Datenschutzerklärung aktualisieren, wenn sich die Funktionsweise der Website oder die rechtlichen Anforderungen ändern. Die aktuelle Fassung ist stets unter dieser Adresse abrufbar.",
+    "title": "Änderungen der Datenschutzerklärung"
+  },
+  "controller": {
+    "contact": "Kontakt in Datenschutzangelegenheiten:",
+    "intro": "Verantwortlicher für die Verarbeitung personenbezogener Daten im Zusammenhang mit der Nutzung dieser Website ist:",
+    "title": "Verantwortlicher"
+  },
+  "cookies": {
+    "text": "Diese Website verwendet keine Cookies zu Tracking- oder Werbezwecken. Die einzigen Informationen, die lokal in Ihrem Browser gespeichert werden, sind das gewählte Farbschema (hell/dunkel) sowie — sofern Sie sie im Umschalter auswählen — die Sprache der Website, gespeichert im <span class=\"mono\">localStorage</span>. Sie verlassen Ihr Gerät nicht und werden uns in keiner Weise übermittelt.",
+    "title": "Cookies und localStorage"
+  },
+  "data": {
+    "form": "Diese Website erhebt personenbezogene Daten ausschließlich dann, wenn Sie diese selbst angeben — über das Kontaktformular. Das Formular fragt nach: Vor- und Nachname, Firmenname, geschäftlicher E-Mail-Adresse, optional Telefonnummer sowie dem Inhalt der Nachricht.",
+    "noTracking": "Wir führen auf dieser Website kein Tracking und kein Profiling von Besuchern durch — es kommen keine Analyse- oder Werbetools zum Einsatz.",
+    "title": "Welche Daten wir erheben"
+  },
+  "meta": {
+    "description": "Datenschutzerklärung der Website govai.pl — welche Daten wir über das Kontaktformular erheben, auf welcher Rechtsgrundlage und wie lange wir sie speichern.",
+    "title": "Datenschutzerklärung — GovAI"
+  },
+  "purpose": {
+    "text": "Die Daten aus dem Formular verarbeiten wir ausschließlich zur Beantwortung Ihrer Anfrage und gegebenenfalls zur Erstellung eines Angebots — Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (vorvertragliche Maßnahmen auf Ihre Anfrage) sowie Art. 6 Abs. 1 lit. f DSGVO (unser berechtigtes Interesse an der Führung geschäftlicher Korrespondenz).",
+    "title": "Zweck und Rechtsgrundlage der Verarbeitung"
+  },
+  "recipients": {
+    "text": "Für den Betrieb des Kontaktformulars nutzen wir den externen Dienstleister <strong style=\"color:var(--text)\">Web3Forms</strong>, der die Nachrichten aus dem Formular an unser Postfach <span class=\"mono\">kontakt@govai.pl</span> weiterleitet. Web3Forms handelt dabei als Auftragsverarbeiter in unserem Auftrag. Abgesehen von diesem Dienstleister geben wir die Daten aus dem Formular an keine weiteren Stellen weiter, es sei denn, dies ist gesetzlich vorgeschrieben.",
+    "title": "An wen wir Daten weitergeben"
+  },
+  "retention": {
+    "text": "Die Daten aus dem Kontaktformular speichern wir so lange, wie es für die Bearbeitung der Anfrage und die damit verbundene Korrespondenz erforderlich ist, und anschließend — sofern keine weitere Zusammenarbeit zustande kommt — für einen durch etwaige Ansprüche gerechtfertigten Zeitraum. Wenn Sie möchten, dass wir Ihre Daten früher löschen, schreiben Sie an <a href=\"mailto:kontakt@govai.pl\">kontakt@govai.pl</a>.",
+    "title": "Speicherdauer"
+  },
+  "rights": {
+    "access": "Recht auf Auskunft über Ihre Daten und auf Erhalt einer Kopie",
+    "complaint": "Recht auf Beschwerde beim Präsidenten des polnischen Amtes für den Schutz personenbezogener Daten (PUODO)",
+    "erasure": "Recht auf Löschung der Daten (\"Recht auf Vergessenwerden\")",
+    "howTo": "Um die oben genannten Rechte auszuüben, schreiben Sie an <a href=\"mailto:kontakt@govai.pl\">kontakt@govai.pl</a>.",
+    "objection": "Recht auf Widerspruch gegen die Verarbeitung",
+    "portability": "Recht auf Datenübertragbarkeit",
+    "rectification": "Recht auf Berichtigung (Korrektur) der Daten",
+    "restriction": "Recht auf Einschränkung der Verarbeitung",
+    "title": "Ihre Rechte"
+  },
+  "scope": "Gilt für die Websites <span class=\"mono\">govai.pl</span> und <span class=\"mono\">govai.pl/blog.html</span>.",
+  "title": "Datenschutzerklärung"
+}

@@ -1,8 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { api, OversightTask } from '@/lib/api';
 import RiskBadge from './RiskBadge';
+import { useFormat } from '@/lib/format';
 
 interface Props {
   task: OversightTask;
@@ -10,7 +12,12 @@ interface Props {
   onDone: () => void;
 }
 
+const ACTIONS = ['approved', 'rejected', 'escalated'] as const;
+
 export default function OversightModal({ task, onClose, onDone }: Props) {
+  const t = useTranslations('common.components.oversightModal');
+  const tc = useTranslations('common');
+  const fmt = useFormat();
   const [action, setAction] = useState<'approved' | 'rejected' | 'escalated' | null>(null);
   const [comment, setComment] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -20,7 +27,7 @@ export default function OversightModal({ task, onClose, onDone }: Props) {
   async function submit() {
     if (!action) return;
     if ((action === 'rejected' || action === 'escalated') && !comment.trim()) {
-      setError('Komentarz jest wymagany przy odrzuceniu lub eskalacji.');
+      setError(t('commentRequired'));
       return;
     }
     setSubmitting(true);
@@ -30,7 +37,7 @@ export default function OversightModal({ task, onClose, onDone }: Props) {
       setResult(res);
       setTimeout(() => { onDone(); onClose(); }, 2500);
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : 'Błąd zapisu decyzji');
+      setError(e instanceof Error ? e.message : t('saveError'));
     } finally {
       setSubmitting(false);
     }
@@ -55,19 +62,19 @@ export default function OversightModal({ task, onClose, onDone }: Props) {
               <span className="text-lg font-bold text-white">{task.agent_name}</span>
               <RiskBadge level={task.risk_level} />
             </div>
-            <div className="text-xs text-mgray mt-1">Task ID: {task.task_id}</div>
+            <div className="text-xs text-mgray mt-1">{t('taskId', { id: task.task_id })}</div>
           </div>
           <div className="text-right">
-            <div className="text-xs text-mgray">Pozostały czas</div>
+            <div className="text-xs text-mgray">{t('timeLeft')}</div>
             <div className={`font-mono font-bold text-xl ${ttlColor}`}>
-              {mins}m {secs}s
+              {t('timer', { mins, secs })}
             </div>
           </div>
         </div>
 
         {/* Decyzja agenta */}
         <div className="px-6 py-4">
-          <div className="text-xs uppercase text-mgray tracking-wider mb-2">Decyzja agenta</div>
+          <div className="text-xs uppercase text-mgray tracking-wider mb-2">{t('agentDecision')}</div>
           <div className="bg-navy/80 rounded-lg p-4 text-sm text-lgray leading-relaxed border border-blue/20">
             {task.agent_decision}
           </div>
@@ -76,19 +83,19 @@ export default function OversightModal({ task, onClose, onDone }: Props) {
         {/* Info */}
         <div className="px-6 pb-4 grid grid-cols-2 gap-4 text-xs text-mgray">
           <div>
-            <span className="text-mgray/60">Typ decyzji: </span>
+            <span className="text-mgray/60">{t('decisionType')} </span>
             <span>{task.decision_type}</span>
           </div>
           <div>
-            <span className="text-mgray/60">Zgłoszone: </span>
-            <span>{new Date(task.created_at).toLocaleTimeString('pl-PL')}</span>
+            <span className="text-mgray/60">{t('submitted')} </span>
+            <span>{fmt.time(task.created_at)}</span>
           </div>
         </div>
 
         {/* Alert o pozornym nadzorze */}
         <div className="px-6 pb-3">
           <div className="bg-yellow-900/30 border border-yellow-700/50 rounded-lg px-4 py-2 text-xs text-yellow-300">
-            ⚠ Czas przeglądu jest mierzony od momentu otwarcia tego okna. Decyzja w czasie krótszym niż 10 sekund zostanie oznaczona jako pozorny nadzór.
+            {t('rubberStampWarning')}
           </div>
         </div>
 
@@ -99,7 +106,11 @@ export default function OversightModal({ task, onClose, onDone }: Props) {
             result.action === 'rejected' ? 'bg-red-900/40 text-red-300 border border-red-700' :
             'bg-orange-900/40 text-orange-300 border border-orange-700'
           }`}>
-            Zapisano: {result.action?.toUpperCase()}
+            {t('saved', {
+              action: (ACTIONS as readonly string[]).includes(result.action ?? '')
+                ? tc(`oversightStatus.${result.action as (typeof ACTIONS)[number]}`).toLocaleUpperCase(fmt.locale)
+                : (result.action ?? '').toUpperCase(),
+            })}
             {result.alert && <div className="mt-1 text-yellow-300 text-xs">{result.alert}</div>}
           </div>
         )}
@@ -107,9 +118,9 @@ export default function OversightModal({ task, onClose, onDone }: Props) {
         {/* Przyciski akcji */}
         {!result && (
           <div className="px-6 pb-4">
-            <div className="text-xs uppercase text-mgray tracking-wider mb-3">Twoja decyzja</div>
+            <div className="text-xs uppercase text-mgray tracking-wider mb-3">{t('yourDecision')}</div>
             <div className="flex gap-2 mb-4">
-              {(['approved', 'rejected', 'escalated'] as const).map(a => (
+              {ACTIONS.map(a => (
                 <button
                   key={a}
                   onClick={() => setAction(a)}
@@ -121,14 +132,14 @@ export default function OversightModal({ task, onClose, onDone }: Props) {
                       : 'bg-navy border-blue/40 text-mgray hover:border-blue/70'
                   }`}
                 >
-                  {a === 'approved' ? '✓ Zatwierdź' : a === 'rejected' ? '✕ Odrzuć' : '↑ Eskaluj'}
+                  {t(`actions.${a}`)}
                 </button>
               ))}
             </div>
             <textarea
               value={comment}
               onChange={e => setComment(e.target.value)}
-              placeholder={action === 'approved' ? 'Opcjonalny komentarz...' : 'Uzasadnienie (wymagane)'}
+              placeholder={action === 'approved' ? t('commentOptional') : t('justificationRequired')}
               className="w-full bg-navy border border-blue/40 rounded-lg px-3 py-2.5 text-sm text-white placeholder-mgray/50 resize-none focus:outline-none focus:border-teal"
               rows={3}
             />
@@ -140,14 +151,14 @@ export default function OversightModal({ task, onClose, onDone }: Props) {
         {!result && (
           <div className="px-6 pb-5 flex justify-end gap-3">
             <button onClick={onClose} className="px-5 py-2 rounded-lg text-sm text-mgray border border-blue/30 hover:bg-blue/20 transition-colors">
-              Anuluj
+              {t('cancel')}
             </button>
             <button
               onClick={submit}
               disabled={!action || submitting}
               className="px-6 py-2 rounded-lg text-sm font-semibold bg-teal text-dark hover:bg-teal/90 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
-              {submitting ? 'Zapisywanie...' : 'Zapisz decyzję'}
+              {submitting ? t('saving') : t('save')}
             </button>
           </div>
         )}

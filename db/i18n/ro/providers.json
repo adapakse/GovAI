@@ -1,0 +1,17 @@
+{
+  "Anthropic Claude (Cloud)": {
+    "notes": "Furnizor extern de modele. Necesită DPA. A nu se utiliza pentru date protejate de secretul profesional al avocatului."
+  },
+  "Bielik On-Prem (Local)": {
+    "notes": "Model local — compatibil cu secretul profesional al avocatului. Activați după pornirea serverului Ollama."
+  },
+  "DeepSeek (Cloud)": {
+    "notes": "Servere în afara UE (China). Exclusiv date publice — prelucrarea datelor clienților este interzisă."
+  },
+  "Google Gemini (Cloud)": {
+    "notes": "Furnizor extern de modele cu EU Data Boundary. Necesită DPA. A nu se utiliza pentru date privilegiate."
+  },
+  "OpenAI (Cloud)": {
+    "notes": "Furnizor extern de modele. Necesită DPA Enterprise. A nu se utiliza pentru date confidențiale."
+  }
+}

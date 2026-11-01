@@ -1,0 +1,10 @@
+{
+  "alerts": {
+    "rubber_stamp": "Supraveghere aparentă — revizuire mai scurtă de {seconds} secunde. Evenimentul a fost înregistrat."
+  },
+  "errors": {
+    "already_reviewed": "Sarcina a fost deja soluționată — stare: {status}",
+    "cannot_start_review": "Sarcina are starea '{status}' — revizuirea nu poate fi începută",
+    "task_not_found": "Sarcina de supraveghere nu există"
+  }
+}

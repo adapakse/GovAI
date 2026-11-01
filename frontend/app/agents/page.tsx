@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { api, Agent, AgentStatus, RiskLevel, Provider } from '@/lib/api';
 import RiskBadge from '@/components/RiskBadge';
 import SearchBox from '@/components/SearchBox';
@@ -14,15 +15,22 @@ const STATUS_STYLE: Record<AgentStatus, string> = {
   retired:     'text-mgray/50',
 };
 
-const RISK_OPTS: { value: RiskLevel | ''; label: string }[] = [
-  { value: '', label: 'Wszystkie' },
-  { value: 'minimal', label: 'Minimalne' },
-  { value: 'limited', label: 'Ograniczone' },
-  { value: 'high', label: 'Wysokie' },
-  { value: 'unacceptable', label: 'Niedopuszczalne' },
+// Etykiety tłumaczone przy renderze: options.riskFilter.<labelKey>
+const RISK_OPTS: { value: RiskLevel | ''; labelKey: string }[] = [
+  { value: '', labelKey: 'all' },
+  { value: 'minimal', labelKey: 'minimal' },
+  { value: 'limited', labelKey: 'limited' },
+  { value: 'high', labelKey: 'high' },
+  { value: 'unacceptable', labelKey: 'unacceptable' },
 ];
 
+const STATUS_OPTS: AgentStatus[] = ['active', 'suspended', 'quarantined', 'retired'];
+
+const COLUMNS = ['name', 'risk', 'status', 'owner', 'model', 'oversight', 'actions'] as const;
+
 export default function AgentsPage() {
+  const t = useTranslations('agents');
+  const tc = useTranslations('common');
   const [agents, setAgents] = useState<Agent[]>([]);
   const [providers, setProviders] = useState<Provider[]>([]);
   const [loading, setLoading] = useState(true);
@@ -58,16 +66,18 @@ export default function AgentsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Rejestr Agentów</h1>
+          <h1 className="text-2xl font-bold text-white">{t('list.title')}</h1>
           <p className="text-mgray text-sm mt-0.5">
-            {query ? `${visibleAgents.length} z ${agents.length}` : `${agents.length}`} agentów
+            {query
+              ? t('list.countFiltered', { shown: visibleAgents.length, total: agents.length })
+              : t('list.count', { count: agents.length })}
           </p>
         </div>
         <button
           onClick={() => setShowForm(true)}
           className="px-4 py-2 bg-teal text-dark text-sm font-semibold rounded-lg hover:bg-teal/90 transition-colors"
         >
-          + Zarejestruj agenta
+          {t('list.registerButton')}
         </button>
       </div>
 
@@ -76,7 +86,7 @@ export default function AgentsPage() {
         <SearchBox
           value={query}
           onChange={setQuery}
-          placeholder="Szukaj — nazwa, model, provider, właściciel, zespół..."
+          placeholder={t('list.searchPlaceholder')}
           count={visibleAgents.length}
           total={agents.length}
         />
@@ -85,18 +95,15 @@ export default function AgentsPage() {
           onChange={e => setFilterRisk(e.target.value as RiskLevel | '')}
           className="bg-navy border border-blue/40 text-sm text-white rounded-lg px-3 py-2 focus:outline-none focus:border-teal"
         >
-          {RISK_OPTS.map(o => <option key={o.value} value={o.value}>{o.label} ryzyko</option>)}
+          {RISK_OPTS.map(o => <option key={o.value} value={o.value}>{t(`options.riskFilter.${o.labelKey}`)}</option>)}
         </select>
         <select
           value={filterStatus}
           onChange={e => setFilterStatus(e.target.value as AgentStatus | '')}
           className="bg-navy border border-blue/40 text-sm text-white rounded-lg px-3 py-2 focus:outline-none focus:border-teal"
         >
-          <option value="">Wszystkie statusy</option>
-          <option value="active">Aktywny</option>
-          <option value="suspended">Zawieszony</option>
-          <option value="quarantined">Kwarantanna</option>
-          <option value="retired">Wycofany</option>
+          <option value="">{t('list.filters.allStatuses')}</option>
+          {STATUS_OPTS.map(s => <option key={s} value={s}>{tc(`agentStatus.${s}`)}</option>)}
         </select>
       </div>
 
@@ -105,22 +112,22 @@ export default function AgentsPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-blue/30">
-              {['Nazwa', 'Ryzyko', 'Status', 'Właściciel', 'Model', 'Nadzór', 'Akcje'].map(h => (
+              {COLUMNS.map(h => (
                 <th key={h} className="px-4 py-3 text-left text-xs uppercase tracking-wider text-mgray font-semibold">
-                  {h}
+                  {t(`list.columns.${h}`)}
                 </th>
               ))}
             </tr>
           </thead>
           <tbody className="divide-y divide-blue/20">
             {loading && (
-              <tr><td colSpan={7} className="px-4 py-8 text-center text-mgray animate-pulse">Ładowanie...</td></tr>
+              <tr><td colSpan={7} className="px-4 py-8 text-center text-mgray animate-pulse">{t('list.loading')}</td></tr>
             )}
             {!loading && agents.length === 0 && (
-              <tr><td colSpan={7} className="px-4 py-8 text-center text-mgray/50">Brak agentów</td></tr>
+              <tr><td colSpan={7} className="px-4 py-8 text-center text-mgray/50">{t('list.empty')}</td></tr>
             )}
             {!loading && agents.length > 0 && visibleAgents.length === 0 && (
-              <tr><td colSpan={7} className="px-4 py-8 text-center text-mgray/50">Brak agentów pasujących do „{query}”</td></tr>
+              <tr><td colSpan={7} className="px-4 py-8 text-center text-mgray/50">{t('list.noMatches', { query })}</td></tr>
             )}
             {visibleAgents.map(a => (
               <tr key={a.id} className="hover:bg-blue/10 transition-colors">
@@ -129,13 +136,13 @@ export default function AgentsPage() {
                     {a.name}
                   </Link>
                   {a.annex_iii_cat && (
-                    <div className="text-xs text-mgray/60 mt-0.5">Aneks III: {a.annex_iii_cat}</div>
+                    <div className="text-xs text-mgray/60 mt-0.5">{t('list.annexIII', { category: a.annex_iii_cat })}</div>
                   )}
                 </td>
                 <td className="px-4 py-3"><RiskBadge level={a.risk_level} /></td>
                 <td className="px-4 py-3">
                   <span className={`text-xs font-semibold ${STATUS_STYLE[a.status]}`}>
-                    {a.status.toUpperCase()}
+                    {tc(`agentStatus.${a.status}`).toUpperCase()}
                   </span>
                 </td>
                 <td className="px-4 py-3">
@@ -145,7 +152,7 @@ export default function AgentsPage() {
                 <td className="px-4 py-3 text-xs text-mgray">{a.model_id.split('-').slice(0,2).join('-')}</td>
                 <td className="px-4 py-3">
                   {a.requires_oversight
-                    ? <span className="text-orange-400 text-xs font-semibold">● Wymagany</span>
+                    ? <span className="text-orange-400 text-xs font-semibold">{t('list.oversightRequired')}</span>
                     : <span className="text-mgray/40 text-xs">—</span>}
                 </td>
                 <td className="px-4 py-3">
@@ -155,7 +162,7 @@ export default function AgentsPage() {
                         onClick={() => changeStatus(a.id, 'suspended')}
                         className="text-xs text-yellow-400 border border-yellow-700/50 px-2 py-1 rounded hover:bg-yellow-900/30 transition-colors"
                       >
-                        Zawieś
+                        {t('list.actions.suspend')}
                       </button>
                     )}
                     {a.status === 'suspended' && (
@@ -163,14 +170,14 @@ export default function AgentsPage() {
                         onClick={() => changeStatus(a.id, 'active')}
                         className="text-xs text-green-400 border border-green-700/50 px-2 py-1 rounded hover:bg-green-900/30 transition-colors"
                       >
-                        Aktywuj
+                        {t('list.actions.activate')}
                       </button>
                     )}
                     <Link
                       href={`/agents/${a.id}`}
                       className="text-xs text-teal border border-teal/30 px-2 py-1 rounded hover:bg-teal/10 transition-colors"
                     >
-                      Szczegóły
+                      {t('list.actions.details')}
                     </Link>
                   </div>
                 </td>
@@ -186,7 +193,17 @@ export default function AgentsPage() {
   );
 }
 
+// Pola tekstowe formularza rejestracji — etykiety/placeholdery z form.fields.*
+const TEXT_FIELDS = [
+  { key: 'name', labelKey: 'name', placeholderKey: 'namePlaceholder', required: true },
+  { key: 'owner_name', labelKey: 'owner', placeholderKey: 'ownerPlaceholder', required: true },
+  { key: 'owner_email', labelKey: 'ownerEmail', placeholderKey: 'ownerEmailPlaceholder', required: true },
+  { key: 'team', labelKey: 'team', placeholderKey: 'teamPlaceholder', required: false },
+] as const;
+
 function RegisterModal({ onClose, onDone }: { onClose: () => void; onDone: () => void }) {
+  const t = useTranslations('agents');
+  const tc = useTranslations('common');
   const [form, setForm] = useState({
     name: '', description: '', owner_name: '', owner_email: '',
     team: '', model_id: 'claude-haiku-4-5-20251001', monthly_budget_eur: '50',
@@ -202,7 +219,7 @@ function RegisterModal({ onClose, onDone }: { onClose: () => void; onDone: () =>
       const res = await api.agents.create({ ...form, monthly_budget_eur: parseFloat(form.monthly_budget_eur) });
       setResult(res);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Błąd rejestracji');
+      setError(err instanceof Error ? err.message : t('form.errors.register'));
     } finally {
       setLoading(false);
     }
@@ -212,30 +229,30 @@ function RegisterModal({ onClose, onDone }: { onClose: () => void; onDone: () =>
     <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4" onClick={onClose}>
       <div className="bg-dark border border-blue/40 rounded-xl w-full max-w-lg shadow-2xl" onClick={e => e.stopPropagation()}>
         <div className="px-6 py-4 border-b border-blue/30">
-          <h2 className="text-lg font-bold text-white">Rejestracja Agenta AI</h2>
-          <p className="text-xs text-mgray mt-0.5">Claude automatycznie sklasyfikuje ryzyko AI Act</p>
+          <h2 className="text-lg font-bold text-white">{t('form.title')}</h2>
+          <p className="text-xs text-mgray mt-0.5">{t('form.subtitle')}</p>
         </div>
 
         {result ? (
           <div className="px-6 py-6 space-y-4">
             <div className="bg-green-900/30 border border-green-700 rounded-lg px-4 py-3 text-green-300 text-sm">
-              Agent zarejestrowany pomyślnie!
+              {t('form.success')}
             </div>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-mgray">Poziom ryzyka:</span>
-                <span className="text-white font-semibold">{String(result.risk_level).toUpperCase()}</span>
+                <span className="text-mgray">{t('form.result.riskLevel')}</span>
+                <span className="text-white font-semibold">{tc(`risk.${result.risk_level}`).toUpperCase()}</span>
               </div>
               {result.annex_iii_cat && (
                 <div className="flex justify-between">
-                  <span className="text-mgray">Kategoria Aneksu III:</span>
+                  <span className="text-mgray">{t('form.result.annexIIICategory')}</span>
                   <span className="text-white">{String(result.annex_iii_cat)}</span>
                 </div>
               )}
               <div className="flex justify-between">
-                <span className="text-mgray">Nadzór wymagany:</span>
+                <span className="text-mgray">{t('form.result.oversightRequired')}</span>
                 <span className={result.requires_oversight ? 'text-orange-400 font-semibold' : 'text-green-400'}>
-                  {result.requires_oversight ? 'TAK' : 'NIE'}
+                  {result.requires_oversight ? t('form.result.yes') : t('form.result.no')}
                 </span>
               </div>
               {result.legal_basis && (
@@ -243,42 +260,37 @@ function RegisterModal({ onClose, onDone }: { onClose: () => void; onDone: () =>
               )}
             </div>
             <button onClick={onDone} className="w-full py-2.5 bg-teal text-dark font-semibold rounded-lg hover:bg-teal/90">
-              Gotowe
+              {t('form.done')}
             </button>
           </div>
         ) : (
           <form onSubmit={submit} className="px-6 py-4 space-y-4">
-            {[
-              { key: 'name', label: 'Nazwa agenta', placeholder: 'np. Agent Obsługi Klienta', required: true },
-              { key: 'owner_name', label: 'Właściciel', placeholder: 'Jan Kowalski', required: true },
-              { key: 'owner_email', label: 'Email właściciela', placeholder: 'j.kowalski@firma.pl', required: true },
-              { key: 'team', label: 'Zespół', placeholder: 'np. Obsługa Klienta', required: false },
-            ].map(({ key, label, placeholder, required }) => (
+            {TEXT_FIELDS.map(({ key, labelKey, placeholderKey, required }) => (
               <div key={key}>
-                <label className="text-xs text-mgray mb-1 block">{label}</label>
+                <label className="text-xs text-mgray mb-1 block">{t(`form.fields.${labelKey}`)}</label>
                 <input
                   required={required}
-                  value={form[key as keyof typeof form]}
+                  value={form[key]}
                   onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
-                  placeholder={placeholder}
+                  placeholder={t(`form.fields.${placeholderKey}`)}
                   className="w-full bg-navy border border-blue/40 rounded-lg px-3 py-2 text-sm text-white placeholder-mgray/50 focus:outline-none focus:border-teal"
                 />
               </div>
             ))}
             <div>
-              <label className="text-xs text-mgray mb-1 block">Opis agenta (używany do klasyfikacji AI Act)</label>
+              <label className="text-xs text-mgray mb-1 block">{t('form.fields.description')}</label>
               <textarea
                 required
                 value={form.description}
                 onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
-                placeholder="Opisz dokładnie co robi agent, jakie decyzje podejmuje, jakie dane przetwarza..."
+                placeholder={t('form.fields.descriptionPlaceholder')}
                 className="w-full bg-navy border border-blue/40 rounded-lg px-3 py-2 text-sm text-white placeholder-mgray/50 focus:outline-none focus:border-teal resize-none"
                 rows={4}
               />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-xs text-mgray mb-1 block">Model</label>
+                <label className="text-xs text-mgray mb-1 block">{t('form.fields.model')}</label>
                 <select
                   value={form.model_id}
                   onChange={e => setForm(f => ({ ...f, model_id: e.target.value }))}
@@ -289,7 +301,7 @@ function RegisterModal({ onClose, onDone }: { onClose: () => void; onDone: () =>
                 </select>
               </div>
               <div>
-                <label className="text-xs text-mgray mb-1 block">Budżet miesięczny (EUR)</label>
+                <label className="text-xs text-mgray mb-1 block">{t('form.fields.monthlyBudget')}</label>
                 <input
                   type="number"
                   value={form.monthly_budget_eur}
@@ -301,10 +313,10 @@ function RegisterModal({ onClose, onDone }: { onClose: () => void; onDone: () =>
             {error && <div className="text-red-400 text-xs">{error}</div>}
             <div className="flex gap-3 pt-2">
               <button type="button" onClick={onClose} className="flex-1 py-2.5 border border-blue/40 rounded-lg text-sm text-mgray hover:bg-blue/20">
-                Anuluj
+                {t('form.cancel')}
               </button>
               <button type="submit" disabled={loading} className="flex-1 py-2.5 bg-teal text-dark font-semibold rounded-lg text-sm hover:bg-teal/90 disabled:opacity-50">
-                {loading ? 'Klasyfikuję...' : 'Zarejestruj + Klasyfikuj'}
+                {loading ? t('form.submitting') : t('form.submit')}
               </button>
             </div>
           </form>

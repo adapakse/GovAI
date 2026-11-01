@@ -1,0 +1,13 @@
+{
+  "agentInactive": "El agente '{agent}' tiene el estado '{status}' y no puede realizar llamadas.",
+  "agentNotRegistered": "El agente '{agent_id}' no está registrado en GovAI. Registre el agente antes de utilizar la pasarela.",
+  "auth": {
+    "invalidApiKey": "Clave API no válida o caducada",
+    "invalidToken": "Token no válido o caducado",
+    "missing": "Falta la autorización",
+    "missingDetail": "Se requiere la cabecera Authorization: Bearer <token> o X-API-Key: <key>"
+  },
+  "llmError": "Error del modelo de lenguaje: {error}",
+  "missingAgentId": "Falta la cabecera X-Agent-ID",
+  "missingMessages": "No hay mensajes en la solicitud"
+}

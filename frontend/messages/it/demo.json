@@ -1,0 +1,100 @@
+{
+  "chat": {
+    "awaitingOversight": "⏳ Inoltrato alla sorveglianza umana (art. 14 EU AI Act)\nOversight ID: {id}",
+    "blocked": "🚫 Bloccato: {reason}",
+    "clear": "Cancella",
+    "connectionError": "Errore di connessione: {error}",
+    "defaultBlockReason": "Policy di sicurezza GovAI",
+    "emptyHint": "Scriva un messaggio qui sotto — sarà elaborato da GovAI Gateway (scansione dati personali → policy → {model})",
+    "pipeline": "Chat libera · GovAI Gateway → scansione dati personali → policy → {model}",
+    "placeholder": "Scriva un messaggio all'agente...",
+    "sectionTitle": "Chat libera — chiamata diretta tramite il Gateway",
+    "send": "Invia ▶"
+  },
+  "expected": {
+    "allowed": "Consentito",
+    "allowed_with_pii": "Consentito + dati personali",
+    "blocked": "Bloccato",
+    "oversight_required": "Da sorvegliare"
+  },
+  "fleet": {
+    "button": "▦ Popola la flotta (50 agenti)",
+    "count": "{count, plural, one {# agente della flotta} other {# agenti della flotta}}",
+    "desc": "Aggiunge 50 agenti distribuiti tra i reparti, con lacune di conformità intenzionali (sistemi ad alto rischio senza sorveglianza, revisioni scadute, pratiche vietate ai sensi dell'art. 5). Dimostra che, su larga scala, gestire manualmente l'AI Act è impraticabile.",
+    "seededAgents": "{count, plural, one {Creato # agente} other {Creati # agenti}}.",
+    "title": "Flotta dimostrativa (scala)"
+  },
+  "links": {
+    "audit": "→ Log",
+    "auditLog": "→ Log di audit",
+    "oversight": "→ Sorveglianza",
+    "oversightQueue": "→ Coda di sorveglianza"
+  },
+  "loading": "⏳ Caricamento...",
+  "noAgents": "Nessun agente attivo.",
+  "noResults": "Nessun agente corrispondente a «{query}».",
+  "playbook": {
+    "collapse": "▲ comprimi",
+    "expand": "▼ espandi",
+    "go": "Vai →",
+    "intro": "Conduca la presentazione passo dopo passo.",
+    "steps": {
+      "1": {
+        "desc": "Clicchi \"Popola 30 giorni di dati\" — il seeder genera ~500 voci di audit e ~23 elementi nella coda di sorveglianza.",
+        "title": "Popolare il database con dati storici"
+      },
+      "2": {
+        "desc": "Vada alla Dashboard. Vedrà il totale delle chiamate, i blocchi, i dati personali, i costi e il grafico delle 24 h.",
+        "title": "Controllare la Dashboard — dati storici"
+      },
+      "3": {
+        "desc": "Clicchi \"Esegui ▶\" accanto allo scenario \"Richiesta di informazioni su un'assicurazione\" (Agente 1).",
+        "title": "Eseguire uno scenario — positivo"
+      },
+      "4": {
+        "desc": "Clicchi \"Il cliente fornisce PESEL e numero di conto\". Presidio maschera i dati prima dell'invio al modello.",
+        "title": "Eseguire uno scenario con dati personali"
+      },
+      "5": {
+        "desc": "Tentativo di modifica finanziaria → G-001. Attacco di prompt injection → G-002. Visibili nel Log.",
+        "title": "Attivare i blocchi G-001 e G-002"
+      },
+      "6": {
+        "desc": "L'Agente 2 richiede sorveglianza — la chiamata finisce in coda. Vada a Sorveglianza e approvi.",
+        "title": "Coda di sorveglianza (art. 14)"
+      },
+      "7": {
+        "desc": "Selezioni l'agente DeepSeek e scriva un messaggio qualsiasi. GovAI intercetta il traffico, cerca i dati personali e verifica le policy — esattamente come per Claude.",
+        "title": "Provare DeepSeek tramite GovAI"
+      }
+    },
+    "title": "📋 Guida alla demo — 7 passaggi"
+  },
+  "result": {
+    "blockedByPolicy": "Bloccato dalla policy.",
+    "expected": "→ atteso: {label}",
+    "gatewayResponse": "Risposta del gateway:",
+    "match": "✓ conforme",
+    "mismatch": "≠ inatteso",
+    "run": "Esegui ▶",
+    "running": "⏳ Chiamata in corso...",
+    "sentToOversight": "Decisione inoltrata alla sorveglianza.\nOversight ID: {id}\n\n{message}",
+    "task": "task: {id}..."
+  },
+  "searchPlaceholder": "Cerca agente — nome, modello, provider (es. bielik, ollama), team...",
+  "seed": {
+    "button": "▦ Popola 30 giorni di dati",
+    "counts": "{audit} audit · {oversight} sorveglianza",
+    "desc": "Il seeder genera ~500 voci di audit e 23 elementi in coda.",
+    "refresh": "↻ Aggiorna",
+    "reset": "✕ Reimposta i dati",
+    "resetConfirm": "Eliminare TUTTI i dati demo (audit, sorveglianza, flotta di agenti)?",
+    "resetDone": "Eliminati {audit} audit, {oversight} elementi di sorveglianza e {fleet} agenti della flotta.",
+    "seededEntries": "{count, plural, one {Creata # voce} other {Create # voci}}.",
+    "statusEmpty": "○ Vuoto",
+    "statusSeeded": "● Popolato",
+    "title": "Dati demo (30 giorni di storico)"
+  },
+  "subtitle": "Ogni chiamata passa attraverso GovAI Gateway → scansione dati personali → motore delle policy → modello AI. Risultati visibili nel Log e nella coda di Sorveglianza.",
+  "title": "Simulatore di agenti AI"
+}
