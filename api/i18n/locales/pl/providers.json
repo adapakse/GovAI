@@ -2,6 +2,8 @@
   "errors": {
     "invalid_sensitivity": "Nieprawidłowy max_data_sensitivity. Dozwolone: {allowed}",
     "invalid_type": "Nieznany provider_type. Dozwolone: {allowed}",
+    "key_env_not_allowed": "Niedozwolona zmienna z kluczem. Dozwolone: {allowed}.",
+    "key_env_with_base_url": "Klucza platformy (api_key_env) nie można łączyć z własnym adresem base_url.",
     "not_found": "Provider nie znaleziony"
   }
 }

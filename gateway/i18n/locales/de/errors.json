@@ -1,6 +1,7 @@
 {
   "agentInactive": "KI-Agent '{agent}' hat den Status '{status}' und kann keine Aufrufe ausführen.",
   "agentNotRegistered": "KI-Agent '{agent_id}' ist in GovAI nicht registriert. Registrieren Sie den KI-Agenten, bevor Sie das Sicherheits-Gateway nutzen.",
+  "apiKeyAgentMismatch": "Dieser API-Schlüssel ist nicht dem Agenten '{agent_id}' zugeordnet.",
   "auth": {
     "invalidApiKey": "API-Schlüssel ungültig oder abgelaufen",
     "invalidToken": "Token ungültig oder abgelaufen",

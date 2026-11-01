@@ -5,6 +5,10 @@ from dataclasses import dataclass, field
 from typing import Any, Literal, Optional
 from uuid import UUID
 
+# Zmienne środowiskowe z kluczami platformy, do których może się odwołać provider
+# (providers.api_key_env). Trzymaj w synchronizacji z api/routers/providers.py.
+PLATFORM_KEY_ENVS = frozenset({"ANTHROPIC_API_KEY", "OPENAI_API_KEY", "DEEPSEEK_API_KEY", "GOOGLE_API_KEY"})
+
 
 @dataclass
 class AgentRecord:
@@ -51,7 +55,12 @@ class ProviderRecord:
     api_key_env: Optional[str] = None
 
     def api_key_from_env(self) -> Optional[str]:
-        if not self.api_key_env:
+        """Klucz platformy z env — tylko zmienna z białej listy i tylko dla
+        providera bez własnego base_url (API waliduje to samo przy zapisie;
+        tu druga linia obrony dla wierszy sprzed walidacji)."""
+        if not self.api_key_env or self.base_url:
+            return None
+        if self.api_key_env not in PLATFORM_KEY_ENVS:
             return None
         return os.environ.get(self.api_key_env)
 

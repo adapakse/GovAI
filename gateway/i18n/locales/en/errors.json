@@ -1,6 +1,7 @@
 {
   "agentInactive": "Agent '{agent}' has status '{status}' and cannot make calls.",
   "agentNotRegistered": "Agent '{agent_id}' is not registered in GovAI. Register the agent before using the gateway.",
+  "apiKeyAgentMismatch": "This API key is not assigned to agent '{agent_id}'.",
   "auth": {
     "invalidApiKey": "API key invalid or expired",
     "invalidToken": "Token invalid or expired",

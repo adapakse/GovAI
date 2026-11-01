@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { WS } from '@/lib/api';
+import { ensureFreshToken } from '@/lib/auth';
 import { formatDistanceToNow } from 'date-fns';
 import { useDateFnsLocale } from '@/lib/format';
 
@@ -38,9 +39,14 @@ export default function LiveFeed() {
     // z pierwszego mountu nic już nie dopisze do stanu.
     let cancelled = false;
 
-    function connect() {
+    async function connect() {
       if (cancelled) return;
-      ws = new WebSocket(`${WS}/ws/live-feed`);
+      // Kanał wymaga access tokenu w query string (przeglądarkowy WebSocket nie
+      // wysyła nagłówka Authorization); przy każdym ponownym połączeniu świeży token.
+      const token = await ensureFreshToken();
+      if (cancelled) return;
+      if (!token) { retry = setTimeout(connect, 3000); return; }
+      ws = new WebSocket(`${WS}/ws/live-feed?token=${encodeURIComponent(token)}`);
       ws.onopen  = () => { if (!cancelled) setConnected(true); };
       ws.onclose = () => { if (!cancelled) { setConnected(false); retry = setTimeout(connect, 3000); } };
       ws.onerror = () => ws.close();

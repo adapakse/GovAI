@@ -1,6 +1,7 @@
 {
   "agentInactive": "Agent '{agent}' ima status '{status}' in ne more izvajati klicev.",
   "agentNotRegistered": "Agent '{agent_id}' ni registriran v GovAI. Pred uporabo varnostnega prehoda agenta registrirajte.",
+  "apiKeyAgentMismatch": "Ta ključ API ni dodeljen agentu '{agent_id}'.",
   "auth": {
     "invalidApiKey": "Ključ API je neveljaven ali je potekel",
     "invalidToken": "Žeton je neveljaven ali je potekel",

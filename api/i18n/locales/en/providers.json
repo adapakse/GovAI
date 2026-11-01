@@ -2,6 +2,8 @@
   "errors": {
     "invalid_sensitivity": "Invalid max_data_sensitivity. Allowed: {allowed}",
     "invalid_type": "Unknown provider_type. Allowed: {allowed}",
+    "key_env_not_allowed": "Key variable not allowed. Allowed: {allowed}.",
+    "key_env_with_base_url": "A platform key (api_key_env) cannot be combined with a custom base_url.",
     "not_found": "Provider not found"
   }
 }

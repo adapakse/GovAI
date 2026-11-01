@@ -2,6 +2,8 @@
   "errors": {
     "invalid_sensitivity": "Недопустимое значение max_data_sensitivity. Допустимые значения: {allowed}",
     "invalid_type": "Неизвестный provider_type. Допустимые значения: {allowed}",
+    "key_env_not_allowed": "Недопустимая переменная ключа. Допустимые: {allowed}.",
+    "key_env_with_base_url": "Ключ платформы (api_key_env) нельзя сочетать с собственным base_url.",
     "not_found": "Поставщик моделей не найден"
   }
 }
