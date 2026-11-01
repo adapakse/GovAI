@@ -19,3 +19,8 @@ for f in db/migrations/*.sql; do
 done
 
 docker compose up -d --build
+
+# Caddy nie ma własnego obrazu — `up` nie odtwarza go, gdy zmienia się tylko
+# website/ (bind mount) lub caddy/*. Entrypoint kopiuje stronę i renderuje
+# Caddyfile tylko przy starcie, więc bez restartu landing zostaje w starej wersji.
+docker compose restart caddy
