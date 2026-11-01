@@ -1,6 +1,7 @@
 {
   "errors": {
     "invalid_risk_level": "risk_level debe ser: minimal, limited, high o unacceptable",
+    "platform_read_only": "Los requisitos del catálogo de la plataforma son de solo lectura. Añade en su lugar un requisito propio de tu organización.",
     "requirement_not_found": "El requisito '{req_id}' no existe"
   }
 }

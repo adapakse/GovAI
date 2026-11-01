@@ -9,7 +9,8 @@
 set -e
 
 psql_exec() {
-  docker compose exec -T postgres psql -U govai -d "${GOVAI_DB:-govai}" -v ON_ERROR_STOP=1 -q "$@"
+  # app.platform=on: migracje działają ponad RLS (FORCE dotyczy też właściciela tabel).
+  docker compose exec -T -e PGOPTIONS="-c app.platform=on" postgres psql -U govai -d "${GOVAI_DB:-govai}" -v ON_ERROR_STOP=1 -q "$@"
 }
 
 psql_exec -c "CREATE TABLE IF NOT EXISTS schema_migrations (
@@ -46,3 +47,16 @@ for f in db/migrations/*.sql; do
   psql_exec -1 -f "/tmp/$name"
   psql_exec -c "INSERT INTO schema_migrations (filename) VALUES ('$name')"
 done
+
+# Hasło roli aplikacji (govai_app, migracja 015) — z DB_APP_PASSWORD w środowisku
+# albo w .env. Przez stdin, żeby nie pojawiło się w liście procesów.
+app_password=${DB_APP_PASSWORD:-$(grep '^DB_APP_PASSWORD=' .env 2>/dev/null | cut -d= -f2-)}
+has_role=$(psql_exec -tAc "SELECT 1 FROM pg_roles WHERE rolname = 'govai_app'")
+if [ "$has_role" = "1" ]; then
+  if [ -z "$app_password" ]; then
+    echo "Brak DB_APP_PASSWORD — API i gateway nie połączą się z bazą jako govai_app" >&2
+    exit 1
+  fi
+  printf "ALTER ROLE govai_app WITH PASSWORD '%s';\n" "$app_password" \
+    | docker compose exec -T postgres psql -U govai -d "${GOVAI_DB:-govai}" -v ON_ERROR_STOP=1 -q
+fi

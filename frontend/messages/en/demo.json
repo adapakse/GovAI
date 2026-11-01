@@ -33,6 +33,10 @@
   "loading": "⏳ Loading...",
   "noAgents": "No active agents.",
   "noResults": "No agents matching “{query}”.",
+  "notDemoTenant": {
+    "body": "Your organisation works with real data — test scenarios, sample data generation and log reset are disabled here.",
+    "title": "The simulator is available only in the demo organisation"
+  },
   "playbook": {
     "collapse": "▲ collapse",
     "expand": "▼ expand",

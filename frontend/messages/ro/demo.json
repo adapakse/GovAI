@@ -33,6 +33,10 @@
   "loading": "⏳ Se încarcă...",
   "noAgents": "Niciun agent activ.",
   "noResults": "Niciun agent nu corespunde căutării „{query}”.",
+  "notDemoTenant": {
+    "body": "Organizația ta lucrează cu date reale — scenariile de test, generarea de date exemplu și resetarea jurnalului sunt dezactivate aici.",
+    "title": "Simulatorul este disponibil doar în organizația demo"
+  },
   "playbook": {
     "collapse": "▲ restrângeți",
     "expand": "▼ extindeți",

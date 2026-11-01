@@ -1,5 +1,7 @@
+import asyncio
 import logging
 import time
+from typing import Awaitable, Callable, Optional
 
 from i18n import t
 from models import AgentRecord, PIIScanResult, PolicyDecision
@@ -17,30 +19,56 @@ def _text_from_messages(messages: list[dict]) -> str:
 
 class PolicyEngine:
     """
-    Silnik polityk ładujący reguły z bazy danych.
+    Silnik polityk ładujący reguły z bazy danych — osobny zestaw reguł PER ORGANIZACJA.
 
-    Reguły są trzymane w pamięci i odświeżane co 60s przez background task
-    w main.py — bez restartu gateway. Ocena każdego żądania jest synchroniczna.
+    Cache: tenant_id → reguły blokujące. Reguły organizacji ładowane leniwie przy
+    pierwszym żądaniu (ensure_loaded) i odświeżane przez background task w main.py
+    (refresh_all, co intervals.policy_refresh_seconds) — bez restartu gateway.
+    Ocena żądania (evaluate) jest synchroniczna i używa wyłącznie reguł organizacji
+    agenta (agent.tenant_id) — reguły jednej organizacji nigdy nie trafiają do innej.
 
     Kolejność: deny rules (wg priorytetu) → oversight_required (flaga agenta) → allowed.
     """
 
     def __init__(self) -> None:
-        self._deny_rules: list[dict] = []
-        self._loaded_at: float = 0.0
+        # Klucz None — tylko testy jednostkowe (agent bez organizacji).
+        self._deny_rules: dict[Optional[str], list[dict]] = {}
+        self._loaded_at: dict[Optional[str], float] = {}
+        self._locks: dict[str, asyncio.Lock] = {}
 
-    def load_rules(self, rules: list[dict]) -> None:
-        """Ładuje reguły z DB. Wywoływane przy starcie i przez background task."""
-        self._deny_rules = [r for r in rules if r.get("rule_type") == "deny"]
-        self._loaded_at = time.time()
+    def load_rules(self, rules: list[dict], tenant_id: Optional[str] = None) -> None:
+        """Ustawia reguły organizacji (z DB lub w testach ręcznie)."""
+        self._deny_rules[tenant_id] = [r for r in rules if r.get("rule_type") == "deny"]
+        self._loaded_at[tenant_id] = time.time()
         logger.info(
-            "Polityki załadowane z DB: %d reguł blokujących [%s]",
-            len(self._deny_rules),
-            time.strftime("%H:%M:%S", time.localtime(self._loaded_at)),
+            "Polityki organizacji %s załadowane z DB: %d reguł blokujących",
+            tenant_id, len(self._deny_rules[tenant_id]),
         )
 
-    def rules_loaded_at(self) -> float:
-        return self._loaded_at
+    def rules_loaded_at(self, tenant_id: Optional[str] = None) -> float:
+        return self._loaded_at.get(tenant_id, 0.0)
+
+    def loaded_tenants(self) -> list[str]:
+        return [t_id for t_id in self._deny_rules if t_id is not None]
+
+    async def ensure_loaded(self, tenant_id: str, fetch: Callable[[str], Awaitable[list[dict]]]) -> None:
+        """Leniwe ładowanie reguł organizacji przy jej pierwszym żądaniu.
+        Błąd odczytu propaguje się (fail closed — bez reguł nie oceniamy)."""
+        if tenant_id in self._deny_rules:
+            return
+        lock = self._locks.setdefault(tenant_id, asyncio.Lock())
+        async with lock:
+            if tenant_id not in self._deny_rules:
+                self.load_rules(await fetch(tenant_id), tenant_id)
+
+    async def refresh_all(self, fetch: Callable[[str], Awaitable[list[dict]]]) -> None:
+        """Odświeża reguły wszystkich organizacji obecnych w cache. Przy błędzie
+        zostają poprzednie reguły danej organizacji."""
+        for tenant_id in self.loaded_tenants():
+            try:
+                self.load_rules(await fetch(tenant_id), tenant_id)
+            except Exception as exc:
+                logger.error("Błąd odświeżania polityk organizacji %s: %s", tenant_id, exc)
 
     def evaluate(
         self,
@@ -51,8 +79,8 @@ class PolicyEngine:
 
         text = _text_from_messages(messages)
 
-        # ── Reguły blokujące (z DB, posortowane wg priorytetu) ────────────────
-        for rule in self._deny_rules:
+        # ── Reguły blokujące organizacji agenta (posortowane wg priorytetu) ───
+        for rule in self._deny_rules.get(agent.tenant_id, []):
             keywords: list[str] = rule.get("condition_json", {}).get("keywords", [])
             for kw in keywords:
                 if kw.lower() in text:

@@ -1,12 +1,18 @@
 """
 Wymagania EU AI Act — CRUD zarządzany przez konsultanta z UI.
+
+Multitenancy: katalog platformy (tenant_id NULL, is_platform=true) jest dla
+organizacji tylko do odczytu (403); organizacja dodaje własne wymagania.
+Super-admin zmienia wymagania platformy w trybie platformy (platform_db).
 """
+from contextlib import nullcontext
 from typing import Optional
 from uuid import uuid4
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 
+from database import platform_db
 from dependencies.auth import CurrentUser, get_current_user, require_role
 from i18n import DEFAULT_LOCALE, get_locale, localized, t
 from repositories import compliance_repository as compliance_repo
@@ -25,6 +31,7 @@ class RequirementCreate(BaseModel):
     default_severity: str = "major"           # critical | major | minor
     default_deadline_days: int = 30
     decl_key: Optional[str] = None            # klucz w agents.compliance_decl / auto-check
+    is_platform: bool = False                 # wymaganie katalogu platformy — tylko super-admin
 
     def validate_risk_level(self) -> None:
         if self.risk_level not in {"minimal", "limited", "high", "unacceptable"}:
@@ -55,29 +62,38 @@ async def list_requirements(
 
 @router.post("", status_code=201)
 async def create_requirement(data: RequirementCreate, user: CurrentUser = Depends(_WRITE_ROLES)):
-    """Dodanie nowego wymagania EU AI Act."""
+    """Dodanie nowego wymagania EU AI Act (domyślnie własnego wymagania organizacji)."""
+    try:
+        data.validate_risk_level()
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
+    if data.is_platform:
+        _deny_platform_write(user)
+
     req_id = str(uuid4())
-    row = await compliance_repo.insert_requirement(
-        req_id, data.risk_level, data.article_ref,
-        data.requirement_title, data.requirement_text, data.sort_order,
-        data.default_severity, data.default_deadline_days, data.decl_key,
-    )
-    # Kolumna bazowa wymaga tekstu — w innym języku niż polski zapisujemy go
-    # w niej (fallback) oraz jako tłumaczenie dla języka żądania.
-    locale = get_locale()
-    if locale != DEFAULT_LOCALE:
-        row = await compliance_repo.set_requirement_translation(
-            req_id, locale, data.requirement_title, data.requirement_text,
+    # tenant_id z DEFAULT current_tenant_id(): organizacja — własny wiersz,
+    # tryb platformy — NULL (katalog platformy).
+    async with _write_scope(data.is_platform):
+        row = await compliance_repo.insert_requirement(
+            req_id, data.risk_level, data.article_ref,
+            data.requirement_title, data.requirement_text, data.sort_order,
+            data.default_severity, data.default_deadline_days, data.decl_key,
         )
+        # Kolumna bazowa wymaga tekstu — w innym języku niż polski zapisujemy go
+        # w niej (fallback) oraz jako tłumaczenie dla języka żądania.
+        locale = get_locale()
+        if locale != DEFAULT_LOCALE:
+            row = await compliance_repo.set_requirement_translation(
+                req_id, locale, data.requirement_title, data.requirement_text,
+            )
     return _to_dict(row)
 
 
 @router.put("/{req_id}")
 async def update_requirement(req_id: str, data: RequirementUpdate, user: CurrentUser = Depends(_WRITE_ROLES)):
     """Aktualizacja wymagania."""
-    row = await compliance_repo.get_requirement(req_id, columns="id")
-    if not row:
-        raise HTTPException(404, t("compliance.errors.requirement_not_found", req_id=req_id))
+    existing = await _get_writable(req_id, user, columns="id, tenant_id")
+    row = existing
 
     # Tytuł/treść edytowane w innym języku niż polski trafiają do *_i18n[locale],
     # kolumna bazowa (polski) zostaje nietknięta.
@@ -99,27 +115,53 @@ async def update_requirement(req_id: str, data: RequirementUpdate, user: Current
     if all(v is None for v in fields.values()) and not has_translation:
         raise HTTPException(400, t("common.errors.no_fields_to_update"))
 
-    if any(v is not None for v in fields.values()):
-        row = await compliance_repo.update_requirement(req_id, fields)
-    if has_translation:
-        row = await compliance_repo.set_requirement_translation(
-            req_id, locale, data.requirement_title, data.requirement_text,
-        )
+    async with _write_scope(existing["tenant_id"] is None):
+        if any(v is not None for v in fields.values()):
+            row = await compliance_repo.update_requirement(req_id, fields)
+        if has_translation:
+            row = await compliance_repo.set_requirement_translation(
+                req_id, locale, data.requirement_title, data.requirement_text,
+            )
     return _to_dict(row)
 
 
 @router.delete("/{req_id}")
 async def delete_requirement(req_id: str, user: CurrentUser = Depends(require_role("partner"))):
     """Trwałe usunięcie wymagania."""
-    row = await compliance_repo.get_requirement(req_id, columns="id, requirement_title, title_i18n")
+    # Jawna kontrola konieczna: polityka RLS katalogu przy DELETE sprawdza tylko
+    # USING (widoczność), a wiersze platformy są widoczne dla organizacji.
+    row = await _get_writable(req_id, user, columns="id, tenant_id, requirement_title, title_i18n")
+    async with _write_scope(row["tenant_id"] is None):
+        await compliance_repo.delete_requirement(req_id)
+    return {"deleted": req_id, "title": localized(row["title_i18n"], row["requirement_title"])}
+
+
+def _deny_platform_write(user: CurrentUser) -> None:
+    if not user.is_super_admin:
+        raise HTTPException(403, t("compliance.errors.platform_read_only"))
+
+
+async def _get_writable(req_id: str, user: CurrentUser, columns: str):
+    """Wymaganie do zmiany: 404 gdy niewidoczne, 403 gdy to wiersz katalogu
+    platformy, a użytkownik nie jest super-adminem. `columns` musi mieć tenant_id."""
+    row = await compliance_repo.get_requirement(req_id, columns=columns)
     if not row:
         raise HTTPException(404, t("compliance.errors.requirement_not_found", req_id=req_id))
-    await compliance_repo.delete_requirement(req_id)
-    return {"deleted": req_id, "title": localized(row["title_i18n"], row["requirement_title"])}
+    if row["tenant_id"] is None:
+        _deny_platform_write(user)
+    return row
+
+
+def _write_scope(is_platform: bool):
+    """Wiersze platformy zapisujemy w trybie platformy, własne — w kontekście żądania."""
+    return platform_db() if is_platform else nullcontext()
 
 
 def _to_dict(row) -> dict:
     d = dict(row)
+    # Wiersz z SELECT * ma tenant_id — na zewnątrz tylko flaga is_platform
+    if "tenant_id" in d:
+        d["is_platform"] = d.pop("tenant_id") is None
     # Tytuł/treść w języku żądania; surowe kolumny tłumaczeń nie trafiają do klienta
     d["requirement_title"] = localized(d.pop("title_i18n", None), d.get("requirement_title"))
     d["requirement_text"] = localized(d.pop("text_i18n", None), d.get("requirement_text"))

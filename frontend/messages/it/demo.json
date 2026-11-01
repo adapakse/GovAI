@@ -33,6 +33,10 @@
   "loading": "⏳ Caricamento...",
   "noAgents": "Nessun agente attivo.",
   "noResults": "Nessun agente corrispondente a «{query}».",
+  "notDemoTenant": {
+    "body": "La tua organizzazione lavora con dati reali: scenari di test, generazione di dati di esempio e reset del registro sono disattivati.",
+    "title": "Il simulatore è disponibile solo nell’organizzazione demo"
+  },
   "playbook": {
     "collapse": "▲ comprimi",
     "expand": "▼ espandi",

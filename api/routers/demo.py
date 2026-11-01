@@ -6,6 +6,11 @@ Każde wywołanie /demo/run idzie pełną drogą:
 
 /demo/seed wypełnia bazę 30 dniami realistycznych danych historycznych.
 /demo/reset usuwa wszystkie dane dla agentów demo.
+
+Multitenancy: wszystkie endpointy /demo/* tylko dla organizacji demonstracyjnej
+(tenants.is_demo) — seed/reset w prawdziwej organizacji zaśmieciłby jej rejestr
+i dziennik (a reset dziennika jest dozwolony wyłącznie w organizacji demo).
+Dane powstają w kontekście organizacji użytkownika (RLS + DEFAULT tenant_id).
 """
 import hashlib
 import json
@@ -23,7 +28,15 @@ from config import settings
 from i18n import t
 from repositories import demo_repository as demo_repo
 
-router = APIRouter(prefix="/demo", tags=["demo"])
+async def _require_demo_tenant(user: CurrentUser = Depends(get_current_user)) -> CurrentUser:
+    if not user.tenant_is_demo:
+        raise HTTPException(403, t("demo.errors.notDemoTenant"))
+    return user
+
+
+# Zależność na poziomie routera — get_current_user jest cache'owany w obrębie
+# żądania, więc endpointy dostają ten sam kontekst organizacji.
+router = APIRouter(prefix="/demo", tags=["demo"], dependencies=[Depends(_require_demo_tenant)])
 
 # ── UUID-e seedowane w init.sql ────────────────────────────────────────────────
 _A1 = "a1000000-0000-0000-0000-000000000001"
@@ -699,7 +712,7 @@ async def run_scenario(req: RunRequest, user: CurrentUser = Depends(get_current_
 
     # Gateway wymaga autoryzacji (AuthMiddleware) — mintujemy token serwisowy
     # z tożsamości zalogowanego użytkownika; API i gateway dzielą JWT_SECRET.
-    gw_token = create_access_token(user.id, user.email, user.role)
+    gw_token = create_access_token(user.id, user.email, user.role, user.tenant_id)
 
     async with httpx.AsyncClient(timeout=90.0) as client:
         try:

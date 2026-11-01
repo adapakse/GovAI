@@ -4,6 +4,7 @@
     "invalid_type": "provider_type necunoscut. Valori permise: {allowed}",
     "key_env_not_allowed": "Variabila cheii nu este permisă. Permise: {allowed}.",
     "key_env_with_base_url": "O cheie a platformei (api_key_env) nu poate fi combinată cu un base_url propriu.",
-    "not_found": "Furnizorul de modele nu a fost găsit"
+    "not_found": "Furnizorul de modele nu a fost găsit",
+    "platform_read_only": "Furnizorii platformei sunt doar pentru citire. Adăugați în schimb un furnizor propriu al organizației."
   }
 }

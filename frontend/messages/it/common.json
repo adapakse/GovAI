@@ -57,6 +57,10 @@
     "pending": "In attesa",
     "rejected": "Rifiutato"
   },
+  "platform": {
+    "badge": "Piattaforma",
+    "rowHint": "Questa voce è gestita da GovAI: è comune a tutte le organizzazioni e di sola lettura."
+  },
   "policyResult": {
     "allowed": "Consentito",
     "blocked": "Bloccato",

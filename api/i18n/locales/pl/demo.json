@@ -7,6 +7,7 @@
   "errors": {
     "gatewayTimeout": "Timeout — wywołanie modelu trwało zbyt długo.",
     "gatewayUnavailable": "Nie można połączyć się z Gateway. Sprawdź czy kontener govai-gateway-1 jest uruchomiony.",
+    "notDemoTenant": "Funkcje demonstracyjne są dostępne tylko w organizacji demonstracyjnej.",
     "unknownAgent": "Nieznany agent_id: {agent_id}",
     "unknownScenario": "Nieznany scenariusz: {scenario}"
   },

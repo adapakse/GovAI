@@ -33,6 +33,10 @@
   "loading": "⏳ Ładowanie...",
   "noAgents": "Brak aktywnych agentów.",
   "noResults": "Brak agentów pasujących do „{query}”.",
+  "notDemoTenant": {
+    "body": "Twoja organizacja pracuje na rzeczywistych danych — scenariusze testowe, generowanie danych przykładowych i reset dziennika są tu wyłączone.",
+    "title": "Symulator jest dostępny tylko w organizacji demonstracyjnej"
+  },
   "playbook": {
     "collapse": "▲ zwiń",
     "expand": "▼ rozwiń",

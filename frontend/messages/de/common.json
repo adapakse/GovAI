@@ -57,6 +57,10 @@
     "pending": "Ausstehend",
     "rejected": "Abgelehnt"
   },
+  "platform": {
+    "badge": "Plattform",
+    "rowHint": "Dieser Eintrag wird von GovAI verwaltet — er gilt für alle Organisationen und ist schreibgeschützt."
+  },
   "policyResult": {
     "allowed": "Zulässig",
     "blocked": "Blockiert",

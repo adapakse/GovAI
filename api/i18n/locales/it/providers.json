@@ -4,6 +4,7 @@
     "invalid_type": "provider_type sconosciuto. Valori consentiti: {allowed}",
     "key_env_not_allowed": "Variabile della chiave non consentita. Consentite: {allowed}.",
     "key_env_with_base_url": "Una chiave di piattaforma (api_key_env) non può essere combinata con un base_url personalizzato.",
-    "not_found": "Provider non trovato"
+    "not_found": "Provider non trovato",
+    "platform_read_only": "I provider della piattaforma sono di sola lettura. Aggiungi invece un provider della tua organizzazione."
   }
 }

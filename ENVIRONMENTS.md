@@ -61,6 +61,12 @@ MSYS_NO_PATHCONV=1 sh infra/scripts/migrate.sh
 ```
 
 Skrypt stosuje tylko migracje nieobecne w `schema_migrations`.
+
+`.env` musi zawierać `DB_APP_PASSWORD` (rola `govai_app`, której używają API i gateway —
+wymagana przez RLS, migracja 015); opcjonalnie `TENANT_BASE_DOMAINS` (np. `govai.test`)
+do testowania logowania przez subdomenę organizacji. Testy izolacji organizacji
+(wymagają działającego stosu): `sh tests/isolation/run.sh` — szczegóły w
+`tests/isolation/README.md`, opis modelu w `docs/multitenancy-plan.md`.
 (Nigdy `Get-Content -Raw | ... psql` — psuje polskie znaki, zob.
 `db/migrations/008_fix_text_encoding.sql`.)
 

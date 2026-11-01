@@ -7,6 +7,7 @@
   "errors": {
     "gatewayTimeout": "Tiempo de espera agotado — la llamada al modelo tardó demasiado.",
     "gatewayUnavailable": "No se puede conectar con la pasarela (Gateway). Compruebe que el contenedor govai-gateway-1 está en ejecución.",
+    "notDemoTenant": "Las funciones de demostración solo están disponibles en la organización de demostración.",
     "unknownAgent": "agent_id desconocido: {agent_id}",
     "unknownScenario": "Escenario desconocido: {scenario}"
   },

@@ -57,6 +57,10 @@
     "pending": "Pending",
     "rejected": "Rejected"
   },
+  "platform": {
+    "badge": "Platform",
+    "rowHint": "This entry is managed by GovAI — it is shared by all organisations and read-only."
+  },
   "policyResult": {
     "allowed": "Allowed",
     "blocked": "Blocked",

@@ -28,6 +28,8 @@ export default function Sidebar() {
   const [pendingCount, setPendingCount] = useState(0);
   const { user, logout } = useAuth();
   const t = useTranslations('shell');
+  // Symulator (/demo) tylko w organizacji demo — API i tak zwraca 403 dla pozostałych
+  const adminNav = ADMIN_NAV.filter(({ href }) => href !== '/demo' || user?.tenant?.is_demo === true);
   const isAdminPath = ADMIN_NAV.some(({ href }) => path === href || path.startsWith(href + '/'));
   const [adminOpen, setAdminOpen] = useState(isAdminPath);
 
@@ -129,7 +131,7 @@ export default function Sidebar() {
             <ChevronIcon />
           </span>
         </button>
-        {adminOpen && ADMIN_NAV.map(({ href, icon, label }) => {
+        {adminOpen && adminNav.map(({ href, icon, label }) => {
           const active = path === href || path.startsWith(href + '/');
           return (
             <Link
@@ -154,6 +156,9 @@ export default function Sidebar() {
       <div className="px-4 py-4 border-t border-blue/30 text-xs text-mgray/60">
         {user && (
           <div className="mb-2.5">
+            {user.tenant?.name && (
+              <div className="text-mgray/50 truncate text-[10px] mb-0.5" title={user.tenant.name}>{user.tenant.name}</div>
+            )}
             <div className="text-white/80 font-medium truncate">{user.full_name}</div>
             <div className="text-mgray/50 truncate uppercase tracking-wider text-[10px] mt-0.5">{t(`roles.${user.role}`)}</div>
           </div>

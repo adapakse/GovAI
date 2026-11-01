@@ -85,7 +85,7 @@ def _lookup(catalog: dict[str, Any], key: str) -> Optional[Any]:
     return node
 
 
-def t(key: str, locale: Optional[str] = None, **params: Any) -> str:
+def t(key: str, /, locale: Optional[str] = None, **params: Any) -> str:
     """Tekst dla klucza "<namespace>.<ścieżka>" w języku żądania (lub podanym)."""
     loc = locale if is_locale(locale) else get_locale()
     value = _lookup(_catalog(loc), key)

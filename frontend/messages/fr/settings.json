@@ -52,10 +52,14 @@
     "running": "Rechargement..."
   },
   "row": {
+    "defaultValue": "par défaut : {value}",
     "hideHistory": "masquer l’historique",
     "invalidJson": "JSON invalide",
     "lastChange": "dern. modif. : {user} · {date}",
     "locked": "verrouillé",
+    "overriddenHint": "Votre organisation a remplacé la valeur par défaut de la plateforme.",
+    "platformParam": "Paramètre de plateforme",
+    "platformParamHint": "Paramètre technique commun à toutes les organisations : seul l’administrateur de la plateforme GovAI peut le modifier.",
     "range": "plage : {range}",
     "save": "✓ Enregistrer",
     "showHistory": "historique",

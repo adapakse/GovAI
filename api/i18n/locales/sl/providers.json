@@ -4,6 +4,7 @@
     "invalid_type": "Neznan provider_type. Dovoljeno: {allowed}",
     "key_env_not_allowed": "Spremenljivka ključa ni dovoljena. Dovoljene: {allowed}.",
     "key_env_with_base_url": "Ključa platforme (api_key_env) ni mogoče kombinirati z lastnim base_url.",
-    "not_found": "Dobavitelja ni bilo mogoče najti"
+    "not_found": "Dobavitelja ni bilo mogoče najti",
+    "platform_read_only": "Ponudniki platforme so samo za branje. Namesto tega dodajte lastnega ponudnika organizacije."
   }
 }

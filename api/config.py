@@ -26,6 +26,14 @@ class Settings(BaseSettings):
         alias="ALLOWED_ORIGINS",
     )
 
+    # Domeny bazowe subdomen organizacji, np. "govai.pl" → gessel.govai.pl
+    # (CSV, jak ALLOWED_ORIGINS). Puste = brak subdomen (tryb dedykowany / lokalny).
+    tenant_base_domains_raw: str = Field(default="", alias="TENANT_BASE_DOMAINS")
+
+    @property
+    def tenant_base_domains(self) -> list[str]:
+        return [d.strip().lower() for d in self.tenant_base_domains_raw.split(",") if d.strip()]
+
     @property
     def allowed_origins(self) -> list[str]:
         """Akceptuje JSON-listę albo string z originami rozdzielonymi przecinkiem."""

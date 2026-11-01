@@ -10,25 +10,38 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+from database import current_tenant_id, platform_db
 from i18n import LOCALES, is_locale, t
 from repositories import settings_repository as repo
 
 logger = logging.getLogger(__name__)
 
-_cache: dict[str, Any] = {}
+# Multitenancy: wartości domyślne platformy + nadpisania per organizacja.
+# Odczyt (get_*) bierze organizację z kontekstu bazy (database.current_tenant_id);
+# poza kontekstem organizacji — wartości domyślne platformy.
+_defaults: dict[str, Any] = {}
+_overrides: dict[str, dict[str, Any]] = {}
 
 
 async def load() -> None:
-    """Ładuje wszystkie wartości do cache (start + odświeżanie)."""
-    global _cache
+    """Ładuje wartości domyślne i nadpisania wszystkich organizacji (start + odświeżanie)."""
+    global _defaults, _overrides
     try:
-        _cache = await repo.fetch_values()
+        async with platform_db():
+            defaults = await repo.fetch_defaults()
+            overrides = await repo.fetch_overrides()
+        _defaults, _overrides = defaults, overrides
     except Exception as exc:
         logger.error("Błąd ładowania ustawień z DB: %s", exc)
 
 
 def _get(key: str, default: Any) -> Any:
-    return _cache.get(key, default)
+    tenant = current_tenant_id()
+    if tenant is not None:
+        tenant_values = _overrides.get(tenant)
+        if tenant_values and key in tenant_values:
+            return tenant_values[key]
+    return _defaults.get(key, default)
 
 
 def get_int(key: str, default: int) -> int:
@@ -101,11 +114,25 @@ def validate(meta: dict, value: Any) -> None:
 
 
 async def set_value(key: str, raw_value: Any, meta: dict, updated_by: str) -> dict:
-    """Rzutuje, waliduje, zapisuje przez repozytorium i odświeża cache."""
+    """Rzutuje, waliduje i zapisuje nadpisanie organizacji bieżącego kontekstu; odświeża cache."""
     value = coerce(meta["value_type"], raw_value)
     validate(meta, value)
     row = await repo.update_value(key, value, updated_by)
     if row is None:
         raise KeyError(key)
-    _cache[key] = value
+    tenant = current_tenant_id()
+    if tenant is not None:
+        _overrides.setdefault(tenant, {})[key] = value
+    return row
+
+
+async def set_default(key: str, raw_value: Any, meta: dict, updated_by: str) -> dict:
+    """Zmienia wartość domyślną platformy (super-admin) — w osobnej transakcji platformy."""
+    value = coerce(meta["value_type"], raw_value)
+    validate(meta, value)
+    async with platform_db():
+        row = await repo.update_default(key, value, updated_by)
+    if row is None:
+        raise KeyError(key)
+    _defaults[key] = value
     return row

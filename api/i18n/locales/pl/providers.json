@@ -4,6 +4,7 @@
     "invalid_type": "Nieznany provider_type. Dozwolone: {allowed}",
     "key_env_not_allowed": "Niedozwolona zmienna z kluczem. Dozwolone: {allowed}.",
     "key_env_with_base_url": "Klucza platformy (api_key_env) nie można łączyć z własnym adresem base_url.",
-    "not_found": "Provider nie znaleziony"
+    "not_found": "Provider nie znaleziony",
+    "platform_read_only": "Provider platformy jest tylko do odczytu. Dodaj własnego providera organizacji."
   }
 }

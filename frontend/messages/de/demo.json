@@ -33,6 +33,10 @@
   "loading": "⏳ Wird geladen...",
   "noAgents": "Keine aktiven KI-Agenten.",
   "noResults": "Keine KI-Agenten gefunden für „{query}“.",
+  "notDemoTenant": {
+    "body": "Ihre Organisation arbeitet mit echten Daten — Testszenarien, das Erzeugen von Beispieldaten und das Zurücksetzen des Protokolls sind hier deaktiviert.",
+    "title": "Der Simulator ist nur in der Demo-Organisation verfügbar"
+  },
   "playbook": {
     "collapse": "▲ einklappen",
     "expand": "▼ ausklappen",
