@@ -32,12 +32,15 @@
     { code: 'ro', name: 'Română' },
     { code: 'ru', name: 'Русский' },
     { code: 'sl', name: 'Slovenščina' },
-    { code: 'hr', name: 'Hrvatski' }
+    { code: 'hr', name: 'Hrvatski' },
+    // Tylko landing page — aplikacja nie obsługuje portugalskiego (link "Zaloguj się"
+    // dopisuje ?lang=pt, aplikacja go ignoruje i wybiera język z przeglądarki).
+    { code: 'pt', name: 'Português' }
   ];
 
   var OG_LOCALES = {
     pl: 'pl_PL', en: 'en_GB', de: 'de_DE', it: 'it_IT', es: 'es_ES',
-    fr: 'fr_FR', ro: 'ro_RO', ru: 'ru_RU', sl: 'sl_SI', hr: 'hr_HR'
+    fr: 'fr_FR', ro: 'ro_RO', ru: 'ru_RU', sl: 'sl_SI', hr: 'hr_HR', pt: 'pt_PT'
   };
 
   // Katalog słowników względem pliku i18n.js (nie względem adresu strony).

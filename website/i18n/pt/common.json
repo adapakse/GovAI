@@ -1,0 +1,29 @@
+{
+  "cta": {
+    "bookDemo": "Agendar uma demonstração"
+  },
+  "footer": {
+    "home": "Página inicial",
+    "owner": "Titular da plataforma:",
+    "privacy": "Privacidade",
+    "rights": "© 2026 GovAI. Todos os direitos reservados.",
+    "terms": "Termos e condições"
+  },
+  "lang": {
+    "label": "Idioma",
+    "picker": "Idioma do sítio"
+  },
+  "nav": {
+    "act": "AI Act",
+    "backHome": "← Página inicial",
+    "blog": "Blog",
+    "faq": "Perguntas frequentes",
+    "login": "Iniciar sessão",
+    "menu": "Menu",
+    "platform": "Plataforma",
+    "pricing": "Preços"
+  },
+  "theme": {
+    "toggle": "Alternar tema"
+  }
+}

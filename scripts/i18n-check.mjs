@@ -24,7 +24,8 @@ const CATALOGS = [
   { root: 'frontend/messages', icu: true },
   { root: 'api/i18n/locales', icu: false },
   { root: 'gateway/i18n/locales', icu: false },
-  { root: 'website/i18n', icu: false },
+  // Landing page ma dodatkowo portugalski (aplikacja — nie).
+  { root: 'website/i18n', icu: false, extraLocales: ['pt'] },
   { root: 'db/i18n', icu: false },
 ];
 
@@ -91,13 +92,13 @@ function readJson(file) {
   }
 }
 
-function checkCatalog({ root, icu }) {
+function checkCatalog({ root, icu, extraLocales = [] }) {
   const base = join(ROOT, root);
   const sourceDir = join(base, SOURCE);
   if (!existsSync(sourceDir)) return;
   const namespaces = readdirSync(sourceDir).filter(f => f.endsWith('.json')).sort();
 
-  for (const locale of LOCALES) {
+  for (const locale of [...LOCALES, ...extraLocales]) {
     const dir = join(base, locale);
     const present = existsSync(dir) && statSync(dir).isDirectory()
       ? readdirSync(dir).filter(f => f.endsWith('.json'))
