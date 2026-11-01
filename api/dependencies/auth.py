@@ -62,9 +62,14 @@ async def get_current_user(
             detail=t("auth.errors.missing_token"),
             headers={"WWW-Authenticate": "Bearer"},
         )
+    return await authenticate_token(credentials.credentials)
 
+
+async def authenticate_token(token: str) -> CurrentUser:
+    """Weryfikuje access token (JWT) i aktywność konta. Wspólne dla HTTP (Bearer)
+    i WebSocket (token w query string — przeglądarka nie wyśle nagłówka)."""
     try:
-        payload = decode_access_token(credentials.credentials)
+        payload = decode_access_token(token)
     except JWTError as exc:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

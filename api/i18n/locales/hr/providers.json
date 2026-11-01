@@ -2,6 +2,8 @@
   "errors": {
     "invalid_sensitivity": "Neispravan max_data_sensitivity. Dopuštene vrijednosti: {allowed}",
     "invalid_type": "Nepoznat provider_type. Dopuštene vrijednosti: {allowed}",
+    "key_env_not_allowed": "Varijabla ključa nije dopuštena. Dopuštene: {allowed}.",
+    "key_env_with_base_url": "Ključ platforme (api_key_env) ne može se kombinirati s vlastitim base_url.",
     "not_found": "Pružatelj nije pronađen"
   }
 }

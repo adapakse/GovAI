@@ -141,6 +141,17 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
     task_id = request.headers.get("X-Task-ID", str(uuid4()))
     agent_id = request.headers.get("X-Agent-ID", "")
 
+    # Klucz API przypisany do agenta (api_keys.agent_id) może wywoływać wyłącznie
+    # tego agenta — bez tego dowolny ważny klucz działał za dowolny X-Agent-ID.
+    # Brak nagłówka przy kluczu przypisanym do agenta = agent z klucza.
+    key_agent_id = getattr(request.state, "auth_agent_id", None)
+    if key_agent_id:
+        if not agent_id:
+            agent_id = key_agent_id
+        elif agent_id != key_agent_id:
+            logger.warning("Klucz API agenta %s użyty dla X-Agent-ID %s — odrzucono", key_agent_id, agent_id)
+            raise HTTPException(status_code=403, detail=t("errors.apiKeyAgentMismatch", agent_id=agent_id))
+
     if not agent_id:
         raise HTTPException(status_code=400, detail=t("errors.missingAgentId"))
 
@@ -377,6 +388,10 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
     api_key = selected_provider.api_key_from_env()
     if api_key:
         extra_kwargs["api_key"] = api_key
+    # Domyślny klucz platformy tylko dla oficjalnego endpointu dostawcy — nigdy
+    # dla providera z własnym base_url (klucz trafiłby na dowolny serwer).
+    elif selected_provider.base_url:
+        pass
     elif selected_provider.provider_type == "anthropic" and settings.anthropic_api_key:
         extra_kwargs["api_key"] = settings.anthropic_api_key
     elif selected_provider.provider_type == "deepseek" and settings.deepseek_api_key:

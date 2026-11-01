@@ -39,10 +39,11 @@ VM: `git reset --hard origin/<branch>` w `/opt/govai`, a potem
 
 1. pobiera sekrety z Azure Key Vault do `/opt/govai/.env`
    (`infra/scripts/fetch-secrets.sh`, tożsamość zarządzana VM),
-2. startuje Postgresa i aplikuje **wszystkie** pliki z `db/migrations/`
-   (przy każdym deployu — dlatego każda migracja musi być idempotentna:
-   `IF NOT EXISTS`, `ON CONFLICT ...`),
-3. `docker compose up -d --build`.
+2. startuje Postgresa i stosuje **niewykonane** migracje z `db/migrations/`
+   (`infra/scripts/migrate.sh`: rejestr w tabeli `schema_migrations`, każda
+   migracja w jednej transakcji z `ON_ERROR_STOP` — błąd przerywa deploy;
+   migracje i tak pisz idempotentnie: `IF NOT EXISTS`, `ON CONFLICT ...`),
+3. `docker compose up -d --build`, restart Caddy (odświeża landing page).
 
 ## Lokalne uruchomienie
 
@@ -53,16 +54,15 @@ docker compose up -d --build
 ```
 
 Lokalnie migracje **nie są auto-stosowane** (tylko `db/init.sql` przy
-świeżym wolumenie) — po każdej nowej migracji w `db/migrations/`:
+świeżym wolumenie) — po każdej nowej migracji w `db/migrations/` (Git Bash):
 
-```powershell
-docker cp db/migrations/0XX_nazwa.sql govai-postgres-1:/tmp/m.sql
-docker compose exec -T postgres psql -U govai -d govai -f /tmp/m.sql
+```sh
+MSYS_NO_PATHCONV=1 sh infra/scripts/migrate.sh
 ```
 
+Skrypt stosuje tylko migracje nieobecne w `schema_migrations`.
 (Nigdy `Get-Content -Raw | ... psql` — psuje polskie znaki, zob.
-`db/migrations/008_fix_text_encoding.sql`. W Git Bash dodaj
-`export MSYS_NO_PATHCONV=1` przed `docker cp`.)
+`db/migrations/008_fix_text_encoding.sql`.)
 
 Kod w `api/`, `gateway/`, `frontend/` jest kopiowany do obrazu (bez bind
 mountów) — po zmianie kodu `docker compose up -d --build <serwis>`, sam

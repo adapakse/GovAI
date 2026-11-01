@@ -1,16 +1,26 @@
 -- GovAI — Faza 2: Hybrydowy routing LLM
 -- Uruchomić: psql -U govai -d govai -f 003_providers.sql
+--
+-- Idempotentna (od etapu 0 multitenancy): wcześniej CREATE TYPE/TABLE bez
+-- IF NOT EXISTS i INSERT-y bez warunku — deploy-remote.sh uruchamiał migracje
+-- przy każdym deployu bez ON_ERROR_STOP, więc każdy deploy dodawał 4 providerów
+-- chmurowych ponownie (na INT było po 7 kopii). Duplikaty czyści 014.
 
 -- ── Poziomy wrażliwości danych ────────────────────────────────────────────────
-CREATE TYPE data_sensitivity_level AS ENUM (
-    'public',        -- pytania ogólne, informacje publiczne — dowolny provider
-    'internal',      -- dane robocze bez identyfikatorów — provider z DPA
-    'confidential',  -- dane osobowe, NIP, sygnatury — prywatna chmura (EU)
-    'privileged'     -- tajemnica adwokacka / radcowska — wyłącznie on-prem
-);
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'data_sensitivity_level') THEN
+        CREATE TYPE data_sensitivity_level AS ENUM (
+            'public',        -- pytania ogólne, informacje publiczne — dowolny provider
+            'internal',      -- dane robocze bez identyfikatorów — provider z DPA
+            'confidential',  -- dane osobowe, NIP, sygnatury — prywatna chmura (EU)
+            'privileged'     -- tajemnica adwokacka / radcowska — wyłącznie on-prem
+        );
+    END IF;
+END $$;
 
 -- ── Dostawcy modeli LLM ───────────────────────────────────────────────────────
-CREATE TABLE providers (
+CREATE TABLE IF NOT EXISTS providers (
     id                   UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name                 TEXT NOT NULL,
     provider_type        TEXT NOT NULL,       -- openai | anthropic | deepseek | google | bielik | ollama | vllm | custom
@@ -28,8 +38,8 @@ CREATE TABLE providers (
     updated_at           TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_providers_active    ON providers (active) WHERE active = true;
-CREATE INDEX idx_providers_sensitivity ON providers (max_data_sensitivity);
+CREATE INDEX IF NOT EXISTS idx_providers_active    ON providers (active) WHERE active = true;
+CREATE INDEX IF NOT EXISTS idx_providers_sensitivity ON providers (max_data_sensitivity);
 
 -- ── Rozszerzenie dziennika audytowego ─────────────────────────────────────────
 ALTER TABLE audit_log
@@ -40,7 +50,7 @@ ALTER TABLE audit_log
 
 -- Anthropic Claude — zewnętrzny, DPA dostępne, tylko EU-safe use-cases
 INSERT INTO providers (name, provider_type, model_ids, api_key_env, max_data_sensitivity, priority, notes)
-VALUES (
+SELECT
     'Anthropic Claude (Cloud)',
     'anthropic',
     ARRAY['claude-haiku-4-5-20251001', 'claude-sonnet-4-6', 'claude-opus-4-8'],
@@ -48,11 +58,11 @@ VALUES (
     'internal',
     10,
     'Provider zewnętrzny. Wymaga DPA. Nie używać dla danych objętych tajemnicą adwokacką.'
-);
+WHERE NOT EXISTS (SELECT 1 FROM providers WHERE name = 'Anthropic Claude (Cloud)');
 
 -- OpenAI — zewnętrzny, DPA dostępne
 INSERT INTO providers (name, provider_type, model_ids, api_key_env, max_data_sensitivity, priority, notes)
-VALUES (
+SELECT
     'OpenAI (Cloud)',
     'openai',
     ARRAY['gpt-4o', 'gpt-4o-mini', 'gpt-4-turbo', 'o1', 'o3-mini'],
@@ -60,11 +70,11 @@ VALUES (
     'internal',
     20,
     'Provider zewnętrzny. Wymaga DPA Enterprise. Nie używać dla danych poufnych.'
-);
+WHERE NOT EXISTS (SELECT 1 FROM providers WHERE name = 'OpenAI (Cloud)');
 
 -- DeepSeek — zewnętrzny, serwery w Chinach — TYLKO dane publiczne
 INSERT INTO providers (name, provider_type, model_ids, api_key_env, max_data_sensitivity, priority, notes)
-VALUES (
+SELECT
     'DeepSeek (Cloud)',
     'deepseek',
     ARRAY['deepseek-chat', 'deepseek-coder'],
@@ -72,11 +82,11 @@ VALUES (
     'public',
     30,
     'Serwery poza UE (Chiny). Wyłącznie dane publiczne — zakaz przetwarzania danych klientów.'
-);
+WHERE NOT EXISTS (SELECT 1 FROM providers WHERE name = 'DeepSeek (Cloud)');
 
 -- Google Gemini — zewnętrzny, EU Data Boundary dostępne
 INSERT INTO providers (name, provider_type, model_ids, api_key_env, max_data_sensitivity, priority, notes)
-VALUES (
+SELECT
     'Google Gemini (Cloud)',
     'google',
     ARRAY['gemini-1.5-pro', 'gemini-1.5-flash', 'gemini-2.0-flash'],
@@ -84,11 +94,11 @@ VALUES (
     'internal',
     25,
     'Provider zewnętrzny z EU Data Boundary. Wymaga DPA. Nie używać dla danych uprzywilejowanych.'
-);
+WHERE NOT EXISTS (SELECT 1 FROM providers WHERE name = 'Google Gemini (Cloud)');
 
 -- Bielik On-Prem — lokalny model, pełna kontrola — może obsługiwać PRIVILEGED
 INSERT INTO providers (id, name, provider_type, model_ids, base_url, max_data_sensitivity, priority, active, notes)
-VALUES (
+SELECT
     'b0000000-0000-0000-0000-000000000001',
     'Bielik On-Prem (Local)',
     'ollama',
@@ -98,4 +108,4 @@ VALUES (
     1,
     false,  -- domyślnie wyłączony — aktywuj po skonfigurowaniu serwera
     'Model lokalny — tajemnica adwokacka OK. Aktywuj po uruchomieniu serwera Ollama.'
-);
+WHERE NOT EXISTS (SELECT 1 FROM providers WHERE name = 'Bielik On-Prem (Local)');

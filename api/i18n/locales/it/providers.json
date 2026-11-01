@@ -2,6 +2,8 @@
   "errors": {
     "invalid_sensitivity": "max_data_sensitivity non valido. Valori consentiti: {allowed}",
     "invalid_type": "provider_type sconosciuto. Valori consentiti: {allowed}",
+    "key_env_not_allowed": "Variabile della chiave non consentita. Consentite: {allowed}.",
+    "key_env_with_base_url": "Una chiave di piattaforma (api_key_env) non può essere combinata con un base_url personalizzato.",
     "not_found": "Provider non trovato"
   }
 }

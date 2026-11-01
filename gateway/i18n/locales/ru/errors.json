@@ -1,6 +1,7 @@
 {
   "agentInactive": "Агент «{agent}» имеет статус «{status}» и не может выполнять вызовы.",
   "agentNotRegistered": "Агент «{agent_id}» не зарегистрирован в GovAI. Зарегистрируйте агента перед использованием шлюза.",
+  "apiKeyAgentMismatch": "Этот ключ API не назначен агенту '{agent_id}'.",
   "auth": {
     "invalidApiKey": "Ключ API недействителен или истёк",
     "invalidToken": "Токен недействителен или истёк",

@@ -1,6 +1,7 @@
 {
   "agentInactive": "El agente '{agent}' tiene el estado '{status}' y no puede realizar llamadas.",
   "agentNotRegistered": "El agente '{agent_id}' no está registrado en GovAI. Registre el agente antes de utilizar la pasarela.",
+  "apiKeyAgentMismatch": "Esta clave de API no está asignada al agente '{agent_id}'.",
   "auth": {
     "invalidApiKey": "Clave API no válida o caducada",
     "invalidToken": "Token no válido o caducado",

@@ -24,6 +24,21 @@ _WRITE_ROLES = require_role("partner", "it_admin")
 VALID_SENSITIVITY = {"public", "internal", "confidential", "privileged"}
 VALID_TYPES = {"openai", "anthropic", "deepseek", "google", "bielik", "ollama", "vllm", "custom"}
 
+# Zmienne środowiskowe z kluczami platformy, do których provider może się odwołać
+# (api_key_env). Bez białej listy dowolna zmienna procesu gatewaya (np. JWT_SECRET,
+# DB_PASSWORD) mogła trafić do dostawcy jako klucz. Trzymaj w synchronizacji z
+# gateway/models.py (PLATFORM_KEY_ENVS).
+PLATFORM_KEY_ENVS = {"ANTHROPIC_API_KEY", "OPENAI_API_KEY", "DEEPSEEK_API_KEY", "GOOGLE_API_KEY"}
+
+
+def _validate_key_config(api_key_env: Optional[str], base_url: Optional[str]) -> None:
+    """Klucz platformy tylko z białej listy i nigdy razem z własnym base_url —
+    inaczej klucz platformy dałoby się wysłać na dowolny serwer."""
+    if api_key_env and api_key_env not in PLATFORM_KEY_ENVS:
+        raise HTTPException(400, t("providers.errors.key_env_not_allowed", allowed=", ".join(sorted(PLATFORM_KEY_ENVS))))
+    if api_key_env and base_url:
+        raise HTTPException(400, t("providers.errors.key_env_with_base_url"))
+
 
 class ProviderCreate(BaseModel):
     name: str
@@ -94,6 +109,7 @@ async def create_provider(
         raise HTTPException(400, t("providers.errors.invalid_type", allowed=sorted(VALID_TYPES)))
     if body.max_data_sensitivity not in VALID_SENSITIVITY:
         raise HTTPException(400, t("providers.errors.invalid_sensitivity", allowed=sorted(VALID_SENSITIVITY)))
+    _validate_key_config(body.api_key_env, body.base_url)
 
     row = await providers_repo.insert_provider(
         name=body.name,
@@ -116,12 +132,17 @@ async def update_provider(
     body: ProviderUpdate,
     user: CurrentUser = Depends(_WRITE_ROLES),
 ):
-    existing = await providers_repo.get_provider_id(provider_id)
+    existing = await providers_repo.get_provider(provider_id)
     if not existing:
         raise HTTPException(404, t("providers.errors.not_found"))
 
     if body.max_data_sensitivity and body.max_data_sensitivity not in VALID_SENSITIVITY:
         raise HTTPException(400, t("providers.errors.invalid_sensitivity", allowed=sorted(VALID_SENSITIVITY)))
+    # PATCH nie czyści pól (None = bez zmian) — walidujemy stan po zmianie.
+    _validate_key_config(
+        body.api_key_env if body.api_key_env is not None else existing["api_key_env"],
+        body.base_url if body.base_url is not None else existing["base_url"],
+    )
 
     row = await providers_repo.update_provider(
         provider_id,

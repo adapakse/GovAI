@@ -4,8 +4,8 @@ import logging
 
 from typing import Optional
 
-from fastapi import APIRouter, Depends, Query, WebSocket, WebSocketDisconnect
-from dependencies.auth import CurrentUser, get_current_user
+from fastapi import APIRouter, Depends, HTTPException, Query, WebSocket, WebSocketDisconnect, status
+from dependencies.auth import CurrentUser, authenticate_token, get_current_user
 from i18n import t
 from repositories import dashboard_repository as dashboard_repo
 from services import settings_service
@@ -77,7 +77,20 @@ async def live_feed(websocket: WebSocket):
     WebSocket stream zdarzeń real-time dla pulpitu operacyjnego.
     Subskrybuje kanały Redis: audit:new_call, audit:blocked, audit:error,
     oversight:pending, oversight:escalated.
+
+    Wymaga access tokenu w query string (?token=...) — przeglądarkowy WebSocket
+    nie pozwala ustawić nagłówka Authorization. Bez ważnego tokenu połączenie
+    jest odrzucane przed accept (HTTP 403 przy handshake).
     """
+    token = websocket.query_params.get("token")
+    try:
+        if not token:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+        await authenticate_token(token)
+    except HTTPException:
+        await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
+        return
+
     await websocket.accept()
 
     if _redis is None:

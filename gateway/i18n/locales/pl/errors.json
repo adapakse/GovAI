@@ -1,6 +1,7 @@
 {
   "agentInactive": "Agent '{agent}' ma status '{status}' i nie może wykonywać wywołań.",
   "agentNotRegistered": "Agent '{agent_id}' nie jest zarejestrowany w GovAI. Zarejestruj agenta przed użyciem bramki.",
+  "apiKeyAgentMismatch": "Klucz API nie jest przypisany do agenta '{agent_id}'.",
   "auth": {
     "invalidApiKey": "Klucz API nieprawidłowy lub wygasły",
     "invalidToken": "Token nieprawidłowy lub wygasły",

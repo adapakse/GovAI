@@ -1,6 +1,7 @@
 {
   "agentInactive": "Agentul '{agent}' are starea '{status}' și nu poate efectua apeluri.",
   "agentNotRegistered": "Agentul '{agent_id}' nu este înregistrat în GovAI. Înregistrați agentul înainte de a utiliza gateway-ul de securitate.",
+  "apiKeyAgentMismatch": "Această cheie API nu este atribuită agentului '{agent_id}'.",
   "auth": {
     "invalidApiKey": "Cheie API nevalidă sau expirată",
     "invalidToken": "Token nevalid sau expirat",
