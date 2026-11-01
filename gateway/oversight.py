@@ -9,7 +9,7 @@ import redis.asyncio as aioredis
 
 import app_settings
 from config import settings
-from database import get_pool
+from database import platform_conn, tenant_conn
 from i18n import t
 from models import AgentRecord
 
@@ -36,6 +36,11 @@ def get_redis() -> aioredis.Redis:
     return _redis
 
 
+def tenant_channel(tenant_id: str, channel: str) -> str:
+    """Kanał Redis organizacji (subskrybuje go WebSocket API: api/routers/dashboard.py)."""
+    return f"tenant:{tenant_id}:{channel}"
+
+
 async def push_oversight_task(
     agent: AgentRecord,
     messages: list[dict],
@@ -59,27 +64,30 @@ async def push_oversight_task(
 
     agent_decision = t("oversight.agentDecision", agent=agent.name, content=user_content[:200])
 
-    pool = get_pool()
-    await pool.execute(
-        """
-        INSERT INTO oversight_queue (
-            id, agent_id, task_id, decision_type, agent_decision,
-            input_hash, status, ttl_expires_at
-        ) VALUES ($1, $2, $3, $4, $5, $6, 'pending', $7)
-        """,
-        oversight_id,
-        agent.id,
-        task_id,
-        t("oversight.decisionType", risk=agent.risk_level.upper()),
-        agent_decision,
-        input_hash,
-        ttl_expires_at,
-    )
+    if not agent.tenant_id:
+        raise RuntimeError("push_oversight_task: agent bez tenant_id")
+    async with tenant_conn(agent.tenant_id) as conn:
+        await conn.execute(
+            """
+            INSERT INTO oversight_queue (
+                id, agent_id, task_id, decision_type, agent_decision,
+                input_hash, status, ttl_expires_at, tenant_id
+            ) VALUES ($1, $2, $3, $4, $5, $6, 'pending', $7, $8)
+            """,
+            oversight_id,
+            agent.id,
+            task_id,
+            t("oversight.decisionType", risk=agent.risk_level.upper()),
+            agent_decision,
+            input_hash,
+            ttl_expires_at,
+            agent.tenant_id,
+        )
 
-    # Powiadomienie dla pulpitu przez Redis pub/sub
+    # Powiadomienie dla pulpitu organizacji przez Redis pub/sub
     redis = get_redis()
     await redis.publish(
-        "oversight:pending",
+        tenant_channel(agent.tenant_id, "oversight:pending"),
         json.dumps({
             "oversight_id": oversight_id,
             "agent_id": agent.id,
@@ -102,25 +110,28 @@ async def ttl_monitor_loop() -> None:
     Pętla działająca w tle — co minutę eskaluje przeterminowane zadania.
     Uruchamiana jako asyncio.Task przy starcie aplikacji.
     """
-    pool = get_pool()
     redis = get_redis()
 
     while True:
         try:
-            rows = await pool.fetch(
-                """
-                UPDATE oversight_queue
-                SET status = 'escalated'
-                WHERE status = 'pending' AND ttl_expires_at < NOW()
-                RETURNING id, agent_id, task_id
-                """
-            )
+            # Zadanie platformy — ponad organizacjami; zdarzenie trafia na kanał
+            # organizacji, do której należy zadanie.
+            async with platform_conn() as conn:
+                rows = await conn.fetch(
+                    """
+                    UPDATE oversight_queue
+                    SET status = 'escalated'
+                    WHERE status = 'pending' AND ttl_expires_at < NOW()
+                    RETURNING id, agent_id, task_id, tenant_id
+                    """
+                )
             for row in rows:
                 logger.warning(
-                    "Zadanie nadzoru przeterminowane i eskalowane: id=%s", row["id"]
+                    "Zadanie nadzoru przeterminowane i eskalowane: id=%s tenant=%s",
+                    row["id"], row["tenant_id"],
                 )
                 await redis.publish(
-                    "oversight:escalated",
+                    tenant_channel(str(row["tenant_id"]), "oversight:escalated"),
                     json.dumps({
                         "oversight_id": str(row["id"]),
                         "agent_id": str(row["agent_id"]),

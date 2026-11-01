@@ -61,6 +61,8 @@ mkdir -p "$(dirname "$TARGET_ENV_FILE")"
   echo "# Wygenerowane automatycznie przez infra/scripts/fetch-secrets.sh — NIE edytuj ręcznie."
   echo "JWT_SECRET=${jwt_secret}"
   echo "DB_PASSWORD=${db_password}"
+  # Rola aplikacji govai_app (RLS) — hasło wyliczane z DB_PASSWORD, bez osobnego sekretu w Key Vault.
+  echo "DB_APP_PASSWORD=$(printf '%s' "${db_password}:govai_app" | sha256sum | cut -c1-48)"
   echo "ANTHROPIC_API_KEY=${anthropic_api_key}"
   echo "DEEPSEEK_API_KEY=${deepseek_api_key}"
   [ -n "$allowed_origins" ] && echo "ALLOWED_ORIGINS=${allowed_origins}"

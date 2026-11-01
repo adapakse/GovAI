@@ -6,9 +6,11 @@
     "invalidApiKey": "Cheie API nevalidă sau expirată",
     "invalidToken": "Token nevalid sau expirat",
     "missing": "Lipsește autorizarea",
-    "missingDetail": "Este necesar antetul Authorization: Bearer <token> sau X-API-Key: <key>"
+    "missingDetail": "Este necesar antetul Authorization: Bearer <token> sau X-API-Key: <key>",
+    "tenantInactive": "Organizația este suspendată sau ștearsă — acces blocat."
   },
   "llmError": "Eroare a modelului lingvistic: {error}",
   "missingAgentId": "Lipsește antetul X-Agent-ID",
-  "missingMessages": "Solicitarea nu conține mesaje"
+  "missingMessages": "Solicitarea nu conține mesaje",
+  "policiesUnavailable": "Politicile organizației sunt temporar indisponibile — încercați din nou mai târziu."
 }

@@ -57,6 +57,10 @@
     "pending": "En attente",
     "rejected": "Rejeté"
   },
+  "platform": {
+    "badge": "Plateforme",
+    "rowHint": "Cette entrée est gérée par GovAI : elle est commune à toutes les organisations et en lecture seule."
+  },
   "policyResult": {
     "allowed": "Autorisé",
     "blocked": "Bloqué",

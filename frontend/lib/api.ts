@@ -197,6 +197,8 @@ export interface AiActRequirement {
   default_deadline_days: number;
   decl_key: string | null;
   created_at: string;
+  // true = wiersz katalogu platformy (zarządza GovAI) — zmiana tylko przez super-admina
+  is_platform?: boolean;
 }
 
 export type DataSensitivityLevel = 'public' | 'internal' | 'confidential' | 'privileged';
@@ -218,6 +220,8 @@ export interface Provider {
   created_by: string | null;
   created_at: string;
   updated_at: string;
+  // true = provider platformy (zarządza GovAI) — zmiana tylko przez super-admina
+  is_platform?: boolean;
 }
 
 export type RequirementDeclStatus = 'yes' | 'no' | 'partial' | 'na' | 'undeclared';
@@ -354,6 +358,11 @@ export interface Setting {
   editable: boolean;
   updated_by: string | null;
   updated_at: string;
+  // Multitenancy: false = parametr platformy (zmienia tylko super-admin);
+  // overridden = organizacja nadpisała wartość domyślną (default_value)
+  tenant_editable?: boolean;
+  overridden?: boolean;
+  default_value?: unknown;
 }
 
 export interface SettingHistoryEntry {

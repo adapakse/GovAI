@@ -29,6 +29,50 @@ jobs:
       - name: Kompletność tłumaczeń (10 języków)
         run: node scripts/i18n-check.mjs
 
+  # Izolacja organizacji (multitenancy): pełny stos (Postgres + migracje + API +
+  # gateway) i testy czarnoskrzynkowe z tests/isolation — dwie organizacje,
+  # każdy endpoint krzyżowo, RLS, gateway, WebSocket.
+  isolation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Środowisko testowe (.env z losowymi sekretami)
+        run: |
+          {
+            echo "DB_PASSWORD=ci$(openssl rand -hex 16)"
+            echo "DB_APP_PASSWORD=ci$(openssl rand -hex 16)"
+            echo "JWT_SECRET=$(openssl rand -hex 32)"
+            echo "ANTHROPIC_API_KEY=sk-ant-ci-placeholder"
+            echo "ALLOWED_ORIGINS=http://localhost"
+            echo "TENANT_BASE_DOMAINS=govai.test"
+          } > .env
+
+      - name: Build api + gateway
+        run: docker compose build api gateway
+
+      - name: Postgres + migracje
+        run: |
+          docker compose up -d postgres redis
+          # init.sql działa przy pierwszym starcie — czekamy, aż tabele istnieją
+          timeout 120 sh -c 'until docker compose exec -T postgres psql -U govai -d govai -tAc "SELECT 1 FROM agents LIMIT 1" >/dev/null 2>&1; do sleep 2; done'
+          sh infra/scripts/migrate.sh
+
+      - name: Start api + gateway
+        run: |
+          docker compose up -d --no-deps api gateway
+          for svc in api:8000 gateway:8001; do
+            name=${svc%%:*}; port=${svc##*:}
+            timeout 180 sh -c "until docker compose exec -T $name python -c \"import urllib.request; urllib.request.urlopen('http://localhost:$port/health')\" >/dev/null 2>&1; do sleep 3; done"
+          done
+
+      - name: Testy izolacji
+        run: sh tests/isolation/run.sh
+
+      - name: Logi przy błędzie
+        if: failure()
+        run: docker compose logs --tail 200 api gateway postgres
+
   build:
     runs-on: ubuntu-latest
     strategy:

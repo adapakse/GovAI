@@ -6,9 +6,11 @@
     "invalidApiKey": "Ключ API недействителен или истёк",
     "invalidToken": "Токен недействителен или истёк",
     "missing": "Отсутствует авторизация",
-    "missingDetail": "Требуется заголовок Authorization: Bearer <token> или X-API-Key: <key>"
+    "missingDetail": "Требуется заголовок Authorization: Bearer <token> или X-API-Key: <key>",
+    "tenantInactive": "Организация приостановлена или удалена — доступ заблокирован."
   },
   "llmError": "Ошибка языковой модели: {error}",
   "missingAgentId": "Отсутствует заголовок X-Agent-ID",
-  "missingMessages": "В запросе отсутствуют сообщения"
+  "missingMessages": "В запросе отсутствуют сообщения",
+  "policiesUnavailable": "Политики организации временно недоступны — повторите попытку позже."
 }

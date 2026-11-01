@@ -6,9 +6,11 @@
     "invalidApiKey": "Clé API invalide ou expirée",
     "invalidToken": "Jeton invalide ou expiré",
     "missing": "Autorisation manquante",
-    "missingDetail": "En-tête requis : Authorization: Bearer <token> ou X-API-Key: <key>"
+    "missingDetail": "En-tête requis : Authorization: Bearer <token> ou X-API-Key: <key>",
+    "tenantInactive": "L'organisation est suspendue ou supprimée — accès bloqué."
   },
   "llmError": "Erreur du modèle de langage : {error}",
   "missingAgentId": "En-tête X-Agent-ID manquant",
-  "missingMessages": "Aucun message dans la requête"
+  "missingMessages": "Aucun message dans la requête",
+  "policiesUnavailable": "Les politiques de l'organisation sont temporairement indisponibles — veuillez réessayer plus tard."
 }

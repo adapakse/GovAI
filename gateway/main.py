@@ -24,15 +24,12 @@ logger = logging.getLogger(__name__)
 
 
 async def _policy_refresh_loop(policy_engine: PolicyEngine) -> None:
-    """Odświeża parametry i reguły polityk z DB — bez restartu gateway."""
+    """Odświeża parametry (wszystkich organizacji) i reguły polityk organizacji
+    obecnych w cache — bez restartu gateway."""
     while True:
         await asyncio.sleep(app_settings.get_int("intervals.policy_refresh_seconds", 60))
         await app_settings.load()
-        try:
-            rules = await fetch_active_policies()
-            policy_engine.load_rules(rules)
-        except Exception as exc:
-            logger.error("Błąd odświeżania polityk z DB: %s", exc)
+        await policy_engine.refresh_all(fetch_active_policies)
 
 
 @asynccontextmanager
@@ -44,14 +41,8 @@ async def lifespan(app: FastAPI):
     await app_settings.load()
 
     pii = PIIScanner()
+    # Reguły polityk ładowane leniwie per organizacja (proxy: ensure_loaded).
     policy = PolicyEngine()
-
-    # Załaduj reguły z DB przy starcie
-    try:
-        rules = await fetch_active_policies()
-        policy.load_rules(rules)
-    except Exception as exc:
-        logger.error("Błąd ładowania polityk przy starcie: %s — używam pustych reguł", exc)
 
     init_components(pii, policy)
 
@@ -99,6 +90,8 @@ class LocaleMiddleware:
                 (v.decode("latin-1") for k, v in scope.get("headers", []) if k == b"accept-language"),
                 None,
             )
+            # Organizacja nie jest tu jeszcze znana — domyślny język platformy;
+            # AuthMiddleware podmienia go na domyślny język organizacji.
             set_locale(match_locale(header) or app_settings.get_str("i18n.default_locale", DEFAULT_LOCALE))
         await self.app(scope, receive, send)
 
@@ -132,14 +125,13 @@ async def chat_completions(request: Request):
 @app.get("/health")
 async def health():
     """Status zdrowia bramki i jej zależności."""
-    from database import get_pool
+    from database import raw_pool
     from oversight import get_redis
 
     checks = {}
 
     try:
-        pool = get_pool()
-        await pool.fetchval("SELECT 1")
+        await raw_pool().fetchval("SELECT 1")
         checks["postgres"] = "ok"
     except Exception as exc:
         checks["postgres"] = f"error: {exc}"

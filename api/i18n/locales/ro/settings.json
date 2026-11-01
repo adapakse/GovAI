@@ -8,6 +8,7 @@
     "invalid_locale": "Limbă neacceptată. Valori permise: {allowed}",
     "invalid_value": "Valoare nevalidă: {error}",
     "not_editable": "Parametrul '{key}' nu este editabil",
-    "not_found": "Parametrul '{key}' nu există"
+    "not_found": "Parametrul '{key}' nu există",
+    "platform_only": "'{key}' este un parametru tehnic al platformei — doar un administrator GovAI îl poate modifica."
   }
 }

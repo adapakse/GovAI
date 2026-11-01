@@ -8,6 +8,7 @@
     "invalid_locale": "Nicht unterstützte Sprache. Zulässig: {allowed}",
     "invalid_value": "Ungültiger Wert: {error}",
     "not_editable": "Parameter '{key}' ist nicht bearbeitbar",
-    "not_found": "Parameter '{key}' existiert nicht"
+    "not_found": "Parameter '{key}' existiert nicht",
+    "platform_only": "'{key}' ist ein technischer Plattformparameter — nur ein GovAI-Administrator kann ihn ändern."
   }
 }

@@ -28,3 +28,12 @@ async def deactivate_api_key(key_id: str) -> str:
     return await pool.execute(
         "UPDATE api_keys SET active = false WHERE id = $1", key_id,
     )
+
+
+async def tenant_id_by_slug(slug: str):
+    """Id aktywnej (nieusuniętej) organizacji o danym slugu — tryb platformy (logowanie)."""
+    pool = get_pool()
+    value = await pool.fetchval(
+        "SELECT id FROM tenants WHERE slug = $1 AND deleted_at IS NULL", slug,
+    )
+    return str(value) if value else None

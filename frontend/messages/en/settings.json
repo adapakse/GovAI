@@ -52,10 +52,14 @@
     "running": "Reloading..."
   },
   "row": {
+    "defaultValue": "default: {value}",
     "hideHistory": "hide history",
     "invalidJson": "Invalid JSON",
     "lastChange": "last change: {user} · {date}",
     "locked": "locked",
+    "overriddenHint": "Your organisation has overridden the platform default value.",
+    "platformParam": "Platform parameter",
+    "platformParamHint": "Technical parameter shared by all organisations — only the GovAI platform administrator can change it.",
     "range": "range: {range}",
     "save": "✓ Save",
     "showHistory": "history",

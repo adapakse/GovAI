@@ -7,6 +7,7 @@
   "errors": {
     "gatewayTimeout": "Timeout — apelul modelului a durat prea mult.",
     "gatewayUnavailable": "Nu se poate realiza conexiunea cu Gateway-ul. Verificați dacă containerul govai-gateway-1 rulează.",
+    "notDemoTenant": "Funcțiile demonstrative sunt disponibile doar în organizația demonstrativă.",
     "unknownAgent": "agent_id necunoscut: {agent_id}",
     "unknownScenario": "Scenariu necunoscut: {scenario}"
   },

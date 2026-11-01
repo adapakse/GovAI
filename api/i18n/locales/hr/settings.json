@@ -8,6 +8,7 @@
     "invalid_locale": "Jezik nije podržan. Dopuštene vrijednosti: {allowed}",
     "invalid_value": "Neispravna vrijednost: {error}",
     "not_editable": "Parametar '{key}' nije moguće uređivati",
-    "not_found": "Parametar '{key}' ne postoji"
+    "not_found": "Parametar '{key}' ne postoji",
+    "platform_only": "'{key}' tehnički je parametar platforme — može ga promijeniti samo administrator GovAI-ja."
   }
 }

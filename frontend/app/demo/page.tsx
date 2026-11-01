@@ -7,6 +7,7 @@ import SearchBox from '@/components/SearchBox';
 import { api, Agent, Provider, PolicyResult } from '@/lib/api';
 import { matchesQuery, providerFieldsForModel } from '@/lib/search';
 import { ensureFreshToken } from '@/lib/auth';
+import { useAuth } from '@/components/AuthProvider';
 
 const GW_URL  = process.env.NEXT_PUBLIC_GATEWAY_URL ?? 'http://localhost:8001';
 
@@ -186,7 +187,30 @@ function FreeChat({ agent }: { agent: Agent }) {
 }
 
 // ── Strona główna ─────────────────────────────────────────────────────────────
+// Symulator działa tylko w organizacji demo (API zwraca 403 dla pozostałych) —
+// poza nią komunikat zamiast symulatora, bez żadnych wywołań API.
 export default function DemoPage() {
+  const t = useTranslations('demo');
+  const { user, isLoading } = useAuth();
+  // tenant === undefined: stara sesja, AuthProvider właśnie dociąga /auth/me
+  if (isLoading || !user || user.tenant === undefined) {
+    return <p className="text-mgray text-sm">{t('loading')}</p>;
+  }
+  if (user.tenant?.is_demo !== true) {
+    return (
+      <div className="space-y-6">
+        <h1 className="text-2xl font-bold text-white">{t('title')}</h1>
+        <div className="rounded-lg border border-blue/30 bg-navy/60 px-5 py-4 max-w-2xl">
+          <p className="text-white text-sm font-medium">{t('notDemoTenant.title')}</p>
+          <p className="text-mgray text-sm mt-1">{t('notDemoTenant.body')}</p>
+        </div>
+      </div>
+    );
+  }
+  return <DemoSimulator />;
+}
+
+function DemoSimulator() {
   const t = useTranslations('demo');
   const tc = useTranslations('common');
   const [agents, setAgents] = useState<Agent[]>([]);

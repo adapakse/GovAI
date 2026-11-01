@@ -29,12 +29,16 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from pydantic import BaseModel, field_validator
 
+from database import platform_db, tenant_db
 from dependencies.auth import CurrentUser, get_current_user, require_role
 from i18n import DEFAULT_LOCALE, LOCALES, is_locale, t
+from repositories import agents_repository as agents_repo
 from repositories import auth_repository as auth_repo
 from services import settings_service
+from services.tenant_host import slug_from_host
 from services.auth_service import (
     change_password, create_api_key, create_refresh_token, create_user,
+    find_login_identities, get_identity,
     get_user_by_email, get_user_by_id, list_users, revoke_refresh_token,
     update_last_login, update_user, update_user_locale, verify_api_key,
     verify_refresh_token, create_access_token,
@@ -133,39 +137,74 @@ def _locale_fields(user: dict) -> dict:
 
 # ── Endpointy publiczne ────────────────────────────────────────────────────────
 
+def _tenant_fields(identity: dict) -> dict:
+    return {
+        "is_super_admin": bool(identity.get("is_super_admin")),
+        "tenant": {
+            "id": str(identity["tenant_id"]),
+            "slug": identity["tenant_slug"],
+            "name": identity["tenant_name"],
+            "is_demo": bool(identity["tenant_is_demo"]),
+        },
+    }
+
+
+def _ensure_active(identity: dict) -> None:
+    if identity["tenant_deleted_at"] is not None or identity["tenant_status"] != "active":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=t("auth.errors.tenant_inactive"))
+    if identity["status"] != "active":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail=t("auth.errors.account_status", status=identity["status"]))
+
+
 @router.post("/login")
 async def login(body: LoginRequest, request: Request):
     """
     Logowanie — zwraca access_token (JWT, 60 min) i refresh_token (7 dni).
     Refresh token należy przechowywać bezpiecznie i używać do odnowienia sesji.
-    """
-    user = await get_user_by_email(str(body.email))
 
-    if not user or not user.get("password_hash"):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail=t("auth.errors.invalid_credentials"))
+    Organizacja: na subdomenie {slug}.<domena> — tylko konta tej organizacji;
+    na adresie uniwersalnym (app.<domena>) — konto o danym e-mailu i haśle
+    w dowolnej organizacji (gdy pasuje kilka — trzeba użyć adresu organizacji).
+    """
+    host_slug = slug_from_host(request.headers.get("host"))
+    async with platform_db():
+        tenant_id = None
+        if host_slug:
+            tenant_id = await auth_repo.tenant_id_by_slug(host_slug)
+            if tenant_id is None:
+                raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                                    detail=t("auth.errors.invalid_credentials"))
+        candidates = await find_login_identities(str(body.email), tenant_id)
 
     from services.auth_service import verify_password
-    if not verify_password(body.password, user["password_hash"]):
+    matches = [c for c in candidates
+               if c.get("password_hash") and verify_password(body.password, c["password_hash"])]
+    if not matches:
         logger.warning("Nieudane logowanie dla: %s (IP: %s)", body.email,
                        request.client.host if request.client else "unknown")
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail=t("auth.errors.invalid_credentials"))
+    if len(matches) > 1:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=t("auth.errors.ambiguous_login"))
 
-    if user["status"] != "active":
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
-                            detail=t("auth.errors.account_status", status=user["status"]))
+    user = matches[0]
+    _ensure_active(user)
 
     user_id = str(user["id"])
-    access_token = create_access_token(user_id, str(body.email), str(user["role"]))
-    refresh_token = await create_refresh_token(
-        user_id,
-        ip_address=request.client.host if request.client else None,
-        user_agent=request.headers.get("User-Agent"),
-    )
-    await update_last_login(user_id)
+    tenant_id = str(user["tenant_id"])
+    access_token = create_access_token(user_id, user["email"], str(user["role"]), tenant_id)
+    async with tenant_db(tenant_id):
+        refresh_token = await create_refresh_token(
+            user_id,
+            tenant_id,
+            ip_address=request.client.host if request.client else None,
+            user_agent=request.headers.get("User-Agent"),
+        )
+        await update_last_login(user_id)
+        locale_fields = _locale_fields(user)
 
-    logger.info("Zalogowano: %s (%s)", body.email, user["role"])
+    logger.info("Zalogowano: %s (%s, organizacja %s)", body.email, user["role"], user["tenant_slug"])
     return {
         "access_token": access_token,
         "refresh_token": refresh_token,
@@ -173,28 +212,33 @@ async def login(body: LoginRequest, request: Request):
         "expires_in": 3600,
         "user": {
             "id": user_id,
-            "email": str(body.email),
+            "email": user["email"],
             "full_name": user["full_name"],
             "role": user["role"],
-            **_locale_fields(user),
+            **locale_fields,
+            **_tenant_fields(user),
         },
     }
 
 
 @router.post("/refresh")
-async def refresh(body: RefreshRequest):
+async def refresh(body: RefreshRequest, request: Request):
     """Odnawia access_token na podstawie refresh_token."""
-    token_data = await verify_refresh_token(body.refresh_token)
+    async with platform_db():
+        token_data = await verify_refresh_token(body.refresh_token)
+        user = await get_identity(token_data["user_id"]) if token_data else None
     if not token_data:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail=t("auth.errors.invalid_refresh_token"))
-
-    user = await get_user_by_id(token_data["user_id"])
-    if not user or user["status"] != "active":
+    if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail=t("auth.errors.account_inactive"))
+    _ensure_active(user)
+    host_slug = slug_from_host(request.headers.get("host"))
+    if host_slug is not None and host_slug != user["tenant_slug"]:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=t("auth.errors.tenant_host_mismatch"))
 
-    access_token = create_access_token(user["id"], user["email"], user["role"])
+    access_token = create_access_token(str(user["id"]), user["email"], user["role"], str(user["tenant_id"]))
     return {"access_token": access_token, "token_type": "bearer", "expires_in": 3600}
 
 # ── Endpointy wymagające JWT ───────────────────────────────────────────────────
@@ -211,7 +255,14 @@ async def logout(body: RefreshRequest, user: CurrentUser = Depends(get_current_u
 async def me(user: CurrentUser = Depends(get_current_user)):
     """Dane aktualnie zalogowanego użytkownika."""
     full = await get_user_by_id(user.id)
-    return {**full, **_locale_fields(full)} if full else full
+    if not full:
+        return full
+    return {
+        **full, **_locale_fields(full),
+        "is_super_admin": user.is_super_admin,
+        "tenant": {"id": user.tenant_id, "slug": user.tenant_slug, "name": user.tenant_name,
+                   "is_demo": user.tenant_is_demo},
+    }
 
 
 @router.put("/me/locale")
@@ -331,6 +382,10 @@ async def new_api_key(
     Tworzy nowy klucz API. Surowy klucz widoczny TYLKO w tej odpowiedzi —
     zapisz go natychmiast, nie jest przechowywany w czytelnej formie.
     """
+    # Klucz obcy api_keys.agent_id nie podlega RLS — bez tej kontroli dałoby się
+    # przypiąć klucz do agenta innej organizacji (RLS ukrywa cudzych agentów).
+    if body.agent_id and not await agents_repo.get_agent_id_only(body.agent_id):
+        raise HTTPException(status_code=404, detail=t("agents.errors.not_found", agent_id=body.agent_id))
     result = await create_api_key(
         name=body.name,
         created_by=user.id,

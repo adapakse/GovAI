@@ -1,6 +1,7 @@
 {
   "errors": {
     "invalid_risk_level": "risk_level must be one of: minimal, limited, high or unacceptable",
+    "platform_read_only": "Platform catalogue requirements are read-only. Add your organization's own requirement instead.",
     "requirement_not_found": "Requirement '{req_id}' does not exist"
   }
 }
