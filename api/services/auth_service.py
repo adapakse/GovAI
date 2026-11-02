@@ -33,13 +33,16 @@ def verify_password(plain: str, hashed: str) -> bool:
 
 # ── JWT access token ──────────────────────────────────────────────────────────
 
-def create_access_token(user_id: str, email: str, role: str) -> str:
+def create_access_token(user_id: str, email: str, role: str, tenant_id: str) -> str:
     minutes = settings_service.get_int("security.access_token_expire_minutes", settings.access_token_expire_minutes)
     expire = datetime.now(timezone.utc) + timedelta(minutes=minutes)
     payload = {
         "sub": str(user_id),
         "email": email,
         "role": role,
+        # Organizacja — gateway bierze ją z tokenu (wywołania z UI / symulatora);
+        # API i tak sprawdza organizację z rekordu użytkownika przy każdym żądaniu.
+        "tenant_id": str(tenant_id),
         "exp": expire,
         "iat": datetime.now(timezone.utc),
         "type": "access",
@@ -63,6 +66,7 @@ def _hash_token(raw: str) -> str:
 
 async def create_refresh_token(
     user_id: str,
+    tenant_id: str,
     ip_address: Optional[str] = None,
     user_agent: Optional[str] = None,
 ) -> str:
@@ -74,9 +78,9 @@ async def create_refresh_token(
 
     pool = get_pool()
     await pool.execute(
-        """INSERT INTO refresh_tokens (user_id, token_hash, expires_at, ip_address, user_agent)
-           VALUES ($1, $2, $3, $4, $5)""",
-        user_id, token_hash, expires_at, ip_address, user_agent,
+        """INSERT INTO refresh_tokens (user_id, tenant_id, token_hash, expires_at, ip_address, user_agent)
+           VALUES ($1, $2, $3, $4, $5, $6)""",
+        user_id, tenant_id, token_hash, expires_at, ip_address, user_agent,
     )
     return raw
 
@@ -85,13 +89,13 @@ async def verify_refresh_token(raw: str) -> Optional[dict]:
     token_hash = _hash_token(raw)
     pool = get_pool()
     row = await pool.fetchrow(
-        """SELECT id, user_id FROM refresh_tokens
+        """SELECT id, user_id, tenant_id FROM refresh_tokens
            WHERE token_hash = $1 AND NOT revoked AND expires_at > NOW()""",
         token_hash,
     )
     if not row:
         return None
-    return {"user_id": str(row["user_id"]), "token_id": str(row["id"])}
+    return {"user_id": str(row["user_id"]), "token_id": str(row["id"]), "tenant_id": str(row["tenant_id"])}
 
 async def revoke_refresh_token(raw: str) -> None:
     token_hash = _hash_token(raw)
@@ -110,10 +114,40 @@ async def revoke_all_user_tokens(user_id: str) -> None:
 
 # ── Użytkownicy ───────────────────────────────────────────────────────────────
 
+# Użytkownik + jego organizacja — wywoływane w platform_db() (przed ustaleniem
+# organizacji: logowanie, weryfikacja tokenu). Organizacja zawsze z rekordu
+# użytkownika, nigdy z danych od klienta.
+_IDENTITY_SELECT = """
+    SELECT u.id, u.email, u.full_name, u.role, u.status, u.password_hash, u.locale,
+           u.is_super_admin, u.tenant_id,
+           t.slug AS tenant_slug, t.name AS tenant_name, t.status AS tenant_status,
+           t.is_demo AS tenant_is_demo, t.deleted_at AS tenant_deleted_at
+    FROM users u JOIN tenants t ON t.id = u.tenant_id
+"""
+
+async def get_identity(user_id: str) -> Optional[dict]:
+    row = await get_pool().fetchrow(_IDENTITY_SELECT + " WHERE u.id = $1", user_id)
+    return dict(row) if row else None
+
+async def find_login_identities(email: str, tenant_id: Optional[str] = None) -> list[dict]:
+    """Konta o danym e-mailu — w podanej organizacji albo we wszystkich
+    (logowanie przez adres uniwersalny app.<domena>)."""
+    if tenant_id:
+        rows = await get_pool().fetch(
+            _IDENTITY_SELECT + " WHERE lower(u.email) = $1 AND u.tenant_id = $2 AND t.deleted_at IS NULL",
+            email.lower().strip(), tenant_id,
+        )
+    else:
+        rows = await get_pool().fetch(
+            _IDENTITY_SELECT + " WHERE lower(u.email) = $1 AND t.deleted_at IS NULL",
+            email.lower().strip(),
+        )
+    return [dict(r) for r in rows]
+
 async def get_user_by_email(email: str) -> Optional[dict]:
     pool = get_pool()
     row = await pool.fetchrow(
-        "SELECT id, email, full_name, role, status, password_hash, locale FROM users WHERE email = $1",
+        "SELECT id, email, full_name, role, status, password_hash, locale FROM users WHERE lower(email) = $1",
         email.lower().strip(),
     )
     return dict(row) if row else None

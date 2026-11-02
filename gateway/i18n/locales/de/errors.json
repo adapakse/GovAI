@@ -6,9 +6,11 @@
     "invalidApiKey": "API-Schlüssel ungültig oder abgelaufen",
     "invalidToken": "Token ungültig oder abgelaufen",
     "missing": "Keine Autorisierung",
-    "missingDetail": "Header Authorization: Bearer <token> oder X-API-Key: <key> erforderlich"
+    "missingDetail": "Header Authorization: Bearer <token> oder X-API-Key: <key> erforderlich",
+    "tenantInactive": "Die Organisation ist gesperrt oder gelöscht — Zugriff blockiert."
   },
   "llmError": "Fehler des Sprachmodells: {error}",
   "missingAgentId": "Header X-Agent-ID fehlt",
-  "missingMessages": "Keine Nachrichten in der Anfrage"
+  "missingMessages": "Keine Nachrichten in der Anfrage",
+  "policiesUnavailable": "Die Richtlinien der Organisation sind vorübergehend nicht verfügbar — bitte später erneut versuchen."
 }

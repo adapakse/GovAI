@@ -57,6 +57,10 @@
     "pending": "Na čekanju",
     "rejected": "Odbijeno"
   },
+  "platform": {
+    "badge": "Platforma",
+    "rowHint": "Ovim unosom upravlja GovAI — zajednički je svim organizacijama i samo za čitanje."
+  },
   "policyResult": {
     "allowed": "Dopušteno",
     "blocked": "Blokirano",

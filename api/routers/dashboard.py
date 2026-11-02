@@ -86,7 +86,7 @@ async def live_feed(websocket: WebSocket):
     try:
         if not token:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
-        await authenticate_token(token)
+        user = await authenticate_token(token, websocket.headers.get("host"))
     except HTTPException:
         await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
         return
@@ -98,11 +98,14 @@ async def live_feed(websocket: WebSocket):
         await websocket.close()
         return
 
+    # Multitenancy: gateway publikuje zdarzenia na kanały organizacji
+    # tenant:{tenant_id}:<kanał>; klient dostaje typ bez prefiksu (audit:blocked...).
+    prefix = f"tenant:{user.tenant_id}:"
     pubsub = _redis.pubsub()
-    await pubsub.subscribe(
+    await pubsub.subscribe(*(prefix + ch for ch in (
         "audit:new_call", "audit:blocked", "audit:error",
         "oversight:pending", "oversight:escalated",
-    )
+    )))
 
     try:
         async for message in pubsub.listen():
@@ -117,8 +120,11 @@ async def live_feed(websocket: WebSocket):
                 if isinstance(payload, dict) and "block_reason" in payload:
                     payload["block_reason"] = localize_block_reason(payload.get("block_reason"), payload)
 
+                channel = message["channel"]
+                if isinstance(channel, bytes):
+                    channel = channel.decode()
                 await websocket.send_json({
-                    "type": message["channel"],
+                    "type": channel.removeprefix(prefix),
                     "payload": payload,
                 })
     except WebSocketDisconnect:

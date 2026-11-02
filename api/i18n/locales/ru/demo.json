@@ -7,6 +7,7 @@
   "errors": {
     "gatewayTimeout": "Тайм-аут — вызов модели занял слишком много времени.",
     "gatewayUnavailable": "Не удаётся подключиться к шлюзу. Проверьте, запущен ли контейнер govai-gateway-1.",
+    "notDemoTenant": "Демонстрационные функции доступны только в демонстрационной организации.",
     "unknownAgent": "Неизвестный agent_id: {agent_id}",
     "unknownScenario": "Неизвестный сценарий: {scenario}"
   },

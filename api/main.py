@@ -124,9 +124,9 @@ async def root():
 
 @app.get("/health")
 async def health():
-    from database import get_pool
+    from database import raw_pool
     try:
-        await get_pool().fetchval("SELECT 1")
+        await raw_pool().fetchval("SELECT 1")
         db = "ok"
     except Exception as e:
         db = f"error: {e}"

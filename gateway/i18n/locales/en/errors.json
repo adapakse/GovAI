@@ -6,9 +6,11 @@
     "invalidApiKey": "API key invalid or expired",
     "invalidToken": "Token invalid or expired",
     "missing": "Not authorised",
-    "missingDetail": "Header Authorization: Bearer <token> or X-API-Key: <key> required"
+    "missingDetail": "Header Authorization: Bearer <token> or X-API-Key: <key> required",
+    "tenantInactive": "The organisation is suspended or deleted — access blocked."
   },
   "llmError": "Language model error: {error}",
   "missingAgentId": "Missing X-Agent-ID header",
-  "missingMessages": "No messages in the request"
+  "missingMessages": "No messages in the request",
+  "policiesUnavailable": "The organisation's policies are temporarily unavailable — please try again later."
 }

@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import {
   AuthUser, clearSession, getAccessToken, getUser,
-  apiRefresh, getRefreshToken, saveSession,
+  apiRefresh, apiMe, getRefreshToken, saveSession,
 } from '@/lib/auth';
 import { effectiveLocale, getActiveLocale, setLocaleCookie } from '@/lib/locale';
 
@@ -49,6 +49,11 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         }
         setUser(stored);
         setIsLoading(false);
+        // Sesja sprzed multitenancy (brak tenant) — dociągnij organizację z /auth/me
+        if (stored.tenant === undefined) {
+          // Gdy /auth/me zawiedzie — tenant: null (brak organizacji = brak funkcji demo), bez zawieszania UI
+          apiMe().then(u => setUser(u ?? { ...stored, tenant: null }));
+        }
         return;
       }
 

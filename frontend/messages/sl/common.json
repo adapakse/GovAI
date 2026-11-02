@@ -57,6 +57,10 @@
     "pending": "Na čakanju",
     "rejected": "Zavrnjeno"
   },
+  "platform": {
+    "badge": "Platforma",
+    "rowHint": "Ta vnos upravlja GovAI — skupen je vsem organizacijam in je samo za branje."
+  },
   "policyResult": {
     "allowed": "Dovoljeno",
     "blocked": "Blokirano",

@@ -7,6 +7,7 @@
   "errors": {
     "gatewayTimeout": "Zeitüberschreitung — der Modellaufruf hat zu lange gedauert.",
     "gatewayUnavailable": "Verbindung zum Gateway nicht möglich. Prüfen Sie, ob der Container govai-gateway-1 läuft.",
+    "notDemoTenant": "Demo-Funktionen sind nur in der Demo-Organisation verfügbar.",
     "unknownAgent": "Unbekannte agent_id: {agent_id}",
     "unknownScenario": "Unbekanntes Szenario: {scenario}"
   },

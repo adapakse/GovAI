@@ -5,6 +5,8 @@ import { useTranslations } from 'next-intl';
 import { api, Policy, AiActRequirement, RiskLevel } from '@/lib/api';
 import SearchBox from '@/components/SearchBox';
 import { matchesQuery } from '@/lib/search';
+import { useAuth } from '@/components/AuthProvider';
+import PlatformBadge from '@/components/PlatformBadge';
 
 type Tab = 'rules' | 'aiact';
 
@@ -453,6 +455,9 @@ function NewRequirementForm({ onSaved }: { onSaved: () => void }) {
 
 function RequirementRow({ req, onChanged }: { req: AiActRequirement; onChanged: () => void }) {
   const t = useTranslations('policies');
+  const { user } = useAuth();
+  // Wymaganie z katalogu platformy — dla organizacji tylko do odczytu (API i tak zwraca 403)
+  const readOnly = req.is_platform === true && !user?.is_super_admin;
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
@@ -500,7 +505,7 @@ function RequirementRow({ req, onChanged }: { req: AiActRequirement; onChanged: 
     }
   }
 
-  if (editing) {
+  if (editing && !readOnly) {
     return (
       <div className="px-4 py-3 bg-dark/40 space-y-2 border-b border-blue/10">
         <div className="grid grid-cols-2 gap-3">
@@ -562,13 +567,14 @@ function RequirementRow({ req, onChanged }: { req: AiActRequirement; onChanged: 
 
   return (
     <div className={`px-4 py-3 border-b border-blue/10 flex items-start gap-3 hover:bg-blue/5 transition-colors ${!req.active ? 'opacity-40' : ''}`}>
-      <button onClick={toggle} className={`mt-0.5 w-8 h-4 rounded-full flex-shrink-0 transition-colors ${req.active ? 'bg-teal' : 'bg-mgray/30'}`}>
+      <button onClick={toggle} disabled={readOnly} className={`mt-0.5 w-8 h-4 rounded-full flex-shrink-0 transition-colors ${req.active ? 'bg-teal' : 'bg-mgray/30'}`}>
         <span className={`block w-3 h-3 bg-white rounded-full mt-0.5 transition-transform ${req.active ? 'translate-x-4' : 'translate-x-0.5'}`} />
       </button>
       <div className="flex-1 min-w-0">
         <div className="flex items-baseline gap-2 flex-wrap">
           <span className="text-xs font-mono font-bold text-teal">{req.article_ref}</span>
           <span className="text-sm font-semibold text-white">{req.requirement_title}</span>
+          {req.is_platform && <PlatformBadge />}
           <span className={`text-[10px] px-1.5 py-0.5 rounded ${SEVERITY_BADGE[req.default_severity]}`}>
             {t.has(`severity.${req.default_severity}`) ? t(`severity.${req.default_severity}`) : req.default_severity}
           </span>
@@ -581,14 +587,14 @@ function RequirementRow({ req, onChanged }: { req: AiActRequirement; onChanged: 
         </div>
         <p className="text-xs text-mgray mt-0.5 leading-relaxed">{req.requirement_text}</p>
       </div>
-      <div className="flex gap-2 flex-shrink-0">
+      {!readOnly && <div className="flex gap-2 flex-shrink-0">
         <button onClick={() => setEditing(true)} className="text-xs text-mgray hover:text-white border border-blue/20 px-2 py-1 rounded transition-colors">
           {t('edit')}
         </button>
         <button onClick={remove} className="text-xs text-red-400/60 hover:text-red-300 border border-red-900/30 px-2 py-1 rounded transition-colors">
           {t('delete')}
         </button>
-      </div>
+      </div>}
     </div>
   );
 }

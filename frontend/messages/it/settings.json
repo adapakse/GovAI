@@ -52,10 +52,14 @@
     "running": "Ricaricamento..."
   },
   "row": {
+    "defaultValue": "predefinito: {value}",
     "hideHistory": "nascondi cronologia",
     "invalidJson": "JSON non valido",
     "lastChange": "ultima modifica: {user} · {date}",
     "locked": "bloccato",
+    "overriddenHint": "La tua organizzazione ha sovrascritto il valore predefinito della piattaforma.",
+    "platformParam": "Parametro di piattaforma",
+    "platformParamHint": "Parametro tecnico comune a tutte le organizzazioni: può modificarlo solo l’amministratore della piattaforma GovAI.",
     "range": "intervallo: {range}",
     "save": "✓ Salva",
     "showHistory": "cronologia",

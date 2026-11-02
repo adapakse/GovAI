@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { api, Setting, SettingHistoryEntry } from '@/lib/api';
 import { useAuth } from '@/components/AuthProvider';
 import { useFormat } from '@/lib/format';
+import PlatformBadge from '@/components/PlatformBadge';
 import { LOCALES, LOCALE_NAMES } from '@/i18n/locales';
 
 // Tytuły i opisy kategorii: settings.categories.<cat>.title/desc
@@ -69,15 +70,17 @@ function SettingHistory({ settingKey }: { settingKey: string }) {
 }
 
 // ── Pojedynczy parametr ───────────────────────────────────────────────────────
-function SettingRow({ setting, canEdit, onSaved }: {
-  setting: Setting; canEdit: boolean; onSaved: (s: Setting) => void;
+function SettingRow({ setting, canEdit, isSuperAdmin, onSaved }: {
+  setting: Setting; canEdit: boolean; isSuperAdmin: boolean; onSaved: (s: Setting) => void;
 }) {
   const t = useTranslations('settings');
   const fmtDate = useFmtDate();
   const isJson = setting.value_type === 'json';
   const isLocale = setting.key === DEFAULT_LOCALE_KEY;
   const initial = isJson ? JSON.stringify(setting.value, null, 2) : setting.value;
-  const editable = canEdit && setting.editable;
+  // Parametr platformy (tenant_editable=false) — zmienia tylko super-admin
+  const isPlatformParam = setting.tenant_editable === false;
+  const editable = canEdit && setting.editable && (!isPlatformParam || isSuperAdmin);
 
   const [draft, setDraft] = useState<string | number | boolean>(initial as never);
   const [saving, setSaving] = useState(false);
@@ -130,6 +133,9 @@ function SettingRow({ setting, canEdit, onSaved }: {
               {t('row.locked')}
             </span>
           )}
+          {isPlatformParam && (
+            <PlatformBadge label={t('row.platformParam')} hint={t('row.platformParamHint')} />
+          )}
         </div>
         {setting.description && (
           <p className="text-xs text-mgray mt-0.5 leading-relaxed">{setting.description}</p>
@@ -137,6 +143,9 @@ function SettingRow({ setting, canEdit, onSaved }: {
         <div className="flex gap-3 mt-1 text-[10px] text-mgray/40 flex-wrap items-center">
           {setting.unit && <span>{t('row.unit', { unit: setting.unit })}</span>}
           {range && <span>{t('row.range', { range })}</span>}
+          {setting.overridden && (
+            <span title={t('row.overriddenHint')}>{t('row.defaultValue', { value: fmtVal(setting.default_value) })}</span>
+          )}
           {setting.updated_by && (
             <span>{t('row.lastChange', { user: setting.updated_by, date: fmtDate(setting.updated_at) })}</span>
           )}
@@ -219,7 +228,8 @@ function SettingRow({ setting, canEdit, onSaved }: {
 export default function SettingsPage() {
   const t = useTranslations('settings');
   const { user } = useAuth();
-  const canEdit = user?.role === 'it_admin';
+  // it_admin organizacji albo super-admin platformy (zgodnie z API: routers/settings.py)
+  const canEdit = user?.role === 'it_admin' || user?.is_super_admin === true;
 
   const [grouped, setGrouped] = useState<Record<string, Setting[]>>({});
   const [loading, setLoading] = useState(true);
@@ -332,7 +342,7 @@ export default function SettingsPage() {
             </div>
             <div>
               {filtered[cat].map(s => (
-                <SettingRow key={s.key} setting={s} canEdit={canEdit} onSaved={onSaved} />
+                <SettingRow key={s.key} setting={s} canEdit={canEdit} isSuperAdmin={user?.is_super_admin === true} onSaved={onSaved} />
               ))}
             </div>
           </div>

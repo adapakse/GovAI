@@ -7,6 +7,7 @@
   "errors": {
     "gatewayTimeout": "Délai dépassé — l’appel au modèle a pris trop de temps.",
     "gatewayUnavailable": "Impossible de se connecter à la passerelle (Gateway). Vérifiez que le conteneur govai-gateway-1 est en cours d’exécution.",
+    "notDemoTenant": "Les fonctions de démonstration ne sont disponibles que dans l'organisation de démonstration.",
     "unknownAgent": "agent_id inconnu : {agent_id}",
     "unknownScenario": "Scénario inconnu : {scenario}"
   },

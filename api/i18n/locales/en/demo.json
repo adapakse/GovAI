@@ -7,6 +7,7 @@
   "errors": {
     "gatewayTimeout": "Timeout — the model call took too long.",
     "gatewayUnavailable": "Cannot connect to the Gateway. Check that the govai-gateway-1 container is running.",
+    "notDemoTenant": "Demo features are available only in the demo organization.",
     "unknownAgent": "Unknown agent_id: {agent_id}",
     "unknownScenario": "Unknown scenario: {scenario}"
   },

@@ -1,6 +1,7 @@
 {
   "errors": {
     "invalid_risk_level": "risk_level должен иметь одно из значений: minimal, limited, high или unacceptable",
+    "platform_read_only": "Требования из каталога платформы доступны только для чтения. Добавьте собственное требование организации.",
     "requirement_not_found": "Требование «{req_id}» не существует"
   }
 }

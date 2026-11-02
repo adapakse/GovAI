@@ -12,6 +12,16 @@ export interface AuthUser extends LocalePreference {
   email: string;
   full_name: string;
   role: string;
+  // Multitenancy — sesje zapisane przed wdrożeniem nie mają tych pól
+  is_super_admin?: boolean;
+  tenant?: AuthTenant | null;
+}
+
+export interface AuthTenant {
+  id: string;
+  slug: string;
+  name: string;
+  is_demo: boolean;
 }
 
 export interface LoginResponse {
@@ -111,6 +121,26 @@ export async function apiSetLocale(locale: Locale | null): Promise<AuthUser> {
   const stored = getUser();
   if (stored) localStorage.setItem(T_USER, JSON.stringify({ ...stored, ...user }));
   return user;
+}
+
+// Odświeża zapisanego użytkownika z GET /auth/me (np. stara sesja bez tenant).
+// Błędy połykane — zwraca null, a dotychczasowa sesja zostaje bez zmian.
+export async function apiMe(): Promise<AuthUser | null> {
+  try {
+    const token = await ensureFreshToken();
+    if (!token) return null;
+    const r = await fetch(`${API}/auth/me`, {
+      headers: { 'Authorization': `Bearer ${token}`, 'Accept-Language': getActiveLocale() },
+    });
+    if (!r.ok) return null;
+    const user: AuthUser = await r.json();
+    const stored = getUser();
+    const merged = { ...(stored ?? {}), ...user } as AuthUser;
+    localStorage.setItem(T_USER, JSON.stringify(merged));
+    return merged;
+  } catch {
+    return null;
+  }
 }
 
 // ── Token refresh with retry ──────────────────────────────────────────────────

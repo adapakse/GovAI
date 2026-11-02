@@ -10,7 +10,7 @@ from fastapi import HTTPException, Request
 import app_settings
 from audit_logger import write_audit_fire_and_forget
 from config import settings
-from database import get_agent
+from database import fetch_active_policies, get_agent
 from i18n import t
 from models import AgentRecord, AuditEntry, PIIScanResult, PolicyDecision, ProviderRecord
 from oversight import push_oversight_task
@@ -162,11 +162,15 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
         raise HTTPException(status_code=400, detail=t("errors.missingMessages"))
 
     # ── 1. Weryfikacja agenta ──────────────────────────────────────────────────
-    agent = await get_agent(agent_id)
+    # Organizacja ustalona w AuthMiddleware (klucz API / JWT). Agent spoza
+    # organizacji jest dla niej nieznany.
+    tenant_id: str = request.state.tenant_id
+    agent = await get_agent(tenant_id, agent_id)
 
     if agent is None:
         logger.warning("Nieznany agent: %s", agent_id)
         write_audit_fire_and_forget(AuditEntry(
+            tenant_id=tenant_id,
             agent_id=agent_id,
             agent_name=t("audit.unknownAgentName"),
             task_id=task_id,
@@ -187,6 +191,7 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
     if agent.status != "active":
         logger.warning("Agent %s ma status: %s", agent.name, agent.status)
         write_audit_fire_and_forget(AuditEntry(
+            tenant_id=tenant_id,
             agent_id=agent.id,
             agent_name=agent.name,
             task_id=task_id,
@@ -217,6 +222,12 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
     clean_messages = pii_result.redacted_messages
 
     # ── 3. Ocena polityk ────────────────────────────────────────────────────────
+    try:
+        await _policy_engine.ensure_loaded(tenant_id, fetch_active_policies)
+    except Exception as exc:
+        # Fail closed — bez reguł organizacji nie przepuszczamy wywołania.
+        logger.error("Nie można załadować polityk organizacji %s: %s", tenant_id, exc)
+        raise HTTPException(status_code=503, detail=t("errors.policiesUnavailable")) from exc
     decision: PolicyDecision = _policy_engine.evaluate(agent, clean_messages, pii_result)
 
     # ── 3.5. Klasyfikacja wrażliwości danych ────────────────────────────────────
@@ -238,6 +249,7 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
     # tego etapu bramka nawet nie próbowała szukać providera.
     if decision.result == "blocked":
         write_audit_fire_and_forget(AuditEntry(
+            tenant_id=tenant_id,
             agent_id=agent.id,
             agent_name=agent.name,
             task_id=task_id,
@@ -270,6 +282,7 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
         oversight_id = await push_oversight_task(agent, clean_messages, task_id, input_hash)
 
         write_audit_fire_and_forget(AuditEntry(
+            tenant_id=tenant_id,
             agent_id=agent.id,
             agent_name=agent.name,
             task_id=task_id,
@@ -297,13 +310,14 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
     # ── 3.6. Wybór providera (tylko dla zapytań "allowed") ──────────────────────
     selected_provider: Optional[ProviderRecord] = None
     if not settings.demo_mode:
-        selected_provider = await select_provider(agent.model_id, sensitivity.level)
+        selected_provider = await select_provider(tenant_id, agent.model_id, sensitivity.level)
         if selected_provider is None:
             block = _block_reason(
                 "no_eligible_provider", model=agent.model_id, sensitivity=sensitivity.level,
             )
             reason = block["block_reason"]
             write_audit_fire_and_forget(AuditEntry(
+                tenant_id=tenant_id,
                 agent_id=agent.id,
                 agent_name=agent.name,
                 task_id=task_id,
@@ -343,6 +357,7 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
         output_hash = _hash(response_text)
 
         write_audit_fire_and_forget(AuditEntry(
+            tenant_id=tenant_id,
             agent_id=agent.id,
             agent_name=agent.name,
             task_id=task_id,
@@ -408,6 +423,7 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
     except Exception as exc:
         logger.exception("Błąd wywołania LLM dla agenta %s (provider: %s)", agent.name, selected_provider.name)
         write_audit_fire_and_forget(AuditEntry(
+            tenant_id=tenant_id,
             agent_id=agent.id,
             agent_name=agent.name,
             task_id=task_id,
@@ -444,6 +460,7 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
 
     # ── 6. Dziennik audytowy ────────────────────────────────────────────────────
     write_audit_fire_and_forget(AuditEntry(
+        tenant_id=tenant_id,
         agent_id=agent.id,
         agent_name=agent.name,
         task_id=task_id,

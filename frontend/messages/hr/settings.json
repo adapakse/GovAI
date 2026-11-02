@@ -52,10 +52,14 @@
     "running": "Ponovno učitavanje..."
   },
   "row": {
+    "defaultValue": "zadano: {value}",
     "hideHistory": "sakrij povijest",
     "invalidJson": "Neispravan JSON",
     "lastChange": "posl. promjena: {user} · {date}",
     "locked": "zaključano",
+    "overriddenHint": "Vaša organizacija nadjačala je zadanu vrijednost platforme.",
+    "platformParam": "Parametar platforme",
+    "platformParamHint": "Tehnički parametar zajednički svim organizacijama — može ga promijeniti samo administrator platforme GovAI.",
     "range": "raspon: {range}",
     "save": "✓ Spremi",
     "showHistory": "povijest",

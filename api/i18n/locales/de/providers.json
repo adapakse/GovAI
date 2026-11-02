@@ -4,6 +4,7 @@
     "invalid_type": "Unbekannter provider_type. Zulässig: {allowed}",
     "key_env_not_allowed": "Unzulässige Schlüsselvariable. Zulässig: {allowed}.",
     "key_env_with_base_url": "Ein Plattformschlüssel (api_key_env) kann nicht mit einer eigenen base_url kombiniert werden.",
-    "not_found": "Modellanbieter nicht gefunden"
+    "not_found": "Modellanbieter nicht gefunden",
+    "platform_read_only": "Plattform-Provider sind schreibgeschützt. Fügen Sie stattdessen einen eigenen Provider Ihrer Organisation hinzu."
   }
 }

@@ -57,6 +57,10 @@
     "pending": "În așteptare",
     "rejected": "Respinse"
   },
+  "platform": {
+    "badge": "Platformă",
+    "rowHint": "Această intrare este gestionată de GovAI — este comună tuturor organizațiilor și doar pentru citire."
+  },
   "policyResult": {
     "allowed": "Permise",
     "blocked": "Blocate",

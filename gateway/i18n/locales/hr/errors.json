@@ -6,9 +6,11 @@
     "invalidApiKey": "API ključ je neispravan ili je istekao",
     "invalidToken": "Token je neispravan ili je istekao",
     "missing": "Nedostaje autorizacija",
-    "missingDetail": "Potrebno je zaglavlje Authorization: Bearer <token> ili X-API-Key: <key>"
+    "missingDetail": "Potrebno je zaglavlje Authorization: Bearer <token> ili X-API-Key: <key>",
+    "tenantInactive": "Organizacija je suspendirana ili izbrisana — pristup je blokiran."
   },
   "llmError": "Pogreška jezičnog modela: {error}",
   "missingAgentId": "Nedostaje zaglavlje X-Agent-ID",
-  "missingMessages": "U zahtjevu nema poruka"
+  "missingMessages": "U zahtjevu nema poruka",
+  "policiesUnavailable": "Pravila organizacije privremeno su nedostupna — pokušajte ponovno kasnije."
 }

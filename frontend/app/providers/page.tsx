@@ -6,6 +6,8 @@ import { api, Provider, DataSensitivityLevel, ProviderType } from '@/lib/api';
 import SearchBox from '@/components/SearchBox';
 import { matchesQuery } from '@/lib/search';
 import { useFormat } from '@/lib/format';
+import { useAuth } from '@/components/AuthProvider';
+import PlatformBadge from '@/components/PlatformBadge';
 
 // ── Stałe ─────────────────────────────────────────────────────────────────────
 
@@ -217,6 +219,9 @@ function AddProviderForm({ onSaved }: { onSaved: () => void }) {
 function ProviderCard({ provider, onChanged }: { provider: Provider; onChanged: () => void }) {
   const t = useTranslations('providers');
   const fmt = useFormat();
+  const { user } = useAuth();
+  // Provider platformy — dla organizacji tylko do odczytu (API i tak zwraca 403)
+  const readOnly = provider.is_platform === true && !user?.is_super_admin;
   const [toggling, setToggling] = useState(false);
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -300,7 +305,7 @@ function ProviderCard({ provider, onChanged }: { provider: Provider; onChanged: 
         {/* Toggle active */}
         <button
           onClick={toggleActive}
-          disabled={toggling}
+          disabled={toggling || readOnly}
           className={`relative w-10 h-5 rounded-full transition-colors flex-shrink-0 ${
             provider.active ? 'bg-teal' : 'bg-mgray/30'
           }`}
@@ -316,6 +321,7 @@ function ProviderCard({ provider, onChanged }: { provider: Provider; onChanged: 
           {TYPE_ICON[provider.provider_type] ?? '◎'}
         </span>
         <span className="font-semibold text-white text-sm">{provider.name}</span>
+        {provider.is_platform && <PlatformBadge />}
 
         {/* Sensitivity badge */}
         <span className={`text-xs font-bold px-2 py-0.5 rounded border ${sensitivityStyle}`}>
@@ -325,6 +331,7 @@ function ProviderCard({ provider, onChanged }: { provider: Provider; onChanged: 
         {/* Health */}
         <button
           onClick={toggleHealth}
+          disabled={readOnly}
           title={provider.is_healthy ? t('card.healthyHint') : t('card.unhealthyHint')}
           className={`text-xs px-2 py-0.5 rounded border transition-colors ${
             provider.is_healthy
@@ -344,7 +351,7 @@ function ProviderCard({ provider, onChanged }: { provider: Provider; onChanged: 
       </div>
 
       {/* Body */}
-      {editing ? (
+      {editing && !readOnly ? (
         <div className="px-5 py-4 space-y-3">
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -463,8 +470,8 @@ function ProviderCard({ provider, onChanged }: { provider: Provider; onChanged: 
             </p>
           )}
 
-          {/* Actions */}
-          <div className="flex gap-2 pt-1">
+          {/* Actions — wiersz platformy bez edycji/usuwania dla organizacji */}
+          {!readOnly && <div className="flex gap-2 pt-1">
             <button onClick={() => setEditing(true)}
               className="text-xs text-mgray hover:text-white border border-blue/20 px-3 py-1 rounded transition-colors">
               {t('card.edit')}
@@ -473,7 +480,7 @@ function ProviderCard({ provider, onChanged }: { provider: Provider; onChanged: 
               className="text-xs text-red-400/60 hover:text-red-300 border border-red-900/30 px-3 py-1 rounded transition-colors disabled:opacity-40">
               {deleting ? '...' : t('card.delete')}
             </button>
-          </div>
+          </div>}
         </div>
       )}
     </div>

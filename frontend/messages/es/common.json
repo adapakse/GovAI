@@ -57,6 +57,10 @@
     "pending": "Pendiente",
     "rejected": "Rechazado"
   },
+  "platform": {
+    "badge": "Plataforma",
+    "rowHint": "Esta entrada la gestiona GovAI: es común a todas las organizaciones y de solo lectura."
+  },
   "policyResult": {
     "allowed": "Permitido",
     "blocked": "Bloqueado",

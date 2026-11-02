@@ -1,15 +1,21 @@
 """
 Router /providers — zarządzanie dostawcami modeli LLM.
 Dostęp: partner, it_admin.
+
+Multitenancy: lista = providerzy platformy (tenant_id NULL, is_platform=true)
++ własni providerzy organizacji. Wiersze platformy są dla organizacji tylko do
+odczytu (403); super-admin zmienia je w trybie platformy (platform_db).
 """
 from __future__ import annotations
 
 import logging
+from contextlib import nullcontext
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
+from database import platform_db
 from dependencies.auth import CurrentUser, get_current_user, require_role
 from i18n import t
 from repositories import providers_repository as providers_repo
@@ -49,6 +55,8 @@ class ProviderCreate(BaseModel):
     max_data_sensitivity: str = "internal"
     priority: int = 100
     notes: Optional[str] = None
+    # true = provider platformy (wspólny dla wszystkich organizacji) — tylko super-admin
+    is_platform: bool = False
 
 
 class ProviderUpdate(BaseModel):
@@ -76,6 +84,27 @@ def _row_to_dict(row) -> dict:
     if "model_ids" in d and d["model_ids"] is not None:
         d["model_ids"] = list(d["model_ids"])
     return d
+
+
+def _deny_platform_write(user: CurrentUser) -> None:
+    if not user.is_super_admin:
+        raise HTTPException(403, t("providers.errors.platform_read_only"))
+
+
+async def _get_writable(provider_id: str, user: CurrentUser):
+    """Provider do zmiany: 404 gdy niewidoczny, 403 gdy to wiersz platformy,
+    a użytkownik nie jest super-adminem (RLS i tak odrzuciłby zapis — jako 500)."""
+    existing = await providers_repo.get_provider(provider_id)
+    if not existing:
+        raise HTTPException(404, t("providers.errors.not_found"))
+    if existing["is_platform"]:
+        _deny_platform_write(user)
+    return existing
+
+
+def _write_scope(is_platform: bool):
+    """Wiersze platformy zapisujemy w trybie platformy, własne — w kontekście żądania."""
+    return platform_db() if is_platform else nullcontext()
 
 
 # ── Endpoints ─────────────────────────────────────────────────────────────────
@@ -110,19 +139,24 @@ async def create_provider(
     if body.max_data_sensitivity not in VALID_SENSITIVITY:
         raise HTTPException(400, t("providers.errors.invalid_sensitivity", allowed=sorted(VALID_SENSITIVITY)))
     _validate_key_config(body.api_key_env, body.base_url)
+    if body.is_platform:
+        _deny_platform_write(user)
 
-    row = await providers_repo.insert_provider(
-        name=body.name,
-        provider_type=body.provider_type,
-        model_ids=body.model_ids,
-        base_url=body.base_url,
-        api_key_env=body.api_key_env,
-        max_data_sensitivity=body.max_data_sensitivity,
-        priority=body.priority,
-        notes=body.notes,
-        created_by=user.id,
-    )
-    logger.info("Provider '%s' utworzony przez %s", body.name, user.email)
+    # tenant_id z DEFAULT current_tenant_id(): w kontekście organizacji — jej
+    # własny wiersz; w trybie platformy — NULL (provider platformy).
+    async with _write_scope(body.is_platform):
+        row = await providers_repo.insert_provider(
+            name=body.name,
+            provider_type=body.provider_type,
+            model_ids=body.model_ids,
+            base_url=body.base_url,
+            api_key_env=body.api_key_env,
+            max_data_sensitivity=body.max_data_sensitivity,
+            priority=body.priority,
+            notes=body.notes,
+            created_by=user.id,
+        )
+    logger.info("Provider '%s' utworzony przez %s (platforma: %s)", body.name, user.email, body.is_platform)
     return _row_to_dict(row)
 
 
@@ -132,9 +166,7 @@ async def update_provider(
     body: ProviderUpdate,
     user: CurrentUser = Depends(_WRITE_ROLES),
 ):
-    existing = await providers_repo.get_provider(provider_id)
-    if not existing:
-        raise HTTPException(404, t("providers.errors.not_found"))
+    existing = await _get_writable(provider_id, user)
 
     if body.max_data_sensitivity and body.max_data_sensitivity not in VALID_SENSITIVITY:
         raise HTTPException(400, t("providers.errors.invalid_sensitivity", allowed=sorted(VALID_SENSITIVITY)))
@@ -144,20 +176,21 @@ async def update_provider(
         body.base_url if body.base_url is not None else existing["base_url"],
     )
 
-    row = await providers_repo.update_provider(
-        provider_id,
-        name=body.name,
-        base_url=body.base_url,
-        api_key_env=body.api_key_env,
-        priority=body.priority,
-        active=body.active,
-        is_healthy=body.is_healthy,
-        notes=body.notes,
-        model_ids=body.model_ids,
-        max_data_sensitivity=body.max_data_sensitivity,
-    )
+    async with _write_scope(existing["is_platform"]):
+        row = await providers_repo.update_provider(
+            provider_id,
+            name=body.name,
+            base_url=body.base_url,
+            api_key_env=body.api_key_env,
+            priority=body.priority,
+            active=body.active,
+            is_healthy=body.is_healthy,
+            notes=body.notes,
+            model_ids=body.model_ids,
+            max_data_sensitivity=body.max_data_sensitivity,
+        )
     if row is None:
-        return await get_provider(provider_id, user)
+        return _row_to_dict(existing)
 
     logger.info("Provider '%s' zaktualizowany przez %s", provider_id, user.email)
     return _row_to_dict(row)
@@ -168,7 +201,11 @@ async def delete_provider(
     provider_id: str,
     user: CurrentUser = Depends(_WRITE_ROLES),
 ):
-    row = await providers_repo.delete_provider(provider_id)
+    # Jawna kontrola konieczna: polityka RLS katalogu przy DELETE sprawdza tylko
+    # USING (widoczność), a wiersze platformy są widoczne dla organizacji.
+    existing = await _get_writable(provider_id, user)
+    async with _write_scope(existing["is_platform"]):
+        row = await providers_repo.delete_provider(provider_id)
     if not row:
         raise HTTPException(404, t("providers.errors.not_found"))
     logger.info("Provider '%s' usunięty przez %s", row["name"], user.email)
@@ -182,7 +219,9 @@ async def update_health(
     user: CurrentUser = Depends(_WRITE_ROLES),
 ):
     """Ręczna aktualizacja stanu zdrowia providera (np. po teście połączenia)."""
-    row = await providers_repo.set_health(provider_id, healthy)
+    existing = await _get_writable(provider_id, user)
+    async with _write_scope(existing["is_platform"]):
+        row = await providers_repo.set_health(provider_id, healthy)
     if not row:
         raise HTTPException(404, t("providers.errors.not_found"))
     return _row_to_dict(row)

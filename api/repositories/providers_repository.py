@@ -22,13 +22,21 @@ def _notes_col() -> str:
         return "notes"
     return f"COALESCE(NULLIF(notes_i18n ->> '{loc}', ''), notes) AS notes"
 
+
+def _columns() -> str:
+    """Kolumny zwracane do API. is_platform = wiersz platformy (tenant_id NULL),
+    dla organizacji tylko do odczytu. api_key_encrypted nigdy nie wychodzi z bazy."""
+    return f"""id, name, provider_type, model_ids, base_url, api_key_env,
+               max_data_sensitivity, active, priority, is_healthy,
+               last_health_check_at, {_notes_col()}, created_by, created_at, updated_at,
+               (tenant_id IS NULL) AS is_platform"""
+
+
 async def list_providers(active_only: bool = False):
     pool = get_pool()
     where = "WHERE active = true" if active_only else ""
     return await pool.fetch(
-        f"""SELECT id, name, provider_type, model_ids, base_url, api_key_env,
-                   max_data_sensitivity, active, priority, is_healthy,
-                   last_health_check_at, {_notes_col()}, created_by, created_at, updated_at
+        f"""SELECT {_columns()}
             FROM providers
             {where}
             ORDER BY priority ASC, name ASC"""
@@ -38,9 +46,7 @@ async def list_providers(active_only: bool = False):
 async def get_provider(provider_id: str):
     pool = get_pool()
     return await pool.fetchrow(
-        f"""SELECT id, name, provider_type, model_ids, base_url, api_key_env,
-                  max_data_sensitivity, active, priority, is_healthy,
-                  last_health_check_at, {_notes_col()}, created_by, created_at, updated_at
+        f"""SELECT {_columns()}
            FROM providers WHERE id = $1""",
         provider_id,
     )
@@ -63,9 +69,7 @@ async def insert_provider(
                (name, provider_type, model_ids, base_url, api_key_env,
                 max_data_sensitivity, priority, notes, created_by)
            VALUES ($1, $2, $3, $4, $5, $6::data_sensitivity_level, $7, $8, $9)
-           RETURNING id, name, provider_type, model_ids, base_url, api_key_env,
-                     max_data_sensitivity, active, priority, is_healthy,
-                     last_health_check_at, {_notes_col()}, created_by, created_at, updated_at""",
+           RETURNING {_columns()}""",
         name,
         provider_type,
         model_ids,
@@ -141,9 +145,7 @@ async def update_provider(
 
     return await pool.fetchrow(
         f"""UPDATE providers SET {', '.join(updates)} WHERE id = ${idx}
-            RETURNING id, name, provider_type, model_ids, base_url, api_key_env,
-                      max_data_sensitivity, active, priority, is_healthy,
-                      last_health_check_at, {_notes_col()}, created_by, created_at, updated_at""",
+            RETURNING {_columns()}""",
         *params,
     )
 
@@ -161,6 +163,7 @@ async def set_health(provider_id: str, healthy: bool):
         """UPDATE providers
            SET is_healthy = $1, last_health_check_at = NOW(), updated_at = NOW()
            WHERE id = $2
-           RETURNING id, name, is_healthy, last_health_check_at""",
+           RETURNING id, name, is_healthy, last_health_check_at,
+                     (tenant_id IS NULL) AS is_platform""",
         healthy, provider_id,
     )

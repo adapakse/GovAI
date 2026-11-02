@@ -7,6 +7,7 @@
   "errors": {
     "gatewayTimeout": "Časovna omejitev — klic modela je trajal predolgo.",
     "gatewayUnavailable": "Povezave z varnostnim prehodom (Gateway) ni mogoče vzpostaviti. Preverite, ali vsebnik govai-gateway-1 deluje.",
+    "notDemoTenant": "Predstavitvene funkcije so na voljo samo v predstavitveni organizaciji.",
     "unknownAgent": "Neznan agent_id: {agent_id}",
     "unknownScenario": "Neznan scenarij: {scenario}"
   },

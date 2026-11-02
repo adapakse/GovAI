@@ -52,10 +52,14 @@
     "running": "Ponovno nalaganje ..."
   },
   "row": {
+    "defaultValue": "privzeto: {value}",
     "hideHistory": "skrij zgodovino",
     "invalidJson": "Neveljaven JSON",
     "lastChange": "zadnja sprememba: {user} · {date}",
     "locked": "zaklenjeno",
+    "overriddenHint": "Vaša organizacija je preglasila privzeto vrednost platforme.",
+    "platformParam": "Parameter platforme",
+    "platformParamHint": "Tehnični parameter, skupen vsem organizacijam — spremeni ga lahko samo skrbnik platforme GovAI.",
     "range": "razpon: {range}",
     "save": "✓ Shrani",
     "showHistory": "zgodovina",

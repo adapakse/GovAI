@@ -6,9 +6,11 @@
     "invalidApiKey": "Clave API no válida o caducada",
     "invalidToken": "Token no válido o caducado",
     "missing": "Falta la autorización",
-    "missingDetail": "Se requiere la cabecera Authorization: Bearer <token> o X-API-Key: <key>"
+    "missingDetail": "Se requiere la cabecera Authorization: Bearer <token> o X-API-Key: <key>",
+    "tenantInactive": "La organización está suspendida o eliminada — acceso bloqueado."
   },
   "llmError": "Error del modelo de lenguaje: {error}",
   "missingAgentId": "Falta la cabecera X-Agent-ID",
-  "missingMessages": "No hay mensajes en la solicitud"
+  "missingMessages": "No hay mensajes en la solicitud",
+  "policiesUnavailable": "Las políticas de la organización no están disponibles temporalmente — inténtelo de nuevo más tarde."
 }

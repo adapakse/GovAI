@@ -23,6 +23,8 @@ class AgentRecord:
     team: str
     monthly_budget_eur: float
     annex_iii_cat: Optional[str] = None
+    # Organizacja agenta (multitenancy) — None tylko w testach jednostkowych.
+    tenant_id: Optional[str] = None
 
 
 @dataclass
@@ -91,3 +93,5 @@ class AuditEntry:
     data_sensitivity: Optional[str] = None
     provider_id: Optional[str] = None
     metadata: dict = field(default_factory=dict)
+    # Organizacja, do której należy wpis — wymagana (bez niej wpis nie jest zapisywany).
+    tenant_id: Optional[str] = None

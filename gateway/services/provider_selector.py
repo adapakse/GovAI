@@ -32,11 +32,13 @@ def _can_handle(provider_max: str, required: str) -> bool:
 
 
 async def select_provider(
+    tenant_id: str,
     model_id: str,
     sensitivity_level: str,
 ) -> Optional[ProviderRecord]:
     """
-    Zwraca najlepszego providera dla danego model_id i poziomu wrażliwości.
+    Zwraca najlepszego providera dla danego model_id i poziomu wrażliwości
+    spośród providerów platformy i własnych providerów organizacji tenant_id.
 
     Kolejność preferencji:
     1. Aktywny, zdrowy provider obsługujący wymagany poziom wrażliwości
@@ -44,7 +46,7 @@ async def select_provider(
     3. Przy remisie — niższy priorytet wygrywa
     """
     from database import get_providers_for_sensitivity
-    providers = await get_providers_for_sensitivity(sensitivity_level)
+    providers = await get_providers_for_sensitivity(tenant_id, sensitivity_level)
 
     if not providers:
         logger.warning(

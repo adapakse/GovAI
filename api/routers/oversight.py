@@ -29,6 +29,35 @@ async def list_pending(user: CurrentUser = Depends(get_current_user)):
     return [_row_to_dict(r) for r in rows]
 
 
+# Przed "/{oversight_id}" — inaczej "history" trafiało jako id do trasy z parametrem (500).
+@router.get("/history")
+async def list_history(
+    days: Optional[int] = Query(None, ge=1),
+    status: Optional[str] = Query(None),
+    agent_id: Optional[str] = Query(None),
+    user: CurrentUser = Depends(get_current_user),
+):
+    """Historia wszystkich decyzji nadzorczych."""
+    max_days = settings_service.get_int("oversight.history_max_days", 90)
+    days = min(days or max_days, max_days)
+    hist_limit = settings_service.get_int("oversight.history_limit", 200)
+    rows = await oversight_repo.fetch_history(
+        days=days, hist_limit=hist_limit, status=status, agent_id=agent_id
+    )
+    return [_row_to_dict(r) for r in rows]
+
+
+def _row_to_dict(row) -> dict:
+    d = dict(row)
+    for k, v in d.items():
+        if hasattr(v, 'isoformat'):
+            d[k] = v.isoformat()
+    for f in ("id", "agent_id"):
+        if d.get(f):
+            d[f] = str(d[f])
+    return d
+
+
 @router.get("/{oversight_id}")
 async def get_oversight(oversight_id: str, user: CurrentUser = Depends(get_current_user)):
     """Status pojedynczego zadania nadzoru — używane przez govai-sdk do pollingu."""
@@ -104,31 +133,3 @@ async def submit_review(
         result["alert"] = t("oversight.alerts.rubber_stamp", seconds=min_review_seconds)
 
     return result
-
-
-@router.get("/history")
-async def list_history(
-    days: Optional[int] = Query(None, ge=1),
-    status: Optional[str] = Query(None),
-    agent_id: Optional[str] = Query(None),
-    user: CurrentUser = Depends(get_current_user),
-):
-    """Historia wszystkich decyzji nadzorczych."""
-    max_days = settings_service.get_int("oversight.history_max_days", 90)
-    days = min(days or max_days, max_days)
-    hist_limit = settings_service.get_int("oversight.history_limit", 200)
-    rows = await oversight_repo.fetch_history(
-        days=days, hist_limit=hist_limit, status=status, agent_id=agent_id
-    )
-    return [_row_to_dict(r) for r in rows]
-
-
-def _row_to_dict(row) -> dict:
-    d = dict(row)
-    for k, v in d.items():
-        if hasattr(v, 'isoformat'):
-            d[k] = v.isoformat()
-    for f in ("id", "agent_id"):
-        if d.get(f):
-            d[f] = str(d[f])
-    return d

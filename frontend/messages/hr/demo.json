@@ -33,6 +33,10 @@
   "loading": "⏳ Učitavanje...",
   "noAgents": "Nema aktivnih agenata.",
   "noResults": "Nema agenata koji odgovaraju upitu „{query}”.",
+  "notDemoTenant": {
+    "body": "Vaša organizacija radi sa stvarnim podacima — testni scenariji, generiranje primjera podataka i ponovno postavljanje dnevnika ovdje su onemogućeni.",
+    "title": "Simulator je dostupan samo u demonstracijskoj organizaciji"
+  },
   "playbook": {
     "collapse": "▲ sažmi",
     "expand": "▼ proširi",

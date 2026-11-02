@@ -3,6 +3,48 @@
 Status: plan zatwierdzony 2026-11-01, realizacja etapami (każdy etap = PR do
 `develop` + test na INT). Wzorzec: CRMtree (opis różnic niżej).
 
+| Etap | Stan |
+|---|---|
+| 0 — bezpieczeństwo | zrobione (PR #7) |
+| 1–3 — dane, API, gateway | zrobione (migracja 015, testy izolacji `tests/isolation` w CI) |
+| 4–8 | do zrobienia |
+
+## Jak działa izolacja (stan po etapach 1–3)
+
+- **Egzekwuje ją Row Level Security**, nie filtry w zapytaniach: każde żądanie API
+  otwiera transakcję z `app.tenant_id` (`api/database.py: tenant_db`, zależność
+  `get_current_user`), gateway — krótkie konteksty per operacja (`gateway/database.py`).
+  Istniejące zapytania zostały bez zmian; `tenant_id` przy INSERT wpisuje
+  `DEFAULT current_tenant_id()`. Brak kontekstu = brak danych (fail closed).
+- **Rola `govai_app`** (API i gateway): bez superużytkownika (superużytkownik omija RLS),
+  bez DDL i `TRUNCATE`. Hasło: `DB_APP_PASSWORD` (`fetch-secrets.sh` wylicza je z
+  `DB_PASSWORD`), ustawiane przez `infra/scripts/migrate.sh`. Migracje — rola `govai`.
+- **Tryb platformy** (`app.platform`): logowanie, zadania tła, super-admin.
+- **Złożone klucze obce** `(tenant_id, agent_id)` — powiązanie z agentem innej organizacji
+  niemożliwe także z pominięciem API (klucze obce nie podlegają RLS).
+- **Katalogi** (`providers`, `ai_act_requirements`): wiersze platformy (`tenant_id NULL`)
+  widoczne dla wszystkich, zapis tylko super-admin; organizacja dodaje własne wiersze.
+  Osobne polityki RLS dla SELECT i INSERT/UPDATE/DELETE.
+- **Parametry**: `app_settings` = definicje + wartości domyślne platformy,
+  `app_settings_values` = nadpisania organizacji; `tenant_editable=false`
+  (security, intervals, pricing, models) zmienia tylko super-admin.
+- **Dziennik audytowy niezmienny** — trigger blokuje UPDATE/DELETE (wyjątek: reset danych
+  organizacji demonstracyjnej z `app.audit_purge`).
+- **Kanały Redis** `tenant:{tenant_id}:<kanał>`; WebSocket subskrybuje tylko swoją organizację.
+- **Symulator** (`/demo/*`) tylko w organizacji z `is_demo` (`govai-demo`).
+- **Subdomeny**: `TENANT_BASE_DOMAINS` (np. `govai.pl`) — logowanie na `{slug}.<domena>`
+  tylko do tej organizacji, sesja innej organizacji → 403; bez subdomeny (adres uniwersalny)
+  e-mail + hasło wskazują organizację (gdy kilka — 409, trzeba użyć adresu organizacji).
+
+## Przeniesione do etapu 4 (znalezione w etapach 1–3)
+
+- Gateway przy JWT sprawdza aktywność organizacji, ale nie użytkownika w bazie (zablokowany
+  użytkownik działa do wygaśnięcia tokenu, ≤ 60 min).
+- Własne klucze LLM organizacji (`providers.api_key_encrypted`) — szyfrowanie i użycie.
+- Nadpisywanie/wyłączanie wymagań platformy przez organizację (dziś tylko własne wymagania).
+- Seed demo tworzący agentów per organizacja (dziś stałe UUID A1–A3 tylko w `govai-demo`).
+- Klucz LLM do raportów/klasyfikatora per organizacja.
+
 ## Decyzje
 
 | Obszar | Decyzja |
@@ -28,14 +70,14 @@ Status: plan zatwierdzony 2026-11-01, realizacja etapami (każdy etap = PR do
 
 ## Etapy
 
-### Etap 0 — poprawki bezpieczeństwa (niezależne od multitenancy)
+### Etap 0 — poprawki bezpieczeństwa (zrobione)
 - `/ws/live-feed` wymaga access tokenu (`?token=`).
 - Gateway: klucz API przypisany do agenta działa tylko dla tego agenta.
 - Providerzy: `api_key_env` tylko z białej listy kluczy platformy, nigdy razem z własnym `base_url`.
 - Rejestr migracji (`schema_migrations`, `infra/scripts/migrate.sh`), `ON_ERROR_STOP`, migracja w transakcji.
 - `003_providers.sql` idempotentna + `014_dedupe_providers.sql` (na INT po 7 kopii providerów).
 
-### Etap 1 — model danych
+### Etap 1 — model danych (zrobione)
 - `tenants` (id, slug, nazwa, status active/suspended, `deleted_at`, `default_locale`, created_at); `users.is_super_admin`.
 - `tenant_id NOT NULL` + FK: agents, policies, oversight_queue, audit_log (hypertable), users, api_keys, refresh_tokens, app_settings_audit.
 - Unikalności per organizacja: `(tenant_id, email)`, `(tenant_id, policy_code)`; indeksy z `tenant_id` na początku.
@@ -47,13 +89,13 @@ Status: plan zatwierdzony 2026-11-01, realizacja etapami (każdy etap = PR do
   rola aplikacji bez `BYPASSRLS`, osobna rola platformy dla zadań tła i super-admina;
   `REVOKE UPDATE, DELETE ON audit_log` dla roli aplikacji.
 
-### Etap 2 — API
+### Etap 2 — API (zrobione)
 - JWT z `tenant_id`; `get_current_user` sprawdza status organizacji przy każdym żądaniu; blokada subdomena ≠ organizacja (403).
 - Połączenie z bazą per żądanie z `SET LOCAL app.tenant_id` (zależność FastAPI); przepisanie ~100 zapytań w repozytoriach i serwisach.
 - Per organizacja: cache parametrów, domyślny język, kanały Redis `t:{tenant}:*`, klucz LLM do raportów/klasyfikatora.
 - Symulator demo tylko w obrębie organizacji; reset bez kasowania dziennika.
 
-### Etap 3 — Gateway
+### Etap 3 — Gateway (zrobione)
 - Organizacja z klucza API (lub JWT); agent musi należeć do organizacji (i do klucza).
 - Polityki, parametry, wybór providera per organizacja (cache z kluczem organizacji).
 - Dziennik i kolejka nadzoru z `tenant_id`; zdarzenia na kanały organizacji; pętla TTL jako zadanie platformy.
@@ -86,5 +128,5 @@ eksport organizacji do instancji dedykowanej (obiecany na landing page — póź
 
 ## Otwarte
 - Przeniesienie strefy DNS `govai.pl` do Cloudflare (zmiana NS w panelu home.pl — właściciel domeny).
-- Pierwszy klient: nazwa, slug, termin startu.
-- Dane z INT jako organizacja demonstracyjna `govai-demo`.
+- Pierwszy klient: **Gessel** — `gessel.govai.pl` (termin startu do ustalenia).
+- Dane z INT → organizacja demonstracyjna `govai-demo` (zgoda).

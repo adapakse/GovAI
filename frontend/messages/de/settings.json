@@ -52,10 +52,14 @@
     "running": "Wird neu geladen..."
   },
   "row": {
+    "defaultValue": "Standard: {value}",
     "hideHistory": "Verlauf ausblenden",
     "invalidJson": "Ungültiges JSON",
     "lastChange": "letzte Änderung: {user} · {date}",
     "locked": "gesperrt",
+    "overriddenHint": "Ihre Organisation hat den Standardwert der Plattform überschrieben.",
+    "platformParam": "Plattformparameter",
+    "platformParamHint": "Technischer Parameter für alle Organisationen — nur der GovAI-Plattformadministrator kann ihn ändern.",
     "range": "Bereich: {range}",
     "save": "✓ Speichern",
     "showHistory": "Verlauf",

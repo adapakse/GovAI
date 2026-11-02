@@ -85,7 +85,9 @@ services:
     expose:
       - "8001"
     environment:
-      DATABASE_URL: postgresql://govai:${DB_PASSWORD:-govai_secret}@postgres:5432/govai
+      DATABASE_URL: postgresql://govai_app:${DB_APP_PASSWORD:-govai_app_secret}@postgres:5432/govai
+      # Domeny bazowe subdomen organizacji ({slug}.<domena>), CSV; puste = bez subdomen
+      TENANT_BASE_DOMAINS: ${TENANT_BASE_DOMAINS:-}
       REDIS_URL: redis://redis:6379
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
       DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
@@ -107,7 +109,9 @@ services:
     expose:
       - "8000"
     environment:
-      DATABASE_URL: postgresql://govai:${DB_PASSWORD:-govai_secret}@postgres:5432/govai
+      DATABASE_URL: postgresql://govai_app:${DB_APP_PASSWORD:-govai_app_secret}@postgres:5432/govai
+      # Domeny bazowe subdomen organizacji ({slug}.<domena>), CSV; puste = bez subdomen
+      TENANT_BASE_DOMAINS: ${TENANT_BASE_DOMAINS:-}
       REDIS_URL: redis://redis:6379
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
       JWT_SECRET: ${JWT_SECRET:-ZMIEN_MNIE_NA_LOSOWY_32_BAJTOWY_KLUCZ_HEX}

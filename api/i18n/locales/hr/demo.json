@@ -7,6 +7,7 @@
   "errors": {
     "gatewayTimeout": "Isteklo vrijeme — poziv modela trajao je predugo.",
     "gatewayUnavailable": "Nije moguće povezati se s Gatewayem. Provjerite je li spremnik govai-gateway-1 pokrenut.",
+    "notDemoTenant": "Demonstracijske funkcije dostupne su samo u demonstracijskoj organizaciji.",
     "unknownAgent": "Nepoznat agent_id: {agent_id}",
     "unknownScenario": "Nepoznat scenarij: {scenario}"
   },

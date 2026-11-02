@@ -33,6 +33,10 @@
   "loading": "⏳ Cargando...",
   "noAgents": "No hay agentes activos.",
   "noResults": "No hay agentes que coincidan con «{query}».",
+  "notDemoTenant": {
+    "body": "Tu organización trabaja con datos reales: los escenarios de prueba, la generación de datos de ejemplo y el reinicio del registro están desactivados.",
+    "title": "El simulador solo está disponible en la organización de demostración"
+  },
   "playbook": {
     "collapse": "▲ contraer",
     "expand": "▼ desplegar",

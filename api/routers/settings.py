@@ -23,7 +23,15 @@ from services import settings_service
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/settings", tags=["settings"])
 
-_ADMIN = require_role("it_admin")
+_IT_ADMIN = require_role("it_admin")
+
+
+async def _ADMIN(user: CurrentUser = Depends(get_current_user)) -> CurrentUser:
+    """it_admin organizacji albo super-admin platformy (niezależnie od roli
+    w swojej organizacji — parametry platformy zmienia tylko on)."""
+    if user.is_super_admin:
+        return user
+    return await _IT_ADMIN(user)
 
 
 class SettingUpdate(BaseModel):
@@ -85,7 +93,14 @@ async def update_setting(
         raise HTTPException(403, t("settings.errors.not_editable", key=key))
 
     try:
-        row = await settings_service.set_value(key, body.value, meta, user.email)
+        if meta.get("tenant_editable", True):
+            # Nadpisanie tylko dla organizacji użytkownika.
+            row = await settings_service.set_value(key, body.value, meta, user.email)
+        elif user.is_super_admin:
+            # Parametr techniczny platformy — wartość domyślna dla wszystkich organizacji.
+            row = await settings_service.set_default(key, body.value, meta, user.email)
+        else:
+            raise HTTPException(403, t("settings.errors.platform_only", key=key))
     except ValueError as exc:
         raise HTTPException(400, t("settings.errors.invalid_value", error=exc))
 

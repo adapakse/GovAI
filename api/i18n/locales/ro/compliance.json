@@ -1,6 +1,7 @@
 {
   "errors": {
     "invalid_risk_level": "risk_level trebuie să fie: minimal, limited, high sau unacceptable",
+    "platform_read_only": "Cerințele din catalogul platformei sunt doar pentru citire. Adăugați în schimb o cerință proprie a organizației.",
     "requirement_not_found": "Cerința '{req_id}' nu există"
   }
 }

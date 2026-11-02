@@ -19,6 +19,9 @@ async def list_requirements(
 ):
     """Lista wymagań — opcjonalnie filtrowana wg risk_level / active.
 
+    Multitenancy: katalog platformy (tenant_id NULL, is_platform) + własne
+    wymagania organizacji — RLS zwraca oba zbiory w kontekście organizacji.
+
     requirement_title / requirement_text są już w języku żądania (tłumaczenie
     z title_i18n/text_i18n, fallback: kolumna bazowa po polsku) — dzięki temu
     każdy konsument (router, raporty PDF) dostaje treść we właściwym języku.
@@ -39,7 +42,8 @@ async def list_requirements(
                    COALESCE(NULLIF(title_i18n ->> $1::text, ''), requirement_title) AS requirement_title,
                    COALESCE(NULLIF(text_i18n  ->> $1::text, ''), requirement_text)  AS requirement_text,
                    active, sort_order, created_at,
-                   default_severity, default_deadline_days, decl_key
+                   default_severity, default_deadline_days, decl_key,
+                   (tenant_id IS NULL) AS is_platform
             FROM ai_act_requirements
             WHERE {' AND '.join(conditions)}
             ORDER BY

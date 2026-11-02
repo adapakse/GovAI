@@ -6,9 +6,11 @@
     "invalidApiKey": "Klucz API nieprawidłowy lub wygasły",
     "invalidToken": "Token nieprawidłowy lub wygasły",
     "missing": "Brak autoryzacji",
-    "missingDetail": "Wymagany nagłówek Authorization: Bearer <token> lub X-API-Key: <key>"
+    "missingDetail": "Wymagany nagłówek Authorization: Bearer <token> lub X-API-Key: <key>",
+    "tenantInactive": "Organizacja jest zawieszona lub usunięta — dostęp zablokowany."
   },
   "llmError": "Błąd modelu językowego: {error}",
   "missingAgentId": "Brak nagłówka X-Agent-ID",
-  "missingMessages": "Brak wiadomości w żądaniu"
+  "missingMessages": "Brak wiadomości w żądaniu",
+  "policiesUnavailable": "Polityki organizacji są chwilowo niedostępne — spróbuj ponownie później."
 }

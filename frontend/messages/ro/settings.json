@@ -52,10 +52,14 @@
     "running": "Se reîncarcă..."
   },
   "row": {
+    "defaultValue": "implicit: {value}",
     "hideHistory": "ascundeți istoricul",
     "invalidJson": "JSON nevalid",
     "lastChange": "ultima modificare: {user} · {date}",
     "locked": "blocat",
+    "overriddenHint": "Organizația ta a suprascris valoarea implicită a platformei.",
+    "platformParam": "Parametru de platformă",
+    "platformParamHint": "Parametru tehnic comun tuturor organizațiilor — îl poate modifica doar administratorul platformei GovAI.",
     "range": "interval: {range}",
     "save": "✓ Salvați",
     "showHistory": "istoric",

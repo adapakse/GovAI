@@ -1,6 +1,7 @@
 {
   "errors": {
     "invalid_risk_level": "risk_level mora biti: minimal, limited, high ali unacceptable",
+    "platform_read_only": "Zahteve iz kataloga platforme so samo za branje. Namesto tega dodajte lastno zahtevo organizacije.",
     "requirement_not_found": "Zahteva '{req_id}' ne obstaja"
   }
 }

@@ -7,6 +7,7 @@ from pydantic import BaseModel, field_validator
 
 from dependencies.auth import CurrentUser, get_current_user, require_role
 from i18n import t
+from repositories import agents_repository as agents_repo
 from repositories import policies_repository as policies_repo
 
 logger = logging.getLogger(__name__)
@@ -69,6 +70,10 @@ async def create_policy(data: PolicyCreate, user: CurrentUser = Depends(_WRITE_R
         raise HTTPException(400, t("policies.errors.agent_policy_requires_agent_id"))
     if data.level == "team" and not data.team:
         raise HTTPException(400, t("policies.errors.team_policy_requires_team"))
+    # Klucz obcy nie podlega RLS — bez tej kontroli dałoby się przypiąć politykę
+    # do agenta innej organizacji (i sprawdzać istnienie cudzych agentów).
+    if data.agent_id and not await agents_repo.get_agent_id_only(data.agent_id):
+        raise HTTPException(404, t("agents.errors.not_found", agent_id=data.agent_id))
 
     policy_id = str(uuid4())
     await policies_repo.insert_policy(

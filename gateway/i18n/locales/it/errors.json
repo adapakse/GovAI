@@ -6,9 +6,11 @@
     "invalidApiKey": "Chiave API non valida o scaduta",
     "invalidToken": "Token non valido o scaduto",
     "missing": "Autorizzazione mancante",
-    "missingDetail": "È richiesta l'intestazione Authorization: Bearer <token> oppure X-API-Key: <key>"
+    "missingDetail": "È richiesta l'intestazione Authorization: Bearer <token> oppure X-API-Key: <key>",
+    "tenantInactive": "L'organizzazione è sospesa o eliminata — accesso bloccato."
   },
   "llmError": "Errore del modello linguistico: {error}",
   "missingAgentId": "Intestazione X-Agent-ID mancante",
-  "missingMessages": "Nessun messaggio nella richiesta"
+  "missingMessages": "Nessun messaggio nella richiesta",
+  "policiesUnavailable": "Le policy dell'organizzazione sono temporaneamente non disponibili — riprova più tardi."
 }
