@@ -1,4 +1,8 @@
 {
+  "acting": {
+    "back": "Go back",
+    "message": "You are acting as platform administrator in organisation <b>{tenant}</b>"
+  },
   "logout": "Sign out",
   "meta": {
     "description": "EU AI Act Compliance | Security Gateway | Human Oversight",
@@ -7,14 +11,18 @@
   "nav": {
     "admin": "Admin",
     "agents": "Agents",
+    "apiKeys": "API keys",
     "audit": "Audit log",
     "dashboard": "Dashboard",
     "demo": "Simulator",
     "oversight": "Oversight",
+    "platformAudit": "Platform log",
     "policies": "Policies",
     "providers": "Model providers",
     "reports": "Reports",
-    "settings": "Settings"
+    "settings": "Settings",
+    "tenants": "Organisations",
+    "users": "Users"
   },
   "roles": {
     "associate": "Associate",

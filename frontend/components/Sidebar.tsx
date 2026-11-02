@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '@/components/AuthProvider';
 import LanguagePicker from '@/components/LanguagePicker';
+import { isActingAsTenant } from '@/lib/auth';
 
 // label = klucz shell.nav.<label> w messages/<locale>/shell.json
 const NAV = [
@@ -18,23 +19,42 @@ const NAV = [
   { href: '/reports',   label: 'reports', icon: <ReportsIcon /> },
 ];
 
-const ADMIN_NAV = [
-  { href: '/demo',     label: 'demo', icon: <DemoIcon /> },
-  { href: '/settings', label: 'settings', icon: <SettingsIcon /> },
+// access: kto widzi pozycję — 'all' (każdy zalogowany, API pilnuje uprawnień),
+// 'orgAdmin' (partner / it_admin), 'superAdmin' (super-admin platformy, nie w trybie
+// działania w cudzej organizacji — wtedy wraca się paskiem u góry).
+type NavAccess = 'all' | 'orgAdmin' | 'superAdmin';
+
+const ADMIN_NAV: { href: string; label: string; icon: React.ReactNode; access: NavAccess }[] = [
+  { href: '/demo',             label: 'demo', icon: <DemoIcon />, access: 'all' },
+  { href: '/settings',         label: 'settings', icon: <SettingsIcon />, access: 'all' },
+  { href: '/users',            label: 'users', icon: <UsersIcon />, access: 'orgAdmin' },
+  { href: '/api-keys',         label: 'apiKeys', icon: <KeyIcon />, access: 'orgAdmin' },
+  { href: '/platform/tenants', label: 'tenants', icon: <TenantsIcon />, access: 'superAdmin' },
+  { href: '/platform/audit',   label: 'platformAudit', icon: <AuditIcon />, access: 'superAdmin' },
 ];
+
+// Strony bez paska bocznego
+const NO_SIDEBAR = ['/login', '/change-password'];
 
 export default function Sidebar() {
   const path = usePathname();
   const [pendingCount, setPendingCount] = useState(0);
   const { user, logout } = useAuth();
   const t = useTranslations('shell');
-  // Symulator (/demo) tylko w organizacji demo — API i tak zwraca 403 dla pozostałych
-  const adminNav = ADMIN_NAV.filter(({ href }) => href !== '/demo' || user?.tenant?.is_demo === true);
+  const isOrgAdmin = user?.role === 'partner' || user?.role === 'it_admin';
+  const isPlatformAdmin = user?.is_super_admin === true && !user?.acting_as && !isActingAsTenant();
+  const adminNav = ADMIN_NAV.filter(({ href, access }) => {
+    // Symulator (/demo) tylko w organizacji demo — API i tak zwraca 403 dla pozostałych
+    if (href === '/demo') return user?.tenant?.is_demo === true;
+    if (access === 'orgAdmin') return isOrgAdmin;
+    if (access === 'superAdmin') return isPlatformAdmin;
+    return true;
+  });
   const isAdminPath = ADMIN_NAV.some(({ href }) => path === href || path.startsWith(href + '/'));
   const [adminOpen, setAdminOpen] = useState(isAdminPath);
 
   useEffect(() => {
-    if (path === '/login') return;
+    if (NO_SIDEBAR.includes(path)) return;
     const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
 
     async function fetchCount() {
@@ -58,7 +78,7 @@ export default function Sidebar() {
     return () => clearInterval(id);
   }, [path]);
 
-  if (path === '/login') return null;
+  if (NO_SIDEBAR.includes(path)) return null;
 
   return (
     <aside className="w-52 bg-navy flex flex-col flex-shrink-0 border-r border-blue/30">
@@ -271,6 +291,35 @@ function ChevronIcon() {
   return (
     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="M6 3l5 5-5 5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+function UsersIcon() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <circle cx="6" cy="5" r="2.5"/>
+      <path d="M1.5 14c0-2.5 2-4.5 4.5-4.5s4.5 2 4.5 4.5" strokeLinecap="round"/>
+      <path d="M10.5 3a2.5 2.5 0 010 4.5M12.5 9.8c1.2.6 2 1.9 2 3.4" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+function KeyIcon() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <circle cx="5" cy="10.5" r="3"/>
+      <path d="M7.2 8.3L14 1.5M11.5 4l2 2M9.5 6l1.5 1.5" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+function TenantsIcon() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <rect x="1.5" y="5" width="6" height="9.5" rx="0.5"/>
+      <rect x="8.5" y="1.5" width="6" height="13" rx="0.5"/>
+      <path d="M3.5 8h2M3.5 11h2M10.5 4.5h2M10.5 7.5h2M10.5 10.5h2" strokeLinecap="round"/>
     </svg>
   );
 }

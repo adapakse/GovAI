@@ -55,6 +55,17 @@ class ProviderRecord:
     priority: int
     base_url: Optional[str] = None
     api_key_env: Optional[str] = None
+    # Organizacja właściciela (None = provider platformy) i odszyfrowany własny
+    # klucz organizacji (providers.api_key_encrypted) — nigdy nie logowany (repr=False).
+    tenant_id: Optional[str] = None
+    own_api_key: Optional[str] = field(default=None, repr=False)
+
+    def resolve_api_key(self) -> Optional[str]:
+        """Klucz do wywołania: własny klucz organizacji (także z base_url — należy
+        do organizacji), inaczej klucz platformy z env (biała lista, bez base_url)."""
+        if self.tenant_id and self.own_api_key:
+            return self.own_api_key
+        return self.api_key_from_env()
 
     def api_key_from_env(self) -> Optional[str]:
         """Klucz platformy z env — tylko zmienna z białej listy i tylko dla

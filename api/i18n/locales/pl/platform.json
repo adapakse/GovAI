@@ -1,0 +1,14 @@
+{
+  "errors": {
+    "cannot_delete_demo": "Nie można usunąć organizacji demonstracyjnej.",
+    "cannot_delete_own": "Nie można usunąć własnej organizacji.",
+    "cannot_suspend_own": "Nie można zawiesić własnej organizacji.",
+    "field_required": "Pole jest wymagane.",
+    "invalid_email": "Nieprawidłowy adres e-mail.",
+    "invalid_slug": "Nieprawidłowy identyfikator organizacji: tylko małe litery, cyfry i myślniki (bez myślnika na początku i końcu), maks. 63 znaki; nazwy techniczne (np. app, api, www) są zarezerwowane.",
+    "slug_taken": "Identyfikator organizacji „{slug}” jest już zajęty.",
+    "tenant_deleted": "Organizacja została usunięta.",
+    "tenant_not_found": "Organizacja nie znaleziona.",
+    "tenant_suspended": "Organizacja jest zawieszona — najpierw ją aktywuj."
+  }
+}

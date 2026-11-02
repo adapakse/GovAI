@@ -87,6 +87,8 @@ async def live_feed(websocket: WebSocket):
         if not token:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
         user = await authenticate_token(token, websocket.headers.get("host"))
+        if user.must_change_password:   # najpierw zmiana hasła tymczasowego
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
     except HTTPException:
         await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
         return

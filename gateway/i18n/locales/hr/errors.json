@@ -3,11 +3,14 @@
   "agentNotRegistered": "Agent '{agent_id}' nije registriran u sustavu GovAI. Registrirajte agenta prije upotrebe pristupnika.",
   "apiKeyAgentMismatch": "Ovaj API ključ nije dodijeljen agentu '{agent_id}'.",
   "auth": {
+    "actingNotAllowed": "Djelovanje u kontekstu druge organizacije zahtijeva prava superadministratora.",
     "invalidApiKey": "API ključ je neispravan ili je istekao",
     "invalidToken": "Token je neispravan ili je istekao",
     "missing": "Nedostaje autorizacija",
     "missingDetail": "Potrebno je zaglavlje Authorization: Bearer <token> ili X-API-Key: <key>",
-    "tenantInactive": "Organizacija je suspendirana ili izbrisana — pristup je blokiran."
+    "passwordChangeRequired": "Potrebna je promjena lozinke — postavite novu lozinku u GovAI panelu prije korištenja pristupnika.",
+    "tenantInactive": "Organizacija je suspendirana ili izbrisana — pristup je blokiran.",
+    "userInactive": "Korisnički račun je blokiran ili ne postoji."
   },
   "llmError": "Pogreška jezičnog modela: {error}",
   "missingAgentId": "Nedostaje zaglavlje X-Agent-ID",

@@ -1,0 +1,14 @@
+{
+  "errors": {
+    "cannot_delete_demo": "The demo organization cannot be deleted.",
+    "cannot_delete_own": "You cannot delete your own organization.",
+    "cannot_suspend_own": "You cannot suspend your own organization.",
+    "field_required": "This field is required.",
+    "invalid_email": "Invalid e-mail address.",
+    "invalid_slug": "Invalid organization identifier: only lowercase letters, digits and hyphens (no leading or trailing hyphen), max. 63 characters; technical names (e.g. app, api, www) are reserved.",
+    "slug_taken": "The organization identifier \"{slug}\" is already taken.",
+    "tenant_deleted": "The organization has been deleted.",
+    "tenant_not_found": "Organization not found.",
+    "tenant_suspended": "The organization is suspended — activate it first."
+  }
+}

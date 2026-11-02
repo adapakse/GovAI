@@ -1,4 +1,8 @@
 {
+  "acting": {
+    "back": "Volver",
+    "message": "Estás actuando como administrador de la plataforma en la organización <b>{tenant}</b>"
+  },
   "logout": "Cerrar sesión",
   "meta": {
     "description": "Cumplimiento del EU AI Act | Pasarela de seguridad | Supervisión humana",
@@ -7,14 +11,18 @@
   "nav": {
     "admin": "Administración",
     "agents": "Agentes",
+    "apiKeys": "Claves API",
     "audit": "Registro",
     "dashboard": "Panel",
     "demo": "Simulador",
     "oversight": "Supervisión",
+    "platformAudit": "Registro de la plataforma",
     "policies": "Políticas",
     "providers": "Proveedores",
     "reports": "Informes",
-    "settings": "Parámetros"
+    "settings": "Parámetros",
+    "tenants": "Organizaciones",
+    "users": "Usuarios"
   },
   "roles": {
     "associate": "Asociado",

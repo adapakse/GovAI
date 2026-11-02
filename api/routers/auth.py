@@ -24,6 +24,7 @@ Endpointy wymagające roli it_admin:
 from __future__ import annotations
 
 import logging
+from contextlib import nullcontext
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
@@ -38,7 +39,7 @@ from services import settings_service
 from services.tenant_host import slug_from_host
 from services.auth_service import (
     change_password, create_api_key, create_refresh_token, create_user,
-    find_login_identities, get_identity,
+    find_login_identities, generate_temporary_password, get_identity,
     get_user_by_email, get_user_by_id, list_users, revoke_refresh_token,
     update_last_login, update_user, update_user_locale, verify_api_key,
     verify_refresh_token, create_access_token,
@@ -60,7 +61,8 @@ class UserCreate(BaseModel):
     email: str
     full_name: str
     role: str
-    password: str
+    # Brak hasła — generowane hasło tymczasowe (zwracane raz, wymuszona zmiana)
+    password: Optional[str] = None
     department: Optional[str] = None
     phone: Optional[str] = None
 
@@ -74,8 +76,8 @@ class UserCreate(BaseModel):
 
     @field_validator("password")
     @classmethod
-    def password_strength(cls, v: str) -> str:
-        if len(v) < 12:
+    def password_strength(cls, v: Optional[str]) -> Optional[str]:
+        if v is not None and len(v) < 12:
             raise ValueError(t("auth.errors.password_too_short", min=12))
         return v
 
@@ -140,6 +142,7 @@ def _locale_fields(user: dict) -> dict:
 def _tenant_fields(identity: dict) -> dict:
     return {
         "is_super_admin": bool(identity.get("is_super_admin")),
+        "must_change_password": bool(identity.get("must_change_password")),
         "tenant": {
             "id": str(identity["tenant_id"]),
             "slug": identity["tenant_slug"],
@@ -246,20 +249,31 @@ async def refresh(body: RefreshRequest, request: Request):
 @router.post("/logout")
 async def logout(body: RefreshRequest, user: CurrentUser = Depends(get_current_user)):
     """Unieważnia refresh token (wylogowanie)."""
-    await revoke_refresh_token(body.refresh_token)
+    async with _own_account_scope(user):
+        await revoke_refresh_token(body.refresh_token)
     logger.info("Wylogowano: %s", user.email)
     return {"message": t("auth.messages.logged_out")}
+
+
+def _own_account_scope(user: CurrentUser):
+    """Operacje na własnym koncie. Super-admin w kontekście innej organizacji
+    (acting_as) — jego rekord jest w organizacji macierzystej, niewidocznej
+    w kontekście żądania (RLS), więc tryb platformy."""
+    return platform_db() if user.acting_as else nullcontext()
 
 
 @router.get("/me")
 async def me(user: CurrentUser = Depends(get_current_user)):
     """Dane aktualnie zalogowanego użytkownika."""
-    full = await get_user_by_id(user.id)
+    async with _own_account_scope(user):
+        full = await get_user_by_id(user.id)
     if not full:
         return full
     return {
         **full, **_locale_fields(full),
+        "must_change_password": bool(full.get("must_change_password")),
         "is_super_admin": user.is_super_admin,
+        "acting_as": user.acting_as,
         "tenant": {"id": user.tenant_id, "slug": user.tenant_slug, "name": user.tenant_name,
                    "is_demo": user.tenant_is_demo},
     }
@@ -268,8 +282,9 @@ async def me(user: CurrentUser = Depends(get_current_user)):
 @router.put("/me/locale")
 async def set_my_locale(body: LocaleUpdate, user: CurrentUser = Depends(get_current_user)):
     """Zmiana języka interfejsu zalogowanego użytkownika (null = domyślny instancji)."""
-    await update_user_locale(user.id, body.locale)
-    full = await get_user_by_id(user.id)
+    async with _own_account_scope(user):
+        await update_user_locale(user.id, body.locale)
+        full = await get_user_by_id(user.id)
     return {
         "id": str(full["id"]),
         "email": full["email"],
@@ -302,16 +317,22 @@ async def create_new_user(
     if user.role == "it_admin" and body.role == "partner":
         raise HTTPException(status_code=403, detail=t("auth.errors.it_admin_cannot_create_partner"))
 
+    # Bez hasła w żądaniu — hasło tymczasowe (zwracane tylko w tej odpowiedzi),
+    # użytkownik musi je zmienić przy pierwszym logowaniu.
+    temporary_password = None if body.password else generate_temporary_password()
     new_user = await create_user(
         email=str(body.email),
         full_name=body.full_name,
         role=body.role,
-        password=body.password,
+        password=body.password or temporary_password,
         department=body.department,
         phone=body.phone,
         created_by=user.id,
+        must_change_password=temporary_password is not None,
     )
     logger.info("Nowy użytkownik: %s (%s) — utworzył: %s", body.email, body.role, user.email)
+    if temporary_password:
+        new_user["temporary_password"] = temporary_password
     return new_user
 
 
@@ -348,7 +369,8 @@ async def reset_password(
     if user.role == "it_admin" and target.get("role") == "partner":
         raise HTTPException(403, t("auth.errors.it_admin_cannot_change_partner_password"))
 
-    await change_password(target_id, body.new_password)
+    # Hasło nadane przez administratora — użytkownik musi je zmienić przy logowaniu
+    await change_password(target_id, body.new_password, must_change=target_id != user.id)
     logger.info("Zmieniono hasło dla %s — zmienił: %s", target["email"], user.email)
     return {"message": t("auth.messages.password_changed_sessions_revoked")}
 
@@ -358,8 +380,9 @@ async def change_own_password(
     body: PasswordChange,
     user: CurrentUser = Depends(get_current_user),
 ):
-    """Zmiana własnego hasła przez zalogowanego użytkownika."""
-    await change_password(user.id, body.new_password)
+    """Zmiana własnego hasła przez zalogowanego użytkownika (zeruje wymóg zmiany hasła)."""
+    async with _own_account_scope(user):
+        await change_password(user.id, body.new_password, must_change=False)
     return {"message": t("auth.messages.password_changed_relogin")}
 
 # ── Klucze API (it_admin) ─────────────────────────────────────────────────────

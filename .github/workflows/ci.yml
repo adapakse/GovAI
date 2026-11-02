@@ -45,7 +45,8 @@ jobs:
             echo "JWT_SECRET=$(openssl rand -hex 32)"
             echo "ANTHROPIC_API_KEY=sk-ant-ci-placeholder"
             echo "ALLOWED_ORIGINS=http://localhost"
-            echo "TENANT_BASE_DOMAINS=govai.test"
+            echo "TENANT_BASE_DOMAINS=govai.test,localhost"
+            echo "PROVIDER_KEYS_SECRET=$(openssl rand -hex 32)"
           } > .env
 
       - name: Build api + gateway
@@ -81,6 +82,8 @@ jobs:
           - service: gateway
             build_args: ""
           - service: api
+            build_args: ""
+          - service: caddy
             build_args: ""
           - service: frontend
             build_args: |

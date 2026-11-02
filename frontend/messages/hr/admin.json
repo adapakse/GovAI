@@ -1,0 +1,98 @@
+{
+  "apiKeys": {
+    "add": "+ Novi API ključ",
+    "anyAgent": "bilo koji agent",
+    "columns": {
+      "agent": "Agent",
+      "expires": "Vrijedi do",
+      "lastUsed": "Zadnja upotreba",
+      "name": "Naziv",
+      "prefix": "Prefiks",
+      "status": "Status"
+    },
+    "createdAt": "stvoren {date}",
+    "empty": "Nema API ključeva",
+    "form": {
+      "agent": "Agent",
+      "agentHint": "Ključ će raditi samo za odabranog agenta.",
+      "anyAgent": "— nedodijeljen (bilo koji agent organizacije) —",
+      "anyAgentHint": "Nedodijeljeni ključ radi za svakog agenta organizacije navedenog u zaglavlju X-Agent-ID. Preporučujemo dodjelu agentu.",
+      "cancel": "Odustani",
+      "expiry": "Valjanost",
+      "expiryDays": "{days} dana",
+      "name": "Naziv",
+      "namePlaceholder": "npr. Asistent za ugovore — produkcija",
+      "noExpiry": "bez isteka",
+      "save": "Stvori ključ",
+      "saving": "Stvaranje...",
+      "title": "Novi API ključ"
+    },
+    "loading": "Učitavanje...",
+    "neverUsed": "nekorišten",
+    "noAccess": "Upravljanje API ključevima dostupno je ulogama Partner i IT administrator.",
+    "noExpiry": "bez isteka",
+    "revoke": "Opozovi",
+    "revokeConfirm": {
+      "confirm": "Opozovi ključ",
+      "message": "Opozvati ključ „{name}”? Agenti koji koriste ovaj ključ odmah će izgubiti pristup pristupniku.",
+      "title": "Opoziv API ključa"
+    },
+    "secret": {
+      "description": "Ključ „{name}” — postavite ga u agentu kao zaglavlje X-API-Key.",
+      "label": "API ključ",
+      "title": "API ključ stvoren"
+    },
+    "showRevoked": "Prikaži opozvane ({count})",
+    "state": {
+      "active": "Aktivan",
+      "expired": "Istekao",
+      "revoked": "Opozvan"
+    },
+    "subtitle": "Ključevi kojima se agenti autentificiraju na pristupniku GovAI (zaglavlje X-API-Key).",
+    "title": "API ključevi"
+  },
+  "users": {
+    "add": "+ Dodaj korisnika",
+    "columns": {
+      "lastLogin": "Zadnja prijava",
+      "role": "Uloga",
+      "status": "Status",
+      "user": "Korisnik"
+    },
+    "empty": "Nema korisnika",
+    "form": {
+      "cancel": "Odustani",
+      "email": "Adresa e-pošte",
+      "fullName": "Ime i prezime",
+      "passwordHint": "Privremena lozinka generirat će se automatski — korisnik će je promijeniti pri prvoj prijavi.",
+      "role": "Uloga",
+      "save": "Stvori račun",
+      "saving": "Stvaranje...",
+      "title": "Novi korisnik"
+    },
+    "loading": "Učitavanje...",
+    "never": "nikad",
+    "noAccess": "Upravljanje korisnicima dostupno je ulogama Partner i IT administrator.",
+    "resetConfirm": {
+      "confirm": "Resetiraj lozinku",
+      "message": "Dodijeliti novu privremenu lozinku korisniku {name} ({email})? Njegove trenutne sesije bit će prekinute, a pri sljedećoj prijavi morat će postaviti vlastitu lozinku.",
+      "title": "Resetiranje lozinke"
+    },
+    "resetPassword": "Resetiraj lozinku",
+    "searchPlaceholder": "Pretraži po imenu, e-pošti, ulozi...",
+    "secret": {
+      "createdTitle": "Račun stvoren",
+      "description": "Privremena lozinka za {email}. Korisnik će je promijeniti pri prvoj prijavi.",
+      "label": "Privremena lozinka",
+      "resetTitle": "Nova privremena lozinka"
+    },
+    "status": {
+      "active": "Aktivan",
+      "pending": "Na čekanju",
+      "suspended": "Blokiran"
+    },
+    "subtitle": "Računi u organizaciji {tenant}",
+    "title": "Korisnici",
+    "you": "(vi)"
+  }
+}

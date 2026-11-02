@@ -33,7 +33,12 @@ własne wymaganie AI Act, własny provider, nadpisanie parametru, zadanie nadzor
 
 Po sesji organizacje są usuwane z wszystkimi danymi (audit_log w jednej transakcji z
 `app.platform=on` i `app.audit_purge=on`). Pozostałości po przerwanych uruchomieniach
-(starsze niż godzina) są sprzątane na starcie.
+(starsze niż godzina) są sprzątane na starcie. Razem z organizacjami usuwane są wpisy
+`platform_audit_log` dotyczące ich lub wykonane przez ich użytkowników (FK `tenant_id`).
+
+`test_platform.py` tworzy dodatkowo (na moduł) organizację S, której partner ma
+`is_super_admin=true` (SQL), oraz organizacje zakładane przez `POST /platform/tenants`
+(slug `iso-test-p-<losowy>`) — wszystkie usuwane po module.
 
 ## Pliki
 
@@ -45,6 +50,10 @@ Po sesji organizacje są usuwane z wszystkimi danymi (audit_log w jednej transak
 | `test_api_writes.py` | parametry per organizacja, `tenant_id` zasobów tworzonych przez API, katalog platformy tylko do odczytu, `/demo/*` → 403 |
 | `test_rls.py` | RLS dla `govai_app`: brak kontekstu → 0 wierszy, brak wierszy B w kontekście A, INSERT z cudzym `tenant_id` → błąd, złożone FK, niezmienny audit_log, brak DDL/TRUNCATE |
 | `test_gateway.py` | klucz/JWT A z agentem B → 403, polityki i providerzy B nie działają dla A, audit_log z właściwym `tenant_id`, izolacja WebSocket live-feed |
+| `test_platform.py` | `/platform/*` → 403 dla partnera/it_admina organizacji, 401 bez tokenu; zakładanie organizacji (kopia polityk szablonu, admin z `must_change_password`, slug zarezerwowany → 400, zajęty → 409); wymuszona zmiana hasła (API i gateway → 403 `X-GovAI-Error: password_change_required`); token „enter” (act) — tylko dane organizacji docelowej, zapis z jej `tenant_id`, zawieszona → 400/403, odebranie super-admina → 401/403; zawieszenie/usunięcie a logowanie i `/public/tenant` (pomijane bez `localhost` w `TENANT_BASE_DOMAINS`); szyfrowane klucze providerów (`v1:`, brak klucza w odpowiedziach); `platform_audit_log` niewidoczny i niezmienny dla `govai_app`; zablokowane konto z ważnym JWT (API natychmiast, gateway ≤ 35 s — `slow`) |
+
+Test oznaczony `slow` (`test_suspended_user_rejected`, ~30 s — czeka na wygaśnięcie cache
+werdyktu konta w gatewayu) jest częścią pakietu; pominięcie: `sh tests/isolation/run.sh -m "'not slow'"` (argumenty idą przez `sh -c`, stąd dodatkowe apostrofy).
 
 Testy oznaczone `xfail` dokumentują znane błędy aplikacji niezwiązane z wyciekiem danych
 (opis w powodzie `xfail`); po naprawie zaczną przechodzić (XPASS).

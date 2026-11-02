@@ -1,0 +1,98 @@
+{
+  "apiKeys": {
+    "add": "+ New API key",
+    "anyAgent": "any agent",
+    "columns": {
+      "agent": "Agent",
+      "expires": "Valid until",
+      "lastUsed": "Last used",
+      "name": "Name",
+      "prefix": "Prefix",
+      "status": "Status"
+    },
+    "createdAt": "created {date}",
+    "empty": "No API keys",
+    "form": {
+      "agent": "Agent",
+      "agentHint": "The key will work only for the selected agent.",
+      "anyAgent": "— unassigned (any agent of the organisation) —",
+      "anyAgentHint": "An unassigned key works for any agent of the organisation named in the X-Agent-ID header. Assigning it to an agent is recommended.",
+      "cancel": "Cancel",
+      "expiry": "Validity",
+      "expiryDays": "{days} days",
+      "name": "Name",
+      "namePlaceholder": "e.g. Contract assistant — production",
+      "noExpiry": "no expiry",
+      "save": "Create key",
+      "saving": "Creating...",
+      "title": "New API key"
+    },
+    "loading": "Loading...",
+    "neverUsed": "never used",
+    "noAccess": "API key management is available to the Partner and IT administrator roles.",
+    "noExpiry": "no expiry",
+    "revoke": "Revoke",
+    "revokeConfirm": {
+      "confirm": "Revoke key",
+      "message": "Revoke the key “{name}”? Agents using this key will immediately lose access to the gateway.",
+      "title": "Revoke API key"
+    },
+    "secret": {
+      "description": "Key “{name}” — configure it in the agent as the X-API-Key header.",
+      "label": "API key",
+      "title": "API key created"
+    },
+    "showRevoked": "Show revoked ({count})",
+    "state": {
+      "active": "Active",
+      "expired": "Expired",
+      "revoked": "Revoked"
+    },
+    "subtitle": "Keys used by agents to authenticate with the GovAI gateway (X-API-Key header).",
+    "title": "API keys"
+  },
+  "users": {
+    "add": "+ Add user",
+    "columns": {
+      "lastLogin": "Last sign-in",
+      "role": "Role",
+      "status": "Status",
+      "user": "User"
+    },
+    "empty": "No users",
+    "form": {
+      "cancel": "Cancel",
+      "email": "E-mail address",
+      "fullName": "Full name",
+      "passwordHint": "A temporary password will be generated automatically — the user will change it at first sign-in.",
+      "role": "Role",
+      "save": "Create account",
+      "saving": "Creating...",
+      "title": "New user"
+    },
+    "loading": "Loading...",
+    "never": "never",
+    "noAccess": "User management is available to the Partner and IT administrator roles.",
+    "resetConfirm": {
+      "confirm": "Reset password",
+      "message": "Issue a new temporary password to {name} ({email})? Their current sessions will be ended and they will have to set their own password at next sign-in.",
+      "title": "Reset password"
+    },
+    "resetPassword": "Reset password",
+    "searchPlaceholder": "Search by name, e-mail, role...",
+    "secret": {
+      "createdTitle": "Account created",
+      "description": "Temporary password for {email}. The user will change it at first sign-in.",
+      "label": "Temporary password",
+      "resetTitle": "New temporary password"
+    },
+    "status": {
+      "active": "Active",
+      "pending": "Pending",
+      "suspended": "Blocked"
+    },
+    "subtitle": "Accounts in organisation {tenant}",
+    "title": "Users",
+    "you": "(you)"
+  }
+}

@@ -1,7 +1,12 @@
 {
   "card": {
     "activate": "Activare",
+    "apiKey": "Cheie API proprie",
     "apiKeyEnv": "Variabila cheii API",
+    "apiKeyKeepPlaceholder": "•••••••• (fără modificări)",
+    "apiKeyRemove": "Șterge cheia",
+    "apiKeySet": "cheie setată",
+    "apiKeySetInfo": "Cheie API proprie setată",
     "baseUrl": "Base URL",
     "cancel": "Anulare",
     "deactivate": "Dezactivare",
@@ -28,8 +33,10 @@
   "empty": "Nu există furnizori de modele definiți. Adăugați primul mai sus.",
   "form": {
     "addButton": "+ Adăugați un furnizor de modele",
+    "apiKey": "Cheie API proprie (opțional)",
     "apiKeyEnv": "Variabila de mediu cu cheia API",
     "apiKeyEnvHint": "Numele variabilei din fișierul `.env` al containerului Gateway. Cheia nu părăsește niciodată serverul.",
+    "apiKeyHint": "Cheia organizației — stocată criptat și niciodată afișată. Câmp gol = fără modificări. Nu o combinați cu câmpul variabilei de mediu.",
     "baseUrl": "Base URL *",
     "cancel": "Anulare",
     "maxSensitivity": "Sensibilitatea maximă a datelor *",

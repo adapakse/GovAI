@@ -1,7 +1,12 @@
 {
   "card": {
     "activate": "Activer",
+    "apiKey": "Clé API propre",
     "apiKeyEnv": "Variable de la clé API",
+    "apiKeyKeepPlaceholder": "•••••••• (inchangée)",
+    "apiKeyRemove": "Supprimer la clé",
+    "apiKeySet": "clé définie",
+    "apiKeySetInfo": "Clé API propre définie",
     "baseUrl": "Base URL",
     "cancel": "Annuler",
     "deactivate": "Désactiver",
@@ -28,8 +33,10 @@
   "empty": "Aucun fournisseur de modèles défini. Ajoutez le premier ci-dessus.",
   "form": {
     "addButton": "+ Ajouter un fournisseur de modèles",
+    "apiKey": "Clé API propre (facultatif)",
     "apiKeyEnv": "Variable d’environnement contenant la clé API",
     "apiKeyEnvHint": "Nom de la variable dans le `.env` du conteneur de la passerelle. La clé ne quitte jamais le serveur.",
+    "apiKeyHint": "Clé de l’organisation — stockée chiffrée et jamais affichée. Champ vide = aucune modification. Ne pas combiner avec le champ de variable d’environnement.",
     "baseUrl": "Base URL *",
     "cancel": "Annuler",
     "maxSensitivity": "Sensibilité max. des données *",

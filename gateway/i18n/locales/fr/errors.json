@@ -3,11 +3,14 @@
   "agentNotRegistered": "L’agent '{agent_id}' n’est pas enregistré dans GovAI. Enregistrez l’agent avant d’utiliser la passerelle.",
   "apiKeyAgentMismatch": "Cette clé API n’est pas attribuée à l’agent '{agent_id}'.",
   "auth": {
+    "actingNotAllowed": "Agir dans le contexte d'une autre organisation nécessite les droits de super-administrateur.",
     "invalidApiKey": "Clé API invalide ou expirée",
     "invalidToken": "Jeton invalide ou expiré",
     "missing": "Autorisation manquante",
     "missingDetail": "En-tête requis : Authorization: Bearer <token> ou X-API-Key: <key>",
-    "tenantInactive": "L'organisation est suspendue ou supprimée — accès bloqué."
+    "passwordChangeRequired": "Changement de mot de passe requis — définissez un nouveau mot de passe dans le panneau GovAI avant d'utiliser la passerelle.",
+    "tenantInactive": "L'organisation est suspendue ou supprimée — accès bloqué.",
+    "userInactive": "Le compte utilisateur est bloqué ou n'existe pas."
   },
   "llmError": "Erreur du modèle de langage : {error}",
   "missingAgentId": "En-tête X-Agent-ID manquant",

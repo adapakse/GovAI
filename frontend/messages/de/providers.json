@@ -1,7 +1,12 @@
 {
   "card": {
     "activate": "Aktivieren",
+    "apiKey": "Eigener API-Schlüssel",
     "apiKeyEnv": "API-Schlüssel-Variable",
+    "apiKeyKeepPlaceholder": "•••••••• (unverändert)",
+    "apiKeyRemove": "Schlüssel entfernen",
+    "apiKeySet": "Schlüssel gesetzt",
+    "apiKeySetInfo": "Eigener API-Schlüssel gesetzt",
     "baseUrl": "Base URL",
     "cancel": "Abbrechen",
     "deactivate": "Deaktivieren",
@@ -28,8 +33,10 @@
   "empty": "Keine Modellanbieter definiert. Fügen Sie oben den ersten hinzu.",
   "form": {
     "addButton": "+ Modellanbieter hinzufügen",
+    "apiKey": "Eigener API-Schlüssel (optional)",
     "apiKeyEnv": "Umgebungsvariable mit dem API-Schlüssel",
     "apiKeyEnvHint": "Name der Variable in der `.env` des Gateway-Containers. Der Schlüssel verlässt niemals den Server.",
+    "apiKeyHint": "Schlüssel der Organisation — wird verschlüsselt gespeichert und nie angezeigt. Leeres Feld = keine Änderung. Nicht mit dem Feld für die Umgebungsvariable kombinieren.",
     "baseUrl": "Base URL *",
     "cancel": "Abbrechen",
     "maxSensitivity": "Max. Datensensibilität *",

@@ -7,7 +7,9 @@ Status: plan zatwierdzony 2026-11-01, realizacja etapami (każdy etap = PR do
 |---|---|
 | 0 — bezpieczeństwo | zrobione (PR #7) |
 | 1–3 — dane, API, gateway | zrobione (migracja 015, testy izolacji `tests/isolation` w CI) |
-| 4–8 | do zrobienia |
+| 4 — panel super-admina, administracja organizacji | zrobione (migracja 016, `/platform/*`, testy w `tests/isolation/test_platform.py`) |
+| 5 — subdomeny | kod gotowy; włącza się po przeniesieniu DNS do Cloudflare i dodaniu sekretu `cloudflare-api-token` w Key Vault |
+| 6–8 | do zrobienia |
 
 ## Jak działa izolacja (stan po etapach 1–3)
 
@@ -36,14 +38,38 @@ Status: plan zatwierdzony 2026-11-01, realizacja etapami (każdy etap = PR do
   tylko do tej organizacji, sesja innej organizacji → 403; bez subdomeny (adres uniwersalny)
   e-mail + hasło wskazują organizację (gdy kilka — 409, trzeba użyć adresu organizacji).
 
-## Przeniesione do etapu 4 (znalezione w etapach 1–3)
+## Etap 4 — co działa
 
-- Gateway przy JWT sprawdza aktywność organizacji, ale nie użytkownika w bazie (zablokowany
-  użytkownik działa do wygaśnięcia tokenu, ≤ 60 min).
-- Własne klucze LLM organizacji (`providers.api_key_encrypted`) — szyfrowanie i użycie.
+- **Super-admin** (`users.is_super_admin`, panel Admin → Organizacje / Dziennik platformy):
+  zakładanie organizacji (pierwszy admin z hasłem tymczasowym, kopia polityk szablonu z
+  `govai-demo`, domyślny język), zawieszanie, miękkie usuwanie, reset haseł, **wejście w
+  organizację** (token z `act_tenant_id`, 60 min, bez odświeżania; pasek "Działasz w organizacji X").
+  Każda operacja → `platform_audit_log` (tylko tryb platformy, bez UPDATE/DELETE).
+- **Wymuszona zmiana hasła** (`must_change_password`) — hasła tymczasowe, 403 z
+  `X-GovAI-Error: password_change_required` (API i gateway), strona `/change-password`.
+- **Administracja organizacji**: użytkownicy i klucze API agentów (partner / it_admin).
+- **Własne klucze LLM organizacji**: `providers.api_key_encrypted` (AES-GCM, `v1:`,
+  klucz z `PROVIDER_KEYS_SECRET`, wyliczany w `fetch-secrets.sh` z `JWT_SECRET`); gateway
+  i raporty/klasyfikator używają klucza organizacji, gdy jest.
+- **Gateway sprawdza użytkownika z JWT w bazie** (aktywny, organizacja, super-admin przy act;
+  cache 30 s).
+- **Branding logowania**: `GET /public/tenant` (organizacja z subdomeny).
+
+## Etap 5 — subdomeny (kod gotowy)
+
+- Caddy z modułem `caddy-dns/cloudflare` (`caddy/Dockerfile`); `Caddyfile.tenants.template`
+  (`*.<DOMAIN_NAME>`, certyfikat wildcard ACME DNS-01) dołączany tylko przy `CLOUDFLARE_API_TOKEN`.
+- `fetch-secrets.sh`: opcjonalny sekret Key Vault `cloudflare-api-token` → `CLOUDFLARE_API_TOKEN`
+  i `TENANT_BASE_DOMAINS=<DOMAIN_NAME>`. Bez sekretu — działanie jak dotąd (bez subdomen).
+- Frontend z adresami względnymi (`/api`, `/gateway`, WebSocket z adresu strony) — jeden obraz
+  dla `app.` i wszystkich subdomen; CORS API z regex dla `https://<slug>.<domena>`.
+- **Włączenie**: strefa `govai.pl` w Cloudflare + rekord `*` (DNS only) → token API
+  (Edit zone DNS, strefa govai.pl) → sekret `cloudflare-api-token` w Key Vault → deploy.
+
+## Nadal otwarte (po etapie 4)
+
 - Nadpisywanie/wyłączanie wymagań platformy przez organizację (dziś tylko własne wymagania).
 - Seed demo tworzący agentów per organizacja (dziś stałe UUID A1–A3 tylko w `govai-demo`).
-- Klucz LLM do raportów/klasyfikatora per organizacja.
 
 ## Decyzje
 
@@ -100,7 +126,7 @@ Status: plan zatwierdzony 2026-11-01, realizacja etapami (każdy etap = PR do
 - Polityki, parametry, wybór providera per organizacja (cache z kluczem organizacji).
 - Dziennik i kolejka nadzoru z `tenant_id`; zdarzenia na kanały organizacji; pętla TTL jako zadanie platformy.
 
-### Etap 4 — panele
+### Etap 4 — panele (zrobione)
 - Super-admin (`app.govai.pl`): organizacje — lista, zakładanie (slug, nazwa, język, pierwszy admin z hasłem tymczasowym),
   zawieszanie, miękkie usuwanie, wejście w kontekst organizacji (zapis w audycie).
 - Admin organizacji: użytkownicy, klucze API agentów (endpointy są, brak UI), providerzy z własnymi kluczami.

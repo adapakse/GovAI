@@ -1,0 +1,24 @@
+
+# Subdomeny organizacji {slug}.{{ADDRESS}} (multitenancy) — dołączane przez
+# entrypoint.sh tylko przy ustawionym CLOUDFLARE_API_TOKEN. Certyfikat wildcard
+# przez ACME DNS-01 (strefa DNS w Cloudflare). Konkretne hosty (app., www.)
+# mają pierwszeństwo przed wildcardem. Nieznany slug obsługuje aplikacja
+# (logowanie → 401, /public/tenant → 404).
+*.{{ADDRESS}} {
+	tls {
+		dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+	}
+	encode gzip
+
+	handle_path /api/* {
+		reverse_proxy api:8000
+	}
+
+	handle_path /gateway/* {
+		reverse_proxy gateway:8001
+	}
+
+	handle {
+		reverse_proxy frontend:3000
+	}
+}

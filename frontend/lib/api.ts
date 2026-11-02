@@ -1,8 +1,21 @@
-import { clearSession, ensureFreshToken } from './auth';
+import {
+  ACTING_EXPIRED_URL, clearSession, ensureFreshToken, errorDetail, exitTenantSession, isActingAsTenant,
+} from './auth';
 import { getActiveLocale } from './locale';
 
+// Adresy mogą być względne (/api, /gateway) — wtedy aplikacja działa pod każdą
+// subdomeną organizacji ({slug}.govai.pl) z jednego obrazu, bez CORS.
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
-export const WS  = process.env.NEXT_PUBLIC_WS_URL  ?? 'ws://localhost:8000';
+const WS  = process.env.NEXT_PUBLIC_WS_URL  ?? 'ws://localhost:8000';
+
+/** Pełny adres WebSocket: względny NEXT_PUBLIC_WS_URL (np. "/api") liczony z adresu strony. */
+export function wsUrl(path: string): string {
+  if (WS.startsWith('/') && typeof window !== 'undefined') {
+    const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    return `${proto}//${window.location.host}${WS}${path}`;
+  }
+  return `${WS}${path}`;
+}
 
 export async function authHeaders(): Promise<Record<string, string>> {
   const token = await ensureFreshToken();
@@ -14,68 +27,47 @@ export async function authHeaders(): Promise<Record<string, string>> {
 }
 
 export function handle401() {
+  // Wygasł token wejścia do organizacji — wracamy do sesji super-admina zamiast wylogowania
+  if (isActingAsTenant() && exitTenantSession()) {
+    if (typeof window !== 'undefined') window.location.href = ACTING_EXPIRED_URL;
+    return;
+  }
   clearSession();
   if (typeof window !== 'undefined') window.location.href = '/login';
 }
 
-async function get<T>(path: string): Promise<T> {
-  const r = await fetch(`${API}${path}`, {
-    cache: 'no-store',
-    headers: await authHeaders(),
-  });
-  if (r.status === 401) { handle401(); throw new Error('HTTP 401'); }
-  if (!r.ok) throw new Error(`GET ${path} → ${r.status}`);
-  return r.json();
+// Hasło tymczasowe: API odrzuca wszystko poza zmianą hasła (403 + X-GovAI-Error).
+export function isPasswordChangeRequired(r: Response): boolean {
+  return r.status === 403 && r.headers.get('X-GovAI-Error') === 'password_change_required';
 }
 
-async function post<T>(path: string, body?: unknown): Promise<T> {
+export function handlePasswordChangeRequired() {
+  if (typeof window !== 'undefined' && window.location.pathname !== '/change-password') {
+    window.location.href = '/change-password';
+  }
+}
+
+async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
   const r = await fetch(`${API}${path}`, {
-    method: 'POST',
+    method,
+    cache: 'no-store',
     headers: await authHeaders(),
     body: body !== undefined ? JSON.stringify(body) : undefined,
   });
   if (r.status === 401) { handle401(); throw new Error('HTTP 401'); }
+  if (isPasswordChangeRequired(r)) { handlePasswordChangeRequired(); }
   if (!r.ok) {
     const err = await r.json().catch(() => ({}));
-    throw new Error(err?.detail ?? `POST ${path} → ${r.status}`);
+    throw new Error(errorDetail(err) ?? `${method} ${path} → ${r.status}`);
   }
   return r.json();
 }
 
-async function patch<T>(path: string, body: unknown): Promise<T> {
-  const r = await fetch(`${API}${path}`, {
-    method: 'PATCH',
-    headers: await authHeaders(),
-    body: JSON.stringify(body),
-  });
-  if (r.status === 401) { handle401(); throw new Error('HTTP 401'); }
-  if (!r.ok) throw new Error(`PATCH ${path} → ${r.status}`);
-  return r.json();
-}
-
-async function put<T>(path: string, body: unknown): Promise<T> {
-  const r = await fetch(`${API}${path}`, {
-    method: 'PUT',
-    headers: await authHeaders(),
-    body: JSON.stringify(body),
-  });
-  if (r.status === 401) { handle401(); throw new Error('HTTP 401'); }
-  if (!r.ok) {
-    const err = await r.json().catch(() => ({}));
-    throw new Error(err?.detail ?? `PUT ${path} → ${r.status}`);
-  }
-  return r.json();
-}
-
-async function del<T>(path: string): Promise<T> {
-  const r = await fetch(`${API}${path}`, {
-    method: 'DELETE',
-    headers: await authHeaders(),
-  });
-  if (r.status === 401) { handle401(); throw new Error('HTTP 401'); }
-  if (!r.ok) throw new Error(`DELETE ${path} → ${r.status}`);
-  return r.json();
-}
+const get   = <T>(path: string) => request<T>('GET', path);
+const post  = <T>(path: string, body?: unknown) => request<T>('POST', path, body);
+const patch = <T>(path: string, body: unknown) => request<T>('PATCH', path, body);
+const put   = <T>(path: string, body: unknown) => request<T>('PUT', path, body);
+const del   = <T>(path: string) => request<T>('DELETE', path);
 
 // ── Typy ────────────────────────────────────────────────────────────────────
 
@@ -222,6 +214,8 @@ export interface Provider {
   updated_at: string;
   // true = provider platformy (zarządza GovAI) — zmiana tylko przez super-admina
   is_platform?: boolean;
+  // Własny klucz API organizacji ustawiony (sam klucz nigdy nie wraca z API)
+  has_api_key?: boolean;
 }
 
 export type RequirementDeclStatus = 'yes' | 'no' | 'partial' | 'na' | 'undeclared';
@@ -341,7 +335,133 @@ export const api = {
     history: (key: string) =>
       get<SettingHistoryEntry[]>(`/settings/${encodeURIComponent(key)}/history`),
   },
+  // Administracja organizacji (partner / it_admin)
+  users: {
+    list: () => get<OrgUser[]>('/auth/users'),
+    // Bez hasła — API generuje tymczasowe (temporary_password, pokazywane raz)
+    create: (body: { email: string; full_name: string; role: UserRole }) =>
+      post<OrgUser & { temporary_password?: string }>('/auth/users', body),
+    update: (id: string, body: { role?: UserRole; status?: UserStatus; full_name?: string }) =>
+      patch<OrgUser>(`/auth/users/${id}`, body),
+    // Hasło tymczasowe generuje przeglądarka; API ustawia must_change_password
+    setPassword: (id: string, newPassword: string) =>
+      post<{ message: string; temporary_password?: string }>(`/auth/users/${id}/password`, { new_password: newPassword }),
+  },
+  apiKeys: {
+    list: () => get<ApiKey[]>('/auth/api-keys'),
+    create: (body: { name: string; agent_id: string | null; expires_days: number | null }) =>
+      post<ApiKeyCreated>('/auth/api-keys', body),
+    revoke: (id: string) => del<{ message: string }>(`/auth/api-keys/${id}`),
+  },
+  // Panel super-admina platformy
+  platform: {
+    tenants: () => get<PlatformTenant[]>('/platform/tenants'),
+    createTenant: (body: {
+      slug: string; name: string; default_locale?: string;
+      admin_email: string; admin_full_name: string;
+    }) => post<TenantCreated>('/platform/tenants', body),
+    updateTenant: (id: string, body: { name?: string; status?: TenantStatus }) =>
+      patch<PlatformTenant>(`/platform/tenants/${id}`, body),
+    deleteTenant: (id: string) => del<unknown>(`/platform/tenants/${id}`),
+    tenantUsers: (id: string) => get<TenantUser[]>(`/platform/tenants/${id}/users`),
+    resetPassword: (id: string, userId: string) =>
+      post<{ temporary_password: string }>(`/platform/tenants/${id}/users/${userId}/reset-password`),
+    enter: (id: string) => post<{ access_token: string }>(`/platform/tenants/${id}/enter`),
+    audit: (limit = 200) => get<PlatformAuditEntry[]>(`/platform/audit?limit=${limit}`),
+  },
 };
+
+// ── Administracja organizacji ─────────────────────────────────────────────────
+
+export const USER_ROLES = ['partner', 'it_admin', 'compliance_officer', 'associate', 'reviewer'] as const;
+export type UserRole = (typeof USER_ROLES)[number];
+export const USER_STATUSES = ['active', 'suspended', 'pending'] as const;
+export type UserStatus = (typeof USER_STATUSES)[number];
+
+export interface OrgUser {
+  id: string;
+  email: string;
+  full_name: string;
+  role: UserRole;
+  status: UserStatus;
+  department?: string | null;
+  phone?: string | null;
+  last_login_at: string | null;
+  created_at?: string;
+}
+
+export interface ApiKey {
+  id: string;
+  name: string;
+  key_prefix: string;
+  agent_id: string | null;
+  agent_name: string | null;
+  expires_at: string | null;
+  last_used_at: string | null;
+  active: boolean;
+  created_at: string;
+}
+
+export interface ApiKeyCreated {
+  id: string;
+  name: string;
+  key_prefix: string;
+  key: string;             // surowy klucz — tylko w tej odpowiedzi
+  agent_id: string | null;
+  expires_at: string | null;
+}
+
+// ── Platforma (super-admin) ───────────────────────────────────────────────────
+
+export type TenantStatus = 'active' | 'suspended';
+
+export interface PlatformTenant {
+  id: string;
+  slug: string;
+  name: string;
+  status: TenantStatus;
+  is_demo: boolean;
+  created_at: string;
+  deleted_at: string | null;
+  users_count: number;
+  agents_count: number;
+}
+
+export interface TenantCreated {
+  tenant: PlatformTenant;
+  admin: { id: string; email: string };
+  temporary_password: string;
+}
+
+export interface TenantUser {
+  id: string;
+  email: string;
+  full_name: string;
+  role: UserRole;
+  status: UserStatus;
+  last_login_at: string | null;
+}
+
+export interface PlatformAuditEntry {
+  id?: string | number;
+  time: string;
+  actor_user_id: string | null;
+  actor_email: string;
+  action: string;
+  tenant_id: string | null;
+  tenant_slug?: string | null;
+  tenant_name?: string | null;
+  details: Record<string, unknown> | null;
+}
+
+/** Hasło tymczasowe generowane w przeglądarce (reset przez admina organizacji). */
+export function generateTemporaryPassword(length = 16): string {
+  // Bez znaków mylących (0/O, 1/l/I) — hasło bywa przepisywane ręcznie
+  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
+  const bytes = new Uint32Array(length);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes, b => alphabet[b % alphabet.length]).join('');
+}
 
 export type SettingType = 'number' | 'int' | 'bool' | 'string' | 'json';
 

@@ -84,5 +84,13 @@
       "unacceptable": "NIEDOPUSZCZALNE"
     },
     "unacceptable": "Niedopuszczalne"
+  },
+  "secretModal": {
+    "cancel": "Anuluj",
+    "close": "Zamknij",
+    "copied": "Skopiowano",
+    "copy": "Kopiuj",
+    "done": "Zapisałem — zamknij",
+    "warning": "Ta wartość jest wyświetlana tylko raz. Skopiuj ją teraz i przekaż bezpiecznym kanałem — po zamknięciu okna nie będzie można jej odczytać."
   }
 }

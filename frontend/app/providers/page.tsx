@@ -44,6 +44,7 @@ const EMPTY_FORM = {
   model_ids: '',
   base_url: '',
   api_key_env: '',
+  api_key: '',
   max_data_sensitivity: 'internal' as DataSensitivityLevel,
   priority: '10',
   notes: '',
@@ -69,6 +70,8 @@ function AddProviderForm({ onSaved }: { onSaved: () => void }) {
         model_ids:            form.model_ids.split('\n').map(s => s.trim()).filter(Boolean),
         base_url:             form.base_url || null,
         api_key_env:          form.api_key_env || null,
+        // Własny klucz organizacji — tylko zapis, API szyfruje (nigdy nie wraca)
+        ...(form.api_key ? { api_key: form.api_key } : {}),
         max_data_sensitivity: form.max_data_sensitivity,
         priority:             parseInt(form.priority) || 10,
         notes:                form.notes || null,
@@ -185,6 +188,20 @@ function AddProviderForm({ onSaved }: { onSaved: () => void }) {
       </div>
 
       <div>
+        <label className="text-xs text-mgray mb-1 block">{t('form.apiKey')}</label>
+        <input
+          type="password"
+          autoComplete="new-password"
+          className="w-full bg-navy border border-blue/30 rounded-lg px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-teal"
+          value={form.api_key}
+          onChange={e => f('api_key', e.target.value)}
+        />
+        <p className="text-xs text-mgray/50 mt-1">
+          {t('form.apiKeyHint')}
+        </p>
+      </div>
+
+      <div>
         <label className="text-xs text-mgray mb-1 block">{t('form.notes')}</label>
         <textarea
           rows={2}
@@ -231,10 +248,12 @@ function ProviderCard({ provider, onChanged }: { provider: Provider; onChanged: 
     model_ids:            provider.model_ids.join('\n'),
     base_url:             provider.base_url ?? '',
     api_key_env:          provider.api_key_env ?? '',
+    api_key:              '',   // puste = bez zmian
     max_data_sensitivity: provider.max_data_sensitivity,
     priority:             String(provider.priority),
     notes:                provider.notes ?? '',
   });
+  const [removingKey, setRemovingKey] = useState(false);
 
   function f(key: keyof typeof form, val: string) {
     setForm(prev => ({ ...prev, [key]: val }));
@@ -269,16 +288,31 @@ function ProviderCard({ provider, onChanged }: { provider: Provider; onChanged: 
         model_ids:            form.model_ids.split('\n').map(s => s.trim()).filter(Boolean),
         base_url:             form.base_url || null,
         api_key_env:          form.api_key_env || null,
+        ...(form.api_key ? { api_key: form.api_key } : {}),
         max_data_sensitivity: form.max_data_sensitivity as DataSensitivityLevel,
         priority:             parseInt(form.priority) || 10,
         notes:                form.notes || null,
       });
+      f('api_key', '');
       setEditing(false);
       onChanged();
     } catch (e) {
       alert(String(e));
     } finally {
       setSaving(false);
+    }
+  }
+
+  // "api_key": "" usuwa własny klucz organizacji
+  async function removeApiKey() {
+    setRemovingKey(true);
+    try {
+      await api.providers.update(provider.id, { api_key: '' });
+      onChanged();
+    } catch (e) {
+      alert(String(e));
+    } finally {
+      setRemovingKey(false);
     }
   }
 
@@ -402,6 +436,35 @@ function ProviderCard({ provider, onChanged }: { provider: Provider; onChanged: 
               />
             </div>
           </div>
+          {!provider.is_platform && (
+            <div>
+              <label className="text-xs text-mgray mb-1 flex items-center gap-2">
+                {t('card.apiKey')}
+                {provider.has_api_key && (
+                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded border border-teal/40 text-teal bg-teal/10">
+                    {t('card.apiKeySet')}
+                  </span>
+                )}
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="password"
+                  autoComplete="new-password"
+                  className="flex-1 bg-navy border border-blue/30 rounded-lg px-3 py-1.5 text-sm text-white font-mono focus:outline-none focus:border-teal"
+                  placeholder={provider.has_api_key ? t('card.apiKeyKeepPlaceholder') : ''}
+                  value={form.api_key}
+                  onChange={e => f('api_key', e.target.value)}
+                />
+                {provider.has_api_key && (
+                  <button onClick={removeApiKey} disabled={removingKey}
+                    className="px-3 py-1.5 text-xs text-red-400/70 hover:text-red-300 border border-red-900/30 rounded-lg disabled:opacity-40">
+                    {removingKey ? '...' : t('card.apiKeyRemove')}
+                  </button>
+                )}
+              </div>
+              <p className="text-xs text-mgray/50 mt-1">{t('form.apiKeyHint')}</p>
+            </div>
+          )}
           <div className="grid grid-cols-4 gap-3">
             <div>
               <label className="text-xs text-mgray mb-1 block">{t('card.priority')}</label>
@@ -457,6 +520,9 @@ function ProviderCard({ provider, onChanged }: { provider: Provider; onChanged: 
             )}
             {provider.api_key_env && (
               <span>{t.rich('card.key', { env: provider.api_key_env, code: (c) => <code className="text-teal/70">{c}</code> })}</span>
+            )}
+            {provider.has_api_key && (
+              <span className="text-teal/80">{t('card.apiKeySetInfo')}</span>
             )}
             {provider.last_health_check_at && (
               <span>{t('card.lastCheck', { date: fmt.date(provider.last_health_check_at) })}</span>

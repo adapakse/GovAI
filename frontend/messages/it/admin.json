@@ -1,0 +1,98 @@
+{
+  "apiKeys": {
+    "add": "+ Nuova chiave API",
+    "anyAgent": "qualsiasi agente",
+    "columns": {
+      "agent": "Agente",
+      "expires": "Valida fino al",
+      "lastUsed": "Ultimo utilizzo",
+      "name": "Nome",
+      "prefix": "Prefisso",
+      "status": "Stato"
+    },
+    "createdAt": "creata il {date}",
+    "empty": "Nessuna chiave API",
+    "form": {
+      "agent": "Agente",
+      "agentHint": "La chiave funzionerà solo per l’agente selezionato.",
+      "anyAgent": "— non assegnata (qualsiasi agente dell’organizzazione) —",
+      "anyAgentHint": "Una chiave non assegnata funziona per qualsiasi agente dell’organizzazione indicato nell’intestazione X-Agent-ID. Si consiglia di assegnarla a un agente.",
+      "cancel": "Annulla",
+      "expiry": "Validità",
+      "expiryDays": "{days} giorni",
+      "name": "Nome",
+      "namePlaceholder": "es. Assistente contratti — produzione",
+      "noExpiry": "senza scadenza",
+      "save": "Crea chiave",
+      "saving": "Creazione...",
+      "title": "Nuova chiave API"
+    },
+    "loading": "Caricamento...",
+    "neverUsed": "mai usata",
+    "noAccess": "La gestione delle chiavi API è disponibile per i ruoli Partner e Amministratore IT.",
+    "noExpiry": "senza scadenza",
+    "revoke": "Revoca",
+    "revokeConfirm": {
+      "confirm": "Revoca chiave",
+      "message": "Revocare la chiave «{name}»? Gli agenti che usano questa chiave perderanno immediatamente l’accesso al gateway.",
+      "title": "Revoca chiave API"
+    },
+    "secret": {
+      "description": "Chiave «{name}» — configurala nell’agente come intestazione X-API-Key.",
+      "label": "Chiave API",
+      "title": "Chiave API creata"
+    },
+    "showRevoked": "Mostra revocate ({count})",
+    "state": {
+      "active": "Attiva",
+      "expired": "Scaduta",
+      "revoked": "Revocata"
+    },
+    "subtitle": "Chiavi con cui gli agenti si autenticano sul gateway GovAI (intestazione X-API-Key).",
+    "title": "Chiavi API"
+  },
+  "users": {
+    "add": "+ Aggiungi utente",
+    "columns": {
+      "lastLogin": "Ultimo accesso",
+      "role": "Ruolo",
+      "status": "Stato",
+      "user": "Utente"
+    },
+    "empty": "Nessun utente",
+    "form": {
+      "cancel": "Annulla",
+      "email": "Indirizzo e-mail",
+      "fullName": "Nome e cognome",
+      "passwordHint": "Verrà generata automaticamente una password temporanea — l’utente la cambierà al primo accesso.",
+      "role": "Ruolo",
+      "save": "Crea account",
+      "saving": "Creazione...",
+      "title": "Nuovo utente"
+    },
+    "loading": "Caricamento...",
+    "never": "mai",
+    "noAccess": "La gestione degli utenti è disponibile per i ruoli Partner e Amministratore IT.",
+    "resetConfirm": {
+      "confirm": "Reimposta password",
+      "message": "Assegnare una nuova password temporanea a {name} ({email})? Le sue sessioni attuali verranno chiuse e al prossimo accesso dovrà impostare una password personale.",
+      "title": "Reimpostazione password"
+    },
+    "resetPassword": "Reimposta password",
+    "searchPlaceholder": "Cerca per nome, e-mail, ruolo...",
+    "secret": {
+      "createdTitle": "Account creato",
+      "description": "Password temporanea per {email}. L’utente la cambierà al primo accesso.",
+      "label": "Password temporanea",
+      "resetTitle": "Nuova password temporanea"
+    },
+    "status": {
+      "active": "Attivo",
+      "pending": "In attesa",
+      "suspended": "Bloccato"
+    },
+    "subtitle": "Account dell’organizzazione {tenant}",
+    "title": "Utenti",
+    "you": "(tu)"
+  }
+}

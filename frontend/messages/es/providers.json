@@ -1,7 +1,12 @@
 {
   "card": {
     "activate": "Activar",
+    "apiKey": "Clave API propia",
     "apiKeyEnv": "Variable de la clave API",
+    "apiKeyKeepPlaceholder": "•••••••• (sin cambios)",
+    "apiKeyRemove": "Eliminar clave",
+    "apiKeySet": "clave configurada",
+    "apiKeySetInfo": "Clave API propia configurada",
     "baseUrl": "Base URL",
     "cancel": "Cancelar",
     "deactivate": "Desactivar",
@@ -28,8 +33,10 @@
   "empty": "No hay proveedores de modelos definidos. Añada el primero más arriba.",
   "form": {
     "addButton": "+ Añadir proveedor",
+    "apiKey": "Clave API propia (opcional)",
     "apiKeyEnv": "Variable de entorno con la clave API",
     "apiKeyEnvHint": "Nombre de la variable en el `.env` del contenedor de la pasarela. La clave nunca sale del servidor.",
+    "apiKeyHint": "Clave de la organización: se guarda cifrada y nunca se muestra. Campo vacío = sin cambios. No la combines con el campo de variable de entorno.",
     "baseUrl": "Base URL *",
     "cancel": "Cancelar",
     "maxSensitivity": "Sensibilidad máx. de los datos *",

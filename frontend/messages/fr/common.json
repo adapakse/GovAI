@@ -84,5 +84,13 @@
       "unacceptable": "INACCEPTABLE"
     },
     "unacceptable": "Inacceptable"
+  },
+  "secretModal": {
+    "cancel": "Annuler",
+    "close": "Fermer",
+    "copied": "Copié",
+    "copy": "Copier",
+    "done": "C’est enregistré — fermer",
+    "warning": "Cette valeur n’est affichée qu’une seule fois. Copiez-la maintenant et transmettez-la par un canal sécurisé — elle ne pourra plus être consultée après la fermeture de cette fenêtre."
   }
 }

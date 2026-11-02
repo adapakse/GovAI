@@ -1,4 +1,8 @@
 {
+  "acting": {
+    "back": "Вернуться",
+    "message": "Вы действуете как администратор платформы в организации <b>{tenant}</b>"
+  },
   "logout": "Выйти",
   "meta": {
     "description": "Соответствие EU AI Act | Шлюз безопасности | Человеческий надзор",
@@ -7,14 +11,18 @@
   "nav": {
     "admin": "Администрирование",
     "agents": "Агенты",
+    "apiKeys": "API-ключи",
     "audit": "Журнал",
     "dashboard": "Панель",
     "demo": "Симулятор",
     "oversight": "Надзор",
+    "platformAudit": "Журнал платформы",
     "policies": "Политики",
     "providers": "Поставщики моделей",
     "reports": "Отчёты",
-    "settings": "Параметры"
+    "settings": "Параметры",
+    "tenants": "Организации",
+    "users": "Пользователи"
   },
   "roles": {
     "associate": "Юрист (Associate)",

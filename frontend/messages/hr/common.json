@@ -84,5 +84,13 @@
       "unacceptable": "NEPRIHVATLJIVI"
     },
     "unacceptable": "Neprihvatljivi"
+  },
+  "secretModal": {
+    "cancel": "Odustani",
+    "close": "Zatvori",
+    "copied": "Kopirano",
+    "copy": "Kopiraj",
+    "done": "Spremio sam — zatvori",
+    "warning": "Ova se vrijednost prikazuje samo jednom. Kopirajte je sada i proslijedite sigurnim kanalom — nakon zatvaranja prozora neće je biti moguće pročitati."
   }
 }

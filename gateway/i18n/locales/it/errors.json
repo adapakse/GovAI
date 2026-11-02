@@ -3,11 +3,14 @@
   "agentNotRegistered": "L'agente '{agent_id}' non è registrato in GovAI. Registri l'agente prima di utilizzare il gateway.",
   "apiKeyAgentMismatch": "Questa chiave API non è assegnata all'agente '{agent_id}'.",
   "auth": {
+    "actingNotAllowed": "Operare nel contesto di un'altra organizzazione richiede i diritti di super-amministratore.",
     "invalidApiKey": "Chiave API non valida o scaduta",
     "invalidToken": "Token non valido o scaduto",
     "missing": "Autorizzazione mancante",
     "missingDetail": "È richiesta l'intestazione Authorization: Bearer <token> oppure X-API-Key: <key>",
-    "tenantInactive": "L'organizzazione è sospesa o eliminata — accesso bloccato."
+    "passwordChangeRequired": "È richiesta la modifica della password — imposta una nuova password nel pannello GovAI prima di usare il gateway.",
+    "tenantInactive": "L'organizzazione è sospesa o eliminata — accesso bloccato.",
+    "userInactive": "L'account utente è bloccato o non esiste."
   },
   "llmError": "Errore del modello linguistico: {error}",
   "missingAgentId": "Intestazione X-Agent-ID mancante",

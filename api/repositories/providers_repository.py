@@ -29,7 +29,11 @@ def _columns() -> str:
     return f"""id, name, provider_type, model_ids, base_url, api_key_env,
                max_data_sensitivity, active, priority, is_healthy,
                last_health_check_at, {_notes_col()}, created_by, created_at, updated_at,
-               (tenant_id IS NULL) AS is_platform"""
+               (tenant_id IS NULL) AS is_platform,
+               (api_key_encrypted IS NOT NULL) AS has_api_key"""
+
+# PATCH: wartość "usuń klucz" (None = bez zmian)
+CLEAR = object()
 
 
 async def list_providers(active_only: bool = False):
@@ -62,13 +66,14 @@ async def insert_provider(
     priority: int,
     notes: Optional[str],
     created_by: Any,
+    api_key_encrypted: Optional[str] = None,
 ):
     pool = get_pool()
     return await pool.fetchrow(
         f"""INSERT INTO providers
                (name, provider_type, model_ids, base_url, api_key_env,
-                max_data_sensitivity, priority, notes, created_by)
-           VALUES ($1, $2, $3, $4, $5, $6::data_sensitivity_level, $7, $8, $9)
+                max_data_sensitivity, priority, notes, created_by, api_key_encrypted)
+           VALUES ($1, $2, $3, $4, $5, $6::data_sensitivity_level, $7, $8, $9, $10)
            RETURNING {_columns()}""",
         name,
         provider_type,
@@ -79,6 +84,7 @@ async def insert_provider(
         priority,
         notes,
         created_by,
+        api_key_encrypted,
     )
 
 
@@ -99,11 +105,20 @@ async def update_provider(
     notes: Optional[str] = None,
     model_ids: Optional[list[str]] = None,
     max_data_sensitivity: Optional[str] = None,
+    api_key_encrypted: Any = None,
 ):
-    """Dynamiczny UPDATE pól opcjonalnych. Zwraca None gdy brak pól do zmiany."""
+    """Dynamiczny UPDATE pól opcjonalnych. Zwraca None gdy brak pól do zmiany.
+    api_key_encrypted: None = bez zmian, CLEAR = usunięcie klucza, str = nowy szyfrogram."""
     pool = get_pool()
     updates, params = [], []
     idx = 1
+
+    if api_key_encrypted is CLEAR:
+        updates.append("api_key_encrypted = NULL")
+    elif api_key_encrypted is not None:
+        updates.append(f"api_key_encrypted = ${idx}")
+        params.append(api_key_encrypted)
+        idx += 1
 
     simple_fields = [
         ("name", name),
