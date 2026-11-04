@@ -1,0 +1,124 @@
+{
+  "audit": {
+    "actions": {
+      "tenant_create": "Organisation angelegt",
+      "tenant_delete": "Organisation gelöscht",
+      "tenant_enter": "In Organisation gewechselt",
+      "tenant_update": "Organisation geändert",
+      "user_reset_password": "Benutzerpasswort zurückgesetzt"
+    },
+    "columns": {
+      "action": "Aktion",
+      "actor": "Wer",
+      "details": "Details",
+      "tenant": "Organisation",
+      "time": "Zeit"
+    },
+    "empty": "Keine Einträge",
+    "limit": "Einträge:",
+    "loading": "Wird geladen...",
+    "noAccess": "Das Plattformprotokoll steht nur dem Plattformadministrator zur Verfügung.",
+    "searchPlaceholder": "Nach Person, Aktion, Organisation suchen...",
+    "subtitle": "Vorgänge der Plattformadministratoren: Anlegen und Ändern von Organisationen, Passwort-Zurücksetzungen, Wechsel in den Kontext von Organisationen.",
+    "title": "Plattformprotokoll"
+  },
+  "tenants": {
+    "actingExpired": "Die Sitzung im Kontext der Organisation ist abgelaufen (60 Minuten) — Sie sind zurück in der Plattformverwaltung. Um fortzufahren, wechseln Sie erneut in die Organisation.",
+    "actions": {
+      "activate": "Aktivieren",
+      "delete": "Löschen",
+      "deleteDemo": "Die Demo-Organisation kann nicht gelöscht werden",
+      "deleteOwn": "Die eigene Organisation kann nicht gelöscht werden",
+      "enter": "Wechseln",
+      "enterSuspended": "Die Organisation ist nicht aktiv",
+      "suspend": "Sperren",
+      "users": "Benutzer"
+    },
+    "add": "+ Neue Organisation",
+    "columns": {
+      "agents": "Agenten",
+      "created": "Angelegt",
+      "status": "Status",
+      "tenant": "Organisation",
+      "users": "Benutzer"
+    },
+    "created": {
+      "description": "Erster Administrator: {email}. Subdomain der Organisation: {slug}. Geben Sie das temporäre Passwort an den Administrator weiter — er ändert es bei der ersten Anmeldung.",
+      "label": "Temporäres Passwort des Administrators",
+      "title": "Organisation {name} angelegt"
+    },
+    "delete": {
+      "cancel": "Abbrechen",
+      "confirm": "Organisation löschen",
+      "message": "Die Organisation wird gelöscht (vorläufig — die Daten bleiben in der Datenbank, aber niemand hat mehr Zugriff darauf). Benutzer können sich nicht anmelden, und API-Schlüssel funktionieren nicht mehr.",
+      "title": "Organisation {name} löschen",
+      "typeSlug": "Geben Sie zur Bestätigung den Slug der Organisation ein: <code>{slug}</code>"
+    },
+    "demo": "Demo",
+    "empty": "Keine Organisationen",
+    "form": {
+      "adminEmail": "E-Mail-Adresse",
+      "adminFullName": "Vor- und Nachname",
+      "adminHint": "Der Administrator erhält die Rolle Partner und ein temporäres Passwort, das bei der ersten Anmeldung zu ändern ist. Die Organisation erhält eine Kopie der Richtlinien aus der Vorlage.",
+      "adminSection": "Erster Administrator",
+      "cancel": "Abbrechen",
+      "locale": "Standardsprache",
+      "localePlatform": "— Standard der Plattform —",
+      "name": "Name",
+      "namePlaceholder": "z. B. Kanzlei Nowak & Partner",
+      "save": "Organisation anlegen",
+      "saving": "Wird angelegt...",
+      "slug": "Slug (Adresse)",
+      "slugErrors": {
+        "chars": "Erlaubt sind nur Kleinbuchstaben (a–z), Ziffern und Bindestriche.",
+        "edges": "Der Slug darf nicht mit einem Bindestrich beginnen oder enden.",
+        "length": "Der Slug darf höchstens 63 Zeichen lang sein.",
+        "reserved": "Dieser Slug ist für die Plattform reserviert.",
+        "taken": "Dieser Slug ist bereits vergeben."
+      },
+      "slugHint": "Kleinbuchstaben, Ziffern und Bindestriche — die Subdomain der Organisation in der Plattformadresse.",
+      "slugPreview": "Subdomain der Organisation: {slug}",
+      "title": "Neue Organisation"
+    },
+    "loading": "Wird geladen...",
+    "noAccess": "Die Organisationsverwaltung steht nur dem Plattformadministrator zur Verfügung.",
+    "own": "(Ihre Organisation)",
+    "searchPlaceholder": "Nach Name oder Slug suchen...",
+    "showDeleted": "Gelöschte anzeigen ({count})",
+    "state": {
+      "active": "Aktiv",
+      "deleted": "Gelöscht",
+      "suspended": "Gesperrt"
+    },
+    "subtitle": "Organisationen (Kunden) der GovAI-Plattform — Anlegen, Sperren und Wechsel in den Kontext einer Organisation.",
+    "suspendConfirm": {
+      "confirm": "Sperren",
+      "message": "Die Organisation {name} sperren? Ihre Benutzer können sich nicht anmelden, und das Gateway lehnt Aufrufe ihrer Agenten bis zur erneuten Aktivierung ab.",
+      "title": "Organisation sperren"
+    },
+    "title": "Organisationen",
+    "users": {
+      "columns": {
+        "lastLogin": "Letzte Anmeldung",
+        "role": "Rolle",
+        "status": "Status",
+        "user": "Benutzer"
+      },
+      "empty": "Keine Benutzer",
+      "loading": "Wird geladen...",
+      "never": "nie",
+      "resetConfirm": {
+        "confirm": "Passwort zurücksetzen",
+        "message": "Ein neues temporäres Passwort für {name} ({email}) vergeben? Die aktuellen Sitzungen werden beendet.",
+        "title": "Passwort zurücksetzen"
+      },
+      "resetPassword": "Passwort zurücksetzen",
+      "secret": {
+        "description": "Temporäres Passwort für {email}. Der Benutzer ändert es bei der ersten Anmeldung.",
+        "label": "Temporäres Passwort",
+        "title": "Neues temporäres Passwort"
+      },
+      "title": "Benutzer der Organisation {name}"
+    }
+  }
+}

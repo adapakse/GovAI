@@ -55,6 +55,8 @@ export const NAMESPACES = [
   'audit',
   'oversight',
   'demo',
+  'admin',
+  'platform',
 ] as const;
 
 export function isLocale(value: unknown): value is Locale {

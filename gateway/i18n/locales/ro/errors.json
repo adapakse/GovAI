@@ -3,11 +3,14 @@
   "agentNotRegistered": "Agentul '{agent_id}' nu este înregistrat în GovAI. Înregistrați agentul înainte de a utiliza gateway-ul de securitate.",
   "apiKeyAgentMismatch": "Această cheie API nu este atribuită agentului '{agent_id}'.",
   "auth": {
+    "actingNotAllowed": "Acționarea în contextul altei organizații necesită drepturi de super-administrator.",
     "invalidApiKey": "Cheie API nevalidă sau expirată",
     "invalidToken": "Token nevalid sau expirat",
     "missing": "Lipsește autorizarea",
     "missingDetail": "Este necesar antetul Authorization: Bearer <token> sau X-API-Key: <key>",
-    "tenantInactive": "Organizația este suspendată sau ștearsă — acces blocat."
+    "passwordChangeRequired": "Este necesară schimbarea parolei — setați o parolă nouă în panoul GovAI înainte de a folosi gateway-ul.",
+    "tenantInactive": "Organizația este suspendată sau ștearsă — acces blocat.",
+    "userInactive": "Contul de utilizator este blocat sau nu există."
   },
   "llmError": "Eroare a modelului lingvistic: {error}",
   "missingAgentId": "Lipsește antetul X-Agent-ID",

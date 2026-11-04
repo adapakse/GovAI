@@ -1,0 +1,98 @@
+{
+  "apiKeys": {
+    "add": "+ Nueva clave API",
+    "anyAgent": "cualquier agente",
+    "columns": {
+      "agent": "Agente",
+      "expires": "Válida hasta",
+      "lastUsed": "Último uso",
+      "name": "Nombre",
+      "prefix": "Prefijo",
+      "status": "Estado"
+    },
+    "createdAt": "creada el {date}",
+    "empty": "No hay claves API",
+    "form": {
+      "agent": "Agente",
+      "agentHint": "La clave solo funcionará para el agente seleccionado.",
+      "anyAgent": "— sin asignar (cualquier agente de la organización) —",
+      "anyAgentHint": "Una clave sin asignar funciona para cualquier agente de la organización indicado en la cabecera X-Agent-ID. Se recomienda asignarla a un agente.",
+      "cancel": "Cancelar",
+      "expiry": "Validez",
+      "expiryDays": "{days} días",
+      "name": "Nombre",
+      "namePlaceholder": "p. ej. Asistente de contratos — producción",
+      "noExpiry": "sin caducidad",
+      "save": "Crear clave",
+      "saving": "Creando...",
+      "title": "Nueva clave API"
+    },
+    "loading": "Cargando...",
+    "neverUsed": "sin usar",
+    "noAccess": "La gestión de claves API está disponible para los roles Partner y Administrador de TI.",
+    "noExpiry": "sin caducidad",
+    "revoke": "Revocar",
+    "revokeConfirm": {
+      "confirm": "Revocar clave",
+      "message": "¿Revocar la clave «{name}»? Los agentes que la utilizan perderán inmediatamente el acceso a la pasarela.",
+      "title": "Revocar clave API"
+    },
+    "secret": {
+      "description": "Clave «{name}»: configúrala en el agente como cabecera X-API-Key.",
+      "label": "Clave API",
+      "title": "Clave API creada"
+    },
+    "showRevoked": "Mostrar revocadas ({count})",
+    "state": {
+      "active": "Activa",
+      "expired": "Caducada",
+      "revoked": "Revocada"
+    },
+    "subtitle": "Claves con las que los agentes se autentican en la pasarela GovAI (cabecera X-API-Key).",
+    "title": "Claves API"
+  },
+  "users": {
+    "add": "+ Añadir usuario",
+    "columns": {
+      "lastLogin": "Último inicio de sesión",
+      "role": "Rol",
+      "status": "Estado",
+      "user": "Usuario"
+    },
+    "empty": "No hay usuarios",
+    "form": {
+      "cancel": "Cancelar",
+      "email": "Correo electrónico",
+      "fullName": "Nombre y apellidos",
+      "passwordHint": "Se generará automáticamente una contraseña temporal; el usuario la cambiará en su primer inicio de sesión.",
+      "role": "Rol",
+      "save": "Crear cuenta",
+      "saving": "Creando...",
+      "title": "Nuevo usuario"
+    },
+    "loading": "Cargando...",
+    "never": "nunca",
+    "noAccess": "La gestión de usuarios está disponible para los roles Partner y Administrador de TI.",
+    "resetConfirm": {
+      "confirm": "Restablecer contraseña",
+      "message": "¿Asignar una nueva contraseña temporal a {name} ({email})? Sus sesiones actuales se cerrarán y tendrá que establecer su propia contraseña en el próximo inicio de sesión.",
+      "title": "Restablecer contraseña"
+    },
+    "resetPassword": "Restablecer contraseña",
+    "searchPlaceholder": "Buscar por nombre, correo, rol...",
+    "secret": {
+      "createdTitle": "Cuenta creada",
+      "description": "Contraseña temporal para {email}. El usuario la cambiará en su primer inicio de sesión.",
+      "label": "Contraseña temporal",
+      "resetTitle": "Nueva contraseña temporal"
+    },
+    "status": {
+      "active": "Activo",
+      "pending": "Pendiente",
+      "suspended": "Bloqueado"
+    },
+    "subtitle": "Cuentas de la organización {tenant}",
+    "title": "Usuarios",
+    "you": "(tú)"
+  }
+}

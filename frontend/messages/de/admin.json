@@ -1,0 +1,98 @@
+{
+  "apiKeys": {
+    "add": "+ Neuer API-Schlüssel",
+    "anyAgent": "beliebiger Agent",
+    "columns": {
+      "agent": "Agent",
+      "expires": "Gültig bis",
+      "lastUsed": "Zuletzt verwendet",
+      "name": "Name",
+      "prefix": "Präfix",
+      "status": "Status"
+    },
+    "createdAt": "erstellt am {date}",
+    "empty": "Keine API-Schlüssel",
+    "form": {
+      "agent": "Agent",
+      "agentHint": "Der Schlüssel funktioniert nur für den ausgewählten Agenten.",
+      "anyAgent": "— nicht zugeordnet (beliebiger Agent der Organisation) —",
+      "anyAgentHint": "Ein nicht zugeordneter Schlüssel funktioniert für jeden Agenten der Organisation, der im Header X-Agent-ID angegeben ist. Wir empfehlen die Zuordnung zu einem Agenten.",
+      "cancel": "Abbrechen",
+      "expiry": "Gültigkeit",
+      "expiryDays": "{days} Tage",
+      "name": "Name",
+      "namePlaceholder": "z. B. Vertragsassistent — Produktion",
+      "noExpiry": "unbefristet",
+      "save": "Schlüssel erstellen",
+      "saving": "Wird erstellt...",
+      "title": "Neuer API-Schlüssel"
+    },
+    "loading": "Wird geladen...",
+    "neverUsed": "nie verwendet",
+    "noAccess": "Die Verwaltung der API-Schlüssel steht den Rollen Partner und IT-Administrator zur Verfügung.",
+    "noExpiry": "unbefristet",
+    "revoke": "Widerrufen",
+    "revokeConfirm": {
+      "confirm": "Schlüssel widerrufen",
+      "message": "Den Schlüssel „{name}“ widerrufen? Agenten, die diesen Schlüssel verwenden, verlieren sofort den Zugang zum Gateway.",
+      "title": "API-Schlüssel widerrufen"
+    },
+    "secret": {
+      "description": "Schlüssel „{name}“ — konfigurieren Sie ihn im Agenten als Header X-API-Key.",
+      "label": "API-Schlüssel",
+      "title": "API-Schlüssel erstellt"
+    },
+    "showRevoked": "Widerrufene anzeigen ({count})",
+    "state": {
+      "active": "Aktiv",
+      "expired": "Abgelaufen",
+      "revoked": "Widerrufen"
+    },
+    "subtitle": "Schlüssel, mit denen sich Agenten am GovAI-Gateway authentifizieren (Header X-API-Key).",
+    "title": "API-Schlüssel"
+  },
+  "users": {
+    "add": "+ Benutzer hinzufügen",
+    "columns": {
+      "lastLogin": "Letzte Anmeldung",
+      "role": "Rolle",
+      "status": "Status",
+      "user": "Benutzer"
+    },
+    "empty": "Keine Benutzer",
+    "form": {
+      "cancel": "Abbrechen",
+      "email": "E-Mail-Adresse",
+      "fullName": "Vor- und Nachname",
+      "passwordHint": "Ein temporäres Passwort wird automatisch erzeugt — der Benutzer ändert es bei der ersten Anmeldung.",
+      "role": "Rolle",
+      "save": "Konto anlegen",
+      "saving": "Wird angelegt...",
+      "title": "Neuer Benutzer"
+    },
+    "loading": "Wird geladen...",
+    "never": "nie",
+    "noAccess": "Die Benutzerverwaltung steht den Rollen Partner und IT-Administrator zur Verfügung.",
+    "resetConfirm": {
+      "confirm": "Passwort zurücksetzen",
+      "message": "Ein neues temporäres Passwort für {name} ({email}) vergeben? Die aktuellen Sitzungen werden beendet, und bei der nächsten Anmeldung muss ein eigenes Passwort festgelegt werden.",
+      "title": "Passwort zurücksetzen"
+    },
+    "resetPassword": "Passwort zurücksetzen",
+    "searchPlaceholder": "Nach Name, E-Mail, Rolle suchen...",
+    "secret": {
+      "createdTitle": "Konto angelegt",
+      "description": "Temporäres Passwort für {email}. Der Benutzer ändert es bei der ersten Anmeldung.",
+      "label": "Temporäres Passwort",
+      "resetTitle": "Neues temporäres Passwort"
+    },
+    "status": {
+      "active": "Aktiv",
+      "pending": "Ausstehend",
+      "suspended": "Gesperrt"
+    },
+    "subtitle": "Konten in der Organisation {tenant}",
+    "title": "Benutzer",
+    "you": "(Sie)"
+  }
+}

@@ -1,0 +1,124 @@
+{
+  "audit": {
+    "actions": {
+      "tenant_create": "Osnivanje organizacije",
+      "tenant_delete": "Brisanje organizacije",
+      "tenant_enter": "Ulazak u organizaciju",
+      "tenant_update": "Promjena organizacije",
+      "user_reset_password": "Resetiranje lozinke korisnika"
+    },
+    "columns": {
+      "action": "Radnja",
+      "actor": "Tko",
+      "details": "Detalji",
+      "tenant": "Organizacija",
+      "time": "Vrijeme"
+    },
+    "empty": "Nema zapisa",
+    "limit": "Zapisa:",
+    "loading": "Učitavanje...",
+    "noAccess": "Dnevnik platforme dostupan je samo administratoru platforme.",
+    "searchPlaceholder": "Pretraži po osobi, radnji, organizaciji...",
+    "subtitle": "Radnje administratora platforme: osnivanje i promjene organizacija, resetiranja lozinki, ulasci u kontekst organizacija.",
+    "title": "Dnevnik platforme"
+  },
+  "tenants": {
+    "actingExpired": "Sesija u kontekstu organizacije je istekla (60 minuta) — vraćeni ste na ploču platforme. Za nastavak ponovno uđite u organizaciju.",
+    "actions": {
+      "activate": "Aktiviraj",
+      "delete": "Izbriši",
+      "deleteDemo": "Demonstracijsku organizaciju nije moguće izbrisati",
+      "deleteOwn": "Vlastitu organizaciju nije moguće izbrisati",
+      "enter": "Uđi",
+      "enterSuspended": "Organizacija nije aktivna",
+      "suspend": "Suspendiraj",
+      "users": "Korisnici"
+    },
+    "add": "+ Nova organizacija",
+    "columns": {
+      "agents": "Agenti",
+      "created": "Stvorena",
+      "status": "Status",
+      "tenant": "Organizacija",
+      "users": "Korisnici"
+    },
+    "created": {
+      "description": "Prvi administrator: {email}. Poddomena organizacije: {slug}. Proslijedite privremenu lozinku administratoru — promijenit će je pri prvoj prijavi.",
+      "label": "Privremena lozinka administratora",
+      "title": "Organizacija {name} je osnovana"
+    },
+    "delete": {
+      "cancel": "Odustani",
+      "confirm": "Izbriši organizaciju",
+      "message": "Organizacija će biti izbrisana (meko brisanje — podaci ostaju u bazi, ali nitko im neće imati pristup). Korisnici se neće moći prijaviti, a API ključevi prestat će raditi.",
+      "title": "Brisanje organizacije {name}",
+      "typeSlug": "Za potvrdu upišite slug organizacije: <code>{slug}</code>"
+    },
+    "demo": "demo",
+    "empty": "Nema organizacija",
+    "form": {
+      "adminEmail": "Adresa e-pošte",
+      "adminFullName": "Ime i prezime",
+      "adminHint": "Administrator dobiva ulogu Partner i privremenu lozinku koju mijenja pri prvoj prijavi. Organizacija dobiva kopiju pravila iz predloška.",
+      "adminSection": "Prvi administrator",
+      "cancel": "Odustani",
+      "locale": "Zadani jezik",
+      "localePlatform": "— zadani jezik platforme —",
+      "name": "Naziv",
+      "namePlaceholder": "npr. Odvjetničko društvo Novak i partneri",
+      "save": "Osnuj organizaciju",
+      "saving": "Osnivanje...",
+      "slug": "Slug (adresa)",
+      "slugErrors": {
+        "chars": "Dopuštena su samo mala slova (a–z), znamenke i crtice.",
+        "edges": "Slug ne smije počinjati ni završavati crticom.",
+        "length": "Slug može imati najviše 63 znaka.",
+        "reserved": "Ovaj slug rezerviran je za platformu.",
+        "taken": "Ovaj slug je već zauzet."
+      },
+      "slugHint": "Mala slova, znamenke i crtice — poddomena organizacije u adresi platforme.",
+      "slugPreview": "Poddomena organizacije: {slug}",
+      "title": "Nova organizacija"
+    },
+    "loading": "Učitavanje...",
+    "noAccess": "Ploča organizacija dostupna je samo administratoru platforme.",
+    "own": "(vaša organizacija)",
+    "searchPlaceholder": "Pretraži po nazivu ili slugu...",
+    "showDeleted": "Prikaži izbrisane ({count})",
+    "state": {
+      "active": "Aktivna",
+      "deleted": "Izbrisana",
+      "suspended": "Suspendirana"
+    },
+    "subtitle": "Organizacije (klijenti) platforme GovAI — osnivanje, suspenzija i ulazak u kontekst organizacije.",
+    "suspendConfirm": {
+      "confirm": "Suspendiraj",
+      "message": "Suspendirati organizaciju {name}? Njezini se korisnici neće moći prijaviti, a pristupnik će odbijati pozive njezinih agenata do ponovne aktivacije.",
+      "title": "Suspenzija organizacije"
+    },
+    "title": "Organizacije",
+    "users": {
+      "columns": {
+        "lastLogin": "Zadnja prijava",
+        "role": "Uloga",
+        "status": "Status",
+        "user": "Korisnik"
+      },
+      "empty": "Nema korisnika",
+      "loading": "Učitavanje...",
+      "never": "nikad",
+      "resetConfirm": {
+        "confirm": "Resetiraj lozinku",
+        "message": "Dodijeliti novu privremenu lozinku korisniku {name} ({email})? Njegove trenutne sesije bit će prekinute.",
+        "title": "Resetiranje lozinke"
+      },
+      "resetPassword": "Resetiraj lozinku",
+      "secret": {
+        "description": "Privremena lozinka za {email}. Korisnik će je promijeniti pri prvoj prijavi.",
+        "label": "Privremena lozinka",
+        "title": "Nova privremena lozinka"
+      },
+      "title": "Korisnici organizacije {name}"
+    }
+  }
+}

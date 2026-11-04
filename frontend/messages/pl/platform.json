@@ -1,0 +1,124 @@
+{
+  "audit": {
+    "actions": {
+      "tenant_create": "Założenie organizacji",
+      "tenant_delete": "Usunięcie organizacji",
+      "tenant_enter": "Wejście do organizacji",
+      "tenant_update": "Zmiana organizacji",
+      "user_reset_password": "Reset hasła użytkownika"
+    },
+    "columns": {
+      "action": "Akcja",
+      "actor": "Kto",
+      "details": "Szczegóły",
+      "tenant": "Organizacja",
+      "time": "Czas"
+    },
+    "empty": "Brak wpisów",
+    "limit": "Wpisów:",
+    "loading": "Ładowanie...",
+    "noAccess": "Dziennik platformy jest dostępny tylko dla administratora platformy.",
+    "searchPlaceholder": "Szukaj po osobie, akcji, organizacji...",
+    "subtitle": "Operacje administratorów platformy: zakładanie i zmiany organizacji, resety haseł, wejścia w kontekst organizacji.",
+    "title": "Dziennik platformy"
+  },
+  "tenants": {
+    "actingExpired": "Sesja w kontekście organizacji wygasła (60 minut) — wróciłeś do panelu platformy. Aby kontynuować, wejdź do organizacji ponownie.",
+    "actions": {
+      "activate": "Aktywuj",
+      "delete": "Usuń",
+      "deleteDemo": "Organizacji demonstracyjnej nie można usunąć",
+      "deleteOwn": "Nie można usunąć własnej organizacji",
+      "enter": "Wejdź",
+      "enterSuspended": "Organizacja nie jest aktywna",
+      "suspend": "Zawieś",
+      "users": "Użytkownicy"
+    },
+    "add": "+ Nowa organizacja",
+    "columns": {
+      "agents": "Agenci",
+      "created": "Utworzona",
+      "status": "Status",
+      "tenant": "Organizacja",
+      "users": "Użytkownicy"
+    },
+    "created": {
+      "description": "Pierwszy administrator: {email}. Subdomena organizacji: {slug}. Przekaż hasło tymczasowe administratorowi — zmieni je przy pierwszym logowaniu.",
+      "label": "Hasło tymczasowe administratora",
+      "title": "Organizacja {name} założona"
+    },
+    "delete": {
+      "cancel": "Anuluj",
+      "confirm": "Usuń organizację",
+      "message": "Organizacja zostanie usunięta (miękko — dane zostają w bazie, ale nikt nie będzie miał do niej dostępu). Użytkownicy nie zalogują się, a klucze API przestaną działać.",
+      "title": "Usunięcie organizacji {name}",
+      "typeSlug": "Aby potwierdzić, wpisz slug organizacji: <code>{slug}</code>"
+    },
+    "demo": "demo",
+    "empty": "Brak organizacji",
+    "form": {
+      "adminEmail": "Adres e-mail",
+      "adminFullName": "Imię i nazwisko",
+      "adminHint": "Administrator dostanie rolę Partner i hasło tymczasowe do zmiany przy pierwszym logowaniu. Organizacja otrzyma kopię polityk z szablonu.",
+      "adminSection": "Pierwszy administrator",
+      "cancel": "Anuluj",
+      "locale": "Język domyślny",
+      "localePlatform": "— domyślny platformy —",
+      "name": "Nazwa",
+      "namePlaceholder": "np. Kancelaria Nowak i Wspólnicy",
+      "save": "Załóż organizację",
+      "saving": "Zakładanie...",
+      "slug": "Slug (adres)",
+      "slugErrors": {
+        "chars": "Dozwolone są tylko małe litery (a–z), cyfry i myślniki.",
+        "edges": "Slug nie może zaczynać się ani kończyć myślnikiem.",
+        "length": "Slug może mieć najwyżej 63 znaki.",
+        "reserved": "Ten slug jest zarezerwowany dla platformy.",
+        "taken": "Ten slug jest już zajęty."
+      },
+      "slugHint": "Małe litery, cyfry i myślniki — subdomena organizacji w adresie platformy.",
+      "slugPreview": "Subdomena organizacji: {slug}",
+      "title": "Nowa organizacja"
+    },
+    "loading": "Ładowanie...",
+    "noAccess": "Panel organizacji jest dostępny tylko dla administratora platformy.",
+    "own": "(Twoja organizacja)",
+    "searchPlaceholder": "Szukaj po nazwie lub slugu...",
+    "showDeleted": "Pokaż usunięte ({count})",
+    "state": {
+      "active": "Aktywna",
+      "deleted": "Usunięta",
+      "suspended": "Zawieszona"
+    },
+    "subtitle": "Organizacje (klienci) platformy GovAI — zakładanie, zawieszanie i wejście w kontekst organizacji.",
+    "suspendConfirm": {
+      "confirm": "Zawieś",
+      "message": "Zawiesić organizację {name}? Jej użytkownicy nie zalogują się, a bramka odrzuci wywołania jej agentów do czasu ponownej aktywacji.",
+      "title": "Zawieszenie organizacji"
+    },
+    "title": "Organizacje",
+    "users": {
+      "columns": {
+        "lastLogin": "Ostatnie logowanie",
+        "role": "Rola",
+        "status": "Status",
+        "user": "Użytkownik"
+      },
+      "empty": "Brak użytkowników",
+      "loading": "Ładowanie...",
+      "never": "nigdy",
+      "resetConfirm": {
+        "confirm": "Resetuj hasło",
+        "message": "Nadać nowe hasło tymczasowe użytkownikowi {name} ({email})? Jego bieżące sesje zostaną zakończone.",
+        "title": "Reset hasła"
+      },
+      "resetPassword": "Resetuj hasło",
+      "secret": {
+        "description": "Hasło tymczasowe dla {email}. Użytkownik zmieni je przy pierwszym logowaniu.",
+        "label": "Hasło tymczasowe",
+        "title": "Nowe hasło tymczasowe"
+      },
+      "title": "Użytkownicy organizacji {name}"
+    }
+  }
+}

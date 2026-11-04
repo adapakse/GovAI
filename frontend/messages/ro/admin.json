@@ -1,0 +1,98 @@
+{
+  "apiKeys": {
+    "add": "+ Cheie API nouă",
+    "anyAgent": "orice agent",
+    "columns": {
+      "agent": "Agent",
+      "expires": "Valabilă până la",
+      "lastUsed": "Ultima utilizare",
+      "name": "Nume",
+      "prefix": "Prefix",
+      "status": "Stare"
+    },
+    "createdAt": "creată {date}",
+    "empty": "Nicio cheie API",
+    "form": {
+      "agent": "Agent",
+      "agentHint": "Cheia va funcționa doar pentru agentul selectat.",
+      "anyAgent": "— neatribuită (orice agent al organizației) —",
+      "anyAgentHint": "O cheie neatribuită funcționează pentru orice agent al organizației indicat în antetul X-Agent-ID. Recomandăm atribuirea către un agent.",
+      "cancel": "Anulează",
+      "expiry": "Valabilitate",
+      "expiryDays": "{days} zile",
+      "name": "Nume",
+      "namePlaceholder": "ex. Asistent contracte — producție",
+      "noExpiry": "fără expirare",
+      "save": "Creează cheia",
+      "saving": "Se creează...",
+      "title": "Cheie API nouă"
+    },
+    "loading": "Se încarcă...",
+    "neverUsed": "neutilizată",
+    "noAccess": "Gestionarea cheilor API este disponibilă pentru rolurile Partner și Administrator IT.",
+    "noExpiry": "fără expirare",
+    "revoke": "Revocă",
+    "revokeConfirm": {
+      "confirm": "Revocă cheia",
+      "message": "Revocați cheia „{name}”? Agenții care folosesc această cheie își vor pierde imediat accesul la gateway.",
+      "title": "Revocarea cheii API"
+    },
+    "secret": {
+      "description": "Cheia „{name}” — configurați-o în agent ca antet X-API-Key.",
+      "label": "Cheie API",
+      "title": "Cheie API creată"
+    },
+    "showRevoked": "Afișează revocate ({count})",
+    "state": {
+      "active": "Activă",
+      "expired": "Expirată",
+      "revoked": "Revocată"
+    },
+    "subtitle": "Chei cu care agenții se autentifică în gateway-ul GovAI (antetul X-API-Key).",
+    "title": "Chei API"
+  },
+  "users": {
+    "add": "+ Adaugă utilizator",
+    "columns": {
+      "lastLogin": "Ultima autentificare",
+      "role": "Rol",
+      "status": "Stare",
+      "user": "Utilizator"
+    },
+    "empty": "Niciun utilizator",
+    "form": {
+      "cancel": "Anulează",
+      "email": "Adresă de e-mail",
+      "fullName": "Nume și prenume",
+      "passwordHint": "Parola temporară va fi generată automat — utilizatorul o va schimba la prima autentificare.",
+      "role": "Rol",
+      "save": "Creează contul",
+      "saving": "Se creează...",
+      "title": "Utilizator nou"
+    },
+    "loading": "Se încarcă...",
+    "never": "niciodată",
+    "noAccess": "Gestionarea utilizatorilor este disponibilă pentru rolurile Partner și Administrator IT.",
+    "resetConfirm": {
+      "confirm": "Resetează parola",
+      "message": "Emiteți o parolă temporară nouă pentru {name} ({email})? Sesiunile sale curente vor fi încheiate, iar la următoarea autentificare va trebui să își seteze propria parolă.",
+      "title": "Resetarea parolei"
+    },
+    "resetPassword": "Resetează parola",
+    "searchPlaceholder": "Căutați după nume, e-mail, rol...",
+    "secret": {
+      "createdTitle": "Cont creat",
+      "description": "Parolă temporară pentru {email}. Utilizatorul o va schimba la prima autentificare.",
+      "label": "Parolă temporară",
+      "resetTitle": "Parolă temporară nouă"
+    },
+    "status": {
+      "active": "Activ",
+      "pending": "În așteptare",
+      "suspended": "Blocat"
+    },
+    "subtitle": "Conturi în organizația {tenant}",
+    "title": "Utilizatori",
+    "you": "(dvs.)"
+  }
+}

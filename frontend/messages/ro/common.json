@@ -84,5 +84,13 @@
       "unacceptable": "INACCEPTABIL"
     },
     "unacceptable": "Inacceptabil"
+  },
+  "secretModal": {
+    "cancel": "Anulează",
+    "close": "Închide",
+    "copied": "Copiat",
+    "copy": "Copiază",
+    "done": "Am salvat — închide",
+    "warning": "Această valoare este afișată o singură dată. Copiați-o acum și transmiteți-o pe un canal sigur — după închiderea ferestrei nu mai poate fi recuperată."
   }
 }

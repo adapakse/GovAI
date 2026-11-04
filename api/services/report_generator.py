@@ -20,6 +20,7 @@ from reportlab.platypus import (
 from config import settings
 from i18n import language_name_en, t, t_dict
 from services import settings_service
+from services.llm_client import anthropic_client
 from services.compliance import assess_compliance
 from repositories import compliance_repository as compliance_repo
 from database import get_pool
@@ -181,7 +182,7 @@ async def generate_narrative(report_data: dict) -> str:
     }
 
     try:
-        client = anthropic.AsyncAnthropic(api_key=settings.anthropic_api_key)
+        client = await anthropic_client()
         msg = await client.messages.create(
             model=settings_service.get_str("models.classifier_model", settings.classifier_model),
             max_tokens=settings_service.get_int("compliance.report_max_tokens", 450),

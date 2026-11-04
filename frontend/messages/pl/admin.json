@@ -1,0 +1,98 @@
+{
+  "apiKeys": {
+    "add": "+ Nowy klucz API",
+    "anyAgent": "dowolny agent",
+    "columns": {
+      "agent": "Agent",
+      "expires": "Ważny do",
+      "lastUsed": "Ostatnie użycie",
+      "name": "Nazwa",
+      "prefix": "Prefiks",
+      "status": "Status"
+    },
+    "createdAt": "utworzony {date}",
+    "empty": "Brak kluczy API",
+    "form": {
+      "agent": "Agent",
+      "agentHint": "Klucz będzie działał wyłącznie dla wybranego agenta.",
+      "anyAgent": "— bez przypisania (dowolny agent organizacji) —",
+      "anyAgentHint": "Klucz nieprzypisany działa dla każdego agenta organizacji wskazanego nagłówkiem X-Agent-ID. Zalecamy przypisanie do agenta.",
+      "cancel": "Anuluj",
+      "expiry": "Ważność",
+      "expiryDays": "{days} dni",
+      "name": "Nazwa",
+      "namePlaceholder": "np. Asystent umów — produkcja",
+      "noExpiry": "bezterminowo",
+      "save": "Utwórz klucz",
+      "saving": "Tworzenie...",
+      "title": "Nowy klucz API"
+    },
+    "loading": "Ładowanie...",
+    "neverUsed": "nieużywany",
+    "noAccess": "Zarządzanie kluczami API jest dostępne dla ról Partner i Administrator IT.",
+    "noExpiry": "bezterminowo",
+    "revoke": "Odwołaj",
+    "revokeConfirm": {
+      "confirm": "Odwołaj klucz",
+      "message": "Odwołać klucz „{name}”? Agenci korzystający z tego klucza natychmiast stracą dostęp do bramki.",
+      "title": "Odwołanie klucza API"
+    },
+    "secret": {
+      "description": "Klucz „{name}” — skonfiguruj go w agencie jako nagłówek X-API-Key.",
+      "label": "Klucz API",
+      "title": "Klucz API utworzony"
+    },
+    "showRevoked": "Pokaż odwołane ({count})",
+    "state": {
+      "active": "Aktywny",
+      "expired": "Wygasł",
+      "revoked": "Odwołany"
+    },
+    "subtitle": "Klucze, którymi agenci uwierzytelniają się w bramce GovAI (nagłówek X-API-Key).",
+    "title": "Klucze API"
+  },
+  "users": {
+    "add": "+ Dodaj użytkownika",
+    "columns": {
+      "lastLogin": "Ostatnie logowanie",
+      "role": "Rola",
+      "status": "Status",
+      "user": "Użytkownik"
+    },
+    "empty": "Brak użytkowników",
+    "form": {
+      "cancel": "Anuluj",
+      "email": "Adres e-mail",
+      "fullName": "Imię i nazwisko",
+      "passwordHint": "Hasło tymczasowe zostanie wygenerowane automatycznie — użytkownik zmieni je przy pierwszym logowaniu.",
+      "role": "Rola",
+      "save": "Utwórz konto",
+      "saving": "Tworzenie...",
+      "title": "Nowy użytkownik"
+    },
+    "loading": "Ładowanie...",
+    "never": "nigdy",
+    "noAccess": "Zarządzanie użytkownikami jest dostępne dla ról Partner i Administrator IT.",
+    "resetConfirm": {
+      "confirm": "Resetuj hasło",
+      "message": "Nadać nowe hasło tymczasowe użytkownikowi {name} ({email})? Jego bieżące sesje zostaną zakończone, a przy następnym logowaniu będzie musiał ustawić własne hasło.",
+      "title": "Reset hasła"
+    },
+    "resetPassword": "Resetuj hasło",
+    "searchPlaceholder": "Szukaj po nazwisku, e-mailu, roli...",
+    "secret": {
+      "createdTitle": "Konto utworzone",
+      "description": "Hasło tymczasowe dla {email}. Użytkownik zmieni je przy pierwszym logowaniu.",
+      "label": "Hasło tymczasowe",
+      "resetTitle": "Nowe hasło tymczasowe"
+    },
+    "status": {
+      "active": "Aktywny",
+      "pending": "Oczekujący",
+      "suspended": "Zablokowany"
+    },
+    "subtitle": "Konta w organizacji {tenant}",
+    "title": "Użytkownicy",
+    "you": "(Ty)"
+  }
+}

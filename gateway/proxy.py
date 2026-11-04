@@ -400,7 +400,7 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
     if selected_provider.base_url:
         extra_kwargs["api_base"] = selected_provider.base_url
 
-    api_key = selected_provider.api_key_from_env()
+    api_key = selected_provider.resolve_api_key()
     if api_key:
         extra_kwargs["api_key"] = api_key
     # Domyślny klucz platformy tylko dla oficjalnego endpointu dostawcy — nigdy

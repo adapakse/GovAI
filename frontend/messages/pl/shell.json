@@ -1,4 +1,8 @@
 {
+  "acting": {
+    "back": "Wróć",
+    "message": "Działasz jako administrator platformy w organizacji <b>{tenant}</b>"
+  },
   "logout": "Wyloguj",
   "meta": {
     "description": "Zgodność z EU AI Act | Bramka Bezpieczeństwa | Nadzór Człowieka",
@@ -7,14 +11,18 @@
   "nav": {
     "admin": "Admin",
     "agents": "Agenci",
+    "apiKeys": "Klucze API",
     "audit": "Dziennik",
     "dashboard": "Pulpit",
     "demo": "Symulator",
     "oversight": "Nadzór",
+    "platformAudit": "Dziennik platformy",
     "policies": "Polityki",
     "providers": "Providerzy",
     "reports": "Raporty",
-    "settings": "Parametry"
+    "settings": "Parametry",
+    "tenants": "Organizacje",
+    "users": "Użytkownicy"
   },
   "roles": {
     "associate": "Associate",

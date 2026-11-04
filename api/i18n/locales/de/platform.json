@@ -1,0 +1,14 @@
+{
+  "errors": {
+    "cannot_delete_demo": "Die Demo-Organisation kann nicht gelöscht werden.",
+    "cannot_delete_own": "Die eigene Organisation kann nicht gelöscht werden.",
+    "cannot_suspend_own": "Die eigene Organisation kann nicht gesperrt werden.",
+    "field_required": "Dieses Feld ist erforderlich.",
+    "invalid_email": "Ungültige E-Mail-Adresse.",
+    "invalid_slug": "Ungültige Organisationskennung: nur Kleinbuchstaben, Ziffern und Bindestriche (kein Bindestrich am Anfang oder Ende), max. 63 Zeichen; technische Namen (z. B. app, api, www) sind reserviert.",
+    "slug_taken": "Die Organisationskennung „{slug}“ ist bereits vergeben.",
+    "tenant_deleted": "Die Organisation wurde gelöscht.",
+    "tenant_not_found": "Organisation nicht gefunden.",
+    "tenant_suspended": "Die Organisation ist gesperrt — aktivieren Sie sie zuerst."
+  }
+}

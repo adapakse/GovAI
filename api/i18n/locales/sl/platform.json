@@ -1,0 +1,14 @@
+{
+  "errors": {
+    "cannot_delete_demo": "Demonstracijske organizacije ni mogoče izbrisati.",
+    "cannot_delete_own": "Lastne organizacije ni mogoče izbrisati.",
+    "cannot_suspend_own": "Lastne organizacije ni mogoče začasno onemogočiti.",
+    "field_required": "To polje je obvezno.",
+    "invalid_email": "Neveljaven e-poštni naslov.",
+    "invalid_slug": "Neveljaven identifikator organizacije: samo male črke, števke in vezaji (brez vezaja na začetku ali koncu), največ 63 znakov; tehnična imena (npr. app, api, www) so rezervirana.",
+    "slug_taken": "Identifikator organizacije »{slug}« je že zaseden.",
+    "tenant_deleted": "Organizacija je bila izbrisana.",
+    "tenant_not_found": "Organizacije ni mogoče najti.",
+    "tenant_suspended": "Organizacija je začasno onemogočena — najprej jo aktivirajte."
+  }
+}

@@ -1,0 +1,124 @@
+{
+  "audit": {
+    "actions": {
+      "tenant_create": "Organizzazione creata",
+      "tenant_delete": "Organizzazione eliminata",
+      "tenant_enter": "Accesso all’organizzazione",
+      "tenant_update": "Organizzazione modificata",
+      "user_reset_password": "Password utente reimpostata"
+    },
+    "columns": {
+      "action": "Azione",
+      "actor": "Chi",
+      "details": "Dettagli",
+      "tenant": "Organizzazione",
+      "time": "Ora"
+    },
+    "empty": "Nessuna voce",
+    "limit": "Voci:",
+    "loading": "Caricamento...",
+    "noAccess": "Il registro della piattaforma è disponibile solo per l’amministratore della piattaforma.",
+    "searchPlaceholder": "Cerca per persona, azione, organizzazione...",
+    "subtitle": "Operazioni degli amministratori della piattaforma: creazione e modifica di organizzazioni, reimpostazioni di password, accessi al contesto delle organizzazioni.",
+    "title": "Registro piattaforma"
+  },
+  "tenants": {
+    "actingExpired": "La sessione nel contesto dell’organizzazione è scaduta (60 minuti) — sei tornato al pannello della piattaforma. Per continuare, accedi di nuovo all’organizzazione.",
+    "actions": {
+      "activate": "Attiva",
+      "delete": "Elimina",
+      "deleteDemo": "L’organizzazione dimostrativa non può essere eliminata",
+      "deleteOwn": "Non puoi eliminare la tua organizzazione",
+      "enter": "Accedi",
+      "enterSuspended": "L’organizzazione non è attiva",
+      "suspend": "Sospendi",
+      "users": "Utenti"
+    },
+    "add": "+ Nuova organizzazione",
+    "columns": {
+      "agents": "Agenti",
+      "created": "Creata",
+      "status": "Stato",
+      "tenant": "Organizzazione",
+      "users": "Utenti"
+    },
+    "created": {
+      "description": "Primo amministratore: {email}. Sottodominio dell’organizzazione: {slug}. Trasmetti la password temporanea all’amministratore — la cambierà al primo accesso.",
+      "label": "Password temporanea dell’amministratore",
+      "title": "Organizzazione {name} creata"
+    },
+    "delete": {
+      "cancel": "Annulla",
+      "confirm": "Elimina organizzazione",
+      "message": "L’organizzazione verrà eliminata (in modo logico — i dati restano nel database, ma nessuno potrà accedervi). Gli utenti non potranno accedere e le chiavi API smetteranno di funzionare.",
+      "title": "Eliminazione dell’organizzazione {name}",
+      "typeSlug": "Per confermare, digita lo slug dell’organizzazione: <code>{slug}</code>"
+    },
+    "demo": "demo",
+    "empty": "Nessuna organizzazione",
+    "form": {
+      "adminEmail": "Indirizzo e-mail",
+      "adminFullName": "Nome e cognome",
+      "adminHint": "L’amministratore riceve il ruolo Partner e una password temporanea da cambiare al primo accesso. L’organizzazione riceve una copia delle policy del modello.",
+      "adminSection": "Primo amministratore",
+      "cancel": "Annulla",
+      "locale": "Lingua predefinita",
+      "localePlatform": "— predefinita della piattaforma —",
+      "name": "Nome",
+      "namePlaceholder": "es. Studio Legale Nowak & Associati",
+      "save": "Crea organizzazione",
+      "saving": "Creazione...",
+      "slug": "Slug (indirizzo)",
+      "slugErrors": {
+        "chars": "Sono ammessi solo lettere minuscole (a–z), cifre e trattini.",
+        "edges": "Lo slug non può iniziare né terminare con un trattino.",
+        "length": "Lo slug può avere al massimo 63 caratteri.",
+        "reserved": "Questo slug è riservato alla piattaforma.",
+        "taken": "Questo slug è già in uso."
+      },
+      "slugHint": "Lettere minuscole, cifre e trattini — il sottodominio dell’organizzazione nell’indirizzo della piattaforma.",
+      "slugPreview": "Sottodominio dell’organizzazione: {slug}",
+      "title": "Nuova organizzazione"
+    },
+    "loading": "Caricamento...",
+    "noAccess": "Il pannello delle organizzazioni è disponibile solo per l’amministratore della piattaforma.",
+    "own": "(la tua organizzazione)",
+    "searchPlaceholder": "Cerca per nome o slug...",
+    "showDeleted": "Mostra eliminate ({count})",
+    "state": {
+      "active": "Attiva",
+      "deleted": "Eliminata",
+      "suspended": "Sospesa"
+    },
+    "subtitle": "Organizzazioni (clienti) della piattaforma GovAI — creazione, sospensione e accesso al contesto di un’organizzazione.",
+    "suspendConfirm": {
+      "confirm": "Sospendi",
+      "message": "Sospendere l’organizzazione {name}? I suoi utenti non potranno accedere e il gateway rifiuterà le chiamate dei suoi agenti fino alla riattivazione.",
+      "title": "Sospensione dell’organizzazione"
+    },
+    "title": "Organizzazioni",
+    "users": {
+      "columns": {
+        "lastLogin": "Ultimo accesso",
+        "role": "Ruolo",
+        "status": "Stato",
+        "user": "Utente"
+      },
+      "empty": "Nessun utente",
+      "loading": "Caricamento...",
+      "never": "mai",
+      "resetConfirm": {
+        "confirm": "Reimposta password",
+        "message": "Assegnare una nuova password temporanea a {name} ({email})? Le sue sessioni attuali verranno chiuse.",
+        "title": "Reimpostazione password"
+      },
+      "resetPassword": "Reimposta password",
+      "secret": {
+        "description": "Password temporanea per {email}. L’utente la cambierà al primo accesso.",
+        "label": "Password temporanea",
+        "title": "Nuova password temporanea"
+      },
+      "title": "Utenti dell’organizzazione {name}"
+    }
+  }
+}

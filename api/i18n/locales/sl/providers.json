@@ -2,6 +2,8 @@
   "errors": {
     "invalid_sensitivity": "Neveljaven max_data_sensitivity. Dovoljeno: {allowed}",
     "invalid_type": "Neznan provider_type. Dovoljeno: {allowed}",
+    "key_and_key_env": "Lastnega ključa (api_key) ni mogoče kombinirati s ključem platforme (api_key_env).",
+    "key_encryption_unavailable": "Shranjevanje lastnih ključev ni na voljo — šifriranje ni nastavljeno (PROVIDER_KEYS_SECRET).",
     "key_env_not_allowed": "Spremenljivka ključa ni dovoljena. Dovoljene: {allowed}.",
     "key_env_with_base_url": "Ključa platforme (api_key_env) ni mogoče kombinirati z lastnim base_url.",
     "not_found": "Dobavitelja ni bilo mogoče najti",

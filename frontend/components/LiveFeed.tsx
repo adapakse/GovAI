@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { WS } from '@/lib/api';
+import { wsUrl } from '@/lib/api';
 import { ensureFreshToken } from '@/lib/auth';
 import { formatDistanceToNow } from 'date-fns';
 import { useDateFnsLocale } from '@/lib/format';
@@ -46,7 +46,7 @@ export default function LiveFeed() {
       const token = await ensureFreshToken();
       if (cancelled) return;
       if (!token) { retry = setTimeout(connect, 3000); return; }
-      ws = new WebSocket(`${WS}/ws/live-feed?token=${encodeURIComponent(token)}`);
+      ws = new WebSocket(wsUrl(`/ws/live-feed?token=${encodeURIComponent(token)}`));
       ws.onopen  = () => { if (!cancelled) setConnected(true); };
       ws.onclose = () => { if (!cancelled) { setConnected(false); retry = setTimeout(connect, 3000); } };
       ws.onerror = () => ws.close();

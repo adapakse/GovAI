@@ -12,6 +12,7 @@ import anthropic
 from config import settings
 from i18n import language_name_en, t
 from services import settings_service
+from services.llm_client import anthropic_client
 
 logger = logging.getLogger(__name__)
 
@@ -67,7 +68,7 @@ async def classify_risk(description: str) -> ClassificationResult:
     Klasyfikuje agenta AI według EU AI Act na podstawie opisu.
     Używa claude-sonnet-4-6 jako eksperta prawnego.
     """
-    client = anthropic.AsyncAnthropic(api_key=settings.anthropic_api_key)
+    client = await anthropic_client()
 
     try:
         response = await client.messages.create(

@@ -1,0 +1,124 @@
+{
+  "audit": {
+    "actions": {
+      "tenant_create": "Creare organizație",
+      "tenant_delete": "Ștergere organizație",
+      "tenant_enter": "Intrare în organizație",
+      "tenant_update": "Modificare organizație",
+      "user_reset_password": "Resetare parolă utilizator"
+    },
+    "columns": {
+      "action": "Acțiune",
+      "actor": "Cine",
+      "details": "Detalii",
+      "tenant": "Organizație",
+      "time": "Ora"
+    },
+    "empty": "Nicio înregistrare",
+    "limit": "Înregistrări:",
+    "loading": "Se încarcă...",
+    "noAccess": "Jurnalul platformei este disponibil doar administratorului platformei.",
+    "searchPlaceholder": "Căutați după persoană, acțiune, organizație...",
+    "subtitle": "Operațiunile administratorilor platformei: crearea și modificarea organizațiilor, resetări de parole, intrări în contextul organizațiilor.",
+    "title": "Jurnalul platformei"
+  },
+  "tenants": {
+    "actingExpired": "Sesiunea în contextul organizației a expirat (60 de minute) — ați revenit în panoul platformei. Pentru a continua, intrați din nou în organizație.",
+    "actions": {
+      "activate": "Activează",
+      "delete": "Șterge",
+      "deleteDemo": "Organizația demonstrativă nu poate fi ștearsă",
+      "deleteOwn": "Nu vă puteți șterge propria organizație",
+      "enter": "Intră",
+      "enterSuspended": "Organizația nu este activă",
+      "suspend": "Suspendă",
+      "users": "Utilizatori"
+    },
+    "add": "+ Organizație nouă",
+    "columns": {
+      "agents": "Agenți",
+      "created": "Creată",
+      "status": "Stare",
+      "tenant": "Organizație",
+      "users": "Utilizatori"
+    },
+    "created": {
+      "description": "Primul administrator: {email}. Subdomeniul organizației: {slug}. Transmiteți parola temporară administratorului — o va schimba la prima autentificare.",
+      "label": "Parola temporară a administratorului",
+      "title": "Organizația {name} a fost creată"
+    },
+    "delete": {
+      "cancel": "Anulează",
+      "confirm": "Șterge organizația",
+      "message": "Organizația va fi ștearsă (logic — datele rămân în baza de date, dar nimeni nu va mai avea acces la ele). Utilizatorii nu se vor mai putea autentifica, iar cheile API nu vor mai funcționa.",
+      "title": "Ștergerea organizației {name}",
+      "typeSlug": "Pentru confirmare, introduceți slug-ul organizației: <code>{slug}</code>"
+    },
+    "demo": "demo",
+    "empty": "Nicio organizație",
+    "form": {
+      "adminEmail": "Adresă de e-mail",
+      "adminFullName": "Nume și prenume",
+      "adminHint": "Administratorul primește rolul Partner și o parolă temporară de schimbat la prima autentificare. Organizația primește o copie a politicilor din șablon.",
+      "adminSection": "Primul administrator",
+      "cancel": "Anulează",
+      "locale": "Limba implicită",
+      "localePlatform": "— implicită a platformei —",
+      "name": "Nume",
+      "namePlaceholder": "ex. Cabinetul de avocatură Nowak și Asociații",
+      "save": "Creează organizația",
+      "saving": "Se creează...",
+      "slug": "Slug (adresă)",
+      "slugErrors": {
+        "chars": "Sunt permise doar litere mici (a–z), cifre și cratime.",
+        "edges": "Slug-ul nu poate începe sau se termina cu cratimă.",
+        "length": "Slug-ul poate avea cel mult 63 de caractere.",
+        "reserved": "Acest slug este rezervat platformei.",
+        "taken": "Acest slug este deja folosit."
+      },
+      "slugHint": "Litere mici, cifre și cratime — subdomeniul organizației în adresa platformei.",
+      "slugPreview": "Subdomeniul organizației: {slug}",
+      "title": "Organizație nouă"
+    },
+    "loading": "Se încarcă...",
+    "noAccess": "Panoul organizațiilor este disponibil doar administratorului platformei.",
+    "own": "(organizația dvs.)",
+    "searchPlaceholder": "Căutați după nume sau slug...",
+    "showDeleted": "Afișează șterse ({count})",
+    "state": {
+      "active": "Activă",
+      "deleted": "Ștearsă",
+      "suspended": "Suspendată"
+    },
+    "subtitle": "Organizațiile (clienții) platformei GovAI — creare, suspendare și intrare în contextul unei organizații.",
+    "suspendConfirm": {
+      "confirm": "Suspendă",
+      "message": "Suspendați organizația {name}? Utilizatorii ei nu se vor putea autentifica, iar gateway-ul va respinge apelurile agenților ei până la reactivare.",
+      "title": "Suspendarea organizației"
+    },
+    "title": "Organizații",
+    "users": {
+      "columns": {
+        "lastLogin": "Ultima autentificare",
+        "role": "Rol",
+        "status": "Stare",
+        "user": "Utilizator"
+      },
+      "empty": "Niciun utilizator",
+      "loading": "Se încarcă...",
+      "never": "niciodată",
+      "resetConfirm": {
+        "confirm": "Resetează parola",
+        "message": "Emiteți o parolă temporară nouă pentru {name} ({email})? Sesiunile sale curente vor fi încheiate.",
+        "title": "Resetarea parolei"
+      },
+      "resetPassword": "Resetează parola",
+      "secret": {
+        "description": "Parolă temporară pentru {email}. Utilizatorul o va schimba la prima autentificare.",
+        "label": "Parolă temporară",
+        "title": "Parolă temporară nouă"
+      },
+      "title": "Utilizatorii organizației {name}"
+    }
+  }
+}

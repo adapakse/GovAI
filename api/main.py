@@ -1,6 +1,8 @@
 import asyncio
 import logging
+import re
 from contextlib import asynccontextmanager
+from typing import Optional
 
 import redis.asyncio as aioredis
 from fastapi import FastAPI
@@ -10,8 +12,8 @@ from config import settings
 from database import close_pool, init_pool
 from i18n import DEFAULT_LOCALE, match_locale, set_locale
 from routers import (
-    agents, audit, auth, compliance, dashboard, demo, oversight,
-    policies, providers, reports, settings as settings_router,
+    agents, audit, auth, compliance, dashboard, demo, oversight, platform,
+    policies, providers, public, reports, settings as settings_router,
 )
 from routers.dashboard import set_redis
 from services import settings_service
@@ -83,11 +85,23 @@ class LocaleMiddleware:
         await self.app(scope, receive, send)
 
 
+def _tenant_origin_regex() -> Optional[str]:
+    """Originy subdomen organizacji: https://<slug>.<domena> dla domen z
+    TENANT_BASE_DOMAINS (obok listy ALLOWED_ORIGINS). Bez domen — brak."""
+    domains = settings.tenant_base_domains
+    if not domains:
+        return None
+    alternatives = "|".join(re.escape(d) for d in domains)
+    return rf"https://[a-z0-9]([a-z0-9-]*[a-z0-9])?\.({alternatives})(:\d+)?"
+
+
 app.add_middleware(LocaleMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.allowed_origins,
+    allow_origin_regex=_tenant_origin_regex(),
     allow_credentials=True,
+    expose_headers=["X-GovAI-Error"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -103,6 +117,8 @@ app.include_router(reports.router)
 app.include_router(providers.router)
 app.include_router(demo.router)
 app.include_router(settings_router.router)
+app.include_router(platform.router)
+app.include_router(public.router)
 
 
 @app.get("/")

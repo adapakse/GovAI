@@ -1,7 +1,12 @@
 {
   "card": {
     "activate": "Aktiviraj",
+    "apiKey": "Lastni ključ API",
     "apiKeyEnv": "Spremenljivka ključa API",
+    "apiKeyKeepPlaceholder": "•••••••• (brez sprememb)",
+    "apiKeyRemove": "Odstrani ključ",
+    "apiKeySet": "ključ nastavljen",
+    "apiKeySetInfo": "Lastni ključ API je nastavljen",
     "baseUrl": "Base URL",
     "cancel": "Prekliči",
     "deactivate": "Deaktiviraj",
@@ -28,8 +33,10 @@
   "empty": "Ni opredeljenih dobaviteljev. Prvega dodajte zgoraj.",
   "form": {
     "addButton": "+ Dodaj dobavitelja",
+    "apiKey": "Lastni ključ API (neobvezno)",
     "apiKeyEnv": "Okoljska spremenljivka s ključem API",
     "apiKeyEnvHint": "Ime spremenljivke v `.env` vsebnika Gateway. Ključ nikoli ne zapusti strežnika.",
+    "apiKeyHint": "Ključ organizacije — shranjen šifriran in nikoli prikazan. Prazno polje = brez sprememb. Ne kombinirajte s poljem okoljske spremenljivke.",
     "baseUrl": "Base URL *",
     "cancel": "Prekliči",
     "maxSensitivity": "Najv. občutljivost podatkov *",

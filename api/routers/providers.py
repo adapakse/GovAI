@@ -19,6 +19,7 @@ from database import platform_db
 from dependencies.auth import CurrentUser, get_current_user, require_role
 from i18n import t
 from repositories import providers_repository as providers_repo
+from services import secret_box
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/providers", tags=["providers"])
@@ -46,12 +47,27 @@ def _validate_key_config(api_key_env: Optional[str], base_url: Optional[str]) ->
         raise HTTPException(400, t("providers.errors.key_env_with_base_url"))
 
 
+def _validate_own_key(api_key_env: Optional[str], has_own_key: bool) -> None:
+    """Własny klucz organizacji (api_key) i klucz platformy (api_key_env) wykluczają się.
+    Własny klucz może iść z własnym base_url — należy do organizacji."""
+    if api_key_env and has_own_key:
+        raise HTTPException(400, t("providers.errors.key_and_key_env"))
+
+
+def _encrypt_key(api_key: str) -> str:
+    if not secret_box.is_configured():
+        raise HTTPException(503, t("providers.errors.key_encryption_unavailable"))
+    return secret_box.encrypt(api_key)
+
+
 class ProviderCreate(BaseModel):
     name: str
     provider_type: str
     model_ids: list[str] = []
     base_url: Optional[str] = None
     api_key_env: Optional[str] = None
+    # Własny klucz organizacji — tylko zapis (szyfrowany, nigdy nie wraca w odpowiedzi)
+    api_key: Optional[str] = None
     max_data_sensitivity: str = "internal"
     priority: int = 100
     notes: Optional[str] = None
@@ -64,6 +80,8 @@ class ProviderUpdate(BaseModel):
     model_ids: Optional[list[str]] = None
     base_url: Optional[str] = None
     api_key_env: Optional[str] = None
+    # None = bez zmian, "" = usuń własny klucz, wartość = nowy klucz
+    api_key: Optional[str] = None
     max_data_sensitivity: Optional[str] = None
     priority: Optional[int] = None
     active: Optional[bool] = None
@@ -139,8 +157,10 @@ async def create_provider(
     if body.max_data_sensitivity not in VALID_SENSITIVITY:
         raise HTTPException(400, t("providers.errors.invalid_sensitivity", allowed=sorted(VALID_SENSITIVITY)))
     _validate_key_config(body.api_key_env, body.base_url)
+    _validate_own_key(body.api_key_env, bool(body.api_key))
     if body.is_platform:
         _deny_platform_write(user)
+    encrypted = _encrypt_key(body.api_key) if body.api_key else None
 
     # tenant_id z DEFAULT current_tenant_id(): w kontekście organizacji — jej
     # własny wiersz; w trybie platformy — NULL (provider platformy).
@@ -155,6 +175,7 @@ async def create_provider(
             priority=body.priority,
             notes=body.notes,
             created_by=user.id,
+            api_key_encrypted=encrypted,
         )
     logger.info("Provider '%s' utworzony przez %s (platforma: %s)", body.name, user.email, body.is_platform)
     return _row_to_dict(row)
@@ -171,10 +192,21 @@ async def update_provider(
     if body.max_data_sensitivity and body.max_data_sensitivity not in VALID_SENSITIVITY:
         raise HTTPException(400, t("providers.errors.invalid_sensitivity", allowed=sorted(VALID_SENSITIVITY)))
     # PATCH nie czyści pól (None = bez zmian) — walidujemy stan po zmianie.
+    effective_key_env = body.api_key_env if body.api_key_env is not None else existing["api_key_env"]
     _validate_key_config(
-        body.api_key_env if body.api_key_env is not None else existing["api_key_env"],
+        effective_key_env,
         body.base_url if body.base_url is not None else existing["base_url"],
     )
+    _validate_own_key(
+        effective_key_env,
+        bool(body.api_key) if body.api_key is not None else bool(existing["has_api_key"]),
+    )
+    if body.api_key is None:
+        new_key = None
+    elif body.api_key == "":
+        new_key = providers_repo.CLEAR
+    else:
+        new_key = _encrypt_key(body.api_key)
 
     async with _write_scope(existing["is_platform"]):
         row = await providers_repo.update_provider(
@@ -188,6 +220,7 @@ async def update_provider(
             notes=body.notes,
             model_ids=body.model_ids,
             max_data_sensitivity=body.max_data_sensitivity,
+            api_key_encrypted=new_key,
         )
     if row is None:
         return _row_to_dict(existing)

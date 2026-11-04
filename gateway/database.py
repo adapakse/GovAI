@@ -22,6 +22,7 @@ from uuid import UUID
 
 import asyncpg
 
+import secret_box
 from config import settings
 from models import AgentRecord, ProviderRecord
 
@@ -94,8 +95,30 @@ def tenant_conn(tenant_id: str):
 
 def platform_conn():
     """Połączenie + transakcja w trybie platformy (RLS: app.platform) — ponad
-    organizacjami. Tylko: wyszukanie klucza API, ładowanie cache, pętla TTL."""
+    organizacjami. Tylko: wyszukanie klucza API, weryfikacja konta z JWT,
+    ładowanie cache, pętla TTL."""
     return _context("app.platform", "on")
+
+
+async def fetch_user_auth(user_id: str) -> Optional[dict]:
+    """Stan konta użytkownika z tokenu JWT (None = nie istnieje). Tryb platformy —
+    super-admin działający w kontekście innej organizacji do niej nie należy."""
+    if not is_uuid(user_id):
+        return None
+    async with platform_conn() as conn:
+        row = await conn.fetchrow(
+            """SELECT tenant_id, status::text AS status, is_super_admin, must_change_password
+               FROM users WHERE id = $1""",
+            user_id,
+        )
+    if row is None:
+        return None
+    return {
+        "tenant_id": str(row["tenant_id"]),
+        "status": row["status"],
+        "is_super_admin": bool(row["is_super_admin"]),
+        "must_change_password": bool(row["must_change_password"]),
+    }
 
 
 async def fetch_tenant_status(tenant_id: str) -> Optional[dict]:
@@ -144,14 +167,12 @@ async def get_providers_for_sensitivity(tenant_id: str, sensitivity_level: str) 
     """Zwraca aktywnych, zdrowych providerów (platformy + własnych organizacji)
     obsługujących wymagany poziom wrażliwości."""
     required_order = _SENSITIVITY_ORDER.get(sensitivity_level, 0)
-    # TODO(etap 4): providerzy organizacji z własnym kluczem (providers.api_key_encrypted)
-    # — odszyfrowanie kluczem z Key Vault i przekazanie do LiteLLM. Na razie klucze
-    # wyłącznie z api_key_env (biała lista kluczy platformy, zob. models.ProviderRecord).
     async with tenant_conn(tenant_id) as conn:
         rows = await conn.fetch(
             """
             SELECT id, name, provider_type, model_ids, base_url,
-                   api_key_env, max_data_sensitivity, priority
+                   api_key_env, api_key_encrypted, tenant_id,
+                   max_data_sensitivity, priority
             FROM providers
             WHERE active = true AND is_healthy = true
               AND (tenant_id IS NULL OR tenant_id = $1)
@@ -162,17 +183,32 @@ async def get_providers_for_sensitivity(tenant_id: str, sensitivity_level: str) 
     result = []
     for row in rows:
         provider_max = row['max_data_sensitivity']
-        if _SENSITIVITY_ORDER.get(provider_max, -1) >= required_order:
-            result.append(ProviderRecord(
-                id=str(row['id']),
-                name=row['name'],
-                provider_type=row['provider_type'],
-                model_ids=list(row['model_ids'] or []),
-                base_url=row['base_url'],
-                api_key_env=row['api_key_env'],
-                max_data_sensitivity=provider_max,
-                priority=row['priority'],
-            ))
+        if _SENSITIVITY_ORDER.get(provider_max, -1) < required_order:
+            continue
+        owner = str(row['tenant_id']) if row['tenant_id'] else None
+        own_key = None
+        # Własny klucz tylko u providera organizacji; u providera platformy kolumna
+        # jest ignorowana (klucze platformy wyłącznie z env, biała lista).
+        if owner and row['api_key_encrypted']:
+            try:
+                own_key = secret_box.decrypt(row['api_key_encrypted'])
+            except secret_box.SecretBoxError as exc:
+                # Log bez klucza i bez szyfrogramu.
+                logger.error("Provider %s (organizacja %s) pominięty — nie można odszyfrować klucza: %s",
+                             row['id'], owner, exc)
+                continue
+        result.append(ProviderRecord(
+            id=str(row['id']),
+            name=row['name'],
+            provider_type=row['provider_type'],
+            model_ids=list(row['model_ids'] or []),
+            base_url=row['base_url'],
+            api_key_env=row['api_key_env'],
+            max_data_sensitivity=provider_max,
+            priority=row['priority'],
+            tenant_id=owner,
+            own_api_key=own_key,
+        ))
     return result
 
 

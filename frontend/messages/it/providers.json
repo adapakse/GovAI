@@ -1,7 +1,12 @@
 {
   "card": {
     "activate": "Attiva",
+    "apiKey": "Chiave API propria",
     "apiKeyEnv": "Variabile della chiave API",
+    "apiKeyKeepPlaceholder": "•••••••• (invariata)",
+    "apiKeyRemove": "Rimuovi chiave",
+    "apiKeySet": "chiave impostata",
+    "apiKeySetInfo": "Chiave API propria impostata",
     "baseUrl": "Base URL",
     "cancel": "Annulla",
     "deactivate": "Disattiva",
@@ -28,8 +33,10 @@
   "empty": "Nessun provider definito. Aggiunga il primo qui sopra.",
   "form": {
     "addButton": "+ Aggiungi provider",
+    "apiKey": "Chiave API propria (facoltativa)",
     "apiKeyEnv": "Variabile d'ambiente con la chiave API",
     "apiKeyEnvHint": "Nome della variabile nel file `.env` del container Gateway. La chiave non lascia mai il server.",
+    "apiKeyHint": "Chiave dell’organizzazione — salvata cifrata e mai visualizzata. Campo vuoto = nessuna modifica. Non combinare con il campo della variabile d’ambiente.",
     "baseUrl": "Base URL *",
     "cancel": "Annulla",
     "maxSensitivity": "Sensibilità massima dei dati *",

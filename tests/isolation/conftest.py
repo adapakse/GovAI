@@ -279,6 +279,11 @@ async def _purge_tenants(where_sql: str, *args: Any) -> None:
                 return
             await conn.execute("SELECT set_config('app.platform', 'on', true), "
                                "set_config('app.audit_purge', 'on', true)")
+            # Dziennik platformy (FK tenant_id → tenants): wpisy o organizacjach
+            # testowych i wpisy wykonane przez ich użytkowników (super-admin testu)
+            await conn.execute(
+                """DELETE FROM platform_audit_log WHERE tenant_id = ANY($1::uuid[])
+                   OR actor_user_id IN (SELECT id FROM users WHERE tenant_id = ANY($1::uuid[]))""", ids)
             for table in TENANT_TABLES_DELETE_ORDER:
                 await conn.execute(f"DELETE FROM {table} WHERE tenant_id = ANY($1::uuid[])", ids)
             await conn.execute("DELETE FROM tenants WHERE id = ANY($1::uuid[])", ids)

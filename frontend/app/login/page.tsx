@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { apiLogin, apiSetLocale, saveSession } from '@/lib/auth';
-import { effectiveLocale, getLocaleCookie, setLocaleCookie } from '@/lib/locale';
+import { apiLogin, apiPublicTenant, apiSetLocale, saveSession, type PublicTenant } from '@/lib/auth';
+import { effectiveLocale, getActiveLocale, getLocaleCookie, setLocaleCookie } from '@/lib/locale';
+import { isLocale } from '@/i18n/locales';
 import LanguagePicker from '@/components/LanguagePicker';
 
 export default function LoginPage() {
@@ -12,6 +13,20 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [tenant, setTenant] = useState<PublicTenant | null>(null);
+
+  // Adres organizacji ({slug}.<domena>) — nazwa organizacji i jej domyślny język,
+  // o ile użytkownik nie wybrał języka sam (ciasteczko). 404 = adres uniwersalny.
+  useEffect(() => {
+    apiPublicTenant().then(tn => {
+      if (!tn) return;
+      setTenant(tn);
+      if (!getLocaleCookie() && isLocale(tn.default_locale) && tn.default_locale !== getActiveLocale()) {
+        setLocaleCookie(tn.default_locale);
+        window.location.reload();
+      }
+    });
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -34,7 +49,8 @@ export default function LoginPage() {
       // (przekierowanie na /login, bo wtedy ciasteczka gai_session jeszcze
       // nie było), co objawia się jako "miganie" z powrotem do pustego logowania.
       // Pełne przeładowanie renderuje też aplikację już w języku użytkownika.
-      window.location.href = '/dashboard';
+      // Hasło tymczasowe — najpierw zmiana hasła (API odrzuci inne żądania)
+      window.location.href = data.user.must_change_password ? '/change-password' : '/dashboard';
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : t('error'));
     } finally {
@@ -70,6 +86,11 @@ export default function LoginPage() {
             </div>
             <div className="text-sm text-mgray mt-1">{t('tagline')}</div>
           </div>
+          {tenant && (
+            <div className="w-full px-4 py-2.5 rounded-lg bg-dark/60 border border-teal/30 text-sm text-mgray">
+              {t.rich('tenant', { name: tenant.name, b: (c) => <span className="text-white font-semibold">{c}</span> })}
+            </div>
+          )}
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">

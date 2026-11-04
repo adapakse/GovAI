@@ -33,8 +33,16 @@ def verify_password(plain: str, hashed: str) -> bool:
 
 # ── JWT access token ──────────────────────────────────────────────────────────
 
-def create_access_token(user_id: str, email: str, role: str, tenant_id: str) -> str:
+ACT_TOKEN_MINUTES = 60   # token super-admina w kontekście organizacji (enter)
+
+
+def create_access_token(
+    user_id: str, email: str, role: str, tenant_id: str,
+    act_tenant_id: Optional[str] = None,
+) -> str:
     minutes = settings_service.get_int("security.access_token_expire_minutes", settings.access_token_expire_minutes)
+    if act_tenant_id:
+        minutes = ACT_TOKEN_MINUTES
     expire = datetime.now(timezone.utc) + timedelta(minutes=minutes)
     payload = {
         "sub": str(user_id),
@@ -42,11 +50,16 @@ def create_access_token(user_id: str, email: str, role: str, tenant_id: str) -> 
         "role": role,
         # Organizacja — gateway bierze ją z tokenu (wywołania z UI / symulatora);
         # API i tak sprawdza organizację z rekordu użytkownika przy każdym żądaniu.
-        "tenant_id": str(tenant_id),
+        # Token super-admina w kontekście organizacji: tenant_id = organizacja docelowa.
+        "tenant_id": str(act_tenant_id or tenant_id),
         "exp": expire,
         "iat": datetime.now(timezone.utc),
         "type": "access",
     }
+    if act_tenant_id:
+        # POST /platform/tenants/{id}/enter — uprawnienia super-admina sprawdza
+        # get_current_user z rekordu w bazie przy każdym żądaniu.
+        payload["act_tenant_id"] = str(act_tenant_id)
     return jwt.encode(payload, settings.jwt_secret, algorithm=settings.jwt_algorithm)
 
 def decode_access_token(token: str) -> dict:
@@ -119,7 +132,7 @@ async def revoke_all_user_tokens(user_id: str) -> None:
 # użytkownika, nigdy z danych od klienta.
 _IDENTITY_SELECT = """
     SELECT u.id, u.email, u.full_name, u.role, u.status, u.password_hash, u.locale,
-           u.is_super_admin, u.tenant_id,
+           u.is_super_admin, u.must_change_password, u.tenant_id,
            t.slug AS tenant_slug, t.name AS tenant_name, t.status AS tenant_status,
            t.is_demo AS tenant_is_demo, t.deleted_at AS tenant_deleted_at
     FROM users u JOIN tenants t ON t.id = u.tenant_id
@@ -156,7 +169,7 @@ async def get_user_by_id(user_id: str) -> Optional[dict]:
     pool = get_pool()
     row = await pool.fetchrow(
         """SELECT id, email, full_name, role, status, department, phone, locale,
-                  last_login_at, created_at, updated_at
+                  last_login_at, must_change_password, created_at, updated_at
            FROM users WHERE id = $1""",
         user_id,
     )
@@ -191,17 +204,30 @@ async def create_user(
     password: str,
     department: Optional[str],
     phone: Optional[str],
-    created_by: str,
+    created_by: Optional[str],
+    must_change_password: bool = False,
+    tenant_id: Optional[str] = None,
 ) -> dict:
+    """tenant_id — jawnie tylko w trybie platformy (zakładanie organizacji);
+    w kontekście organizacji wpisuje go DEFAULT current_tenant_id()."""
     pool = get_pool()
     pw_hash = hash_password(password)
     row = await pool.fetchrow(
-        """INSERT INTO users (email, full_name, role, password_hash, department, phone, created_by)
-           VALUES ($1, $2, $3::user_role, $4, $5, $6, $7)
-           RETURNING id, email, full_name, role, status, department, phone, created_at""",
+        """INSERT INTO users (email, full_name, role, password_hash, department, phone, created_by,
+                              must_change_password, tenant_id)
+           VALUES ($1, $2, $3::user_role, $4, $5, $6, $7, $8, COALESCE($9::uuid, current_tenant_id()))
+           RETURNING id, email, full_name, role, status, department, phone,
+                     must_change_password, created_at""",
         email.lower().strip(), full_name, role, pw_hash, department, phone, created_by,
+        must_change_password, tenant_id,
     )
     return _user_row(row)
+
+
+def generate_temporary_password() -> str:
+    """Hasło tymczasowe (≥ 12 znaków, bez znaków mylących przy przepisywaniu)."""
+    alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789"
+    return "".join(secrets.choice(alphabet) for _ in range(16))
 
 async def update_user(
     user_id: str,
@@ -229,12 +255,16 @@ async def update_user(
     )
     return await get_user_by_id(user_id)
 
-async def change_password(user_id: str, new_password: str) -> None:
+async def change_password(user_id: str, new_password: str, must_change: bool = False) -> None:
+    """Zmiana hasła + unieważnienie sesji. must_change=True — hasło ustawione przez
+    administratora (tymczasowe), użytkownik musi je zmienić przy logowaniu;
+    False — zmiana przez samego użytkownika (zeruje wymóg)."""
     pool = get_pool()
     pw_hash = hash_password(new_password)
     await pool.execute(
-        "UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2",
-        pw_hash, user_id,
+        """UPDATE users SET password_hash = $1, must_change_password = $3, updated_at = NOW()
+           WHERE id = $2""",
+        pw_hash, user_id, must_change,
     )
     await revoke_all_user_tokens(user_id)
 

@@ -1,4 +1,8 @@
 {
+  "acting": {
+    "back": "Zurück",
+    "message": "Sie handeln als Plattformadministrator in der Organisation <b>{tenant}</b>"
+  },
   "logout": "Abmelden",
   "meta": {
     "description": "Konformität mit dem EU AI Act | Sicherheits-Gateway | Menschliche Aufsicht",
@@ -7,14 +11,18 @@
   "nav": {
     "admin": "Admin",
     "agents": "KI-Agenten",
+    "apiKeys": "API-Schlüssel",
     "audit": "Audit-Log",
     "dashboard": "Dashboard",
     "demo": "Simulator",
     "oversight": "Aufsicht",
+    "platformAudit": "Plattformprotokoll",
     "policies": "Richtlinien",
     "providers": "Modellanbieter",
     "reports": "Berichte",
-    "settings": "Parameter"
+    "settings": "Parameter",
+    "tenants": "Organisationen",
+    "users": "Benutzer"
   },
   "roles": {
     "associate": "Associate",
