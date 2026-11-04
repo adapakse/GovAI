@@ -1,0 +1,139 @@
+{
+  "agentStatus": {
+    "active": "Aktiven",
+    "quarantined": "V karanteni",
+    "retired": "Umaknjen",
+    "suspended": "Začasno ustavljen"
+  },
+  "fallbackNarrative": "V analiziranem obdobju {days} dni je organizacija uporabljala naslednje število agentov UI: {agents}, od tega jih je bilo {high} razvrščenih kot visokotvegani po EU AI Act. Zabeleženih je bilo {total} klicev, od katerih jih je mehanizem varnostnih pravilnikov blokiral {blocked} ({block_pct} %). Zaznanih je bilo {pii} incidentov z osebnimi podatki. Skupni strošek API je znašal {cost} EUR. Podrobna analiza skladnosti z EU AI Act zahteva preverjanje s strani pristojne funkcije za skladnost.",
+  "fileName": "govai-porocilo-enterprise-{date}.pdf",
+  "pdf": {
+    "activity": {
+      "topByBlocks": "Agenti z največ blokadami:",
+      "topByCalls": "Agenti z največ klici:"
+    },
+    "alerts": {
+      "budgetExceeded": "⚠ Prekoračitev proračuna: {name} — {actual} EUR ({pct} % praga {threshold} EUR)",
+      "overdueReview": "⚠ Zamujen pregled skladnosti: {name} (rok: {date})"
+    },
+    "columns": {
+      "agent": "Agent",
+      "avgLatency": "Povpr. zakasnitev",
+      "blockRate": "% blokad",
+      "blocks": "Blokade",
+      "calls": "Klici",
+      "costEur": "Strošek EUR",
+      "oversight": "Nadzor",
+      "pii": "PII",
+      "review": "Pregled",
+      "risk": "Tveganje",
+      "status": "Status"
+    },
+    "cover": {
+      "agents": "Agenti UI",
+      "agentsActive": "aktivnih: {n}",
+      "apiCost": "Strošek API",
+      "blocks": "Blokade",
+      "blocksShare": "{pct} % vseh",
+      "calls": "Klici",
+      "lastDays": "zadnjih {days} dni",
+      "pii": "Incidenti PII",
+      "piiNote": "zaznani osebni podatki",
+      "totalDays": "skupaj {days} dni"
+    },
+    "declarationsLegend": "✓ Izpolnjeno · ◑ Delno · ✗ Vrzel · N/A Se ne uporablja · — Ni ocenjeno",
+    "generated": "Ustvarjeno: {date} UTC",
+    "incidents": {
+      "approved": "Odobreno",
+      "avgReviewTime": "Povpr. čas pregleda",
+      "blockCount": "Število blokad",
+      "escalated": "Eskalirano",
+      "incidentCount": "Število incidentov",
+      "noPii": "V analiziranem obdobju ni bilo zaznanih incidentov PII.",
+      "oversightHistory": "Zgodovina čakalne vrste človeškega nadzora (člen 14):",
+      "pending": "Na čakanju",
+      "piiCategories": "Zaznane kategorije osebnih podatkov (PII):",
+      "piiCategory": "Kategorija PII",
+      "policyCode": "Pravilnik (koda)",
+      "policyHits": "Sprožitve pravil blokiranja:",
+      "rejected": "Zavrnjeno",
+      "tasksTotal": "Nalog skupaj"
+    },
+    "kpi": {
+      "apiCost": "Skupni strošek API",
+      "apiCostNote": "ocenjeni strošek modelov LLM",
+      "avgLatency": "Povpr. zakasnitev",
+      "avgLatencyNote": "end-to-end",
+      "avgReview": "povpr. čas pregleda: {min} min",
+      "comment": "Komentar",
+      "maxLatency": "Najv. zakasnitev",
+      "maxLatencyNote": "najpočasnejši klic",
+      "metric": "Metrika",
+      "oversight": "Posredovano v nadzor",
+      "oversightNote": "pravilnik A-001 (člen 14)",
+      "oversightQueue": "Čakalna vrsta nadzora",
+      "oversightQueueValue": "nalog: {total} (na čakanju: {pending})",
+      "pii": "Incidenti PII",
+      "piiNote": "skupaj entitet: {n}",
+      "policyBlocks": "Blokade pravilnikov",
+      "policyBlocksNote": "G-001 finančne, G-002 prompt injection",
+      "tokensIn": "Vhodni žetoni",
+      "tokensInNote": "prompt",
+      "tokensOut": "Izhodni žetoni",
+      "tokensOutNote": "completion",
+      "totalCalls": "Klici skupaj",
+      "totalCallsNote": "vsi agenti",
+      "value": "Vrednost"
+    },
+    "no": "ne",
+    "noData": "ni podatkov",
+    "period": "Obdobje analize: zadnjih {days} dni",
+    "recommendations": {
+      "basis": "Podlaga",
+      "priority": "Prioriteta",
+      "recommendation": "Priporočilo"
+    },
+    "risk": {
+      "agentCount": "Število agentov",
+      "agents": "Agenti",
+      "level": "Stopnja tveganja",
+      "requiresOversight": "Zahteva nadzor"
+    },
+    "riskShort": {
+      "high": "VIS",
+      "limited": "OME",
+      "minimal": "MIN",
+      "unacceptable": "NES"
+    },
+    "sections": {
+      "activity": "5. Analiza dejavnosti agentov",
+      "declarations": "7. Izjave o skladnosti z EU AI Act — visokotvegani agenti",
+      "incidents": "6. Varnostni incidenti",
+      "kpi": "3. Operativni KPI (zadnjih {days} dni)",
+      "recommendations": "{n}. Prednostna priporočila",
+      "registry": "4. Register agentov UI",
+      "riskDistribution": "2. Porazdelitev tveganj po EU AI Act",
+      "summary": "1. Povzetek za upravo"
+    },
+    "title": "Poročilo o upravljanju UI v podjetju",
+    "yes": "DA"
+  },
+  "priority": {
+    "critical": "Kritična",
+    "high": "Visoka",
+    "medium": "Srednja"
+  },
+  "recommendations": {
+    "basisBestPractices": "Dobre prakse",
+    "basisCostControl": "Nadzor stroškov",
+    "basisInternalPolicy": "Notranji pravilnik",
+    "budgetReview": "Pregledati proračune agentov, ki presegajo pragove opozoril: {names}.",
+    "highBlockRate": "Delež blokad znaša {pct} % — pregledati pravila pravilnikov in prilagoditi ključne besede.",
+    "implementOversight": "Uvesti postopke človeškega nadzora za: {names}.",
+    "keepMonitoring": "Nadaljevati spremljanje agentov. Izvesti četrtletni pregled skladnosti.",
+    "missingTechnicalDocs": "Manjka tehnična dokumentacija (člen 11) za: {names}. Pripraviti jo v 60 dneh.",
+    "overdueReviews": "Izvesti zamujene preglede skladnosti za: {names}.",
+    "pendingOversight": "Obravnavati naloge na čakanju v čakalni vrsti nadzora: {n}.",
+    "suspendUnacceptable": "Takoj začasno ustaviti agente, razvrščene kot NESPREJEMLJIVO tveganje. Posvetovati se s pravnim svetovalcem."
+  }
+}

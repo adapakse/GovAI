@@ -85,7 +85,11 @@ services:
     expose:
       - "8001"
     environment:
-      DATABASE_URL: postgresql://govai:${DB_PASSWORD:-govai_secret}@postgres:5432/govai
+      DATABASE_URL: postgresql://govai_app:${DB_APP_PASSWORD:-govai_app_secret}@postgres:5432/govai
+      # Domeny bazowe subdomen organizacji ({slug}.<domena>), CSV; puste = bez subdomen
+      TENANT_BASE_DOMAINS: ${TENANT_BASE_DOMAINS:-}
+      # Szyfrowanie własnych kluczy LLM organizacji (AES-GCM, klucz wyprowadzany z tej wartości)
+      PROVIDER_KEYS_SECRET: ${PROVIDER_KEYS_SECRET:-}
       REDIS_URL: redis://redis:6379
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
       DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
@@ -107,7 +111,11 @@ services:
     expose:
       - "8000"
     environment:
-      DATABASE_URL: postgresql://govai:${DB_PASSWORD:-govai_secret}@postgres:5432/govai
+      DATABASE_URL: postgresql://govai_app:${DB_APP_PASSWORD:-govai_app_secret}@postgres:5432/govai
+      # Domeny bazowe subdomen organizacji ({slug}.<domena>), CSV; puste = bez subdomen
+      TENANT_BASE_DOMAINS: ${TENANT_BASE_DOMAINS:-}
+      # Szyfrowanie własnych kluczy LLM organizacji (AES-GCM, klucz wyprowadzany z tej wartości)
+      PROVIDER_KEYS_SECRET: ${PROVIDER_KEYS_SECRET:-}
       REDIS_URL: redis://redis:6379
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
       JWT_SECRET: ${JWT_SECRET:-ZMIEN_MNIE_NA_LOSOWY_32_BAJTOWY_KLUCZ_HEX}
@@ -124,14 +132,13 @@ services:
     build:
       context: ./frontend
       args:
-        # app.<DOMAIN_NAME> — produkt (frontend/api/gateway) świadomie na
-        # subdomenie, root domeny serwuje stronę marketingową (patrz
-        # caddy/Caddyfile.domain.template). Bez DOMAIN_NAME degraduje do
-        # app.localhost, co Caddyfile.internal.template i tak łapie jako
-        # bezimienny catch-all na :443 — działa bez zmian dla dev/INT.
-        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://app.${DOMAIN_NAME:-localhost}/api}
-        NEXT_PUBLIC_WS_URL: ${NEXT_PUBLIC_WS_URL:-wss://app.${DOMAIN_NAME:-localhost}/api}
-        NEXT_PUBLIC_GATEWAY_URL: ${NEXT_PUBLIC_GATEWAY_URL:-https://app.${DOMAIN_NAME:-localhost}/gateway}
+        # Domyślnie adresy względne — frontend, /api i /gateway na tym samym
+        # hoście (Caddy), więc jeden obraz działa pod app.<DOMAIN_NAME>
+        # i pod każdą subdomeną organizacji {slug}.<DOMAIN_NAME> (multitenancy).
+        # WebSocket: lib/api.ts wsUrl() buduje wss://<host>/api z adresu strony.
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-/api}
+        NEXT_PUBLIC_WS_URL: ${NEXT_PUBLIC_WS_URL:-/api}
+        NEXT_PUBLIC_GATEWAY_URL: ${NEXT_PUBLIC_GATEWAY_URL:-/gateway}
     expose:
       - "3000"
     depends_on:
@@ -143,12 +150,17 @@ services:
   # automatyczny certyfikat (ACME); bez niego — samopodpisany CA Caddy
   # (wystarczające dla środowisk testowych/INT).
   caddy:
-    image: caddy:2-alpine
+    # Własny obraz: Caddy z modułem caddy-dns/cloudflare — certyfikat wildcard
+    # *.<DOMAIN_NAME> dla subdomen organizacji (ACME DNS-01). Bez tokenu
+    # Cloudflare działa jak zwykły caddy (bez subdomen organizacji).
+    build: ./caddy
     environment:
       DOMAIN_NAME: ${DOMAIN_NAME:-}
+      CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN:-}
     volumes:
       - ./caddy/Caddyfile.internal.template:/etc/caddy/Caddyfile.internal.template:ro
       - ./caddy/Caddyfile.domain.template:/etc/caddy/Caddyfile.domain.template:ro
+      - ./caddy/Caddyfile.tenants.template:/etc/caddy/Caddyfile.tenants.template:ro
       - ./caddy/entrypoint.sh:/entrypoint.sh:ro
       - ./website:/srv/website-src:ro
       - caddy_data:/data

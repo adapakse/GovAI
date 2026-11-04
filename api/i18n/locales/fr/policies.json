@@ -1,0 +1,10 @@
+{
+  "errors": {
+    "agent_policy_requires_agent_id": "Une politique d’agent requiert agent_id",
+    "invalid_level": "Le niveau doit être : org, team ou agent",
+    "invalid_rule_type": "Le type de règle doit être : allow, deny ou require_oversight",
+    "keywords_not_list": "Le champ 'keywords' doit être une liste",
+    "not_found": "La politique '{policy_id}' n’existe pas",
+    "team_policy_requires_team": "Une politique d’équipe requiert le champ team"
+  }
+}

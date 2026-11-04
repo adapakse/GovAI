@@ -1,0 +1,268 @@
+{
+  "detail": {
+    "breadcrumb": "Agents",
+    "compliance": {
+      "automatic": "automatic",
+      "complianceOfficer": "Compliance officer",
+      "dataRetention": "Data retention",
+      "dataRetentionValue": "{days, plural, one {# day} other {# days}}",
+      "deadline": "Deadline: {days, plural, one {# day} other {# days}}",
+      "fillDeclaration": "→ Complete the self-declaration in the Registry tab.",
+      "geographicScope": "Geographic scope",
+      "immediately": "IMMEDIATELY",
+      "integrationPoints": "Integration points",
+      "intendedPurpose": "Intended purpose and scope",
+      "intendedUsers": "Intended users",
+      "missingLegalBasis": "no legal basis",
+      "notFilled": "Not completed — see the Registry tab",
+      "note": "Note: {notes}",
+      "personalData": "Processing of personal data",
+      "personalDataNo": "No",
+      "personalDataYes": "Yes — ",
+      "requirementsHeading": "EU AI Act requirements ({met}/{total} met)",
+      "systemProfile": "System profile",
+      "technicalContact": "Technical contact"
+    },
+    "generateReport": "Generate PDF report →",
+    "loading": "Loading...",
+    "oversightRequired": "Oversight<br></br>required",
+    "profile": {
+      "budgetPerMonth": "Budget / month",
+      "budgetValue": "{amount} EUR",
+      "lastReview": "Last review: ",
+      "legalBasis": "Legal basis: ",
+      "model": "Model",
+      "nextReview": "Next: ",
+      "owner": "Owner",
+      "team": "Team"
+    },
+    "stats": {
+      "avgLatency": "Avg. latency",
+      "blocked": "Blocked",
+      "calls": "Calls",
+      "oversight": "For oversight",
+      "pii": "With PII",
+      "piiDetected": "PII detected",
+      "totalCost": "Total cost"
+    },
+    "tabs": {
+      "compliance": "AI Act compliance",
+      "registry": "Registry",
+      "registryWithCount": "Registry ({count} declared)",
+      "stats": "30-day statistics"
+    }
+  },
+  "form": {
+    "cancel": "Cancel",
+    "done": "Done",
+    "errors": {
+      "register": "Registration error"
+    },
+    "fields": {
+      "description": "Agent description (used for AI Act classification)",
+      "descriptionPlaceholder": "Describe precisely what the agent does, what decisions it makes and what data it processes...",
+      "model": "Model",
+      "monthlyBudget": "Monthly budget (EUR)",
+      "name": "Agent name",
+      "namePlaceholder": "e.g. Customer Service Agent",
+      "owner": "Owner",
+      "ownerEmail": "Owner email",
+      "ownerEmailPlaceholder": "j.kowalski@firma.pl",
+      "ownerPlaceholder": "Jan Kowalski",
+      "team": "Team",
+      "teamPlaceholder": "e.g. Customer Service"
+    },
+    "result": {
+      "annexIIICategory": "Annex III category:",
+      "no": "NO",
+      "oversightRequired": "Oversight required:",
+      "riskLevel": "Risk level:",
+      "yes": "YES"
+    },
+    "submit": "Register + Classify",
+    "submitting": "Classifying...",
+    "subtitle": "Claude will automatically classify the AI Act risk",
+    "success": "Agent registered successfully!",
+    "title": "AI Agent Registration"
+  },
+  "list": {
+    "actions": {
+      "activate": "Activate",
+      "details": "Details",
+      "suspend": "Suspend"
+    },
+    "annexIII": "Annex III: {category}",
+    "columns": {
+      "actions": "Actions",
+      "model": "Model",
+      "name": "Name",
+      "oversight": "Oversight",
+      "owner": "Owner",
+      "risk": "Risk",
+      "status": "Status"
+    },
+    "count": "{count, plural, one {# agent} other {# agents}}",
+    "countFiltered": "{shown} of {total} agents",
+    "empty": "No agents",
+    "filters": {
+      "allStatuses": "All statuses"
+    },
+    "loading": "Loading...",
+    "noMatches": "No agents matching “{query}”",
+    "oversightRequired": "● Required",
+    "registerButton": "+ Register agent",
+    "searchPlaceholder": "Search — name, model, provider, owner, team...",
+    "title": "Agent Registry"
+  },
+  "options": {
+    "autoCheck": {
+      "art14_human_oversight": "checked against the “Requires oversight” field",
+      "art26_2_human_oversight": "checked against the “Requires oversight” field",
+      "art26_6_log_retention": "architectural guarantee — audit log with no deletion mechanism"
+    },
+    "declStatus": {
+      "na": "N/A — not applicable",
+      "no": "✗ No — gap",
+      "none": "— not assessed —",
+      "partial": "◑ Partially",
+      "yes": "✓ Yes — met"
+    },
+    "gdprBasis": {
+      "consent": "Consent of the data subject (Art. 6(1)(a))",
+      "contract": "Performance of a contract (Art. 6(1)(b))",
+      "legal_obligation": "Legal obligation (Art. 6(1)(c))",
+      "legitimate_interest": "Legitimate interests (point (f))",
+      "public_task": "Public task (Art. 6(1)(e))",
+      "vital_interests": "Protection of vital interests (point (d))"
+    },
+    "requirementStatus": {
+      "na": "Not applicable",
+      "no": "Gap",
+      "partial": "Partially",
+      "undeclared": "Not assessed",
+      "yes": "Met"
+    },
+    "riskFilter": {
+      "all": "All risk levels",
+      "high": "High risk",
+      "limited": "Limited risk",
+      "minimal": "Minimal risk",
+      "unacceptable": "Unacceptable risk"
+    },
+    "severity": {
+      "critical": "Critical",
+      "major": "Major",
+      "minor": "Minor"
+    }
+  },
+  "registry": {
+    "autoStatusGap": "✗ Gap",
+    "autoStatusMet": "✓ Met",
+    "automatic": "automatic",
+    "declarationsIntro": "Assessment of each requirement by the responsible person — shown in PDF reports and in the compliance assessment. The list comes from the EU AI Act requirements catalogue (Policies → EU AI Act requirements) for the “{risk}” risk level.",
+    "fields": {
+      "complianceOfficer": "Compliance officer",
+      "costAlertThreshold": "Budget alert threshold (EUR)",
+      "costAlertThresholdPlaceholder": "e.g. 160 = alert at 80%",
+      "dataRetentionDays": "Data retention (days)",
+      "dataRetentionDaysPlaceholder": "e.g. 365",
+      "gdprLegalBasis": "GDPR legal basis",
+      "geographicScope": "Geographic scope",
+      "geographicScopePlaceholder": "e.g. PL, EU",
+      "inputModalities": "Input modalities (list)",
+      "integrationPoints": "Integration points (one per line)",
+      "integrationPointsPlaceholder": "Core Banking System (CBS)\nCRM Salesforce\nBIK database",
+      "intendedPurpose": "Intended purpose and scope of the system",
+      "intendedPurposePlaceholder": "A short description of what the system is for and the context in which it is used...",
+      "intendedUsers": "Intended users",
+      "intendedUsersPlaceholder": "e.g. credit analysts, HR staff",
+      "lastReviewedAt": "Last compliance review",
+      "modelVersion": "Model version",
+      "modelVersionPlaceholder": "e.g. claude-haiku-4-5-20251001",
+      "monthlyBudget": "Monthly budget (EUR)",
+      "nextReviewDate": "Next scheduled review",
+      "outputModalities": "Output modalities (list)",
+      "processesPersonalData": "The system processes personal data",
+      "selectPlaceholder": "— select —",
+      "technicalContact": "Technical contact",
+      "version": "System version"
+    },
+    "lastUpdated": "Last updated: {date}",
+    "loadingRequirements": "Loading requirements...",
+    "noRequirements": "No requirements defined in the catalogue for the “{risk}” risk level.",
+    "notSelfDeclarable": "Not subject to self-declaration — the issue must actually be remedied.",
+    "notePlaceholder": "Note (optional) — e.g. 'Documentation in Confluence, space AI-GOV'",
+    "save": "Save registry",
+    "saved": "✓ Saved successfully",
+    "saving": "Saving...",
+    "sections": {
+      "contactsBudget": "Contacts and budget",
+      "declarations": "EU AI Act compliance declarations",
+      "personalData": "Personal data and GDPR",
+      "technical": "Technical details",
+      "versionReviews": "Version and reviews"
+    }
+  },
+  "report": {
+    "annexIII": "Annex III: {category}",
+    "backToAgent": "← Back to agent",
+    "breadcrumbAgents": "Agents",
+    "breadcrumbReport": "AI Act report",
+    "columns": {
+      "article": "Article",
+      "deadline": "Deadline",
+      "requirement": "Requirement",
+      "severity": "Severity"
+    },
+    "deadlineDays": "{days, plural, one {# day} other {# days}}",
+    "downloadPdf": "Download PDF",
+    "error": "Report generation error: {error}",
+    "errors": {
+      "sessionExpired": "Session expired"
+    },
+    "footer": "Report generated by GovAI v0.2.0 · EU AI Act (Regulation (EU) 2024/1689) · This document is for information purposes only. It does not constitute legal advice.",
+    "generatingPdf": "Generating PDF...",
+    "header": "GovAI · EU AI Act Compliance Report · Regulation (EU) 2024/1689",
+    "immediately": "IMMEDIATELY",
+    "loading": "Generating AI Act compliance report...",
+    "meta": {
+      "generatedAt": "Generated: ",
+      "model": "Model: ",
+      "owner": "Owner: ",
+      "team": "Team: "
+    },
+    "noGaps": "No gaps identified — requirements confirmed as met or not applicable in the compliance declarations (Registry tab).",
+    "oversightRequired": "◎ Oversight required",
+    "pdfFilename": "ai-act-report-{id}.pdf",
+    "print": "Print",
+    "profile": {
+      "annexIIICategory": "Annex III category",
+      "annexIIINone": "None",
+      "budgetPerMonth": "Budget / month",
+      "budgetValue": "{amount} EUR",
+      "humanOversight": "Human oversight",
+      "legalBasis": "Legal basis and classification",
+      "model": "AI model",
+      "oversightNotRequired": "Not required",
+      "oversightRequired": "REQUIRED",
+      "ownerEmail": "Owner email",
+      "status": "Status"
+    },
+    "risk": "Risk: {risk}",
+    "sections": {
+      "compliance": "4. EU AI Act Compliance Assessment",
+      "profile": "2. AI System Profile",
+      "stats": "3. Operational Statistics (30 days)",
+      "summary": "1. Executive Summary"
+    },
+    "stats": {
+      "apiCost": "API cost",
+      "avgLatency": "Avg. latency",
+      "blocked": "Blocked",
+      "blockedValue": "{count} ({rate}%)",
+      "calls": "Calls",
+      "oversight": "For oversight",
+      "pii": "With PII"
+    }
+  }
+}

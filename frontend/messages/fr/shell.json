@@ -1,0 +1,34 @@
+{
+  "acting": {
+    "back": "Revenir",
+    "message": "Vous agissez en tant qu’administrateur de la plateforme dans l’organisation <b>{tenant}</b>"
+  },
+  "logout": "Se déconnecter",
+  "meta": {
+    "description": "Conformité à l’EU AI Act | Passerelle de sécurité | Contrôle humain",
+    "title": "GovAI — Plateforme de gouvernance des agents IA"
+  },
+  "nav": {
+    "admin": "Admin",
+    "agents": "Agents",
+    "apiKeys": "Clés API",
+    "audit": "Journal",
+    "dashboard": "Tableau de bord",
+    "demo": "Simulateur",
+    "oversight": "Contrôle",
+    "platformAudit": "Journal de la plateforme",
+    "policies": "Politiques",
+    "providers": "Fournisseurs de modèles",
+    "reports": "Rapports",
+    "settings": "Paramètres",
+    "tenants": "Organisations",
+    "users": "Utilisateurs"
+  },
+  "roles": {
+    "associate": "Collaborateur",
+    "compliance_officer": "Responsable de la conformité",
+    "it_admin": "Administrateur informatique",
+    "partner": "Associé",
+    "reviewer": "Examinateur"
+  }
+}

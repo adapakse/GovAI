@@ -127,16 +127,23 @@ async def fleet_count() -> int:
 
 
 async def reset_demo(ids: list[str]) -> tuple[int, int]:
-    """Usuwa dane audit_log i oversight_queue dla podanych agentów. Zwraca (n_audit, n_oq)."""
+    """Usuwa dane audit_log i oversight_queue dla podanych agentów. Zwraca (n_audit, n_oq).
+
+    audit_log jest niezmienny (trigger z migracji 015) — wyjątek tylko dla
+    organizacji demo z jawnie włączonym app.audit_purge w tej transakcji.
+    Router dopuszcza reset wyłącznie dla organizacji demo."""
     pool = get_pool()
     async with pool.acquire() as conn:
         async with conn.transaction():
             n_audit = await conn.fetchval(
                 "SELECT COUNT(*) FROM audit_log WHERE agent_id = ANY($1::uuid[])", ids
             )
+            await conn.execute("SELECT set_config('app.audit_purge', 'on', true)")
             await conn.execute(
                 "DELETE FROM audit_log WHERE agent_id = ANY($1::uuid[])", ids
             )
+            # Wyłączamy od razu — reszta transakcji żądania znów chroni dziennik.
+            await conn.execute("SELECT set_config('app.audit_purge', 'off', true)")
             n_oq = await conn.fetchval(
                 "SELECT COUNT(*) FROM oversight_queue WHERE agent_id = ANY($1::uuid[])", ids
             )

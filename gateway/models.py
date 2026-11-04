@@ -5,6 +5,10 @@ from dataclasses import dataclass, field
 from typing import Any, Literal, Optional
 from uuid import UUID
 
+# Zmienne środowiskowe z kluczami platformy, do których może się odwołać provider
+# (providers.api_key_env). Trzymaj w synchronizacji z api/routers/providers.py.
+PLATFORM_KEY_ENVS = frozenset({"ANTHROPIC_API_KEY", "OPENAI_API_KEY", "DEEPSEEK_API_KEY", "GOOGLE_API_KEY"})
+
 
 @dataclass
 class AgentRecord:
@@ -19,6 +23,8 @@ class AgentRecord:
     team: str
     monthly_budget_eur: float
     annex_iii_cat: Optional[str] = None
+    # Organizacja agenta (multitenancy) — None tylko w testach jednostkowych.
+    tenant_id: Optional[str] = None
 
 
 @dataclass
@@ -34,6 +40,9 @@ class PolicyDecision:
     result: Literal["allowed", "blocked", "oversight_required"]
     reason: str
     policy_id: Optional[str] = None
+    # Kod i parametry powodu (blockReasons.<code>) — do tłumaczenia w API.
+    reason_code: Optional[str] = None
+    reason_params: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -46,9 +55,25 @@ class ProviderRecord:
     priority: int
     base_url: Optional[str] = None
     api_key_env: Optional[str] = None
+    # Organizacja właściciela (None = provider platformy) i odszyfrowany własny
+    # klucz organizacji (providers.api_key_encrypted) — nigdy nie logowany (repr=False).
+    tenant_id: Optional[str] = None
+    own_api_key: Optional[str] = field(default=None, repr=False)
+
+    def resolve_api_key(self) -> Optional[str]:
+        """Klucz do wywołania: własny klucz organizacji (także z base_url — należy
+        do organizacji), inaczej klucz platformy z env (biała lista, bez base_url)."""
+        if self.tenant_id and self.own_api_key:
+            return self.own_api_key
+        return self.api_key_from_env()
 
     def api_key_from_env(self) -> Optional[str]:
-        if not self.api_key_env:
+        """Klucz platformy z env — tylko zmienna z białej listy i tylko dla
+        providera bez własnego base_url (API waliduje to samo przy zapisie;
+        tu druga linia obrony dla wierszy sprzed walidacji)."""
+        if not self.api_key_env or self.base_url:
+            return None
+        if self.api_key_env not in PLATFORM_KEY_ENVS:
             return None
         return os.environ.get(self.api_key_env)
 
@@ -71,7 +96,13 @@ class AuditEntry:
     cost_eur: Optional[float] = None
     output_hash: Optional[str] = None
     block_reason: Optional[str] = None
+    # Kod powodu (blockReasons.<code>) + parametry — zapisywane w metadata
+    # (block_reason_code / block_reason_params), API tłumaczy z nich block_reason.
+    block_reason_code: Optional[str] = None
+    block_reason_params: dict[str, Any] = field(default_factory=dict)
     policy_id: Optional[str] = None
     data_sensitivity: Optional[str] = None
     provider_id: Optional[str] = None
     metadata: dict = field(default_factory=dict)
+    # Organizacja, do której należy wpis — wymagana (bez niej wpis nie jest zapisywany).
+    tenant_id: Optional[str] = None

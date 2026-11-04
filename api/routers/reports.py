@@ -1,9 +1,12 @@
 import io
+import unicodedata
 from datetime import datetime, timezone
+from urllib.parse import quote
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import StreamingResponse
 from dependencies.auth import CurrentUser, get_current_user
+from i18n import t
 
 from services.enterprise_report import (
     collect_enterprise_data,
@@ -19,6 +22,14 @@ from services.report_generator import (
 router = APIRouter(tags=["reports"])
 
 
+def _attachment(filename: str) -> dict[str, str]:
+    """Content-Disposition dla nazwy w dowolnym języku: filename (ASCII, bez
+    diakrytyków) dla starszych klientów + filename* (RFC 5987, UTF-8)."""
+    ascii_name = unicodedata.normalize("NFKD", filename).encode("ascii", "ignore").decode() or "report.pdf"
+    ascii_name = ascii_name.replace('"', "")
+    return {"Content-Disposition": f"attachment; filename=\"{ascii_name}\"; filename*=UTF-8''{quote(filename)}"}
+
+
 @router.get("/reports/enterprise/pdf")
 async def download_enterprise_pdf(
     days: int = Query(30, ge=7, le=90),
@@ -31,7 +42,7 @@ async def download_enterprise_pdf(
     return StreamingResponse(
         io.BytesIO(pdf_bytes),
         media_type="application/pdf",
-        headers={"Content-Disposition": f'attachment; filename="govai-raport-enterprise-{ts}.pdf"'},
+        headers=_attachment(t("enterpriseReport.fileName", date=ts)),
     )
 
 
@@ -64,7 +75,7 @@ async def get_enterprise_summary(
 async def get_agent_report(agent_id: str, user: CurrentUser = Depends(get_current_user)):
     data = await get_agent_report_data(agent_id)
     if not data:
-        raise HTTPException(404, "Agent nie znaleziony")
+        raise HTTPException(404, t("reports.errors.agent_not_found"))
     narrative = await generate_narrative(data)
     data["narrative"] = narrative
     return data
@@ -74,15 +85,15 @@ async def get_agent_report(agent_id: str, user: CurrentUser = Depends(get_curren
 async def download_agent_report_pdf(agent_id: str, user: CurrentUser = Depends(get_current_user)):
     data = await get_agent_report_data(agent_id)
     if not data:
-        raise HTTPException(404, "Agent nie znaleziony")
+        raise HTTPException(404, t("reports.errors.agent_not_found"))
     narrative = await generate_narrative(data)
     pdf_bytes = render_pdf(data, narrative)
 
     safe_name = data["agent"]["name"].lower().replace(" ", "-")[:40]
-    filename = f"ai-act-raport-{safe_name}.pdf"
+    filename = t("report.fileName", name=safe_name)
 
     return StreamingResponse(
         io.BytesIO(pdf_bytes),
         media_type="application/pdf",
-        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+        headers=_attachment(filename),
     )

@@ -16,13 +16,22 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
 from dependencies.auth import CurrentUser, get_current_user, require_role
+from i18n import localized, t
 from repositories import settings_repository as repo
 from services import settings_service
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/settings", tags=["settings"])
 
-_ADMIN = require_role("it_admin")
+_IT_ADMIN = require_role("it_admin")
+
+
+async def _ADMIN(user: CurrentUser = Depends(get_current_user)) -> CurrentUser:
+    """it_admin organizacji albo super-admin platformy (niezależnie od roli
+    w swojej organizacji — parametry platformy zmienia tylko on)."""
+    if user.is_super_admin:
+        return user
+    return await _IT_ADMIN(user)
 
 
 class SettingUpdate(BaseModel):
@@ -31,6 +40,10 @@ class SettingUpdate(BaseModel):
 
 def _row_to_dict(row: dict) -> dict:
     d = dict(row)
+    # Etykieta/opis/jednostka w języku żądania; surowe kolumny *_i18n nie trafiają do klienta
+    for col in ("label", "description", "unit"):
+        if f"{col}_i18n" in d:
+            d[col] = localized(d.pop(f"{col}_i18n"), d.get(col))
     for k, v in d.items():
         if isinstance(v, Decimal):
             d[k] = float(v)
@@ -53,7 +66,7 @@ async def list_settings(user: CurrentUser = Depends(get_current_user)):
 async def get_setting(key: str, user: CurrentUser = Depends(get_current_user)):
     row = await repo.fetch_one(key)
     if not row:
-        raise HTTPException(404, f"Parametr '{key}' nie istnieje")
+        raise HTTPException(404, t("settings.errors.not_found", key=key))
     return _row_to_dict(row)
 
 
@@ -75,14 +88,21 @@ async def update_setting(
     """Zmiana wartości parametru. Waliduje typ i zakres min/max."""
     meta = await repo.fetch_one(key)
     if not meta:
-        raise HTTPException(404, f"Parametr '{key}' nie istnieje")
+        raise HTTPException(404, t("settings.errors.not_found", key=key))
     if not meta.get("editable", True):
-        raise HTTPException(403, f"Parametr '{key}' nie jest edytowalny")
+        raise HTTPException(403, t("settings.errors.not_editable", key=key))
 
     try:
-        row = await settings_service.set_value(key, body.value, meta, user.email)
+        if meta.get("tenant_editable", True):
+            # Nadpisanie tylko dla organizacji użytkownika.
+            row = await settings_service.set_value(key, body.value, meta, user.email)
+        elif user.is_super_admin:
+            # Parametr techniczny platformy — wartość domyślna dla wszystkich organizacji.
+            row = await settings_service.set_default(key, body.value, meta, user.email)
+        else:
+            raise HTTPException(403, t("settings.errors.platform_only", key=key))
     except ValueError as exc:
-        raise HTTPException(400, f"Nieprawidłowa wartość: {exc}")
+        raise HTTPException(400, t("settings.errors.invalid_value", error=exc))
 
     logger.info("Parametr '%s' zmieniony na %r przez %s", key, body.value, user.email)
     return _row_to_dict(row)

@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 
 from dependencies.auth import CurrentUser, get_current_user, require_role
+from i18n import t
 from repositories import oversight_repository as oversight_repo
 from services import settings_service
 
@@ -28,12 +29,41 @@ async def list_pending(user: CurrentUser = Depends(get_current_user)):
     return [_row_to_dict(r) for r in rows]
 
 
+# Przed "/{oversight_id}" — inaczej "history" trafiało jako id do trasy z parametrem (500).
+@router.get("/history")
+async def list_history(
+    days: Optional[int] = Query(None, ge=1),
+    status: Optional[str] = Query(None),
+    agent_id: Optional[str] = Query(None),
+    user: CurrentUser = Depends(get_current_user),
+):
+    """Historia wszystkich decyzji nadzorczych."""
+    max_days = settings_service.get_int("oversight.history_max_days", 90)
+    days = min(days or max_days, max_days)
+    hist_limit = settings_service.get_int("oversight.history_limit", 200)
+    rows = await oversight_repo.fetch_history(
+        days=days, hist_limit=hist_limit, status=status, agent_id=agent_id
+    )
+    return [_row_to_dict(r) for r in rows]
+
+
+def _row_to_dict(row) -> dict:
+    d = dict(row)
+    for k, v in d.items():
+        if hasattr(v, 'isoformat'):
+            d[k] = v.isoformat()
+    for f in ("id", "agent_id"):
+        if d.get(f):
+            d[f] = str(d[f])
+    return d
+
+
 @router.get("/{oversight_id}")
 async def get_oversight(oversight_id: str, user: CurrentUser = Depends(get_current_user)):
     """Status pojedynczego zadania nadzoru — używane przez govai-sdk do pollingu."""
     row = await oversight_repo.fetch_with_agent(oversight_id)
     if not row:
-        raise HTTPException(404, "Zadanie nadzoru nie istnieje")
+        raise HTTPException(404, t("oversight.errors.task_not_found"))
     return _row_to_dict(row)
 
 
@@ -46,9 +76,9 @@ async def start_review(oversight_id: str, user: CurrentUser = Depends(_REVIEW_RO
     """
     row = await oversight_repo.fetch_status(oversight_id)
     if not row:
-        raise HTTPException(404, "Zadanie nadzoru nie istnieje")
+        raise HTTPException(404, t("oversight.errors.task_not_found"))
     if row["status"] != "pending":
-        raise HTTPException(409, f"Zadanie ma status '{row['status']}' — nie można rozpocząć przeglądu")
+        raise HTTPException(409, t("oversight.errors.cannot_start_review", status=row["status"]))
 
     await oversight_repo.mark_review_start(oversight_id)
     return {"oversight_id": oversight_id, "review_started_at": datetime.now(timezone.utc).isoformat()}
@@ -68,9 +98,9 @@ async def submit_review(
     """
     row = await oversight_repo.fetch_with_agent(oversight_id)
     if not row:
-        raise HTTPException(404, "Zadanie nadzoru nie istnieje")
+        raise HTTPException(404, t("oversight.errors.task_not_found"))
     if row["status"] != "pending":
-        raise HTTPException(409, f"Zadanie już rozpatrzone — status: {row['status']}")
+        raise HTTPException(409, t("oversight.errors.already_reviewed", status=row["status"]))
 
     # Pomiar czasu przeglądu
     review_duration_s = None
@@ -100,37 +130,6 @@ async def submit_review(
         "review_duration_seconds": review_duration_s,
     }
     if rubber_stamp_alert:
-        result["alert"] = (
-            f"Pozorny nadzór — przegląd krótszy niż {min_review_seconds} sekund. "
-            "Zdarzenie zalogowane."
-        )
+        result["alert"] = t("oversight.alerts.rubber_stamp", seconds=min_review_seconds)
 
     return result
-
-
-@router.get("/history")
-async def list_history(
-    days: Optional[int] = Query(None, ge=1),
-    status: Optional[str] = Query(None),
-    agent_id: Optional[str] = Query(None),
-    user: CurrentUser = Depends(get_current_user),
-):
-    """Historia wszystkich decyzji nadzorczych."""
-    max_days = settings_service.get_int("oversight.history_max_days", 90)
-    days = min(days or max_days, max_days)
-    hist_limit = settings_service.get_int("oversight.history_limit", 200)
-    rows = await oversight_repo.fetch_history(
-        days=days, hist_limit=hist_limit, status=status, agent_id=agent_id
-    )
-    return [_row_to_dict(r) for r in rows]
-
-
-def _row_to_dict(row) -> dict:
-    d = dict(row)
-    for k, v in d.items():
-        if hasattr(v, 'isoformat'):
-            d[k] = v.isoformat()
-    for f in ("id", "agent_id"):
-        if d.get(f):
-            d[f] = str(d[f])
-    return d

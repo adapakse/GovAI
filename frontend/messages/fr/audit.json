@@ -1,0 +1,53 @@
+{
+  "count": "{count, plural, one {# entrée} other {# entrées}}",
+  "details": {
+    "blockReason": "Motif du blocage",
+    "errorDetails": "Détails de l’erreur",
+    "fields": {
+      "agent": "Agent",
+      "callId": "Call ID",
+      "cost": "Coût",
+      "eventType": "Type d’événement",
+      "inputHash": "Empreinte de l’entrée",
+      "latency": "Latence",
+      "piiCategories": "Catégories de DCP",
+      "result": "Résultat",
+      "taskId": "Task ID"
+    },
+    "title": "Détails de l’appel"
+  },
+  "filters": {
+    "days": {
+      "1": "Dernier jour",
+      "7": "7 derniers jours",
+      "30": "30 derniers jours"
+    },
+    "pii": {
+      "all": "Toutes (DCP)",
+      "with": "Avec DCP détectées",
+      "without": "Sans DCP"
+    },
+    "result": {
+      "all": "Tous les résultats"
+    }
+  },
+  "header": {
+    "subtitle": "Enregistrement inaltérable de tous les appels des agents IA",
+    "title": "Journal d’audit"
+  },
+  "table": {
+    "columns": {
+      "agent": "Agent",
+      "details": "Détails",
+      "eventType": "Type d’événement",
+      "latency": "Latence",
+      "pii": "DCP",
+      "result": "Résultat",
+      "time": "Heure"
+    },
+    "empty": "Aucune entrée sur cette période",
+    "loading": "Chargement...",
+    "piiEntities": "{count, plural, one {# entité} other {# entités}}",
+    "show": "Afficher"
+  }
+}

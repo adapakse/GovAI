@@ -1,0 +1,12 @@
+{
+  "errors": {
+    "invalid_sensitivity": "max_data_sensitivity invalide. Valeurs autorisées : {allowed}",
+    "invalid_type": "provider_type inconnu. Valeurs autorisées : {allowed}",
+    "key_and_key_env": "Une clé propre (api_key) ne peut pas être combinée avec une clé de la plateforme (api_key_env).",
+    "key_encryption_unavailable": "L’enregistrement de clés propres est indisponible — chiffrement non configuré (PROVIDER_KEYS_SECRET).",
+    "key_env_not_allowed": "Variable de clé non autorisée. Autorisées : {allowed}.",
+    "key_env_with_base_url": "Une clé de la plateforme (api_key_env) ne peut pas être combinée avec une base_url personnalisée.",
+    "not_found": "Fournisseur de modèles introuvable",
+    "platform_read_only": "Les fournisseurs de la plateforme sont en lecture seule. Ajoutez plutôt un fournisseur propre à votre organisation."
+  }
+}

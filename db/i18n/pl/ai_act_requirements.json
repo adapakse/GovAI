@@ -1,0 +1,74 @@
+{
+  "high|Art. 10": {
+    "text": "Dane treningowe, walidacyjne i testowe muszą spełniać kryteria jakości — właściwość, reprezentatywność, brak błędów i kompletność. Wymagana dokumentacja zbiorów danych.",
+    "title": "Wymagania dotyczące danych"
+  },
+  "high|Art. 11": {
+    "text": "Przed wprowadzeniem do użytku wymagana kompletna dokumentacja techniczna zgodna z Aneksem IV EU AI Act. Dokument musi być aktualizowany przez cały cykl życia systemu.",
+    "title": "Dokumentacja techniczna"
+  },
+  "high|Art. 13": {
+    "text": "System AI musi zapewniać przejrzystość operacyjną. Użytkownicy muszą być informowani o interakcji z systemem AI i rozumieć jego działanie w stopniu niezbędnym do nadzoru.",
+    "title": "Transparentność i informacja"
+  },
+  "high|Art. 14": {
+    "text": "Wdrożone środki umożliwiające rozumienie, monitorowanie i interwencję w działanie systemu AI przez człowieka. Możliwość zatrzymania lub cofnięcia każdej decyzji systemu.",
+    "title": "Nadzór człowieka"
+  },
+  "high|Art. 15": {
+    "text": "System musi osiągać odpowiedni poziom dokładności przez cały cykl życia. Wymagane testy odporności na błędy, ataki i nieoczekiwane dane wejściowe.",
+    "title": "Dokładność i odporność"
+  },
+  "high|Art. 17": {
+    "text": "Dostawca wdraża system zarządzania jakością obejmujący polityki, procedury i instrukcje dla zapewnienia zgodności z EU AI Act.",
+    "title": "System zarządzania jakością"
+  },
+  "high|Art. 26 ust. 2": {
+    "text": "Deployer wysokiego ryzyka musi przypisać nadzór człowieka osobom mającym niezbędne kompetencje, przeszkolenie, uprawnienia i wsparcie do jego wykonywania.",
+    "title": "Nadzór człowieka przypisany do kompetentnej osoby"
+  },
+  "high|Art. 26 ust. 5": {
+    "text": "Deployer musi monitorować działanie systemu zgodnie z instrukcją użycia i informować dostawcę oraz — gdy dotyczy — organ nadzoru rynku o zidentyfikowanym ryzyku lub poważnym incydencie.",
+    "title": "Monitorowanie działania i informowanie dostawcy"
+  },
+  "high|Art. 26 ust. 6": {
+    "text": "Deployer musi przechowywać automatycznie generowane logi systemu przez okres odpowiedni do przeznaczenia systemu, co najmniej 6 miesięcy, o ile prawo unijne lub krajowe nie stanowi inaczej.",
+    "title": "Przechowywanie automatycznych logów"
+  },
+  "high|Art. 26 ust. 8": {
+    "text": "Deployer będący podmiotem publicznym musi przestrzegać obowiązków rejestracyjnych z Art. 49 i, przed uruchomieniem systemu, zweryfikować że jest on zarejestrowany w unijnej bazie danych.",
+    "title": "Weryfikacja rejestracji w unijnej bazie danych"
+  },
+  "high|Art. 27": {
+    "text": "Przed wdrożeniem systemu wysokiego ryzyka z pkt 5(b)/(c) Załącznika III (ocena zdolności kredytowej, ryzyko ubezpieczeniowe) lub przez podmiot publiczny/prywatny świadczący usługi publiczne, deployer musi przeprowadzić ocenę wpływu na prawa podstawowe: opis procesów użycia, okres i częstotliwość użycia, kategorie osób dotkniętych, ryzyka szkody dla tych osób oraz środki nadzoru człowieka i mechanizmy odwoławcze.",
+    "title": "Ocena wpływu na prawa podstawowe (FRIA)"
+  },
+  "high|Art. 43": {
+    "text": "Systemy wysokiego ryzyka z Aneksu III wymagają przeprowadzenia oceny zgodności (samoocena lub przez jednostkę notyfikowaną) przed wprowadzeniem do użytku.",
+    "title": "Ocena zgodności"
+  },
+  "high|Art. 49": {
+    "text": "Systemy wysokiego ryzyka muszą być zarejestrowane w unijnej bazie danych AI przed wprowadzeniem do użytku.",
+    "title": "Rejestracja w unijnej bazie danych"
+  },
+  "high|Art. 9": {
+    "text": "Agent wysokiego ryzyka wymaga udokumentowanego systemu zarządzania ryzykiem przez cały cykl życia. Wymagana identyfikacja, analiza i ocena ryzyk oraz wdrożenie środków zaradczych.",
+    "title": "System zarządzania ryzykiem"
+  },
+  "limited|Art. 50 ust. 1": {
+    "text": "Systemy wchodzące w interakcję z ludźmi muszą informować użytkownika w jasny, czytelny i terminowy sposób o automatycznym charakterze systemu, chyba że jest to oczywiste.",
+    "title": "Obowiązek informowania o AI"
+  },
+  "limited|Art. 50 ust. 4": {
+    "text": "Treści tekstowe, audio i wideo generowane przez AI muszą być w sposób maszynowo czytelny oznaczone jako wygenerowane przez AI.",
+    "title": "Oznaczanie treści generowanych przez AI"
+  },
+  "minimal|Preambuła 46": {
+    "text": "Brak obowiązkowych wymogów prawnych dla systemów minimalnego ryzyka. Zalecane stosowanie dobrowolnych kodeksów postępowania i ogólnych zasad godnej zaufania AI (transparentność, sprawiedliwość, bezpieczeństwo).",
+    "title": "Dobrowolne kodeksy postępowania"
+  },
+  "unacceptable|Art. 5": {
+    "text": "Praktyki AI wymienione w Art. 5 są bezwzględnie zakazane w UE. Wymagana weryfikacja, czy system nie kwalifikuje się do żadnej z zakazanych kategorii (manipulacja podprogowa, scoring społeczny, identyfikacja biometryczna w czasie rzeczywistym).",
+    "title": "Bezwzględny zakaz stosowania"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "errors": {
+    "invalid_sensitivity": "Ungültiger max_data_sensitivity. Zulässig: {allowed}",
+    "invalid_type": "Unbekannter provider_type. Zulässig: {allowed}",
+    "key_and_key_env": "Ein eigener Schlüssel (api_key) kann nicht mit einem Plattformschlüssel (api_key_env) kombiniert werden.",
+    "key_encryption_unavailable": "Das Speichern eigener Schlüssel ist nicht verfügbar — Verschlüsselung nicht konfiguriert (PROVIDER_KEYS_SECRET).",
+    "key_env_not_allowed": "Unzulässige Schlüsselvariable. Zulässig: {allowed}.",
+    "key_env_with_base_url": "Ein Plattformschlüssel (api_key_env) kann nicht mit einer eigenen base_url kombiniert werden.",
+    "not_found": "Modellanbieter nicht gefunden",
+    "platform_read_only": "Plattform-Provider sind schreibgeschützt. Fügen Sie stattdessen einen eigenen Provider Ihrer Organisation hinzu."
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "compliance": {
+    "summary_action_required": "Agent '{name}' requires action: {parts}.",
+    "summary_compliant": "Agent '{name}' meets the EU AI Act requirements.",
+    "summary_critical_gaps": "{count} critical gaps require immediate action",
+    "summary_major_gaps": "{count} major gaps to be addressed"
+  },
+  "errors": {
+    "invalid_status": "Invalid status. Allowed: {allowed}",
+    "name_empty": "Agent name cannot be empty",
+    "not_found": "Agent '{agent_id}' does not exist"
+  }
+}

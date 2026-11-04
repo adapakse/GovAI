@@ -10,6 +10,7 @@ import app_settings
 from auth_middleware import AuthMiddleware
 from config import settings
 from database import close_pool, fetch_active_policies, init_pool
+from i18n import DEFAULT_LOCALE, match_locale, set_locale
 from oversight import close_redis, init_redis, ttl_monitor_loop
 from pii_scanner import PIIScanner
 from policy_engine import PolicyEngine
@@ -23,15 +24,12 @@ logger = logging.getLogger(__name__)
 
 
 async def _policy_refresh_loop(policy_engine: PolicyEngine) -> None:
-    """Odświeża parametry i reguły polityk z DB — bez restartu gateway."""
+    """Odświeża parametry (wszystkich organizacji) i reguły polityk organizacji
+    obecnych w cache — bez restartu gateway."""
     while True:
         await asyncio.sleep(app_settings.get_int("intervals.policy_refresh_seconds", 60))
         await app_settings.load()
-        try:
-            rules = await fetch_active_policies()
-            policy_engine.load_rules(rules)
-        except Exception as exc:
-            logger.error("Błąd odświeżania polityk z DB: %s", exc)
+        await policy_engine.refresh_all(fetch_active_policies)
 
 
 @asynccontextmanager
@@ -43,14 +41,8 @@ async def lifespan(app: FastAPI):
     await app_settings.load()
 
     pii = PIIScanner()
+    # Reguły polityk ładowane leniwie per organizacja (proxy: ensure_loaded).
     policy = PolicyEngine()
-
-    # Załaduj reguły z DB przy starcie
-    try:
-        rules = await fetch_active_policies()
-        policy.load_rules(rules)
-    except Exception as exc:
-        logger.error("Błąd ładowania polityk przy starcie: %s — używam pustych reguł", exc)
 
     init_components(pii, policy)
 
@@ -83,7 +75,31 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+class LocaleMiddleware:
+    """Ustawia język żądania (i18n.get_locale) z Accept-Language, a gdy go brak
+    lub jest nieobsługiwany — z domyślnego języka instancji (app_settings
+    i18n.default_locale). Czyste ASGI, żeby contextvar był widoczny w AuthMiddleware
+    i endpointach."""
+
+    def __init__(self, app):
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] in ("http", "websocket"):
+            header = next(
+                (v.decode("latin-1") for k, v in scope.get("headers", []) if k == b"accept-language"),
+                None,
+            )
+            # Organizacja nie jest tu jeszcze znana — domyślny język platformy;
+            # AuthMiddleware podmienia go na domyślny język organizacji.
+            set_locale(match_locale(header) or app_settings.get_str("i18n.default_locale", DEFAULT_LOCALE))
+        await self.app(scope, receive, send)
+
+
+# Kolejność: ostatnio dodany = zewnętrzny. LocaleMiddleware musi otaczać AuthMiddleware,
+# żeby odpowiedzi 401 też były w języku żądania.
 app.add_middleware(AuthMiddleware)
+app.add_middleware(LocaleMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -109,14 +125,13 @@ async def chat_completions(request: Request):
 @app.get("/health")
 async def health():
     """Status zdrowia bramki i jej zależności."""
-    from database import get_pool
+    from database import raw_pool
     from oversight import get_redis
 
     checks = {}
 
     try:
-        pool = get_pool()
-        await pool.fetchval("SELECT 1")
+        await raw_pool().fetchval("SELECT 1")
         checks["postgres"] = "ok"
     except Exception as exc:
         checks["postgres"] = f"error: {exc}"

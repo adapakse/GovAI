@@ -45,7 +45,8 @@ async def list_audit(
                    event_type, policy_result, policy_id,
                    pii_categories, pii_count,
                    input_hash, output_hash, model_used,
-                   latency_ms, tokens_in, tokens_out, cost_eur, block_reason
+                   latency_ms, tokens_in, tokens_out, cost_eur, block_reason,
+                   metadata
             FROM audit_log
             WHERE {where}
             ORDER BY time DESC

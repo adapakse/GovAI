@@ -1,0 +1,10 @@
+{
+  "alerts": {
+    "rubber_stamp": "Navidezni nadzor — pregled je trajal manj kot {seconds} s. Dogodek je zabeležen."
+  },
+  "errors": {
+    "already_reviewed": "Naloga je že obravnavana — status: {status}",
+    "cannot_start_review": "Naloga ima status '{status}' — pregleda ni mogoče začeti",
+    "task_not_found": "Naloga nadzora ne obstaja"
+  }
+}

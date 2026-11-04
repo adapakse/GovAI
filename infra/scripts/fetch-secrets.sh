@@ -46,6 +46,11 @@ jwt_secret=$(get_secret jwt-secret)
 db_password=$(get_secret db-password)
 anthropic_api_key=$(get_secret anthropic-api-key)
 deepseek_api_key=$(get_secret deepseek-api-key)
+# Opcjonalny: token API Cloudflare (strefa DNS domeny) — włącza subdomeny
+# organizacji {slug}.<DOMAIN_NAME> (certyfikat wildcard przez ACME DNS-01,
+# caddy/Caddyfile.tenants.template). Brak sekretu = bez subdomen.
+cloudflare_api_token=$(get_secret cloudflare-api-token 2>/dev/null || true)
+[ "$cloudflare_api_token" = "null" ] && cloudflare_api_token=""
 
 # Z DOMAIN_NAME (z $AZURE_ENV_FILE) — bez tego api korzysta z domyślnego
 # ALLOWED_ORIGINS=https://localhost i blokuje przeglądarkę na app.<domena>
@@ -61,9 +66,17 @@ mkdir -p "$(dirname "$TARGET_ENV_FILE")"
   echo "# Wygenerowane automatycznie przez infra/scripts/fetch-secrets.sh — NIE edytuj ręcznie."
   echo "JWT_SECRET=${jwt_secret}"
   echo "DB_PASSWORD=${db_password}"
+  # Klucz szyfrowania własnych kluczy LLM organizacji (providers.api_key_encrypted) — wyliczany z JWT_SECRET.
+  echo "PROVIDER_KEYS_SECRET=$(printf '%s' "${jwt_secret}:provider-keys" | sha256sum | cut -c1-64)"
+  # Rola aplikacji govai_app (RLS) — hasło wyliczane z DB_PASSWORD, bez osobnego sekretu w Key Vault.
+  echo "DB_APP_PASSWORD=$(printf '%s' "${db_password}:govai_app" | sha256sum | cut -c1-48)"
   echo "ANTHROPIC_API_KEY=${anthropic_api_key}"
   echo "DEEPSEEK_API_KEY=${deepseek_api_key}"
   [ -n "$allowed_origins" ] && echo "ALLOWED_ORIGINS=${allowed_origins}"
+  if [ -n "$cloudflare_api_token" ] && [ -n "$DOMAIN_NAME" ]; then
+    echo "CLOUDFLARE_API_TOKEN=${cloudflare_api_token}"
+    echo "TENANT_BASE_DOMAINS=${DOMAIN_NAME}"
+  fi
   grep -v '^AZURE_CLIENT_ID=\|^AZURE_KEY_VAULT_NAME=\|^SECRETS_BACKEND=' "$AZURE_ENV_FILE" || true
 } > "$TARGET_ENV_FILE"
 

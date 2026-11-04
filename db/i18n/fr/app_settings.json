@@ -1,0 +1,159 @@
+{
+  "budget.default_alert_threshold_eur": {
+    "description": "Seuil d’alerte de coûts pour les nouveaux agents (0 = désactivé).",
+    "label": "Seuil d’alerte par défaut",
+    "unit": "EUR"
+  },
+  "budget.default_monthly_eur": {
+    "description": "Budget attribué aux nouveaux agents (0 = sans limite).",
+    "label": "Budget mensuel par défaut",
+    "unit": "EUR"
+  },
+  "compliance.deadline_days": {
+    "description": "Nombre de jours pour combler chacune des lacunes de conformité à haut risque (clé = champ de contrôle).",
+    "label": "Échéances des lacunes de conformité (jours)",
+    "unit": "jours"
+  },
+  "compliance.enterprise_report_max_tokens": {
+    "description": "Limite de jetons pour la narration du rapport d’entreprise.",
+    "label": "Rapport d’entreprise — jetons max.",
+    "unit": "jetons"
+  },
+  "compliance.report_max_tokens": {
+    "description": "Limite de jetons pour la narration du rapport de conformité d’un agent.",
+    "label": "Rapport d’agent — jetons max.",
+    "unit": "jetons"
+  },
+  "i18n.default_locale": {
+    "description": "Langue de l’interface, des rapports et des messages pour les utilisateurs n’ayant pas choisi leur propre langue. Codes : pl, en, de, it, es, fr, ro, ru, sl, hr.",
+    "label": "Langue par défaut"
+  },
+  "intervals.policy_refresh_seconds": {
+    "description": "Intervalle en secondes auquel la passerelle recharge les règles des politiques depuis la base de données.",
+    "label": "Rechargement des politiques",
+    "unit": "secondes"
+  },
+  "intervals.ttl_monitor_seconds": {
+    "description": "Intervalle en secondes auquel le moniteur escalade les tâches de contrôle expirées.",
+    "label": "Moniteur TTL du contrôle",
+    "unit": "secondes"
+  },
+  "models.classifier_model": {
+    "description": "Modèle utilisé pour évaluer le niveau de risque de l’agent.",
+    "label": "Modèle du classificateur AI Act"
+  },
+  "models.default_agent_model": {
+    "description": "Modèle attribué aux agents nouvellement enregistrés.",
+    "label": "Modèle d’agent par défaut"
+  },
+  "models.default_max_tokens": {
+    "description": "Limite de jetons de sortie lorsque le client ne la précise pas.",
+    "label": "Limite de jetons par défaut",
+    "unit": "jetons"
+  },
+  "models.default_temperature": {
+    "description": "Température du LLM lorsque le client ne la précise pas.",
+    "label": "Température par défaut",
+    "unit": "0–2"
+  },
+  "oversight.history_limit": {
+    "description": "Limite stricte du nombre d’éléments de l’historique du contrôle.",
+    "label": "Historique du contrôle — limite de lignes",
+    "unit": "lignes"
+  },
+  "oversight.history_max_days": {
+    "description": "Plage maximale de jours pour GET /oversight/history.",
+    "label": "Historique du contrôle — jours max.",
+    "unit": "jours"
+  },
+  "oversight.min_review_seconds": {
+    "description": "En deçà de ce nombre de secondes, l’examen est signalé comme un contrôle de pure forme (rubber-stamp).",
+    "label": "Durée min. d’examen",
+    "unit": "secondes"
+  },
+  "oversight.ttl_seconds": {
+    "description": "Délai avant l’escalade d’une tâche dans la file de contrôle.",
+    "label": "TTL d’une tâche de contrôle",
+    "unit": "secondes"
+  },
+  "pagination.audit_default_limit": {
+    "description": "Nombre d’entrées par défaut dans GET /audit.",
+    "label": "Audit — limite par défaut",
+    "unit": "lignes"
+  },
+  "pagination.audit_max_limit": {
+    "description": "Nombre maximal d’entrées dans une seule requête d’audit.",
+    "label": "Audit — limite max.",
+    "unit": "lignes"
+  },
+  "pagination.dashboard_recent_blocks": {
+    "description": "Nombre de blocages récents dans les alertes du tableau de bord.",
+    "label": "Tableau de bord — blocages récents",
+    "unit": "éléments"
+  },
+  "pagination.dashboard_top_agents": {
+    "description": "Nombre d’agents les plus actifs affichés sur le tableau de bord.",
+    "label": "Tableau de bord — agents les plus actifs",
+    "unit": "éléments"
+  },
+  "pagination.default_window_days": {
+    "description": "Plage de jours par défaut pour l’audit et le tableau de bord.",
+    "label": "Fenêtre par défaut (jours)",
+    "unit": "jours"
+  },
+  "pagination.stats_default_days": {
+    "description": "Plage par défaut de GET /agents/{id}/stats.",
+    "label": "Statistiques d’agent — jours par défaut",
+    "unit": "jours"
+  },
+  "pagination.stats_max_days": {
+    "description": "Plage maximale des statistiques d’agent.",
+    "label": "Statistiques d’agent — jours max.",
+    "unit": "jours"
+  },
+  "pagination.timeline_default_hours": {
+    "description": "Fenêtre par défaut du graphique chronologique.",
+    "label": "Chronologie — heures par défaut",
+    "unit": "heures"
+  },
+  "pagination.timeline_max_hours": {
+    "description": "Plage maximale du graphique chronologique.",
+    "label": "Chronologie — heures max.",
+    "unit": "heures"
+  },
+  "pricing.default_rate": {
+    "description": "Tarif [entrée, sortie] pour les modèles absents de la table.",
+    "label": "Tarif par défaut (USD/1k jetons)",
+    "unit": "USD/1k"
+  },
+  "pricing.model_rates": {
+    "description": "Table modèle → [entrée, sortie] en USD pour 1 000 jetons. Un modèle absent de la liste utilise le tarif par défaut.",
+    "label": "Tarifs des modèles (USD/1k jetons)",
+    "unit": "USD/1k"
+  },
+  "pricing.usd_to_eur": {
+    "description": "Coefficient de conversion des coûts des modèles de l’USD vers l’EUR.",
+    "label": "Taux USD→EUR",
+    "unit": "coefficient"
+  },
+  "security.access_token_expire_minutes": {
+    "description": "Durée de vie du JWT access token.",
+    "label": "Validité de l’access token",
+    "unit": "minutes"
+  },
+  "security.bcrypt_rounds": {
+    "description": "Coût du hachage des mots de passe (plus élevé = plus lent, plus sûr).",
+    "label": "Tours bcrypt",
+    "unit": "tours"
+  },
+  "security.pii_confidence_threshold": {
+    "description": "Niveau de confiance minimal de Presidio pour retenir une détection de DCP.",
+    "label": "Seuil de confiance DCP",
+    "unit": "0–1"
+  },
+  "security.refresh_token_expire_days": {
+    "description": "Durée de vie du refresh token.",
+    "label": "Validité du refresh token",
+    "unit": "jours"
+  }
+}

@@ -3,7 +3,9 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { authHeaders, handle401 } from '@/lib/api';
+import { useFormat } from '@/lib/format';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
 
@@ -41,52 +43,51 @@ const RISK_STYLE: Record<string, string> = {
   unacceptable: 'bg-red-900/30 text-red-300 border-red-700',
 };
 
-const RISK_LABEL: Record<string, string> = {
-  minimal: 'Minimalne', limited: 'Ograniczone',
-  high: 'Wysokie', unacceptable: 'Niedopuszczalne',
-};
-
-// Tłumaczenie enuma severity (z ai_act_requirements.default_severity, przez
-// backend) na etykietę/kolor PL — czysta prezentacja, nie treść compliance.
-const SEV_LABEL: Record<string, string> = { critical: 'Krytyczna', major: 'Poważna', minor: 'Drobna' };
+// Enum severity (z ai_act_requirements.default_severity, przez backend) →
+// etykieta (agents.options.severity.*) / kolor — czysta prezentacja.
+const SEVERITIES = ['critical', 'major', 'minor'];
 const SEV_COLOR: Record<string, string> = {
   critical: 'text-red-400', major: 'text-orange-400', minor: 'text-yellow-400',
 };
-const STATUS_LABEL: Record<string, string> = {
-  yes: 'Spełnione', partial: 'Częściowo', no: 'Luka', na: 'Nie dotyczy', undeclared: 'Nie ocenione',
-};
+const REQUIREMENT_STATUSES = ['yes', 'partial', 'no', 'na', 'undeclared'];
+const AGENT_STATUSES = ['active', 'suspended', 'quarantined', 'retired'];
 
 export default function ReportPage() {
+  const t = useTranslations('agents');
+  const tc = useTranslations('common');
+  const fmt = useFormat();
   const { id } = useParams<{ id: string }>();
   const [report, setReport] = useState<ReportData | null>(null);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState('');
 
+  // Oba fetch'e idą z authHeaders() — zawiera Accept-Language, więc narracja,
+  // tytuły wymagań i PDF przychodzą w języku UI.
   useEffect(() => {
     authHeaders()
       .then(headers => fetch(`${API}/agents/${id}/report`, { cache: 'no-store', headers }))
       .then(r => {
-        if (r.status === 401) { handle401(); throw new Error('Sesja wygasła'); }
+        if (r.status === 401) { handle401(); throw new Error(t('report.errors.sessionExpired')); }
         if (!r.ok) throw new Error(`${r.status}`);
         return r.json();
       })
       .then(setReport)
       .catch(e => setError(e.message))
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [id, t]);
 
   async function downloadPdf() {
     setGenerating(true);
     try {
       const r = await fetch(`${API}/agents/${id}/report/pdf`, { headers: await authHeaders() });
-      if (r.status === 401) { handle401(); throw new Error('Sesja wygasła'); }
+      if (r.status === 401) { handle401(); throw new Error(t('report.errors.sessionExpired')); }
       if (!r.ok) throw new Error(`${r.status}`);
       const blob = await r.blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `ai-act-raport-${id.slice(0, 8)}.pdf`;
+      a.download = t('report.pdfFilename', { id: id.slice(0, 8) });
       a.click();
       URL.revokeObjectURL(url);
     } catch (e) {
@@ -100,7 +101,7 @@ export default function ReportPage() {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-4">
         <div className="w-10 h-10 border-4 border-teal border-t-transparent rounded-full animate-spin" />
-        <div className="text-mgray text-sm">Generowanie raportu zgodności z AI Act...</div>
+        <div className="text-mgray text-sm">{t('report.loading')}</div>
       </div>
     );
   }
@@ -108,14 +109,16 @@ export default function ReportPage() {
   if (error || !report) {
     return (
       <div className="text-center py-20">
-        <div className="text-red-400 mb-4">Błąd generowania raportu: {error}</div>
-        <Link href={`/agents/${id}`} className="text-teal hover:underline text-sm">← Powrót do agenta</Link>
+        <div className="text-red-400 mb-4">{t('report.error', { error })}</div>
+        <Link href={`/agents/${id}`} className="text-teal hover:underline text-sm">{t('report.backToAgent')}</Link>
       </div>
     );
   }
 
   const { agent, stats, narrative, generated_at, requirements } = report;
   const risk = agent.risk_level;
+  const riskLabel = RISK_STYLE[risk] ? tc(`risk.${risk}`) : risk;
+  const statusLabel = AGENT_STATUSES.includes(agent.status) ? tc(`agentStatus.${agent.status}`) : agent.status;
   const gaps = requirements.filter(r => r.status === 'no' || r.status === 'partial' || r.status === 'undeclared');
   const blockRate = stats.total_calls > 0
     ? ((stats.blocked / stats.total_calls) * 100).toFixed(1)
@@ -126,18 +129,18 @@ export default function ReportPage() {
       {/* Toolbar (ukrywany przy druku) */}
       <div className="flex items-center justify-between print:hidden">
         <div className="flex items-center gap-2 text-sm text-mgray">
-          <Link href="/agents" className="hover:text-teal">Agenci</Link>
+          <Link href="/agents" className="hover:text-teal">{t('report.breadcrumbAgents')}</Link>
           <span>/</span>
           <Link href={`/agents/${id}`} className="hover:text-teal">{agent.name}</Link>
           <span>/</span>
-          <span className="text-white">Raport AI Act</span>
+          <span className="text-white">{t('report.breadcrumbReport')}</span>
         </div>
         <div className="flex gap-3">
           <button
             onClick={() => window.print()}
             className="px-4 py-2 text-sm border border-blue/40 rounded-lg text-mgray hover:bg-blue/20 transition-colors"
           >
-            Drukuj
+            {t('report.print')}
           </button>
           <button
             onClick={downloadPdf}
@@ -147,9 +150,9 @@ export default function ReportPage() {
             {generating ? (
               <span className="flex items-center gap-2">
                 <span className="w-3 h-3 border-2 border-dark border-t-transparent rounded-full animate-spin" />
-                Generuję PDF...
+                {t('report.generatingPdf')}
               </span>
-            ) : 'Pobierz PDF'}
+            ) : t('report.downloadPdf')}
           </button>
         </div>
       </div>
@@ -157,51 +160,51 @@ export default function ReportPage() {
       {/* Nagłówek raportu */}
       <div className="bg-navy border border-blue/30 rounded-xl p-6 print:border print:rounded-none">
         <div className="text-xs text-teal font-semibold uppercase tracking-wider mb-1">
-          GovAI · Raport Zgodności EU AI Act · Rozporządzenie (UE) 2024/1689
+          {t('report.header')}
         </div>
         <h1 className="text-2xl font-bold text-white mt-2 mb-3">{agent.name}</h1>
         <div className="flex items-center gap-3 flex-wrap">
           <span className={`px-3 py-1 rounded-lg border text-sm font-semibold ${RISK_STYLE[risk] ?? RISK_STYLE.minimal}`}>
-            Ryzyko: {RISK_LABEL[risk] ?? risk}
+            {t('report.risk', { risk: riskLabel })}
           </span>
           {agent.annex_iii_cat && (
             <span className="text-xs text-mgray border border-blue/30 px-2 py-1 rounded">
-              Aneks III: {agent.annex_iii_cat}
+              {t('report.annexIII', { category: agent.annex_iii_cat })}
             </span>
           )}
           {agent.requires_oversight && (
             <span className="text-xs text-orange-400 border border-orange-700/50 px-2 py-1 rounded">
-              ◎ Nadzór wymagany
+              {t('report.oversightRequired')}
             </span>
           )}
         </div>
         <div className="mt-4 pt-4 border-t border-blue/20 flex gap-8 text-xs text-mgray">
-          <div><span className="text-mgray/60">Właściciel: </span>{agent.owner_name}</div>
-          <div><span className="text-mgray/60">Zespół: </span>{agent.team || '—'}</div>
-          <div><span className="text-mgray/60">Model: </span>{agent.model_id}</div>
-          <div><span className="text-mgray/60">Wygenerowano: </span>{new Date(generated_at).toLocaleString('pl-PL')}</div>
+          <div><span className="text-mgray/60">{t('report.meta.owner')}</span>{agent.owner_name}</div>
+          <div><span className="text-mgray/60">{t('report.meta.team')}</span>{agent.team || '—'}</div>
+          <div><span className="text-mgray/60">{t('report.meta.model')}</span>{agent.model_id}</div>
+          <div><span className="text-mgray/60">{t('report.meta.generatedAt')}</span>{fmt.dateTime(generated_at)}</div>
         </div>
       </div>
 
       {/* 1. Streszczenie */}
       <div className="bg-navy border border-blue/30 rounded-xl p-6">
-        <h2 className="text-sm font-bold text-white uppercase tracking-wider mb-1">1. Streszczenie Wykonawcze</h2>
+        <h2 className="text-sm font-bold text-white uppercase tracking-wider mb-1">{t('report.sections.summary')}</h2>
         <div className="w-8 h-0.5 bg-teal mb-4" />
         <p className="text-sm text-mgray leading-relaxed">{narrative}</p>
       </div>
 
       {/* 2. Profil */}
       <div className="bg-navy border border-blue/30 rounded-xl p-6">
-        <h2 className="text-sm font-bold text-white uppercase tracking-wider mb-1">2. Profil Systemu AI</h2>
+        <h2 className="text-sm font-bold text-white uppercase tracking-wider mb-1">{t('report.sections.profile')}</h2>
         <div className="w-8 h-0.5 bg-teal mb-4" />
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
           {([
-            ['Model AI',          agent.model_id],
-            ['Status',            agent.status.toUpperCase()],
-            ['Kategoria An. III', agent.annex_iii_cat || 'Brak'],
-            ['Nadzór człowieka',  agent.requires_oversight ? 'WYMAGANY' : 'Nie wymagany'],
-            ['Email właściciela', agent.owner_email],
-            ['Budżet / mies.',    `${agent.monthly_budget_eur} EUR`],
+            [t('report.profile.model'),            agent.model_id],
+            [t('report.profile.status'),           statusLabel.toUpperCase()],
+            [t('report.profile.annexIIICategory'), agent.annex_iii_cat || t('report.profile.annexIIINone')],
+            [t('report.profile.humanOversight'),   agent.requires_oversight ? t('report.profile.oversightRequired') : t('report.profile.oversightNotRequired')],
+            [t('report.profile.ownerEmail'),       agent.owner_email],
+            [t('report.profile.budgetPerMonth'),   t('report.profile.budgetValue', { amount: agent.monthly_budget_eur })],
           ] as [string, string][]).map(([label, value]) => (
             <div key={label}>
               <div className="text-mgray/60 text-xs mb-0.5">{label}</div>
@@ -211,7 +214,7 @@ export default function ReportPage() {
         </div>
         {agent.legal_basis && (
           <div className="mt-4 pt-4 border-t border-blue/20">
-            <div className="text-xs text-mgray/60 mb-1">Podstawa prawna i klasyfikacja</div>
+            <div className="text-xs text-mgray/60 mb-1">{t('report.profile.legalBasis')}</div>
             <p className="text-sm text-mgray leading-relaxed">{agent.legal_basis}</p>
           </div>
         )}
@@ -219,16 +222,16 @@ export default function ReportPage() {
 
       {/* 3. Statystyki */}
       <div className="bg-navy border border-blue/30 rounded-xl p-6">
-        <h2 className="text-sm font-bold text-white uppercase tracking-wider mb-1">3. Statystyki Operacyjne (30 dni)</h2>
+        <h2 className="text-sm font-bold text-white uppercase tracking-wider mb-1">{t('report.sections.stats')}</h2>
         <div className="w-8 h-0.5 bg-teal mb-4" />
         <div className="grid grid-cols-3 gap-3">
           {[
-            { label: 'Wywołania',     value: stats.total_calls,                                          color: 'text-teal' },
-            { label: 'Blokady',       value: `${stats.blocked} (${blockRate}%)`,                        color: 'text-red-400' },
-            { label: 'Do nadzoru',    value: stats.oversight,                                            color: 'text-orange-400' },
-            { label: 'Z PII',         value: stats.pii_calls,                                           color: 'text-yellow-400' },
-            { label: 'Śr. latencja',  value: stats.avg_latency ? `${Math.round(stats.avg_latency)} ms` : '—', color: 'text-white' },
-            { label: 'Koszt API',     value: `${(stats.total_cost || 0).toFixed(4)} EUR`,              color: 'text-white' },
+            { label: t('report.stats.calls'),      value: stats.total_calls,                                          color: 'text-teal' },
+            { label: t('report.stats.blocked'),    value: t('report.stats.blockedValue', { count: stats.blocked, rate: blockRate }), color: 'text-red-400' },
+            { label: t('report.stats.oversight'),  value: stats.oversight,                                            color: 'text-orange-400' },
+            { label: t('report.stats.pii'),        value: stats.pii_calls,                                           color: 'text-yellow-400' },
+            { label: t('report.stats.avgLatency'), value: stats.avg_latency ? `${Math.round(stats.avg_latency)} ms` : '—', color: 'text-white' },
+            { label: t('report.stats.apiCost'),    value: `${(stats.total_cost || 0).toFixed(4)} EUR`,              color: 'text-white' },
           ].map(({ label, value, color }) => (
             <div key={label} className="bg-dark/50 rounded-lg px-4 py-3">
               <div className="text-xs text-mgray/60 mb-1">{label}</div>
@@ -240,19 +243,18 @@ export default function ReportPage() {
 
       {/* 4. Luki compliance */}
       <div className="bg-navy border border-blue/30 rounded-xl p-6">
-        <h2 className="text-sm font-bold text-white uppercase tracking-wider mb-1">4. Ocena Zgodności z EU AI Act</h2>
+        <h2 className="text-sm font-bold text-white uppercase tracking-wider mb-1">{t('report.sections.compliance')}</h2>
         <div className="w-8 h-0.5 bg-teal mb-4" />
         {gaps.length === 0 ? (
           <p className="text-sm text-green-400">
-            Brak zidentyfikowanych luk — wymagania potwierdzone jako spełnione lub nie dotyczące
-            w deklaracjach zgodności (zakładka Rejestr).
+            {t('report.noGaps')}
           </p>
         ) : (
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-blue/30">
-                {['Artykuł', 'Wymaganie', 'Waga', 'Termin'].map(h => (
-                  <th key={h} className="pb-3 text-left text-xs text-mgray/60 uppercase tracking-wider font-semibold">{h}</th>
+                {(['article', 'requirement', 'severity', 'deadline'] as const).map(h => (
+                  <th key={h} className="pb-3 text-left text-xs text-mgray/60 uppercase tracking-wider font-semibold">{t(`report.columns.${h}`)}</th>
                 ))}
               </tr>
             </thead>
@@ -262,13 +264,15 @@ export default function ReportPage() {
                   <td className="py-2.5 font-mono text-xs text-teal font-semibold">{g.article}</td>
                   <td className="py-2.5 text-white">
                     {g.title}
-                    <span className="ml-2 text-[10px] text-mgray/50">({STATUS_LABEL[g.status] ?? g.status})</span>
+                    <span className="ml-2 text-[10px] text-mgray/50">
+                      ({REQUIREMENT_STATUSES.includes(g.status) ? t(`options.requirementStatus.${g.status}`) : g.status})
+                    </span>
                   </td>
                   <td className={`py-2.5 text-xs font-semibold ${SEV_COLOR[g.severity] ?? 'text-mgray'}`}>
-                    {SEV_LABEL[g.severity] ?? g.severity}
+                    {SEVERITIES.includes(g.severity) ? t(`options.severity.${g.severity}`) : g.severity}
                   </td>
                   <td className="py-2.5 text-mgray text-xs">
-                    {g.deadline_days === 0 ? 'NATYCHMIAST' : `${g.deadline_days} dni`}
+                    {g.deadline_days === 0 ? t('report.immediately') : t('report.deadlineDays', { days: g.deadline_days })}
                   </td>
                 </tr>
               ))}
@@ -279,8 +283,7 @@ export default function ReportPage() {
 
       {/* Stopka */}
       <div className="text-center py-3 text-xs text-mgray/40 border-t border-blue/20">
-        Raport wygenerowany przez GovAI v0.2.0 · EU AI Act (Rozporządzenie UE 2024/1689) ·
-        Dokument ma charakter informacyjny. Nie stanowi porady prawnej.
+        {t('report.footer')}
       </div>
     </div>
   );

@@ -1,0 +1,86 @@
+{
+  "aiactTab": {
+    "count": "{count, plural, one {# requirement} other {# requirements}}",
+    "emptyLevel": "No requirements for this level.",
+    "intro": "Requirements assigned to risk levels. Shown in PDF reports and in the agent compliance view. You can add your own annotations to specific EU AI Act articles."
+  },
+  "banner": {
+    "text": "The Gateway automatically refreshes rules from the database every 60 seconds. Once a change is saved, nothing else needs to be done.",
+    "title": "Configuration without restart:"
+  },
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "edit": "Edit",
+  "loading": "Loading...",
+  "newRequirement": {
+    "addButton": "+ Add requirement",
+    "article": "Article *",
+    "articlePlaceholder": "e.g. Art. 9(2)",
+    "deadlineDays": "Deadline (days)",
+    "declKey": "Self-declaration key",
+    "declKeyHint": "The self-declaration key links this requirement to a field in the agent's Registry tab. Empty = the requirement cannot be self-declared (e.g. an Art. 5 prohibition).",
+    "declKeyPlaceholder": "e.g. art9_risk_management",
+    "reqText": "Requirement description *",
+    "reqTextPlaceholder": "Detailed description of the requirement and how to meet it...",
+    "reqTitle": "Requirement title *",
+    "reqTitlePlaceholder": "e.g. Register of high-risk AI systems",
+    "riskLevel": "Risk level *",
+    "save": "Save requirement",
+    "severity": "Default severity",
+    "sortOrder": "Order",
+    "title": "New EU AI Act requirement"
+  },
+  "newRule": {
+    "addButton": "+ Add new rule",
+    "code": "Rule code",
+    "codePlaceholder": "e.g. G-003",
+    "defaultReason": "Blocked by rule {code}",
+    "keywords": "Keywords (one per line) *",
+    "keywordsPlaceholder": "eksportuj dane\nexport data\nsend all records",
+    "name": "Name *",
+    "namePlaceholder": "e.g. Data export block",
+    "priority": "Priority (lower = more important)",
+    "reason": "Block message",
+    "reasonPlaceholder": "Prohibited operation detected",
+    "save": "Save rule",
+    "title": "New blocking rule"
+  },
+  "requirement": {
+    "article": "Article",
+    "days": "{count, plural, one {# day} other {# days}}",
+    "deleteConfirm": "Delete requirement \"{title}\"?",
+    "noDeclKey": "no self-declaration",
+    "title": "Title"
+  },
+  "rule": {
+    "activate": "Activate",
+    "addKeyword": "+ Add",
+    "addKeywordPlaceholder": "Add keyword...",
+    "deactivate": "Deactivate",
+    "inactive": "INACTIVE",
+    "keywords": "Keywords ({count})",
+    "meta": "Priority: {priority} · Scope: {level} · v{version}",
+    "noKeywords": "No keywords — the rule will never trigger.",
+    "reason": "Message: “{reason}\"",
+    "unsaved": "Unsaved changes · the Gateway will apply them within 60s."
+  },
+  "rulesTab": {
+    "empty": "No rules defined.",
+    "intro": "Blocking rules are checked in order of priority (lower number = higher priority). The first keyword match triggers a block before the model is called.",
+    "noResults": "No rules matching “{query}”.",
+    "searchPlaceholder": "Search rules — name, code, keyword, reason..."
+  },
+  "save": "✓ Save",
+  "saving": "Saving...",
+  "severity": {
+    "critical": "Critical",
+    "major": "Major",
+    "minor": "Minor"
+  },
+  "subtitle": "Manage security rules and EU AI Act requirements without code changes. Rule changes take effect in the Gateway within 60s.",
+  "tabs": {
+    "aiact": "EU AI Act requirements",
+    "rules": "Security Rules"
+  },
+  "title": "Policies and Compliance"
+}

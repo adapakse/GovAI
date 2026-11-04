@@ -1,10 +1,19 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { api, AuditEntry } from '@/lib/api';
 import PolicyBadge from '@/components/PolicyBadge';
+import { useFormat } from '@/lib/format';
+
+const COLUMNS = ['time', 'agent', 'result', 'eventType', 'pii', 'latency', 'details'] as const;
+const RESULTS = ['allowed', 'blocked', 'oversight_required', 'error'] as const;
+const DAYS = ['1', '7', '30'] as const;
 
 export default function AuditPage() {
+  const t = useTranslations('audit');
+  const tc = useTranslations('common');
+  const fmt = useFormat();
   const [entries, setEntries] = useState<AuditEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<AuditEntry | null>(null);
@@ -29,13 +38,13 @@ export default function AuditPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Dziennik Audytowy</h1>
+          <h1 className="text-2xl font-bold text-white">{t('header.title')}</h1>
           <p className="text-mgray text-sm mt-0.5">
-            Niezmienialny zapis wszystkich wywołań agentów AI
+            {t('header.subtitle')}
           </p>
         </div>
         <div className="text-sm text-mgray bg-navy px-3 py-1.5 rounded-full border border-blue/30">
-          {entries.length} wpisów
+          {t('count', { count: entries.length })}
         </div>
       </div>
 
@@ -46,29 +55,28 @@ export default function AuditPage() {
           onChange={e => setFilterResult(e.target.value)}
           className="bg-navy border border-blue/40 text-sm text-white rounded-lg px-3 py-2 focus:outline-none focus:border-teal"
         >
-          <option value="">Wszystkie wyniki</option>
-          <option value="allowed">Dozwolone</option>
-          <option value="blocked">Zablokowane</option>
-          <option value="oversight_required">Do nadzoru</option>
-          <option value="error">Błąd</option>
+          <option value="">{t('filters.result.all')}</option>
+          {RESULTS.map(r => (
+            <option key={r} value={r}>{tc(`policyResult.${r}`)}</option>
+          ))}
         </select>
         <select
           value={filterPii}
           onChange={e => setFilterPii(e.target.value)}
           className="bg-navy border border-blue/40 text-sm text-white rounded-lg px-3 py-2 focus:outline-none focus:border-teal"
         >
-          <option value="">Wszystkie (PII)</option>
-          <option value="true">Z wykrytym PII</option>
-          <option value="false">Bez PII</option>
+          <option value="">{t('filters.pii.all')}</option>
+          <option value="true">{t('filters.pii.with')}</option>
+          <option value="false">{t('filters.pii.without')}</option>
         </select>
         <select
           value={filterDays}
           onChange={e => setFilterDays(e.target.value)}
           className="bg-navy border border-blue/40 text-sm text-white rounded-lg px-3 py-2 focus:outline-none focus:border-teal"
         >
-          <option value="1">Ostatni dzień</option>
-          <option value="7">Ostatnie 7 dni</option>
-          <option value="30">Ostatnie 30 dni</option>
+          {DAYS.map(d => (
+            <option key={d} value={d}>{t(`filters.days.${d}`)}</option>
+          ))}
         </select>
       </div>
 
@@ -77,19 +85,19 @@ export default function AuditPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-blue/30">
-              {['Czas', 'Agent', 'Wynik', 'Typ zdarzenia', 'PII', 'Latencja', 'Szczegóły'].map(h => (
+              {COLUMNS.map(h => (
                 <th key={h} className="px-4 py-3 text-left text-xs uppercase tracking-wider text-mgray font-semibold">
-                  {h}
+                  {t(`table.columns.${h}`)}
                 </th>
               ))}
             </tr>
           </thead>
           <tbody className="divide-y divide-blue/20">
             {loading && (
-              <tr><td colSpan={7} className="px-4 py-8 text-center text-mgray animate-pulse">Ładowanie...</td></tr>
+              <tr><td colSpan={7} className="px-4 py-8 text-center text-mgray animate-pulse">{t('table.loading')}</td></tr>
             )}
             {!loading && entries.length === 0 && (
-              <tr><td colSpan={7} className="px-4 py-8 text-center text-mgray/50">Brak wpisów w tym okresie</td></tr>
+              <tr><td colSpan={7} className="px-4 py-8 text-center text-mgray/50">{t('table.empty')}</td></tr>
             )}
             {entries.map((e, i) => (
               <tr key={i} className={`hover:bg-blue/10 transition-colors ${
@@ -99,10 +107,10 @@ export default function AuditPage() {
               }`}>
                 <td className="px-4 py-2.5">
                   <div className="text-xs text-white font-mono">
-                    {new Date(e.time).toLocaleTimeString('pl-PL')}
+                    {fmt.time(e.time)}
                   </div>
                   <div className="text-xs text-mgray/60">
-                    {new Date(e.time).toLocaleDateString('pl-PL')}
+                    {fmt.date(e.time)}
                   </div>
                 </td>
                 <td className="px-4 py-2.5">
@@ -114,7 +122,7 @@ export default function AuditPage() {
                 <td className="px-4 py-2.5 text-xs text-mgray">{e.event_type}</td>
                 <td className="px-4 py-2.5">
                   {e.pii_count > 0 ? (
-                    <span className="text-xs text-yellow-400 font-semibold">{e.pii_count} encji</span>
+                    <span className="text-xs text-yellow-400 font-semibold">{t('table.piiEntities', { count: e.pii_count })}</span>
                   ) : (
                     <span className="text-xs text-mgray/40">—</span>
                   )}
@@ -127,7 +135,7 @@ export default function AuditPage() {
                     onClick={() => setSelected(e)}
                     className="text-xs text-teal hover:underline"
                   >
-                    Pokaż
+                    {t('table.show')}
                   </button>
                 </td>
               </tr>
@@ -141,20 +149,20 @@ export default function AuditPage() {
         <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4" onClick={() => setSelected(null)}>
           <div className="bg-dark border border-blue/40 rounded-xl w-full max-w-lg shadow-2xl" onClick={e => e.stopPropagation()}>
             <div className="px-6 py-4 border-b border-blue/30 flex items-center justify-between">
-              <h2 className="text-base font-bold text-white">Szczegóły wywołania</h2>
+              <h2 className="text-base font-bold text-white">{t('details.title')}</h2>
               <button onClick={() => setSelected(null)} className="text-mgray hover:text-white text-xl">×</button>
             </div>
             <div className="px-6 py-5 space-y-3 text-sm">
               {[
-                ['Agent',        selected.agent_name],
-                ['Call ID',      selected.call_id],
-                ['Task ID',      selected.task_id],
-                ['Wynik',        selected.policy_result],
-                ['Typ zdarzenia',selected.event_type],
-                ['PII kategorie',selected.pii_categories?.join(', ') || '—'],
-                ['Skrót wejścia',selected.input_hash ?? '—'],
-                ['Latencja',     selected.latency_ms ? `${selected.latency_ms} ms` : '—'],
-                ['Koszt',        selected.cost_eur ? `${Number(selected.cost_eur).toFixed(6)} EUR` : '—'],
+                [t('details.fields.agent'),         selected.agent_name],
+                [t('details.fields.callId'),        selected.call_id],
+                [t('details.fields.taskId'),        selected.task_id],
+                [t('details.fields.result'),        selected.policy_result],
+                [t('details.fields.eventType'),     selected.event_type],
+                [t('details.fields.piiCategories'), selected.pii_categories?.join(', ') || '—'],
+                [t('details.fields.inputHash'),     selected.input_hash ?? '—'],
+                [t('details.fields.latency'),       selected.latency_ms ? `${selected.latency_ms} ms` : '—'],
+                [t('details.fields.cost'),          selected.cost_eur ? `${Number(selected.cost_eur).toFixed(6)} EUR` : '—'],
               ].map(([label, value]) => (
                 <div key={label} className="flex gap-3">
                   <span className="text-mgray w-32 flex-shrink-0">{label}:</span>
@@ -167,7 +175,7 @@ export default function AuditPage() {
                     ? 'bg-purple-900/20 border-purple-700/50 text-purple-300'
                     : 'bg-red-900/20 border-red-700/50 text-red-300'
                 }`}>
-                  {selected.policy_result === 'error' ? 'Szczegóły błędu' : 'Powód blokady'}: {selected.block_reason}
+                  {selected.policy_result === 'error' ? t('details.errorDetails') : t('details.blockReason')}: {selected.block_reason}
                 </div>
               )}
             </div>

@@ -1,0 +1,159 @@
+{
+  "budget.default_alert_threshold_eur": {
+    "description": "Kostenwarnschwelle für neue KI-Agenten (0 = deaktiviert).",
+    "label": "Standard-Warnschwelle",
+    "unit": "EUR"
+  },
+  "budget.default_monthly_eur": {
+    "description": "Budget, das neuen KI-Agenten zugewiesen wird (0 = kein Limit).",
+    "label": "Standard-Monatsbudget",
+    "unit": "EUR"
+  },
+  "compliance.deadline_days": {
+    "description": "Anzahl der Tage zur Behebung einzelner Konformitätslücken bei hohem Risiko (Schlüssel = Kontrollfeld).",
+    "label": "Fristen für Compliance-Lücken (Tage)",
+    "unit": "Tage"
+  },
+  "compliance.enterprise_report_max_tokens": {
+    "description": "Token-Limit für das Narrativ des Unternehmensberichts.",
+    "label": "Enterprise-Bericht — max. Tokens",
+    "unit": "Tokens"
+  },
+  "compliance.report_max_tokens": {
+    "description": "Token-Limit für das Narrativ des Konformitätsberichts eines KI-Agenten.",
+    "label": "Agentenbericht — max. Tokens",
+    "unit": "Tokens"
+  },
+  "i18n.default_locale": {
+    "description": "Sprache der Benutzeroberfläche, der Berichte und der Meldungen für Benutzer, die keine eigene Sprache gewählt haben. Codes: pl, en, de, it, es, fr, ro, ru, sl, hr.",
+    "label": "Standardsprache"
+  },
+  "intervals.policy_refresh_seconds": {
+    "description": "In welchem Sekundenabstand das Gateway die Richtlinienregeln aus der Datenbank neu lädt.",
+    "label": "Neuladen der Richtlinien",
+    "unit": "Sekunden"
+  },
+  "intervals.ttl_monitor_seconds": {
+    "description": "In welchem Sekundenabstand der Monitor überfällige Aufsichtsaufgaben eskaliert.",
+    "label": "TTL-Monitor der Aufsicht",
+    "unit": "Sekunden"
+  },
+  "models.classifier_model": {
+    "description": "Modell zur Bewertung der Risikostufe eines KI-Agenten.",
+    "label": "Modell des AI-Act-Klassifikators"
+  },
+  "models.default_agent_model": {
+    "description": "Modell, das neu registrierten KI-Agenten zugewiesen wird.",
+    "label": "Standardmodell für KI-Agenten"
+  },
+  "models.default_max_tokens": {
+    "description": "Limit der Ausgabe-Tokens, wenn der Client keines angibt.",
+    "label": "Standard-Token-Limit",
+    "unit": "Tokens"
+  },
+  "models.default_temperature": {
+    "description": "LLM-Temperatur, wenn der Client keine angibt.",
+    "label": "Standardtemperatur",
+    "unit": "0–2"
+  },
+  "oversight.history_limit": {
+    "description": "Feste Obergrenze für die Anzahl der Einträge im Aufsichtsverlauf.",
+    "label": "Aufsichtsverlauf — Zeilenlimit",
+    "unit": "Zeilen"
+  },
+  "oversight.history_max_days": {
+    "description": "Maximaler Tagesbereich für GET /oversight/history.",
+    "label": "Aufsichtsverlauf — max. Tage",
+    "unit": "Tage"
+  },
+  "oversight.min_review_seconds": {
+    "description": "Unterhalb dieser Sekundenzahl wird eine Aufsichtsprüfung als Scheinaufsicht (Rubber-Stamp) gekennzeichnet.",
+    "label": "Min. Prüfzeit",
+    "unit": "Sekunden"
+  },
+  "oversight.ttl_seconds": {
+    "description": "Zeit bis zur Eskalation einer Aufgabe in der Aufsichtswarteschlange.",
+    "label": "TTL einer Aufsichtsaufgabe",
+    "unit": "Sekunden"
+  },
+  "pagination.audit_default_limit": {
+    "description": "Standardanzahl der Einträge in GET /audit.",
+    "label": "Audit — Standardlimit",
+    "unit": "Zeilen"
+  },
+  "pagination.audit_max_limit": {
+    "description": "Maximale Anzahl der Einträge in einer Audit-Abfrage.",
+    "label": "Audit — max. Limit",
+    "unit": "Zeilen"
+  },
+  "pagination.dashboard_recent_blocks": {
+    "description": "Anzahl der letzten Blockierungen in den Dashboard-Warnungen.",
+    "label": "Dashboard — letzte Blockierungen",
+    "unit": "Einträge"
+  },
+  "pagination.dashboard_top_agents": {
+    "description": "Anzahl der aktivsten KI-Agenten im Dashboard.",
+    "label": "Dashboard — Top-KI-Agenten",
+    "unit": "Einträge"
+  },
+  "pagination.default_window_days": {
+    "description": "Standard-Tagesbereich für Audit und Dashboard.",
+    "label": "Standardzeitfenster (Tage)",
+    "unit": "Tage"
+  },
+  "pagination.stats_default_days": {
+    "description": "Standardbereich für GET /agents/{id}/stats.",
+    "label": "Agentenstatistik — Standardtage",
+    "unit": "Tage"
+  },
+  "pagination.stats_max_days": {
+    "description": "Maximaler Bereich der Agentenstatistik.",
+    "label": "Agentenstatistik — max. Tage",
+    "unit": "Tage"
+  },
+  "pagination.timeline_default_hours": {
+    "description": "Standardzeitfenster des Timeline-Diagramms.",
+    "label": "Timeline — Standardstunden",
+    "unit": "Stunden"
+  },
+  "pagination.timeline_max_hours": {
+    "description": "Maximaler Bereich des Timeline-Diagramms.",
+    "label": "Timeline — max. Stunden",
+    "unit": "Stunden"
+  },
+  "pricing.default_rate": {
+    "description": "Preis [Eingabe, Ausgabe] für Modelle, die nicht in der Zuordnung enthalten sind.",
+    "label": "Standardpreis (USD/1k Tok.)",
+    "unit": "USD/1k"
+  },
+  "pricing.model_rates": {
+    "description": "Zuordnung Modell → [Eingabe, Ausgabe] in USD pro 1000 Tokens. Modelle außerhalb der Liste verwenden den Standardpreis.",
+    "label": "Modellpreise (USD/1k Tok.)",
+    "unit": "USD/1k"
+  },
+  "pricing.usd_to_eur": {
+    "description": "Umrechnungsfaktor der Modellkosten von USD in EUR.",
+    "label": "Wechselkurs USD→EUR",
+    "unit": "Faktor"
+  },
+  "security.access_token_expire_minutes": {
+    "description": "Lebensdauer des JWT-Access-Tokens.",
+    "label": "Gültigkeit des Access-Tokens",
+    "unit": "Minuten"
+  },
+  "security.bcrypt_rounds": {
+    "description": "Kostenfaktor des Passwort-Hashings (höher = langsamer, sicherer).",
+    "label": "bcrypt-Runden",
+    "unit": "Runden"
+  },
+  "security.pii_confidence_threshold": {
+    "description": "Minimale Konfidenz von Presidio, ab der eine Erkennung personenbezogener Daten anerkannt wird.",
+    "label": "Konfidenzschwelle für personenbez. Daten",
+    "unit": "0–1"
+  },
+  "security.refresh_token_expire_days": {
+    "description": "Lebensdauer des Refresh-Tokens.",
+    "label": "Gültigkeit des Refresh-Tokens",
+    "unit": "Tage"
+  }
+}

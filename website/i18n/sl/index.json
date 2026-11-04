@@ -1,0 +1,542 @@
+{
+  "act": {
+    "eyebrow": "Regulativa",
+    "lead": "Nekateri roki že veljajo, nekateri so bili poleti 2026 prestavljeni — spodaj je dejansko stanje, ne tisto pred spremembo.",
+    "obligations": {
+      "deployer": {
+        "art26p2": {
+          "article": "Člen 26(2)",
+          "mechanism": "Čakalna vrsta za nadzor z vlogo »reviewer« — ne izjava, tu GovAI to uveljavlja.",
+          "requirement": "Človeški nadzor, dodeljen usposobljeni, pooblaščeni osebi."
+        },
+        "art26p5": {
+          "article": "Člen 26(5)",
+          "mechanism": "Statistika klicev agenta je na voljo na nadzorni plošči — sama obveznost obveščanja ponudnika je danes samoizjava, ne avtomatizem.",
+          "requirement": "Spremljanje delovanja sistema in obveščanje ponudnika o tveganjih/incidentih."
+        },
+        "art26p6": {
+          "article": "Člen 26(6)",
+          "mechanism": "Nespremenljiva revizijska sled brez mehanizma samodejnega brisanja — trajno arhitekturno jamstvo, ne izjava za posameznega agenta.",
+          "requirement": "Hramba samodejno ustvarjenih dnevnikov najmanj 6 mesecev."
+        },
+        "art26p8": {
+          "article": "Člen 26(8)",
+          "mechanism": "Polje v registru agenta (isto kot pri členu 49).",
+          "requirement": "Preverjanje registracije sistema v podatkovni zbirki EU (velja za javne subjekte)."
+        },
+        "art27": {
+          "mechanism": "Danes le polje za samoizjavo — brez namenskega čarovnika za FRIA.",
+          "requirement": "Ocena učinka na temeljne pravice (FRIA) — velja za javne subjekte ter za ocenjevanje kreditne sposobnosti in zavarovalnega tveganja."
+        },
+        "scope": "Členi 26–27 — prav tako december 2027, ista sprememba",
+        "title": "Visoko tveganje — uvajalec (deployer)"
+      },
+      "headers": {
+        "article": "Člen",
+        "mechanism": "Mehanizem v GovAI",
+        "priority": "Prednost",
+        "requirement": "Zahteva",
+        "verification": "Preverjanje"
+      },
+      "intro": "To ni statičen prodajni seznam — večina spodnjih vrstic je isti katalog zahtev, ki ga mehanizem za ocenjevanje skladnosti GovAI vrstico za vrstico primerja z registrom vsakega agenta. Stolpec »Preverjanje« kaže, ali status izhaja iz objektivnega sistemskega dejstva (<span class=\"mono\">auto</span>) ali iz izrecne samoizjave (<span class=\"mono\">izjava</span>) — brez izjave se zahteva šteje kot vrzel, ne kot privzeta »zelena kljukica«. Obveznosti ponudnika sistema UI (členi 9–17) smo ločili od obveznosti uvajalca (členi 26–27) — večina organizacij, ki uporabljajo GovAI, uvaja agente, zgrajene na zunanjih modelih, zato je pravno bližje vlogi uvajalca kot ponudnika. Kakšen status ima posamezna organizacija dejansko, je odvisno od konkretnega primera.",
+      "limited": {
+        "art50p1": {
+          "article": "Člen 50(1)",
+          "requirement": "Obveščanje uporabnika o interakciji z UI."
+        },
+        "art50p4": {
+          "article": "Člen 50(4)",
+          "requirement": "Strojno berljivo označevanje vsebin, ustvarjenih z UI."
+        },
+        "scope": "Člen 50 — obveznosti glede preglednosti",
+        "title": "Omejeno tveganje"
+      },
+      "mechanismSelfDeclaration": "Samoizjava v registru agenta.",
+      "note": "<strong>Katalog je mogoče urejati, ni trajno zapisan v kodi.</strong> Svetovalec za skladnost lahko prek nadzorne plošče doda novo zahtevo, spremeni rok ali prednost — ko se spremeni razlaga predpisa ali izide smernica Komisije, se katalog posodobi brez spremembe kode. Člen 26(2) in 26(6) se preverjata samodejno iz registra, ostalo je samoizjava. Danes zavestno izpuščamo: člen 12 (vodenje evidenc — funkcionalno pokrito z revizijsko sledjo, vendar brez ločene vrstice v katalogu vrzeli), člen 16 (splošna obveznost skladnosti ponudnika), člen 4 (pismenost na področju UI — z Digital Omnibus omiljen z »zagotavljanja« na »spodbujanje«), člen 53 (obveznosti GPAI — veljajo za ponudnike modelov, ne za uporabnike GovAI) in člen 72 (spremljanje po dajanju na trg — obveznost ponudnika modela/sistema, ne upravljavca agenta).",
+      "priority": {
+        "critical": "Kritično",
+        "critical30": "Kritično · 30 dni",
+        "critical60": "Kritično · 60 dni",
+        "critical90": "Kritično · 90 dni",
+        "major30": "Pomembno · 30 dni",
+        "major60": "Pomembno · 60 dni",
+        "major90": "Pomembno · 90 dni",
+        "major90Narrow": "Pomembno · 90 dni, ozek obseg",
+        "minor180": "Manj pomembno · 180 dni"
+      },
+      "provider": {
+        "art10": {
+          "mechanism": "Register: kategorije podatkov, pravna podlaga po GDPR, obdobje hrambe.",
+          "requirement": "Kakovost in upravljanje učnih/vhodnih podatkov."
+        },
+        "art11": {
+          "mechanism": "Generator poročil PDF za posameznega agenta — besedilo, ustvarjeno iz podatkov registra in revizijske sledi.",
+          "requirement": "Popolna tehnična dokumentacija v skladu s Prilogo IV."
+        },
+        "art13": {
+          "mechanism": "Register: namen, prejemniki, geografski obseg agenta.",
+          "requirement": "Operativna preglednost do uporabnikov sistema."
+        },
+        "art14": {
+          "mechanism": "Čakalna vrsta za nadzor na poti klica — ne le izjava, tu GovAI to uveljavlja sam.",
+          "requirement": "Človeški nadzor — možnost ustavitve ali razveljavitve odločitve."
+        },
+        "art15": {
+          "mechanism": "Samoizjava + statistika klicev agenta iz revizijske sledi.",
+          "requirement": "Točnost in robustnost sistema v celotnem življenjskem ciklu."
+        },
+        "art17": {
+          "requirement": "Sistem upravljanja kakovosti pri ponudniku."
+        },
+        "art43": {
+          "requirement": "Ugotavljanje skladnosti pred dajanjem v uporabo."
+        },
+        "art49": {
+          "requirement": "Registracija v podatkovni zbirki EU za sisteme UI."
+        },
+        "art9": {
+          "mechanism": "Polje v registru + samoizjava o stanju obvladovanja tveganj.",
+          "requirement": "Sistem obvladovanja tveganj v celotnem življenjskem ciklu agenta."
+        },
+        "scope": "Členi 9–17 — rok: december 2027",
+        "title": "Visoko tveganje — ponudnik sistema"
+      },
+      "source": {
+        "autoArchitecture": "auto · arhitektura",
+        "autoClassification": "auto · razvrstitev",
+        "autoSystemField": "auto · sistemsko polje",
+        "declared": "izjava v registru",
+        "partial": "delno — v nadgradnji"
+      },
+      "title": "Zemljevid obveznosti: kateri člen, kateri mehanizem v GovAI in kako vemo, da je izpolnjen.",
+      "unacceptable": {
+        "art5": {
+          "mechanism": "Razvrščevalnik tveganja ob registraciji agenta, pred uvedbo, označi »unacceptable«.",
+          "requirement": "Absolutna prepoved uporabe — subliminalna manipulacija, družbeno točkovanje, biometrija v realnem času."
+        },
+        "scope": "Člen 5 — v celoti prepovedani sistemi",
+        "title": "Nesprejemljivo tveganje"
+      }
+    },
+    "omnibusNote": "<strong>Digital Omnibus AI (Uredba (EU) 2026/1744, velja od 27. 7. 2026) je polne obveznosti za visoko tveganje prestavil z 2. avgusta 2026 na 2. december 2027</strong> (samostojni sistemi iz Priloge III) in na 2. avgust 2028 za UI, vgrajeno v regulirane proizvode. Roki za člen 5 (prepovedi), člen 50 (preglednost) in obveznosti GPAI so ostali nespremenjeni.",
+    "penalties": {
+      "highRisk": {
+        "amount": "15 mio. € / 3 %",
+        "text": "za večino drugih obveznosti glede visokega tveganja: obvladovanje tveganj, podatki, nadzor, beleženje."
+      },
+      "misinformation": {
+        "amount": "7,5 mio. € / 1 %",
+        "text": "za posredovanje nepravilnih, nepopolnih ali zavajajočih informacij organom."
+      },
+      "note": "Za MSP in zagonska podjetja so globe omejene na nižjo od obeh vrednosti (fiksni znesek ali odstotek) — same obveznosti pa se ne zmanjšajo.",
+      "prohibited": {
+        "amount": "35 mio. € / 7 %",
+        "text": "celotnega svetovnega letnega prometa, kar je višje — za prepovedane prakse (člen 5)."
+      },
+      "title": "Globe so večstopenjske — in resnične."
+    },
+    "timeline": {
+      "aug2025": {
+        "date": "AVG 2025",
+        "text": "Ponudniki modelov GPAI morajo izpolnjevati zahteve glede preglednosti in obvladovanja tveganj.",
+        "title": "Obveznosti za modele za splošne namene"
+      },
+      "aug2026": {
+        "date": "AVG 2026",
+        "text": "Klepetalni roboti, sintetične vsebine in globoki ponaredki morajo biti označeni — rok je ohranjen kljub spremembi.",
+        "title": "Preglednost (člen 50) velja"
+      },
+      "aug2028": {
+        "date": "AVG 2028",
+        "text": "Visokotvegana UI, vgrajena v regulirane proizvode (medicinski pripomočki, vozila) — prvotno avgust 2027, prestavljeno za 12 mesecev. UI v strojih je večinoma izvzeta iz tega režima v korist Uredbe o strojih.",
+        "title": "Vgrajeni visokotvegani sistemi"
+      },
+      "dec2026": {
+        "date": "DEC 2026",
+        "text": "Prepoved ustvarjanja intimnih vsebin brez privolitve in CSAM (nova v členu 5) ter konec 4-mesečnega prehodnega obdobja za vodne žige iz člena 50(2).",
+        "title": "Nova prepoved + konec prehodnega obdobja"
+      },
+      "dec2027": {
+        "date": "DEC 2027",
+        "text": "Polne obveznosti iz Priloge III: obvladovanje tveganj, človeški nadzor, beleženje, dokumentacija. Prvotno avgust 2026 — z Digital Omnibus prestavljeno za 16 mesecev.",
+        "title": "Visokotvegani sistemi začnejo veljati — prestavljeno"
+      },
+      "feb2025": {
+        "date": "FEB 2025",
+        "text": "Člen 5 — manipulativne, izkoriščevalske uporabe UI in uporabe za družbeno točkovanje so že nezakonite.",
+        "title": "Prepoved nesprejemljivih praks"
+      },
+      "now": "Zdaj"
+    },
+    "title": "Rok je Digital Omnibus prestavil. Obveznost ni izginila."
+  },
+  "chat": {
+    "close": "Zapri",
+    "cta": "Pišite nam",
+    "status": "Običajno odgovori v nekaj urah",
+    "team": "Ekipa GovAI",
+    "text": "Imate vprašanje o skladnosti z AI Act, uvedbi ali ceniku? Pišite nam — odgovorimo v enem delovnem dnevu.",
+    "toggle": "Imate vprašanje?"
+  },
+  "compare": {
+    "blocks": {
+      "label": "Kršitev blokira v živo"
+    },
+    "evidence": {
+      "docs": "Ustvarjeni dokumenti",
+      "govai": "Nespremenljiv dnevnik odločitev s časovnim žigom",
+      "label": "Dokaz za revizijo",
+      "manual": "Kar je nekdo zapisal"
+    },
+    "eyebrow": "Zakaj uveljavljanje, ne dokumentacija",
+    "gapVsEnforcement": {
+      "docs": "Nadzorna plošča prikazuje vrzeli, promet teče naprej nespremenjen",
+      "govai": "Isti status vrzeli v živo krmili čakalno vrsto za nadzor in usmerjanje",
+      "label": "Ocena vrzeli proti uveljavljanju",
+      "manual": "Nepovezano — preglednica nikogar ne blokira"
+    },
+    "headers": {
+      "docPlatforms": "Platforme za dokumentacijo",
+      "manual": "Ročni postopek"
+    },
+    "isolation": {
+      "docs": "Vedno deljeni SaaS, brez izbire",
+      "govai": "Izberete vi: namenska instanca ali multi-tenant z logično izolacijo",
+      "label": "Izolacija podatkov",
+      "manual": "Kar že imate"
+    },
+    "lead": "Večina orodij za AI Act se ustavi pri ustvarjanju papirjev. GovAI stoji na poti zahteve.",
+    "no": "Ne",
+    "oversight": {
+      "docs": "Spremljan kot opravilo",
+      "govai": "Vgrajen v pot klica",
+      "label": "Čakalna vrsta za človeški nadzor",
+      "manual": "Priložnostno, po e-pošti"
+    },
+    "title": "Dokumentacija dokazuje, da ste želeli biti skladni. Uveljavljanje dokazuje, da ste bili.",
+    "where": {
+      "docs": "Po klicu, na podlagi dnevnikov",
+      "govai": "Preden klic doseže ponudnika",
+      "label": "Kje deluje",
+      "manual": "Po incidentu, če sploh"
+    },
+    "yes": "Da"
+  },
+  "contact": {
+    "company": "Podjetje",
+    "companyPlaceholder": "Ime podjetja",
+    "email": "Službeni e-poštni naslov",
+    "emailPlaceholder": "janez@podjetje.si",
+    "error": "✕ Prišlo je do napake. Poskusite znova ali pišite neposredno na kontakt@govai.pl",
+    "eyebrow": "Kontakt",
+    "lead": "Odgovorimo v enem delovnem dnevu. Bi raje pisali neposredno? <a href=\"mailto:kontakt@govai.pl\" class=\"contact-email-link\">kontakt@govai.pl</a>",
+    "message": "Sporočilo",
+    "messagePlaceholder": "Na kratko opišite svoje potrebe ali zastavite vprašanje …",
+    "name": "Ime in priimek",
+    "namePlaceholder": "Janez Novak",
+    "optional": "(neobvezno)",
+    "phone": "Telefon",
+    "sending": "Pošiljanje …",
+    "submit": "Pošlji povpraševanje",
+    "success": "✓ Hvala! Kmalu se vam oglasimo.",
+    "title": "Pišite nam"
+  },
+  "cta": {
+    "lead": "30-minutni pogovor. Enega vaših resničnih agentov bomo razvrstili v živo.",
+    "title": "Oglejte si svojega prvega agenta pod uveljavljanjem — še ta teden."
+  },
+  "faq": {
+    "checklist": {
+      "a": "Ne. Orodja tipa kontrolni seznam in dokumentacija povedo, kaj bi morali storiti. GovAI uveljavlja politiko na dejanskem klicu API, preden ga ponudnik modela sploh vidi — revizijska sled je stranski učinek, ne glavni izdelek.",
+      "q": "Je GovAI še eno orodje s kontrolnim seznamom za skladnost?"
+    },
+    "deadlines": {
+      "a": "Prepoved nesprejemljivih praks iz člena 5 velja od februarja 2025, obveznosti GPAI od avgusta 2025, preglednost iz člena 50 od avgusta 2026 — ti roki so aktualni danes. Polne obveznosti za visoko tveganje iz Priloge III je Digital Omnibus (Uredba 2026/1744) prestavil z avgusta 2026 na december 2027 — to še prihaja, ni več »zdaj«.",
+      "q": "Kateri roki AI Act nas danes dejansko zadevajo?"
+    },
+    "gatewayOnly": {
+      "a": "Ne — gre za dve plasti istega sistema. Agent najprej pride v register in dobi razvrstitev tveganja ter oceno vrzeli glede na konkretne člene AI Act (kot v orodjih za dokumentacijo). Šele ta ista razvrstitev se nato v živo uveljavlja na varnostnem prehodu — zato status »zahteva nadzor« ni le rdeča pika na nadzorni plošči, temveč dejansko zadrži odgovor agenta.",
+      "q": "Je GovAI le prehod, ki spremlja promet, brez registra in ocene tveganja?"
+    },
+    "onPrem": {
+      "a": "Da. GovAI se enako uvede na vaši infrastrukturi ali na namenski instanci, ki jo gostimo za vas — model skladnosti se ne spremeni.",
+      "q": "Ali lahko GovAI poganjamo na lastni infrastrukturi?"
+    },
+    "providers": {
+      "a": "Anthropic in DeepSeek takoj po namestitvi, poleg tega možnost lastnega gostovanja (Bielik) za podatke, ki ne smejo zapustiti vaše infrastrukture. Usmerjanje je samodejno, na podlagi občutljivosti podatkov.",
+      "q": "Katere ponudnike modelov podpira GovAI?"
+    },
+    "sharedInfra": {
+      "a": "To je odvisno od izbranega modela — odločite se vi. Za podjetja z večjim obsegom ali strožjimi zahtevami ponujamo namensko instanco: lastno podatkovno zbirko, lastno revizijsko sled, nič deljenega. Za manjše ekipe, ki jim je pomemben nižji vstopni strošek, je na voljo možnost multi-tenant z logično izolacijo za vsako organizacijo. Oba modela uporabljata isti mehanizem za ocenjevanje skladnosti in uveljavljanje politik.",
+      "q": "Ali si infrastrukturo delimo z drugimi strankami GovAI?"
+    },
+    "title": "Vprašanja, ki jih pooblaščenci za skladnost dejansko zastavljajo.",
+    "trial": {
+      "a": "Rezervirajte predstavitev in v živo vam bomo pokazali razvrstitev enega od vaših resničnih agentov. Pogoje pilotnega projekta (trajanje, obseg, morebitni referenčni popust) dogovorimo individualno v tej fazi.",
+      "q": "Ali lahko GovAI preizkusimo pred plačilom?"
+    }
+  },
+  "features": {
+    "auditLog": {
+      "example": "Revizor vpraša po vsaki odločitvi za določenega agenta v določenem tednu — to je poizvedba s časovnim žigom, ne projekt rekonstrukcije.",
+      "how": "Vsaka odločitev — dovoljeno, blokirano, eskalirano — se enkrat zapiše v TimescaleDB in se nikoli ne posodobi ali izbriše.",
+      "problem": "»Dokažite, kaj se je zgodilo 3. marca« je nemogoče, če je zapis spremenljiva tabela dnevnikov, ki jo lahko kdo ureja.",
+      "title": "Nespremenljiva revizijska sled"
+    },
+    "days30": "30 dni",
+    "days60": "60 dni",
+    "deployment": {
+      "example": "Majhna ekipa začne na multi-tenant za delček stroška namenske instance; ko rasteta obseg ali regulativne zahteve, preide na namenski VM brez spremembe integracije na strani agenta.",
+      "how": "GovAI ponuja dva modela uvedbe: namensko instanco (lasten VM, lastna podatkovna zbirka, lastna revizijska sled — popolna fizična izolacija) za podjetja z večjim obsegom ali strogimi zahtevami ter cenejšo instanco multi-tenant z logično izolacijo za vsako organizacijo za manjše ekipe. Kompromis med stroški in izolacijo izberete vi, ne mi namesto vas.",
+      "mock": {
+        "auditIsolated": "Audit log — izolacija po najemniku",
+        "dedicated": "Namenska · lasten VM",
+        "multiTenant": "Multi-tenant · 1 VM",
+        "postgresIsolated": "Postgres — izolacija po najemniku",
+        "redisIsolated": "Redis — izolacija po najemniku",
+        "title": "modeli uvedbe"
+      },
+      "problem": "Velika regulirana institucija in majhna pravna ekipa s petimi agenti ne bi smeli plačevati enake cene za infrastrukturo — obe pa potrebujeta isti mehanizem za ocenjevanje skladnosti in uveljavljanje politik.",
+      "title": "Model uvedbe, prilagojen velikosti podjetja"
+    },
+    "eyebrow": "Platforma",
+    "gapEngine": {
+      "example": "agent=credit-scoring → 9 zahtev za visoko tveganje → 6 izjavljenih, 1 samodejno potrjena (člen 14), 2 neizjavljeni = 2 kritični vrzeli za zaprtje.",
+      "how": "Katalog zahtev (ki ga svetovalec lahko ureja, ni zapisan v kodi) se zahtevo za zahtevo primerja z registrom vsakega agenta — status izhaja bodisi iz objektivnega sistemskega dejstva (npr. ali je človeški nadzor dejansko vklopljen) bodisi iz izrecne samoizjave. Če ni ne enega ne drugega, se to šteje kot dejanska vrzel.",
+      "mock": {
+        "deadline": "rok: dec 2027",
+        "next": {
+          "art11": "<b>Člen 11</b> dopolnite dokumentacijo",
+          "art43": "<b>Člen 43</b> ugotavljanje skladnosti",
+          "art49": "<b>Člen 49</b> registracija v zbirki EU"
+        },
+        "nextHead": "Naslednje prednostne naloge",
+        "risk": "Visoko tveganje · Pril. III.5b",
+        "score": "<b>7 / 9</b> zahtev za visoko tveganje<br>izpolnjenih — člena 26/27 se štejeta ločeno",
+        "tiles": {
+          "art10": "Podatki in upravljanje podatkov",
+          "art11": "Dokumentacija",
+          "art13": "Preglednost",
+          "art14": "Človeški nadzor",
+          "art15": "Točnost",
+          "art17": "Upravljanje kakovosti",
+          "art43": "Ugotavljanje skladnosti",
+          "art49": "Registracija EU",
+          "art9": "Obvladovanje tveganj"
+        }
+      },
+      "problem": "Nadzorne plošče z »% skladnosti« običajno predpostavljajo skladnost tam, kjer še nihče ni ničesar preveril — zelena kljukica na podlagi domneve, ne dejstva.",
+      "title": "Mehanizem za ocenjevanje skladnosti in vrzeli"
+    },
+    "gateway": {
+      "example": "agent=hiring-copilot → POST /v1/chat/completions → pregled → razvrstitev → usmerjanje — preden Anthropic sploh vidi vsebino poizvedbe.",
+      "how": "GovAI se vključi v pot zahteve kot končna točka, združljiva z OpenAI Chat Completions — sprememba enega osnovnega URL-ja in vsak klic je preverjen, preden doseže ponudnika.",
+      "mock": {
+        "intercepted": "↓ prestregel GovAI ↓",
+        "piiScan": "Pregled osebnih podatkov",
+        "policyEngine": "Mehanizem politik",
+        "source": "Agent UI → POST /v1/chat/completions",
+        "targetProvider": "Ciljni ponudnik"
+      },
+      "problem": "Ekipe agente najpogosteje povežejo neposredno s ključem API ponudnika modela. Nihče ne vidi, kaj dejansko zapušča organizacijo, dokler že ni ušlo.",
+      "title": "Varnostni prehod"
+    },
+    "labels": {
+      "example": "Primer",
+      "how": "Kako",
+      "problem": "Kateri problem rešuje"
+    },
+    "lead": "GovAI ni le prehod, ki spremlja promet. Najprej je register in ocena skladnosti — šele ta ista razvrstitev se nato v živo uveljavlja pri vsakem klicu.",
+    "oversight": {
+      "example": "agent=support-bot pii=email → policy=oversight_required — odgovor čaka na odobritev pregledovalca.",
+      "how": "Klici, označeni z <span class=\"mono\">oversight_required</span>, čakajo v vrsti na pregledovalca z vlogo »reviewer«, preden agent prejme odgovor.",
+      "mock": {
+        "approved": "ODOBRENO",
+        "waiting": "ČAKA"
+      },
+      "problem": "Člen 14 zahteva človeški nadzor nad odločitvami z visokim tveganjem — toda »pošljite komu e-pošto« ni postopek, pripravljen na revizijo.",
+      "title": "Čakalna vrsta za človeški nadzor"
+    },
+    "rbac": {
+      "example": "Reviewer lahko odobri ali zavrne označeni klic, ne da bi videl konfiguracijo ponudnikov ali obračun organizacije.",
+      "how": "Pet vlog — partner, IT admin, compliance officer, associate, reviewer — vsaka vidi točno to, kar potrebuje za svojo funkcijo.",
+      "mock": {
+        "billing": "Obračun",
+        "oversight": "Nadzor",
+        "policies": "Politike",
+        "role": "Vloga"
+      },
+      "problem": "V večini orodij je edina vloga s smiselnim dostopom »admin« — vsi drugi so preusmerjeni na e-poštni predal.",
+      "title": "Dostop na podlagi vlog"
+    },
+    "registry": {
+      "example": "agent=credit-scoring → status=quarantined → prehod v nekaj sekundah zavrne nadaljnje klice, brez uvedbe nove različice kode.",
+      "how": "Vsak agent je registriran z lastnikom, namenom, obsegom osebnih podatkov, pravno podlago po GDPR, tehničnim kontaktom in rokom naslednjega pregleda — status (aktiven / začasno ustavljen / karantena / umaknjen) pa se takoj uveljavi na prehodu, ne le zapiše v tabelo.",
+      "mock": {
+        "gdprBasis": "Podlaga po GDPR",
+        "gdprBasisValue": "Člen 6(1)(f)",
+        "owner": "Lastnik",
+        "ownerValue": "Ekipa za tveganja",
+        "quarantine": "Karantena",
+        "version": "Različica / pregled"
+      },
+      "problem": "»Koliko agentov UI imamo v podjetju in kaj točno počnejo« je vprašanje, na katerega v večini organizacij nihče ne zna odgovoriti, ne da bi poklical vse ekipe.",
+      "title": "Register agentov UI"
+    },
+    "reporting": {
+      "example": "GET /agents/credit-scoring/report/pdf → pripravljena datoteka s KPI-ji, porazdelitvijo tveganj in seznamom zapadlih pregledov — za revizorja, brez dotikanja preglednice.",
+      "how": "Poročilo PDF — za posameznega agenta ali za celotno organizacijo — združuje podatke registra, oceno vrzeli, statistiko klicev, proračunska opozorila in zgodovino nadzora, z besedilom, ki se samodejno napiše na podlagi teh podatkov. Ne piše se posebej za nazaj.",
+      "mock": {
+        "agents": "Agenti v registru",
+        "blocked": "Blokiranih",
+        "evaluated": "Ocenjenih klicev",
+        "logCoverage": "Pokritost dnevnika",
+        "oversight": "Napotenih v nadzor"
+      },
+      "problem": "Priprava »tehnične dokumentacije« za revizorja običajno pomeni, da nekdo teden pred rokom sestavlja dokument po spominu.",
+      "title": "Poročanje o skladnosti"
+    },
+    "riskClassifier": {
+      "example": "agent=credit-scoring → risk=high (Pril. III) → samodejno vklopljeno: človeški nadzor + polno beleženje.",
+      "how": "Opis agenta gre v Claude kot pravni razvrščevalnik — vrne stopnjo tveganja, kategorijo iz Priloge III (npr. zaposlovanje, ocenjevanje kreditne sposobnosti, kritična infrastruktura) in seznam ključnih obveznosti. To se zgodi ob registraciji, ne kot enkraten obrazec, ki se izpolni enkrat.",
+      "mock": {
+        "high": "Visoko",
+        "highPill": "VISOKO",
+        "limited": "Omejeno",
+        "minimal": "Minimalno",
+        "oversight": "Člen 14 nadzor",
+        "required": "obvezen",
+        "unacceptable": "Nesprejemljivo"
+      },
+      "problem": "»Katere obveznosti AI Act zadevajo prav tega agenta?« je običajno vprašanje, zastavljeno enkrat, v preglednici, in nikoli ponovno preverjeno, ko se način uporabe agenta spremeni.",
+      "title": "Razvrščevalnik tveganja po AI Act"
+    },
+    "routing": {
+      "example": "pii=email → usmerjanje na lastno gostovan model; klic brez osebnih podatkov → Anthropic. Koda agenta se ne spremeni.",
+      "how": "O usmerjanju odloča občutljivost podatkov, ne navada razvijalca — GovAI za vsak klic izbere Anthropic, DeepSeek ali lastno gostovano instanco (Bielik).",
+      "mock": {
+        "lowSensitivity": "nizka občutljivost",
+        "noPii": "brez osebnih podatkov",
+        "selected": "PII → izbrano"
+      },
+      "problem": "Pošiljanje občutljivih podatkov poljubno nastavljenemu modelu je incident upravljanja podatkov, ki samo čaka, da se zgodi.",
+      "title": "Usmerjanje med več ponudniki"
+    },
+    "title": "Deset elementov enega sistema — od registra do revizijske sledi."
+  },
+  "footer": {
+    "actTimeline": "Časovnica AI Act",
+    "company": "Podjetje",
+    "contact": "Kontakt",
+    "howItWorks": "Kako deluje",
+    "product": "Izdelek",
+    "resources": "Viri",
+    "tagline": "Kontrolna točka med vašimi agenti in modelom."
+  },
+  "hero": {
+    "badges": {
+      "auditLog": "Nespremenljiva revizijska sled",
+      "deployment": "Namenska ali multi-tenant — prilagojeno velikosti podjetja",
+      "openaiApi": "API, združljiv z OpenAI",
+      "registry": "Register agentov + ocena vrzeli"
+    },
+    "ctaAct": "Poglejte, kaj se je spremenilo v AI Act",
+    "eyebrow": "Uveljavljanje EU AI Act · člen 5, Priloga III, člen 50",
+    "pipeline": {
+      "agent": "01 Agent",
+      "audit": "05 Revizija",
+      "pii": "02 Pregled osebnih podatkov",
+      "policy": "03 Mehanizem politik",
+      "routing": "04 Usmerjanje"
+    },
+    "subhead": "GovAI je register agentov UI s samodejno razvrstitvijo tveganja in oceno vrzeli glede na vsako zahtevo AI Act — ter varnostni prehod, ki isto razvrstitev uveljavlja v živo: pregleda osebne podatke, preveri skladnost s politiko, usmeri k pravemu ponudniku in zabeleži vsak klic, preden se odgovor vrne agentu.",
+    "title": "Skladnost z AI Act s platformo GovAI."
+  },
+  "meta": {
+    "description": "GovAI je register agentov UI s samodejno razvrstitvijo tveganja in oceno vrzeli glede na EU AI Act ter varnostni prehod, ki isto razvrstitev v živo uveljavlja pri vsakem klicu.",
+    "ogDescription": "Register agentov UI, samodejna razvrstitev tveganja, ocena vrzeli glede na EU AI Act in varnostni prehod, ki politiko uveljavlja v živo.",
+    "ogTitle": "GovAI — uveljavljanje EU AI Act v realnem času",
+    "title": "GovAI — uveljavljanje EU AI Act v realnem času"
+  },
+  "onboarding": {
+    "demo": {
+      "caption1": "Ena vrstica konfiguracije. Preostala koda agenta — brez sprememb.",
+      "caption2": "Claude analizira opis in predlaga razvrstitev — svetovalec jo le potrdi.",
+      "caption3": "Pravila za posameznega agenta in vrsto podatkov — urejanje brez uvedbe nove kode.",
+      "caption4": "Od prvega klica: pregledano, uveljavljeno, zabeleženo — brez ročnega dela.",
+      "code2": "(Pril. III.5b, auto)",
+      "step": "uvedba · korak"
+    },
+    "eyebrow": "Uvedba",
+    "lead": "Brez migracijskega projekta. GovAI govori API, ki ga vaši agenti že uporabljajo.",
+    "steps": {
+      "pointAgent": {
+        "text": "Sprememba enega osnovnega URL-ja. GovAI govori OpenAI Chat Completions API, zato se nič drugega ne spremeni.",
+        "title": "Usmerite agenta na GovAI"
+      },
+      "policies": {
+        "text": "Izberite, kaj je dovoljeno, blokirano ali zahteva človeka — za posameznega agenta in vrsto podatkov.",
+        "title": "Nastavite politike"
+      },
+      "production": {
+        "text": "Vsak klic se od tega trenutka samodejno pregleda, uveljavi in zabeleži.",
+        "title": "V produkcijo z dokazom"
+      },
+      "register": {
+        "text": "Dodajte agenta v register; GovAI na podlagi načina uporabe predlaga stopnjo tveganja po AI Act.",
+        "title": "Registrirajte in razvrstite"
+      }
+    },
+    "title": "V produkciji še isti dan, ne čez četrtletje."
+  },
+  "pricing": {
+    "enterprise": {
+      "cta": "Pogovorimo se",
+      "eur": "Javni sektor, on-prem, SLA/DR",
+      "features": {
+        "agents": "Neomejeno število agentov",
+        "manager": "Namenski skrbnik za skladnost",
+        "onPrem": "On-prem ali vaš oblak",
+        "sla": "SLA ter namensko varnostno kopiranje/DR"
+      },
+      "monthly": "Individualna ponudba",
+      "setup": "Individualna ponudba",
+      "tagline": "Za regulirane uvedbe, uvedbe z velikim obsegom ali on-prem."
+    },
+    "eyebrow": "Cenik",
+    "growth": {
+      "badge": "Najpogosteje izbran",
+      "eur": "≈ €1 080–1 750/mes.",
+      "features": {
+        "agents": "Do 20 agentov v registru",
+        "oversight": "Čakalna vrsta za človeški nadzor",
+        "routing": "Usmerjanje med več ponudniki",
+        "support": "Prednostna podpora"
+      },
+      "setup": "Pristojbina za uvedbo: <b>25 000–40 000 PLN</b> enkratno",
+      "tagline": "Za ekipe, ki v produkciji upravljajo več deset agentov."
+    },
+    "lead": "Namenska instanca ali multi-tenant z logično izolacijo — prilagojeno velikosti in proračunu podjetja.",
+    "note": "<strong>Okvirni cenik, izhodišče za pogajanja</strong> — prvi pilotni projekt je lahko zavestno ovrednoten nižje.",
+    "perMonth": "PLN/mes.",
+    "starter": {
+      "eur": "≈ €670–1 000/mes.",
+      "features": {
+        "agents": "Do 5 agentov v registru",
+        "multiTenant": "Na voljo tudi kot multi-tenant — nižji vstopni prag, zahtevajte ponudbo",
+        "pii": "Pregledovalnik osebnih podatkov in mehanizem politik",
+        "support": "Standardna podpora"
+      },
+      "setup": "Pristojbina za uvedbo: <b>15 000–25 000 PLN</b> enkratno",
+      "tagline": "Vaš prvi regulirani agent. Do 5 agentov v registru."
+    },
+    "title": "Cenik, ki raste z registrom agentov, ne s številom zaposlenih."
+  },
+  "trust": {
+    "catalog": "zahtev AI Act v katalogu ocene vrzeli, ki ga je mogoče urejati",
+    "deployment": "modela uvedbe — namenski in multi-tenant, prilagojena proračunu",
+    "logged": "klicev zabeleženih pred odgovorom",
+    "policyRefresh": "osvežitev politik, brez ponovnega zagona",
+    "rbac": "vlog RBAC: partner → reviewer"
+  }
+}

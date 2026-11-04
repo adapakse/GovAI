@@ -1,0 +1,8 @@
+{
+  "agent_inactive": "Agent ima status '{status}' — klic je bil zavrnjen pred obdelavo",
+  "llm_error": "Napaka jezikovnega modela ({provider}): {error}",
+  "no_eligible_provider": "Ni dobavitelja, ki bi lahko obdelal model '{model}' agenta pri zahtevani ravni občutljivosti podatkov '{sensitivity}'. Bodisi noben aktiven dobavitelj ne podpira te ravni občutljivosti bodisi nobeden od ustreznih dobaviteljev nima tega modela na seznamu (varnostni prehod namerno ne zamenja modela z drugim brez opozorila). Obrnite se na skrbnika — aktivirajte dobavitelja, ki podpira ta model in raven občutljivosti, ali znižajte občutljivost podatkov v zahtevi.",
+  "policy_custom": "{reason}",
+  "policy_default": "Blokirano z varnostnim pravilnikom",
+  "unknown_agent": "Neznan agent_id: {agent_id} — ni v registru GovAI"
+}

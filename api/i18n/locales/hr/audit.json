@@ -1,0 +1,5 @@
+{
+  "errors": {
+    "call_not_found": "Poziv '{call_id}' nije pronađen u revizijskom zapisniku"
+  }
+}

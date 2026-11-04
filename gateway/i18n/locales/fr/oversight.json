@@ -1,0 +1,5 @@
+{
+  "agentDecision": "L’agent '{agent}' traite la requête et attend l’approbation d’un examinateur. Contenu de la requête (abrégé) : {content}...",
+  "awaitingMessage": "L’appel de l’agent '{agent}' a été suspendu — approbation d’un examinateur requise conformément à l’EU AI Act.",
+  "decisionType": "Appel de l’agent {risk}"
+}

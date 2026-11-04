@@ -1,0 +1,48 @@
+{
+  "alerts": {
+    "empty": "No hay alertas en este período",
+    "title": "Últimos eventos de seguridad",
+    "viewAudit": "Ver registro →"
+  },
+  "byAgent": {
+    "title": "Llamadas por agente"
+  },
+  "chart": {
+    "allowed": "Permitidas",
+    "blocked": "Bloqueadas",
+    "noData": "Sin datos",
+    "total": "Total"
+  },
+  "cost": {
+    "byAgent": "Coste por agente (7 días)",
+    "note": "solo el coste de tokens de Anthropic",
+    "total": "Coste total (7 días)"
+  },
+  "header": {
+    "subtitle": "Últimos 7 días · actualización cada 30 s",
+    "title": "Panel operativo"
+  },
+  "kpi": {
+    "activeAgents": "Agentes activos",
+    "activeAgentsSub": "{count} de alto riesgo",
+    "blocked": "Bloqueos",
+    "blockedSub": "{rate}% de todas las llamadas",
+    "calls": "Llamadas (7 días)",
+    "callsSub": "latencia media {latency} ms",
+    "infraErrors": "Errores de infraestructura",
+    "infraErrorsSub": "sin proveedor de modelos / error del LLM",
+    "pendingOversight": "Pendiente de supervisión",
+    "pendingOversightSub": "requiere la decisión de un revisor"
+  },
+  "loadError": "Error al cargar los datos.",
+  "loading": "Cargando el panel...",
+  "stats": {
+    "oversight": "Para supervisión",
+    "pii": "Detecciones de datos personales"
+  },
+  "timeline": {
+    "empty": "Sin datos en las últimas 24 h",
+    "refresh": "actualización cada 30 s",
+    "title": "Llamadas por hora (últimas 24 h)"
+  }
+}

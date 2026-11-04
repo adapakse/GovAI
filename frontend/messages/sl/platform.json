@@ -1,0 +1,124 @@
+{
+  "audit": {
+    "actions": {
+      "tenant_create": "Ustvarjanje organizacije",
+      "tenant_delete": "Izbris organizacije",
+      "tenant_enter": "Vstop v organizacijo",
+      "tenant_update": "Sprememba organizacije",
+      "user_reset_password": "Ponastavitev gesla uporabnika"
+    },
+    "columns": {
+      "action": "Dejanje",
+      "actor": "Kdo",
+      "details": "Podrobnosti",
+      "tenant": "Organizacija",
+      "time": "Čas"
+    },
+    "empty": "Ni vnosov",
+    "limit": "Vnosov:",
+    "loading": "Nalaganje...",
+    "noAccess": "Dnevnik platforme je na voljo samo skrbniku platforme.",
+    "searchPlaceholder": "Iskanje po osebi, dejanju, organizaciji...",
+    "subtitle": "Dejanja skrbnikov platforme: ustvarjanje in spreminjanje organizacij, ponastavitve gesel, vstopi v kontekst organizacij.",
+    "title": "Dnevnik platforme"
+  },
+  "tenants": {
+    "actingExpired": "Seja v kontekstu organizacije je potekla (60 minut) — vrnjeni ste na ploščo platforme. Za nadaljevanje ponovno vstopite v organizacijo.",
+    "actions": {
+      "activate": "Aktiviraj",
+      "delete": "Izbriši",
+      "deleteDemo": "Demonstracijske organizacije ni mogoče izbrisati",
+      "deleteOwn": "Lastne organizacije ni mogoče izbrisati",
+      "enter": "Vstopi",
+      "enterSuspended": "Organizacija ni aktivna",
+      "suspend": "Ustavi",
+      "users": "Uporabniki"
+    },
+    "add": "+ Nova organizacija",
+    "columns": {
+      "agents": "Agenti",
+      "created": "Ustvarjena",
+      "status": "Stanje",
+      "tenant": "Organizacija",
+      "users": "Uporabniki"
+    },
+    "created": {
+      "description": "Prvi skrbnik: {email}. Poddomena organizacije: {slug}. Začasno geslo posredujte skrbniku — spremenil ga bo ob prvi prijavi.",
+      "label": "Začasno geslo skrbnika",
+      "title": "Organizacija {name} je ustvarjena"
+    },
+    "delete": {
+      "cancel": "Prekliči",
+      "confirm": "Izbriši organizacijo",
+      "message": "Organizacija bo izbrisana (mehki izbris — podatki ostanejo v bazi, vendar do njih nihče ne bo imel dostopa). Uporabniki se ne bodo mogli prijaviti, ključi API pa bodo prenehali delovati.",
+      "title": "Izbris organizacije {name}",
+      "typeSlug": "Za potrditev vpišite slug organizacije: <code>{slug}</code>"
+    },
+    "demo": "demo",
+    "empty": "Ni organizacij",
+    "form": {
+      "adminEmail": "E-poštni naslov",
+      "adminFullName": "Ime in priimek",
+      "adminHint": "Skrbnik dobi vlogo Partner in začasno geslo, ki ga spremeni ob prvi prijavi. Organizacija prejme kopijo pravilnikov iz predloge.",
+      "adminSection": "Prvi skrbnik",
+      "cancel": "Prekliči",
+      "locale": "Privzeti jezik",
+      "localePlatform": "— privzeti jezik platforme —",
+      "name": "Ime",
+      "namePlaceholder": "npr. Odvetniška pisarna Novak in partnerji",
+      "save": "Ustvari organizacijo",
+      "saving": "Ustvarjanje...",
+      "slug": "Slug (naslov)",
+      "slugErrors": {
+        "chars": "Dovoljene so samo male črke (a–z), števke in vezaji.",
+        "edges": "Slug se ne sme začeti ali končati z vezajem.",
+        "length": "Slug ima lahko največ 63 znakov.",
+        "reserved": "Ta slug je rezerviran za platformo.",
+        "taken": "Ta slug je že zaseden."
+      },
+      "slugHint": "Male črke, števke in vezaji — poddomena organizacije v naslovu platforme.",
+      "slugPreview": "Poddomena organizacije: {slug}",
+      "title": "Nova organizacija"
+    },
+    "loading": "Nalaganje...",
+    "noAccess": "Plošča organizacij je na voljo samo skrbniku platforme.",
+    "own": "(vaša organizacija)",
+    "searchPlaceholder": "Iskanje po imenu ali slugu...",
+    "showDeleted": "Prikaži izbrisane ({count})",
+    "state": {
+      "active": "Aktivna",
+      "deleted": "Izbrisana",
+      "suspended": "Začasno ustavljena"
+    },
+    "subtitle": "Organizacije (stranke) platforme GovAI — ustvarjanje, začasna ustavitev in vstop v kontekst organizacije.",
+    "suspendConfirm": {
+      "confirm": "Ustavi",
+      "message": "Začasno ustaviti organizacijo {name}? Njeni uporabniki se ne bodo mogli prijaviti, prehod pa bo zavračal klice njenih agentov do ponovne aktivacije.",
+      "title": "Začasna ustavitev organizacije"
+    },
+    "title": "Organizacije",
+    "users": {
+      "columns": {
+        "lastLogin": "Zadnja prijava",
+        "role": "Vloga",
+        "status": "Stanje",
+        "user": "Uporabnik"
+      },
+      "empty": "Ni uporabnikov",
+      "loading": "Nalaganje...",
+      "never": "nikoli",
+      "resetConfirm": {
+        "confirm": "Ponastavi geslo",
+        "message": "Dodeliti novo začasno geslo uporabniku {name} ({email})? Njegove trenutne seje bodo končane.",
+        "title": "Ponastavitev gesla"
+      },
+      "resetPassword": "Ponastavi geslo",
+      "secret": {
+        "description": "Začasno geslo za {email}. Uporabnik ga bo spremenil ob prvi prijavi.",
+        "label": "Začasno geslo",
+        "title": "Novo začasno geslo"
+      },
+      "title": "Uporabniki organizacije {name}"
+    }
+  }
+}

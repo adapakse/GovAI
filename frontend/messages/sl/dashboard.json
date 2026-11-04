@@ -1,0 +1,48 @@
+{
+  "alerts": {
+    "empty": "V tem obdobju ni opozoril",
+    "title": "Zadnji varnostni dogodki",
+    "viewAudit": "Ogled dnevnika →"
+  },
+  "byAgent": {
+    "title": "Klici po agentih"
+  },
+  "chart": {
+    "allowed": "Dovoljeno",
+    "blocked": "Blokirano",
+    "noData": "Ni podatkov",
+    "total": "Skupaj"
+  },
+  "cost": {
+    "byAgent": "Strošek po agentih (7 dni)",
+    "note": "samo strošek žetonov Anthropic",
+    "total": "Skupni strošek (7 dni)"
+  },
+  "header": {
+    "subtitle": "Zadnjih 7 dni · osveževanje vsakih 30 s",
+    "title": "Operativna nadzorna plošča"
+  },
+  "kpi": {
+    "activeAgents": "Aktivni agenti",
+    "activeAgentsSub": "{count} z visokim tveganjem",
+    "blocked": "Blokade",
+    "blockedSub": "{rate} % vseh klicev",
+    "calls": "Klici (7 dni)",
+    "callsSub": "povpr. zakasnitev {latency} ms",
+    "infraErrors": "Napake infrastrukture",
+    "infraErrorsSub": "ni dobavitelja / napaka LLM",
+    "pendingOversight": "Čaka na nadzor",
+    "pendingOversightSub": "zahteva odločitev pregledovalca"
+  },
+  "loadError": "Napaka pri nalaganju podatkov.",
+  "loading": "Nalaganje nadzorne plošče ...",
+  "stats": {
+    "oversight": "Za nadzor",
+    "pii": "Zaznave PII"
+  },
+  "timeline": {
+    "empty": "V zadnjih 24 urah ni podatkov",
+    "refresh": "osveževanje vsakih 30 s",
+    "title": "Klici po urah (zadnjih 24 ur)"
+  }
+}

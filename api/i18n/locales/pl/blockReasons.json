@@ -1,0 +1,8 @@
+{
+  "agent_inactive": "Agent ma status '{status}' — wywołanie odrzucone przed przetworzeniem",
+  "llm_error": "Błąd modelu językowego ({provider}): {error}",
+  "no_eligible_provider": "Brak providera zdolnego obsłużyć model '{model}' agenta przy wymaganym poziomie wrażliwości danych '{sensitivity}'. Albo żaden aktywny provider nie obsługuje tego poziomu wrażliwości, albo żaden z kwalifikujących się providerów nie ma tego modelu na liście (gateway celowo nie podmienia po cichu na inny model). Skontaktuj się z administratorem — aktywuj providera obsługującego ten model i poziom wrażliwości, albo obniż wrażliwość danych w zapytaniu.",
+  "policy_custom": "{reason}",
+  "policy_default": "Zablokowane przez politykę bezpieczeństwa",
+  "unknown_agent": "Nieznany agent_id: {agent_id} — brak w rejestrze GovAI"
+}

@@ -1,0 +1,34 @@
+{
+  "acting": {
+    "back": "Torna indietro",
+    "message": "Stai operando come amministratore della piattaforma nell’organizzazione <b>{tenant}</b>"
+  },
+  "logout": "Esci",
+  "meta": {
+    "description": "Conformità all'EU AI Act | Gateway di sicurezza | Sorveglianza umana",
+    "title": "GovAI — Piattaforma di governance degli agenti AI"
+  },
+  "nav": {
+    "admin": "Admin",
+    "agents": "Agenti",
+    "apiKeys": "Chiavi API",
+    "audit": "Log di audit",
+    "dashboard": "Dashboard",
+    "demo": "Simulatore",
+    "oversight": "Sorveglianza",
+    "platformAudit": "Registro piattaforma",
+    "policies": "Policy",
+    "providers": "Provider",
+    "reports": "Report",
+    "settings": "Parametri",
+    "tenants": "Organizzazioni",
+    "users": "Utenti"
+  },
+  "roles": {
+    "associate": "Associate",
+    "compliance_officer": "Compliance officer",
+    "it_admin": "Amministratore IT",
+    "partner": "Partner",
+    "reviewer": "Revisore"
+  }
+}

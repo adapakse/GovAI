@@ -11,11 +11,11 @@ cd /opt/govai
 docker compose up -d postgres
 timeout 60 sh -c 'until docker compose exec -T postgres pg_isready -U govai -d govai; do sleep 1; done'
 
-for f in db/migrations/*.sql; do
-  name=$(basename "$f")
-  echo "Migracja: $name"
-  docker cp "$f" "$(docker compose ps -q postgres):/tmp/${name}"
-  docker compose exec -T postgres psql -U govai -d govai -f "/tmp/${name}"
-done
+sh ./infra/scripts/migrate.sh
 
 docker compose up -d --build
+
+# Caddy nie ma własnego obrazu — `up` nie odtwarza go, gdy zmienia się tylko
+# website/ (bind mount) lub caddy/*. Entrypoint kopiuje stronę i renderuje
+# Caddyfile tylko przy starcie, więc bez restartu landing zostaje w starej wersji.
+docker compose restart caddy

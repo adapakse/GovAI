@@ -1,0 +1,13 @@
+{
+  "compliance": {
+    "summary_action_required": "El agente '{name}' requiere actuaciones: {parts}.",
+    "summary_compliant": "El agente '{name}' cumple los requisitos del EU AI Act.",
+    "summary_critical_gaps": "{count} carencias críticas requieren una actuación inmediata",
+    "summary_major_gaps": "{count} carencias graves pendientes de subsanar"
+  },
+  "errors": {
+    "invalid_status": "Estado no válido. Valores permitidos: {allowed}",
+    "name_empty": "El nombre del agente no puede estar vacío",
+    "not_found": "El agente '{agent_id}' no existe"
+  }
+}

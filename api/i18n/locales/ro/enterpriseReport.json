@@ -1,0 +1,139 @@
+{
+  "agentStatus": {
+    "active": "Activ",
+    "quarantined": "Carantină",
+    "retired": "Retras",
+    "suspended": "Suspendat"
+  },
+  "fallbackNarrative": "În perioada analizată de {days} zile, organizația a exploatat {agents} agenți AI, dintre care {high} clasificați cu risc ridicat conform EU AI Act. Au fost înregistrate {total} apeluri, dintre care {blocked} ({block_pct}%) au fost blocate de motorul de politici de securitate. Au fost detectate {pii} incidente care implică date cu caracter personal. Costul total al API a fost de {cost} EUR. Analiza detaliată a conformității cu EU AI Act necesită verificarea de către funcția de conformitate competentă.",
+  "fileName": "govai-raport-enterprise-{date}.pdf",
+  "pdf": {
+    "activity": {
+      "topByBlocks": "Agenți de top după numărul de blocări:",
+      "topByCalls": "Agenți de top după numărul de apeluri:"
+    },
+    "alerts": {
+      "budgetExceeded": "⚠ Depășirea bugetului: {name} — {actual} EUR ({pct}% din pragul de {threshold} EUR)",
+      "overdueReview": "⚠ Revizuire de conformitate restantă: {name} (termen: {date})"
+    },
+    "columns": {
+      "agent": "Agent",
+      "avgLatency": "Latență medie",
+      "blockRate": "% blocări",
+      "blocks": "Blocări",
+      "calls": "Apeluri",
+      "costEur": "Cost EUR",
+      "oversight": "Supraveghere",
+      "pii": "Date pers.",
+      "review": "Revizuire",
+      "risk": "Risc",
+      "status": "Stare"
+    },
+    "cover": {
+      "agents": "Agenți AI",
+      "agentsActive": "{n} activi",
+      "apiCost": "Cost API",
+      "blocks": "Blocări",
+      "blocksShare": "{pct}% din total",
+      "calls": "Apeluri",
+      "lastDays": "ultimele {days} zile",
+      "pii": "Incidente cu date personale",
+      "piiNote": "date cu caracter personal detectate",
+      "totalDays": "în total {days} zile"
+    },
+    "declarationsLegend": "✓ Îndeplinit · ◑ Parțial · ✗ Lacună · N/A Nu se aplică · — Neevaluat",
+    "generated": "Generat la: {date} UTC",
+    "incidents": {
+      "approved": "Aprobate",
+      "avgReviewTime": "Timp mediu de revizuire",
+      "blockCount": "Număr de blocări",
+      "escalated": "Escaladate",
+      "incidentCount": "Număr de incidente",
+      "noPii": "Nu au fost detectate incidente cu date personale în perioada analizată.",
+      "oversightHistory": "Istoricul cozii de supraveghere umană (art. 14):",
+      "pending": "În așteptare",
+      "piiCategories": "Categorii de date cu caracter personal detectate:",
+      "piiCategory": "Categorie de date personale",
+      "policyCode": "Politică (cod)",
+      "policyHits": "Activări ale regulilor de blocare:",
+      "rejected": "Respinse",
+      "tasksTotal": "Total sarcini"
+    },
+    "kpi": {
+      "apiCost": "Cost API total",
+      "apiCostNote": "cost estimat al modelelor LLM",
+      "avgLatency": "Latență medie",
+      "avgLatencyNote": "end-to-end",
+      "avgReview": "timp mediu de revizuire: {min} min",
+      "comment": "Comentariu",
+      "maxLatency": "Latență max.",
+      "maxLatencyNote": "cel mai lent apel",
+      "metric": "Indicator",
+      "oversight": "Transmise spre supraveghere",
+      "oversightNote": "politica A-001 (art. 14)",
+      "oversightQueue": "Coada de supraveghere",
+      "oversightQueueValue": "{total} sarcini ({pending} în așteptare)",
+      "pii": "Incidente cu date personale",
+      "piiNote": "în total {n} entități",
+      "policyBlocks": "Blocări de politici",
+      "policyBlocksNote": "G-001 financiare, G-002 prompt injection",
+      "tokensIn": "Tokenuri de intrare",
+      "tokensInNote": "prompt",
+      "tokensOut": "Tokenuri de ieșire",
+      "tokensOutNote": "completion",
+      "totalCalls": "Total apeluri",
+      "totalCallsNote": "toți agenții",
+      "value": "Valoare"
+    },
+    "no": "nu",
+    "noData": "nu există date",
+    "period": "Perioada analizei: ultimele {days} zile",
+    "recommendations": {
+      "basis": "Temei",
+      "priority": "Prioritate",
+      "recommendation": "Recomandare"
+    },
+    "risk": {
+      "agentCount": "Număr de agenți",
+      "agents": "Agenți",
+      "level": "Nivel de risc",
+      "requiresOversight": "Necesită supraveghere"
+    },
+    "riskShort": {
+      "high": "RID",
+      "limited": "LIM",
+      "minimal": "MIN",
+      "unacceptable": "INA"
+    },
+    "sections": {
+      "activity": "5. Analiza activității agenților",
+      "declarations": "7. Declarații de conformitate EU AI Act — agenți cu risc ridicat",
+      "incidents": "6. Incidente de securitate",
+      "kpi": "3. KPI operaționali (ultimele {days} zile)",
+      "recommendations": "{n}. Recomandări prioritare",
+      "registry": "4. Registrul agenților AI",
+      "riskDistribution": "2. Distribuția riscului EU AI Act",
+      "summary": "1. Rezumat pentru conducere"
+    },
+    "title": "Raport de guvernanță AI a întreprinderii",
+    "yes": "DA"
+  },
+  "priority": {
+    "critical": "Critică",
+    "high": "Ridicată",
+    "medium": "Medie"
+  },
+  "recommendations": {
+    "basisBestPractices": "Bune practici",
+    "basisCostControl": "Controlul costurilor",
+    "basisInternalPolicy": "Politică internă",
+    "budgetReview": "Revizuirea bugetelor agenților care depășesc pragurile de alertă: {names}.",
+    "highBlockRate": "Rata blocărilor este de {pct}% — revizuiți regulile politicilor și ajustați cuvintele-cheie.",
+    "implementOversight": "Implementați proceduri de supraveghere umană pentru: {names}.",
+    "keepMonitoring": "Continuați monitorizarea agenților. Efectuați o revizuire trimestrială a conformității.",
+    "missingTechnicalDocs": "Lipsește documentația tehnică (art. 11) pentru: {names}. Elaborați-o în termen de 60 de zile.",
+    "overdueReviews": "Efectuați revizuirile de conformitate restante pentru: {names}.",
+    "pendingOversight": "Soluționați {n} sarcini în așteptare din coada de supraveghere.",
+    "suspendUnacceptable": "Suspendați imediat agenții clasificați cu risc INACCEPTABIL. Consultați un consilier juridic."
+  }
+}

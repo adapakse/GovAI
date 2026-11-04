@@ -25,10 +25,19 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+      # run-command działa jako root z pustym $HOME, a /opt/govai należy do
+      # govaiadmin — goły `git` jako root odmawia ("dubious ownership") i
+      # zostawiałby pliki roota w repo. Git + chmod jako właściciel repo,
+      # deploy-remote.sh jako root (docker, sudo w fetch-secrets).
+      # run-command nie zwraca kodu wyjścia skryptu (zawsze "succeeded") —
+      # sukces rozpoznajemy po znaczniku GOVAI_DEPLOY_OK na końcu stdout.
       - name: Deploy on VM via az vm run-command
         run: |
-          az vm run-command invoke \
+          output=$(az vm run-command invoke \
             --resource-group "rg-govai-${{ inputs.environment }}" \
             --name "vm-govai-${{ inputs.environment }}" \
             --command-id RunShellScript \
-            --scripts "cd /opt/govai && git fetch origin && git checkout ${{ github.ref_name }} && git reset --hard origin/${{ github.ref_name }} && chmod +x infra/scripts/deploy-remote.sh infra/scripts/fetch-secrets.sh && ./infra/scripts/deploy-remote.sh"
+            --scripts "cd /opt/govai && sudo -H -u govaiadmin sh -c 'git fetch origin && git checkout ${{ github.ref_name }} && git reset --hard origin/${{ github.ref_name }} && chmod +x infra/scripts/deploy-remote.sh infra/scripts/fetch-secrets.sh' && ./infra/scripts/deploy-remote.sh && echo GOVAI_DEPLOY_OK" \
+            --query "value[0].message" -o tsv)
+          echo "$output"
+          echo "$output" | grep -q GOVAI_DEPLOY_OK

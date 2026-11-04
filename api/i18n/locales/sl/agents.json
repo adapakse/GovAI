@@ -1,0 +1,13 @@
+{
+  "compliance": {
+    "summary_action_required": "Agent '{name}' zahteva ukrepe: {parts}.",
+    "summary_compliant": "Agent '{name}' izpolnjuje zahteve EU AI Act.",
+    "summary_critical_gaps": "Kritične vrzeli, ki zahtevajo takojšnje ukrepanje: {count}",
+    "summary_major_gaps": "Resne vrzeli, ki jih je treba odpraviti: {count}"
+  },
+  "errors": {
+    "invalid_status": "Neveljaven status. Dovoljeno: {allowed}",
+    "name_empty": "Ime agenta ne sme biti prazno",
+    "not_found": "Agent '{agent_id}' ne obstaja"
+  }
+}

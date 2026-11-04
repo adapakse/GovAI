@@ -1,0 +1,48 @@
+{
+  "alerts": {
+    "empty": "No alerts in this period",
+    "title": "Recent security events",
+    "viewAudit": "View audit log →"
+  },
+  "byAgent": {
+    "title": "Calls by agent"
+  },
+  "chart": {
+    "allowed": "Allowed",
+    "blocked": "Blocked",
+    "noData": "No data",
+    "total": "Total"
+  },
+  "cost": {
+    "byAgent": "Cost by agent (7 days)",
+    "note": "Anthropic token cost only",
+    "total": "Total cost (7 days)"
+  },
+  "header": {
+    "subtitle": "Last 7 days · refreshed every 30s",
+    "title": "Operations Dashboard"
+  },
+  "kpi": {
+    "activeAgents": "Active agents",
+    "activeAgentsSub": "{count} high-risk",
+    "blocked": "Blocked",
+    "blockedSub": "{rate}% of all calls",
+    "calls": "Calls (7 days)",
+    "callsSub": "avg. latency {latency} ms",
+    "infraErrors": "Infrastructure errors",
+    "infraErrorsSub": "no provider / LLM error",
+    "pendingOversight": "Awaiting oversight",
+    "pendingOversightSub": "reviewer decision required"
+  },
+  "loadError": "Error loading data.",
+  "loading": "Loading dashboard...",
+  "stats": {
+    "oversight": "For oversight",
+    "pii": "PII detections"
+  },
+  "timeline": {
+    "empty": "No data in the last 24h",
+    "refresh": "refreshed every 30s",
+    "title": "Calls by hour (last 24h)"
+  }
+}

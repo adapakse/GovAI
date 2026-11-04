@@ -1,0 +1,542 @@
+{
+  "act": {
+    "eyebrow": "Reglementare",
+    "lead": "Unele termene se aplică deja, altele au fost amânate în vara anului 2026 — mai jos este situația de fapt, nu cea dinaintea modificării.",
+    "obligations": {
+      "deployer": {
+        "art26p2": {
+          "article": "Art. 26 alin. (2)",
+          "mechanism": "Coadă de supraveghere cu rolul „reviewer” — nu o declarație, aici GovAI impune efectiv acest lucru.",
+          "requirement": "Supraveghere umană încredințată unei persoane competente și autorizate."
+        },
+        "art26p5": {
+          "article": "Art. 26 alin. (5)",
+          "mechanism": "Statisticile apelurilor agentului sunt disponibile în panou — obligația de informare a furnizorului este, deocamdată, o auto-declarație, nu un proces automat.",
+          "requirement": "Monitorizarea funcționării sistemului și informarea furnizorului cu privire la riscuri/incidente."
+        },
+        "art26p6": {
+          "article": "Art. 26 alin. (6)",
+          "mechanism": "Jurnal de audit imuabil, fără mecanism de ștergere automată — o garanție arhitecturală permanentă, nu o declarație per agent.",
+          "requirement": "Păstrarea jurnalelor generate automat timp de cel puțin 6 luni."
+        },
+        "art26p8": {
+          "article": "Art. 26 alin. (8)",
+          "mechanism": "Câmp în registrul agentului (același ca la art. 49).",
+          "requirement": "Verificarea înregistrării sistemului în baza de date a UE (se aplică autorităților publice)."
+        },
+        "art27": {
+          "mechanism": "Deocamdată doar un câmp de auto-declarație — nu există un asistent dedicat pentru FRIA.",
+          "requirement": "Evaluarea impactului asupra drepturilor fundamentale (FRIA) — se aplică organismelor de drept public, precum și evaluării bonității și evaluării riscurilor în asigurări."
+        },
+        "scope": "Art. 26-27 — tot decembrie 2027, aceeași modificare",
+        "title": "Risc ridicat — implementator (deployer)"
+      },
+      "headers": {
+        "article": "Articol",
+        "mechanism": "Mecanism în GovAI",
+        "priority": "Prioritate",
+        "requirement": "Cerință",
+        "verification": "Verificare"
+      },
+      "intro": "Aceasta nu este o listă statică de vânzări — majoritatea rândurilor de mai jos reprezintă chiar catalogul de cerințe pe care motorul de evaluare a conformității GovAI îl confruntă cu registrul fiecărui agent, rând cu rând. Coloana „Verificare” arată dacă statusul provine dintr-un fapt obiectiv al sistemului (<span class=\"mono\">auto</span>) sau dintr-o auto-declarație explicită (<span class=\"mono\">declarație</span>) — fără declarație, cerința este considerată o lacună, nu o „bifă verde” implicită. Am separat obligațiile furnizorului sistemului de IA (art. 9-17) de obligațiile implementatorului / deployerului (art. 26-27) — majoritatea organizațiilor care folosesc GovAI implementează agenți construiți pe modele externe, așa că din punct de vedere juridic sunt mai aproape de rolul de implementator decât de cel de furnizor. Statutul pe care îl are efectiv o anumită organizație depinde de cazul concret.",
+      "limited": {
+        "art50p1": {
+          "article": "Art. 50 alin. (1)",
+          "requirement": "Informarea utilizatorului cu privire la interacțiunea cu un sistem de IA."
+        },
+        "art50p4": {
+          "article": "Art. 50 alin. (4)",
+          "requirement": "Marcarea, într-un format care poate fi citit automat, a conținutului generat de IA."
+        },
+        "scope": "Art. 50 — obligații de transparență",
+        "title": "Risc limitat"
+      },
+      "mechanismSelfDeclaration": "Auto-declarație în registrul agentului.",
+      "note": "<strong>Catalogul este editabil, nu fixat definitiv în cod.</strong> Un consultant de conformitate poate adăuga o cerință nouă, poate modifica un termen sau o prioritate direct din panou — atunci când se schimbă interpretarea unei dispoziții sau apare un ghid al Comisiei, catalogul se actualizează fără modificarea codului. Art. 26 alin. (2) și alin. (6) sunt verificate automat din registru, restul este auto-declarație. În mod deliberat omitem deocamdată: art. 12 (păstrarea evidențelor — acoperit funcțional de jurnalul de audit, dar fără un rând separat în catalogul de lacune), art. 16 (obligația generală de conformitate a furnizorului), art. 4 (alfabetizarea în domeniul IA — atenuată de Digital Omnibus de la „asigurare” la „sprijinire”), art. 53 (obligațiile GPAI — se aplică furnizorilor de modele, nu utilizatorilor GovAI) și art. 72 (monitorizarea ulterioară introducerii pe piață — obligație a furnizorului modelului/sistemului, nu a operatorului agentului).",
+      "priority": {
+        "critical": "Critic",
+        "critical30": "Critic · 30 de zile",
+        "critical60": "Critic · 60 de zile",
+        "critical90": "Critic · 90 de zile",
+        "major30": "Important · 30 de zile",
+        "major60": "Important · 60 de zile",
+        "major90": "Important · 90 de zile",
+        "major90Narrow": "Important · 90 de zile, domeniu restrâns",
+        "minor180": "Minor · 180 de zile"
+      },
+      "provider": {
+        "art10": {
+          "mechanism": "Registru: categorii de date, temei juridic RGPD, perioadă de păstrare.",
+          "requirement": "Calitatea și guvernanța datelor de antrenament/de intrare."
+        },
+        "art11": {
+          "mechanism": "Generator de rapoarte PDF per agent — narațiune redactată pe baza datelor din registru și din audit.",
+          "requirement": "Documentație tehnică completă, conformă cu anexa IV."
+        },
+        "art13": {
+          "mechanism": "Registru: scopul preconizat, destinatarii, aria geografică a agentului.",
+          "requirement": "Transparență operațională față de utilizatorii sistemului."
+        },
+        "art14": {
+          "mechanism": "Coadă de supraveghere în calea apelului — nu doar o declarație, aici GovAI impune efectiv acest lucru.",
+          "requirement": "Supraveghere umană — posibilitatea de a opri sau de a anula o decizie."
+        },
+        "art15": {
+          "mechanism": "Auto-declarație + statisticile apelurilor agentului din jurnalul de audit.",
+          "requirement": "Acuratețea și robustețea sistemului pe parcursul întregului ciclu de viață."
+        },
+        "art17": {
+          "requirement": "Sistemul de management al calității al furnizorului."
+        },
+        "art43": {
+          "requirement": "Evaluarea conformității înainte de punerea în funcțiune."
+        },
+        "art49": {
+          "requirement": "Înregistrarea în baza de date a UE pentru sistemele de IA."
+        },
+        "art9": {
+          "mechanism": "Câmp în registru + auto-declarație privind stadiul gestionării riscurilor.",
+          "requirement": "Sistem de gestionare a riscurilor pe parcursul întregului ciclu de viață al agentului."
+        },
+        "scope": "Art. 9-17 — termen: decembrie 2027",
+        "title": "Risc ridicat — furnizorul sistemului"
+      },
+      "source": {
+        "autoArchitecture": "auto · arhitectură",
+        "autoClassification": "auto · clasificare",
+        "autoSystemField": "auto · câmp de sistem",
+        "declared": "declarație în registru",
+        "partial": "parțial — în curs de extindere"
+      },
+      "title": "Harta obligațiilor: ce articol, ce mecanism în GovAI, de unde se știe că este îndeplinit.",
+      "unacceptable": {
+        "art5": {
+          "mechanism": "Clasificatorul de risc semnalează „unacceptable” la înregistrarea agentului, înainte de implementare.",
+          "requirement": "Interdicție absolută de utilizare — manipulare subliminală, atribuire de punctaje sociale, identificare biometrică în timp real."
+        },
+        "scope": "Art. 5 — sisteme interzise în totalitate",
+        "title": "Risc inacceptabil"
+      }
+    },
+    "omnibusNote": "<strong>Digital Omnibus AI (Regulamentul (UE) 2026/1744, în vigoare de la 27.07.2026) a amânat obligațiile complete pentru riscul ridicat de la 2 august 2026 la 2 decembrie 2027</strong> (sisteme de sine stătătoare din anexa III) și la 2 august 2028 pentru IA integrată în produse reglementate. Termenele pentru art. 5 (interdicții), art. 50 (transparență) și obligațiile GPAI au rămas neschimbate.",
+    "penalties": {
+      "highRisk": {
+        "amount": "15 mil. € / 3%",
+        "text": "pentru majoritatea celorlalte obligații privind riscul ridicat: gestionarea riscurilor, date, supraveghere, înregistrarea evenimentelor."
+      },
+      "misinformation": {
+        "amount": "7,5 mil. € / 1%",
+        "text": "pentru furnizarea de informații incorecte, incomplete sau înșelătoare către autorități."
+      },
+      "note": "Pentru IMM-uri și start-upuri, amenzile sunt limitate la cea mai mică dintre cele două valori (suma fixă sau procentul) — dar obligațiile în sine nu se reduc.",
+      "prohibited": {
+        "amount": "35 mil. € / 7%",
+        "text": "din cifra de afaceri anuală globală, oricare dintre acestea este mai mare — pentru practicile interzise (art. 5)."
+      },
+      "title": "Amenzile sunt stratificate — și reale."
+    },
+    "timeline": {
+      "aug2025": {
+        "date": "AUG 2025",
+        "text": "Furnizorii de modele GPAI trebuie să îndeplinească cerințele de transparență și de gestionare a riscurilor.",
+        "title": "Obligații pentru modelele de uz general"
+      },
+      "aug2026": {
+        "date": "AUG 2026",
+        "text": "Chatboturile, conținutul sintetic și deepfake-urile trebuie marcate — termen menținut în ciuda modificării.",
+        "title": "Transparența (art. 50) în vigoare"
+      },
+      "aug2028": {
+        "date": "AUG 2028",
+        "text": "IA cu grad ridicat de risc integrată în produse reglementate (dispozitive medicale, vehicule) — inițial august 2027, amânat cu 12 luni. IA din mașini este în mare parte exclusă din acest regim în favoarea Regulamentului privind mașinile.",
+        "title": "Sisteme integrate cu grad ridicat de risc"
+      },
+      "dec2026": {
+        "date": "DEC 2026",
+        "text": "Interdicția generării de conținut intim fără consimțământ și de CSAM (nouă la art. 5) și încheierea perioadei de tranziție de 4 luni pentru marcarea cu filigran prevăzută la art. 50 alin. (2).",
+        "title": "Interdicție nouă + sfârșitul perioadei de tranziție"
+      },
+      "dec2027": {
+        "date": "DEC 2027",
+        "text": "Obligațiile complete din anexa III: gestionarea riscurilor, supraveghere umană, înregistrarea evenimentelor, documentație. Inițial august 2026 — amânat prin Digital Omnibus cu 16 luni.",
+        "title": "Sistemele cu grad ridicat de risc în vigoare — amânat"
+      },
+      "feb2025": {
+        "date": "FEB 2025",
+        "text": "Art. 5 — utilizările IA manipulatoare, care exploatează vulnerabilități și care atribuie punctaje sociale sunt deja ilegale.",
+        "title": "Interzicerea practicilor inacceptabile"
+      },
+      "now": "Acum"
+    },
+    "title": "Termen amânat prin Digital Omnibus. Obligația nu a dispărut."
+  },
+  "chat": {
+    "close": "Închideți",
+    "cta": "Scrieți-ne",
+    "status": "De obicei răspunde în câteva ore",
+    "team": "Echipa GovAI",
+    "text": "Aveți o întrebare despre conformitatea cu AI Act, implementare sau prețuri? Scrieți-ne — răspundem în cel mult o zi lucrătoare.",
+    "toggle": "Aveți o întrebare?"
+  },
+  "compare": {
+    "blocks": {
+      "label": "Blochează încălcarea în timp real"
+    },
+    "evidence": {
+      "docs": "Documente generate",
+      "govai": "Jurnal imuabil al deciziilor, cu marcaj temporal",
+      "label": "Dovezi pentru audit",
+      "manual": "Ce a notat cineva"
+    },
+    "eyebrow": "De ce aplicare, nu documentare",
+    "gapVsEnforcement": {
+      "docs": "Panoul arată lacunele, traficul continuă neschimbat",
+      "govai": "Același status al lacunei controlează coada de supraveghere și rutarea în timp real",
+      "label": "Evaluarea lacunelor vs. aplicare",
+      "manual": "Deconectate — foaia de calcul nu blochează pe nimeni"
+    },
+    "headers": {
+      "docPlatforms": "Platforme de documentare",
+      "manual": "Proces manual"
+    },
+    "isolation": {
+      "docs": "Întotdeauna SaaS partajat, fără opțiune",
+      "govai": "Dumneavoastră alegeți: instanță dedicată sau multi-tenant cu izolare logică",
+      "label": "Izolarea datelor",
+      "manual": "Ce aveți deja"
+    },
+    "lead": "Majoritatea instrumentelor pentru AI Act se opresc la generarea de documente. GovAI se află în calea cererii.",
+    "no": "Nu",
+    "oversight": {
+      "docs": "Urmărită ca sarcină",
+      "govai": "Integrată în calea apelului",
+      "label": "Coada de supraveghere umană",
+      "manual": "Ad hoc, prin e-mail"
+    },
+    "title": "Documentația dovedește că ați vrut să fiți conform. Aplicarea dovedește că ați fost.",
+    "where": {
+      "docs": "După apel, pe baza jurnalelor",
+      "govai": "Înainte ca apelul să ajungă la furnizor",
+      "label": "Unde acționează",
+      "manual": "După incident, dacă se întâmplă"
+    },
+    "yes": "Da"
+  },
+  "contact": {
+    "company": "Companie",
+    "companyPlaceholder": "Denumirea companiei",
+    "email": "E-mail de serviciu",
+    "emailPlaceholder": "jan@firma.pl",
+    "error": "✕ Ceva nu a funcționat. Încercați din nou sau scrieți-ne direct la kontakt@govai.pl",
+    "eyebrow": "Contact",
+    "lead": "Răspundem în cel mult o zi lucrătoare. Preferați să ne scrieți direct? <a href=\"mailto:kontakt@govai.pl\" class=\"contact-email-link\">kontakt@govai.pl</a>",
+    "message": "Mesaj",
+    "messagePlaceholder": "Descrieți pe scurt nevoile dumneavoastră sau adresați o întrebare…",
+    "name": "Nume și prenume",
+    "namePlaceholder": "Jan Kowalski",
+    "optional": "(opțional)",
+    "phone": "Telefon",
+    "sending": "Se trimite…",
+    "submit": "Trimiteți solicitarea",
+    "success": "✓ Vă mulțumim! Vă vom contacta în curând.",
+    "title": "Scrieți-ne"
+  },
+  "cta": {
+    "lead": "O discuție de 30 de minute. Vom clasifica în direct un agent real.",
+    "title": "Vedeți primul dumneavoastră agent sub aplicarea regulilor — chiar săptămâna aceasta."
+  },
+  "faq": {
+    "checklist": {
+      "a": "Nu. Instrumentele de tip checklist și de documentare vă spun ce ar fi trebuit să faceți. GovAI aplică politica asupra apelului API efectiv, înainte ca furnizorul de modele să îl vadă — jurnalul de audit este un efect secundar, nu produsul principal.",
+      "q": "Este GovAI încă un instrument de tip checklist pentru conformitate?"
+    },
+    "deadlines": {
+      "a": "Interzicerea practicilor inacceptabile prevăzute la art. 5 se aplică din februarie 2025, obligațiile GPAI din august 2025, transparența prevăzută la art. 50 din august 2026 — aceste termene sunt actuale astăzi. Obligațiile complete pentru riscul ridicat din anexa III au fost amânate prin Digital Omnibus (Regulamentul 2026/1744) din august 2026 în decembrie 2027 — ele urmează în continuare, dar nu mai sunt „acum”.",
+      "q": "Ce termene din AI Act ne privesc efectiv astăzi?"
+    },
+    "gatewayOnly": {
+      "a": "Nu — sunt două straturi ale aceluiași sistem. Mai întâi agentul ajunge în registru și primește o clasificare a riscului și o evaluare a lacunelor raportată la articole concrete din AI Act (ca în instrumentele de documentare). Abia apoi aceeași clasificare este aplicată în timp real în poarta de securitate — astfel încât statusul „necesită supraveghere” nu este doar un punct roșu pe dashboard, ci suspendă efectiv răspunsul agentului.",
+      "q": "Este GovAI doar o poartă de securitate care monitorizează traficul, fără registru și fără evaluarea riscului?"
+    },
+    "onPrem": {
+      "a": "Da. GovAI se implementează la fel pe infrastructura dumneavoastră sau pe o instanță dedicată pe care o găzduim pentru dumneavoastră — modelul de conformitate nu se schimbă.",
+      "q": "Putem rula GovAI pe propria infrastructură?"
+    },
+    "providers": {
+      "a": "Anthropic și DeepSeek imediat după instalare, plus opțiunea self-hosted (Bielik) pentru datele care nu ar trebui să părăsească infrastructura dumneavoastră. Rutarea este automată, în funcție de sensibilitatea datelor.",
+      "q": "Ce furnizori de modele suportă GovAI?"
+    },
+    "sharedInfra": {
+      "a": "Depinde de modelul ales — dumneavoastră decideți. Pentru companiile cu volum mai mare sau cu cerințe mai stricte oferim o instanță dedicată: bază de date proprie, jurnal de audit propriu, nimic partajat. Pentru echipele mai mici, care doresc un cost de intrare mai redus, este disponibilă opțiunea multi-tenant cu izolare logică per organizație. Ambele modele folosesc același motor de evaluare a conformității și de aplicare a politicilor.",
+      "q": "Partajăm infrastructura cu alți clienți GovAI?"
+    },
+    "title": "Întrebările pe care le pun efectiv responsabilii cu conformitatea.",
+    "trial": {
+      "a": "Programați un demo și vă vom arăta în direct clasificarea unuia dintre agenții dumneavoastră reali. Condițiile pilotului (durată, domeniu, eventuală reducere pentru referință) le stabilim individual în această etapă.",
+      "q": "Putem testa GovAI înainte de a plăti?"
+    }
+  },
+  "features": {
+    "auditLog": {
+      "example": "Auditorul întreabă despre fiecare decizie pentru un anumit agent într-o anumită săptămână — este o interogare cu marcaj temporal, nu un proiect de reconstituire.",
+      "how": "Fiecare decizie — permisă, blocată, escaladată — este înregistrată o singură dată în TimescaleDB și nu este niciodată actualizată sau ștearsă.",
+      "problem": "„Dovediți ce s-a întâmplat pe 3 martie” este imposibil dacă înregistrarea este un tabel de jurnale modificabil, pe care cineva îl poate edita.",
+      "title": "Jurnal de audit imuabil"
+    },
+    "days30": "30 de zile",
+    "days60": "60 de zile",
+    "deployment": {
+      "example": "O echipă mică pornește pe multi-tenant la o fracțiune din costul unei instanțe dedicate; când cresc volumul sau cerințele de reglementare, migrează pe o VM dedicată fără a modifica integrarea din partea agentului.",
+      "how": "GovAI oferă două modele de implementare: o instanță dedicată (VM proprie, bază de date proprie, jurnal de audit propriu — izolare fizică completă) pentru companiile cu volum mai mare sau cu cerințe stricte, precum și o instanță multi-tenant mai ieftină, cu izolare logică per organizație, pentru echipele mai mici. Dumneavoastră alegeți compromisul cost/izolare, nu noi în locul dumneavoastră.",
+      "mock": {
+        "auditIsolated": "Audit log — izolare per tenant",
+        "dedicated": "Dedicată · VM proprie",
+        "multiTenant": "Multi-tenant · 1 VM",
+        "postgresIsolated": "Postgres — izolare per tenant",
+        "redisIsolated": "Redis — izolare per tenant",
+        "title": "modele de implementare"
+      },
+      "problem": "O instituție mare, reglementată, și o echipă juridică mică, cu cinci agenți, nu ar trebui să plătească același tarif pentru infrastructură — dar ambele au nevoie de același motor de evaluare a conformității și de aplicare a politicilor.",
+      "title": "Model de implementare adaptat dimensiunii companiei"
+    },
+    "eyebrow": "Platforma",
+    "gapEngine": {
+      "example": "agent=credit-scoring → 9 cerințe pentru risc ridicat → 6 declarate, 1 confirmată automat (art. 14), 2 nedeclarate = 2 lacune critice de remediat.",
+      "how": "Catalogul de cerințe (editabil de consultant, nu fixat în cod) este confruntat cu registrul fiecărui agent, cerință cu cerință — statusul provine fie dintr-un fapt obiectiv al sistemului (de ex. dacă supravegherea umană este efectiv activată), fie dintr-o auto-declarație explicită. Lipsa ambelor este considerată o lacună reală.",
+      "mock": {
+        "deadline": "termen: dec. 2027",
+        "next": {
+          "art11": "<b>Art. 11</b> completați documentația",
+          "art43": "<b>Art. 43</b> evaluarea conformității",
+          "art49": "<b>Art. 49</b> înregistrarea în baza de date a UE"
+        },
+        "nextHead": "Următoarele priorități",
+        "risk": "Risc ridicat · Anexa III.5b",
+        "score": "<b>7 / 9</b> cerințe pentru risc ridicat<br>îndeplinite — art. 26/27 calculate separat",
+        "tiles": {
+          "art10": "Datele și guvernanța datelor",
+          "art11": "Documentație",
+          "art13": "Transparență",
+          "art14": "Supraveghere umană",
+          "art15": "Acuratețe",
+          "art17": "Managementul calității",
+          "art43": "Evaluarea conformității",
+          "art49": "Înregistrare UE",
+          "art9": "Gestionarea riscurilor"
+        }
+      },
+      "problem": "Dashboardurile cu „% conformitate” presupun de obicei conformitatea acolo unde nimeni nu a verificat încă nimic — o bifă verde din presupunere, nu din fapte.",
+      "title": "Motor de evaluare a conformității și a lacunelor"
+    },
+    "gateway": {
+      "example": "agent=hiring-copilot → POST /v1/chat/completions → scanare → clasificare → rutare — înainte ca Anthropic să vadă măcar conținutul cererii.",
+      "how": "GovAI intră în calea cererii ca endpoint compatibil cu OpenAI Chat Completions — modificați un singur base URL, iar fiecare apel este verificat înainte de a ajunge la furnizor.",
+      "mock": {
+        "intercepted": "↓ interceptat de GovAI ↓",
+        "piiScan": "Scanare date personale",
+        "policyEngine": "Motor de politici",
+        "source": "Agent IA → POST /v1/chat/completions",
+        "targetProvider": "Furnizor de modele țintă"
+      },
+      "problem": "Echipele își conectează cel mai adesea agenții direct la cheia API a furnizorului de modele. Nimeni nu vede ce iese efectiv din organizație până când nu a ieșit deja.",
+      "title": "Poartă de securitate"
+    },
+    "labels": {
+      "example": "Exemplu",
+      "how": "Cum funcționează",
+      "problem": "Ce problemă rezolvă"
+    },
+    "lead": "GovAI nu este doar o poartă de securitate care monitorizează traficul. Este mai întâi un registru și o evaluare a conformității — iar abia apoi aceeași clasificare este aplicată în timp real la fiecare apel.",
+    "oversight": {
+      "example": "agent=support-bot pii=email → policy=oversight_required — răspunsul așteaptă aprobarea evaluatorului.",
+      "how": "Apelurile marcate <span class=\"mono\">oversight_required</span> așteaptă în coadă un evaluator cu rolul „reviewer”, înainte ca agentul să primească răspunsul.",
+      "mock": {
+        "approved": "APROBAT",
+        "waiting": "ÎN AȘTEPTARE"
+      },
+      "problem": "Art. 14 impune supravegherea umană a deciziilor cu grad ridicat de risc — dar „trimiteți cuiva un e-mail” nu este un proces pregătit pentru audit.",
+      "title": "Coada de supraveghere umană"
+    },
+    "rbac": {
+      "example": "Un reviewer poate aproba sau respinge un apel semnalat fără să vadă configurația furnizorilor de modele sau facturarea organizației.",
+      "how": "Cinci roluri — partner, IT admin, compliance officer, associate, reviewer — fiecare vede exact ce îi trebuie pentru funcția sa.",
+      "mock": {
+        "billing": "Facturare",
+        "oversight": "Supraveghere",
+        "policies": "Politici",
+        "role": "Rol"
+      },
+      "problem": "În majoritatea instrumentelor, singurul rol care are efectiv un acces util este „admin” — restul sunt redirecționați către o căsuță de e-mail.",
+      "title": "Acces bazat pe roluri"
+    },
+    "registry": {
+      "example": "agent=credit-scoring → status=quarantined → poarta de securitate respinge următoarele apeluri în câteva secunde, fără implementarea unei noi versiuni de cod.",
+      "how": "Fiecare agent este înregistrat cu responsabil, scop preconizat, sfera datelor cu caracter personal, temei juridic RGPD, contact tehnic și data următoarei revizuiri — iar statusul (activ / suspendat / carantină / retras) este aplicat imediat în poarta de securitate, nu doar înregistrat într-un tabel.",
+      "mock": {
+        "gdprBasis": "Temei RGPD",
+        "gdprBasisValue": "Art. 6 alin. (1) lit. (f)",
+        "owner": "Responsabil",
+        "ownerValue": "Echipa de risc",
+        "quarantine": "Carantină",
+        "version": "Versiune / revizuire"
+      },
+      "problem": "„Câți agenți IA avem în companie și ce fac exact” este o întrebare la care, în majoritatea organizațiilor, nimeni nu poate răspunde fără să sune pe la toate echipele.",
+      "title": "Registrul agenților IA"
+    },
+    "reporting": {
+      "example": "GET /agents/credit-scoring/report/pdf → fișier gata cu KPI, distribuția riscurilor și lista revizuirilor depășite — direct în mâna auditorului, fără a atinge vreo foaie de calcul.",
+      "how": "Raportul PDF — per agent sau pentru întreaga organizație — combină datele din registru, evaluarea lacunelor, statisticile apelurilor, alertele de buget și istoricul supravegherii, cu o narațiune redactată automat pe baza acestor date. Nu scris separat, după fapt.",
+      "mock": {
+        "agents": "Agenți în registru",
+        "blocked": "Blocate",
+        "evaluated": "Apeluri evaluate",
+        "logCoverage": "Acoperirea jurnalului",
+        "oversight": "Trimise spre supraveghere"
+      },
+      "problem": "Pregătirea „documentației tehnice” pentru auditor înseamnă de obicei că cineva compune un document din memorie cu o săptămână înainte de termen.",
+      "title": "Raportare de conformitate"
+    },
+    "riskClassifier": {
+      "example": "agent=credit-scoring → risk=high (Anexa III) → activate automat: supraveghere umană + înregistrare completă a evenimentelor.",
+      "how": "Descrierea agentului este transmisă către Claude, în rol de clasificator juridic — rezultatul este nivelul de risc, categoria din anexa III (de ex. recrutare, evaluarea bonității, infrastructură critică) și lista obligațiilor-cheie. Acest lucru se întâmplă la înregistrare, nu ca un formular completat o singură dată.",
+      "mock": {
+        "high": "Ridicat",
+        "highPill": "RIDICAT",
+        "limited": "Limitat",
+        "minimal": "Minim",
+        "oversight": "Art. 14 supraveghere",
+        "required": "obligatorie",
+        "unacceptable": "Inacceptabil"
+      },
+      "problem": "„Ce obligații din AI Act se aplică tocmai acestui agent?” este de obicei o întrebare pusă o singură dată, într-o foaie de calcul, și niciodată revizuită atunci când se schimbă modul de utilizare a agentului.",
+      "title": "Clasificator de risc conform AI Act"
+    },
+    "routing": {
+      "example": "pii=email → rutare către un model self-hosted; apel fără date cu caracter personal → Anthropic. Codul agentului nu se schimbă.",
+      "how": "Decizia de rutare este determinată de sensibilitatea datelor, nu de obișnuința dezvoltatorului — GovAI alege Anthropic, DeepSeek sau o instanță self-hosted (Bielik) pentru fiecare apel.",
+      "mock": {
+        "lowSensitivity": "sensibilitate scăzută",
+        "noPii": "fără date personale",
+        "selected": "date personale → selectat"
+      },
+      "problem": "Trimiterea datelor sensibile către un model configurat arbitrar este un incident de guvernanță a datelor care așteaptă să se producă.",
+      "title": "Rutare între mai mulți furnizori de modele"
+    },
+    "title": "Zece elemente ale unui singur sistem — de la registru la jurnalul de audit."
+  },
+  "footer": {
+    "actTimeline": "Calendarul AI Act",
+    "company": "Companie",
+    "contact": "Contact",
+    "howItWorks": "Cum funcționează",
+    "product": "Produs",
+    "resources": "Resurse",
+    "tagline": "Punctul de control dintre agenții dumneavoastră și model."
+  },
+  "hero": {
+    "badges": {
+      "auditLog": "Jurnal de audit imuabil",
+      "deployment": "Dedicat sau multi-tenant — adaptat dimensiunii companiei",
+      "openaiApi": "API compatibil cu OpenAI",
+      "registry": "Registrul agenților + evaluarea lacunelor"
+    },
+    "ctaAct": "Vedeți ce s-a schimbat în AI Act",
+    "eyebrow": "Aplicarea EU AI Act · Art. 5, Anexa III, Art. 50",
+    "pipeline": {
+      "agent": "01 Agent",
+      "audit": "05 Audit",
+      "pii": "02 Scanare date personale",
+      "policy": "03 Motor de politici",
+      "routing": "04 Rutare"
+    },
+    "subhead": "GovAI este un registru de agenți IA cu clasificare automată a riscului și evaluarea lacunelor raportată la fiecare cerință din AI Act — plus o poartă de securitate care aplică aceeași clasificare în timp real: scanează datele cu caracter personal, verifică conformitatea cu politica, direcționează către furnizorul potrivit și înregistrează fiecare apel, înainte ca răspunsul să ajungă înapoi la agent.",
+    "title": "Conformitate cu AI Act prin platforma GovAI."
+  },
+  "meta": {
+    "description": "GovAI este un registru de agenți IA cu clasificare automată a riscului și evaluarea lacunelor în raport cu EU AI Act, plus o poartă de securitate care aplică aceeași clasificare în timp real, la fiecare apel.",
+    "ogDescription": "Registrul agenților IA, clasificare automată a riscului, evaluarea lacunelor în raport cu EU AI Act și o poartă de securitate care aplică politica în timp real.",
+    "ogTitle": "GovAI — aplicarea EU AI Act în timp real",
+    "title": "GovAI — aplicarea EU AI Act în timp real"
+  },
+  "onboarding": {
+    "demo": {
+      "caption1": "O singură linie de configurare. Restul codului agentului — neschimbat.",
+      "caption2": "Claude analizează descrierea și propune o clasificare — consultantul doar o aprobă.",
+      "caption3": "Reguli per agent, per tip de date — editabile fără implementarea unui cod nou.",
+      "caption4": "De la primul apel: scanat, aplicat, înregistrat — fără muncă manuală.",
+      "code2": "(Anexa III.5b, auto)",
+      "step": "implementare · pasul"
+    },
+    "eyebrow": "Implementare",
+    "lead": "Fără proiect de migrare. GovAI vorbește prin API-ul pe care agenții dumneavoastră îl folosesc deja.",
+    "steps": {
+      "pointAgent": {
+        "text": "Modificați un singur base URL. GovAI vorbește prin OpenAI Chat Completions API, așa că nimic altceva nu se schimbă.",
+        "title": "Direcționați agentul către GovAI"
+      },
+      "policies": {
+        "text": "Alegeți ce este permis, ce este blocat sau ce necesită intervenția unui om — per agent, per tip de date.",
+        "title": "Configurați politicile"
+      },
+      "production": {
+        "text": "Fiecare apel este, de acum înainte, scanat, supus politicilor și înregistrat — automat.",
+        "title": "Intrați în producție cu dovezi"
+      },
+      "register": {
+        "text": "Adăugați agentul în registru; GovAI propune nivelul de risc conform AI Act pe baza modului de utilizare.",
+        "title": "Înregistrați și clasificați"
+      }
+    },
+    "title": "În producție în aceeași zi, nu peste un trimestru."
+  },
+  "pricing": {
+    "enterprise": {
+      "cta": "Să discutăm",
+      "eur": "Sector public, on-prem, SLA/DR",
+      "features": {
+        "agents": "Agenți nelimitați",
+        "manager": "Consultant de conformitate dedicat",
+        "onPrem": "On-prem sau în cloudul dumneavoastră",
+        "sla": "SLA și backup/DR dedicat"
+      },
+      "monthly": "Ofertă personalizată",
+      "setup": "Ofertă personalizată",
+      "tagline": "Pentru implementări reglementate, cu volum mare sau on-prem."
+    },
+    "eyebrow": "Prețuri",
+    "growth": {
+      "badge": "Cel mai ales",
+      "eur": "≈ €1 080–1 750/lună",
+      "features": {
+        "agents": "Până la 20 de agenți în registru",
+        "oversight": "Coada de supraveghere umană",
+        "routing": "Rutare între mai mulți furnizori de modele",
+        "support": "Asistență prioritară"
+      },
+      "setup": "Taxă de implementare: <b>25 000–40 000 PLN</b> o singură dată",
+      "tagline": "Pentru echipele care rulează în producție peste zece agenți."
+    },
+    "lead": "Instanță dedicată sau multi-tenant cu izolare logică — adaptate dimensiunii și bugetului companiei.",
+    "note": "<strong>Prețuri orientative, punct de plecare pentru negociere</strong> — primul pilot poate fi, în mod deliberat, evaluat la un preț mai mic.",
+    "perMonth": "PLN/lună",
+    "starter": {
+      "eur": "≈ €670–1 000/lună",
+      "features": {
+        "agents": "Până la 5 agenți în registru",
+        "multiTenant": "Disponibil și ca multi-tenant — prag de intrare mai scăzut, solicitați o ofertă",
+        "pii": "Scaner de date personale și motor de politici",
+        "support": "Asistență standard"
+      },
+      "setup": "Taxă de implementare: <b>15 000–25 000 PLN</b> o singură dată",
+      "tagline": "Primul dumneavoastră agent reglementat. Până la 5 agenți în registru."
+    },
+    "title": "Prețuri care cresc odată cu registrul de agenți, nu cu numărul de angajați."
+  },
+  "trust": {
+    "catalog": "cerințe din AI Act în catalogul editabil de evaluare a lacunelor",
+    "deployment": "modele de implementare — dedicat și multi-tenant, adaptate bugetului",
+    "logged": "din apeluri înregistrate înainte de răspuns",
+    "policyRefresh": "reîmprospătarea politicilor, fără repornire",
+    "rbac": "roluri RBAC: partner → reviewer"
+  }
+}

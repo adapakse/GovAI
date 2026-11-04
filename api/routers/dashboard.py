@@ -4,10 +4,12 @@ import logging
 
 from typing import Optional
 
-from fastapi import APIRouter, Depends, Query, WebSocket, WebSocketDisconnect
-from dependencies.auth import CurrentUser, get_current_user
+from fastapi import APIRouter, Depends, HTTPException, Query, WebSocket, WebSocketDisconnect, status
+from dependencies.auth import CurrentUser, authenticate_token, get_current_user
+from i18n import t
 from repositories import dashboard_repository as dashboard_repo
 from services import settings_service
+from services.block_reasons import localize_block_reason
 
 logger = logging.getLogger(__name__)
 router = APIRouter(tags=["dashboard"])
@@ -75,19 +77,37 @@ async def live_feed(websocket: WebSocket):
     WebSocket stream zdarzeń real-time dla pulpitu operacyjnego.
     Subskrybuje kanały Redis: audit:new_call, audit:blocked, audit:error,
     oversight:pending, oversight:escalated.
+
+    Wymaga access tokenu w query string (?token=...) — przeglądarkowy WebSocket
+    nie pozwala ustawić nagłówka Authorization. Bez ważnego tokenu połączenie
+    jest odrzucane przed accept (HTTP 403 przy handshake).
     """
+    token = websocket.query_params.get("token")
+    try:
+        if not token:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+        user = await authenticate_token(token, websocket.headers.get("host"))
+        if user.must_change_password:   # najpierw zmiana hasła tymczasowego
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+    except HTTPException:
+        await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
+        return
+
     await websocket.accept()
 
     if _redis is None:
-        await websocket.send_json({"type": "error", "message": "Redis niedostępny"})
+        await websocket.send_json({"type": "error", "message": t("dashboard.errors.redis_unavailable")})
         await websocket.close()
         return
 
+    # Multitenancy: gateway publikuje zdarzenia na kanały organizacji
+    # tenant:{tenant_id}:<kanał>; klient dostaje typ bez prefiksu (audit:blocked...).
+    prefix = f"tenant:{user.tenant_id}:"
     pubsub = _redis.pubsub()
-    await pubsub.subscribe(
+    await pubsub.subscribe(*(prefix + ch for ch in (
         "audit:new_call", "audit:blocked", "audit:error",
         "oversight:pending", "oversight:escalated",
-    )
+    )))
 
     try:
         async for message in pubsub.listen():
@@ -97,8 +117,16 @@ async def live_feed(websocket: WebSocket):
                 except Exception:
                     payload = {"raw": message["data"]}
 
+                # Powód blokady w języku klienta WS — kod i parametry gateway
+                # publikuje w payloadzie (block_reason_code / block_reason_params).
+                if isinstance(payload, dict) and "block_reason" in payload:
+                    payload["block_reason"] = localize_block_reason(payload.get("block_reason"), payload)
+
+                channel = message["channel"]
+                if isinstance(channel, bytes):
+                    channel = channel.decode()
                 await websocket.send_json({
-                    "type": message["channel"],
+                    "type": channel.removeprefix(prefix),
                     "payload": payload,
                 })
     except WebSocketDisconnect:
@@ -110,6 +138,11 @@ async def live_feed(websocket: WebSocket):
 
 def _row_to_dict(row) -> dict:
     d = dict(row)
+    metadata = d.pop("metadata", None)
+    if "block_reason" in d:
+        d["block_reason"] = localize_block_reason(
+            d["block_reason"], metadata if isinstance(metadata, dict) else None,
+        )
     for k, v in d.items():
         if hasattr(v, 'isoformat'):
             d[k] = v.isoformat()

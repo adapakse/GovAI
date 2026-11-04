@@ -1,0 +1,10 @@
+{
+  "alerts": {
+    "rubber_stamp": "Sorveglianza apparente — revisione durata meno di {seconds} secondi. Evento registrato."
+  },
+  "errors": {
+    "already_reviewed": "Attività già esaminata — stato: {status}",
+    "cannot_start_review": "L'attività ha lo stato '{status}' — impossibile avviare la revisione",
+    "task_not_found": "L'attività di sorveglianza non esiste"
+  }
+}

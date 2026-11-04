@@ -1,0 +1,29 @@
+{
+  "cta": {
+    "bookDemo": "Book a demo"
+  },
+  "footer": {
+    "home": "Home",
+    "owner": "Platform owner:",
+    "privacy": "Privacy",
+    "rights": "© 2026 GovAI. All rights reserved.",
+    "terms": "Terms of service"
+  },
+  "lang": {
+    "label": "Language",
+    "picker": "Site language"
+  },
+  "nav": {
+    "act": "AI Act",
+    "backHome": "← Home",
+    "blog": "Blog",
+    "faq": "FAQ",
+    "login": "Log in",
+    "menu": "Menu",
+    "platform": "Platform",
+    "pricing": "Pricing"
+  },
+  "theme": {
+    "toggle": "Toggle theme"
+  }
+}

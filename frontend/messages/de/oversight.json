@@ -1,0 +1,20 @@
+{
+  "allApproved": "Alles genehmigt",
+  "empty": {
+    "subtitle": "Alle Entscheidungen wurden bearbeitet.",
+    "title": "Keine ausstehenden Aufgaben"
+  },
+  "header": {
+    "subtitle": "Entscheidungen von Hochrisiko-KI-Agenten erfordern eine Genehmigung · Aktualisierung alle 10 s",
+    "title": "Menschliche Aufsicht"
+  },
+  "info": {
+    "text": "Die Prüfzeit jeder Aufgabe wird gemessen. Eine Genehmigung in weniger als 10 Sekunden nach dem Öffnen der Karte löst eine Warnung aus und wird im Audit-Log erfasst (Art. 14 EU AI Act).",
+    "title": "Schutz vor Scheinaufsicht:"
+  },
+  "loading": "Aufsichtsaufgaben werden geladen...",
+  "pendingCount": "{count} ausstehend",
+  "refresh": "Aktualisieren",
+  "review": "Prüfen",
+  "timer": "{mins}m {secs}s"
+}

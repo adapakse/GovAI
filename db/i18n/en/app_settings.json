@@ -1,0 +1,159 @@
+{
+  "budget.default_alert_threshold_eur": {
+    "description": "Cost alert threshold for new agents (0 = disabled).",
+    "label": "Default alert threshold",
+    "unit": "EUR"
+  },
+  "budget.default_monthly_eur": {
+    "description": "Budget assigned to new agents (0 = no limit).",
+    "label": "Default monthly budget",
+    "unit": "EUR"
+  },
+  "compliance.deadline_days": {
+    "description": "Number of days to remedy individual high-risk compliance gaps (key = control field).",
+    "label": "Compliance gap deadlines (days)",
+    "unit": "days"
+  },
+  "compliance.enterprise_report_max_tokens": {
+    "description": "Token limit for the enterprise report narrative.",
+    "label": "Enterprise report — max tokens",
+    "unit": "tokens"
+  },
+  "compliance.report_max_tokens": {
+    "description": "Token limit for the agent compliance report narrative.",
+    "label": "Agent report — max tokens",
+    "unit": "tokens"
+  },
+  "i18n.default_locale": {
+    "description": "Language of the interface, reports and messages for users who have not chosen their own. Codes: pl, en, de, it, es, fr, ro, ru, sl, hr.",
+    "label": "Default language"
+  },
+  "intervals.policy_refresh_seconds": {
+    "description": "How often (in seconds) the gateway reloads policy rules from the database.",
+    "label": "Policy refresh",
+    "unit": "seconds"
+  },
+  "intervals.ttl_monitor_seconds": {
+    "description": "How often (in seconds) the monitor escalates overdue oversight tasks.",
+    "label": "Oversight TTL monitor",
+    "unit": "seconds"
+  },
+  "models.classifier_model": {
+    "description": "Model used to assess an agent's risk level.",
+    "label": "AI Act classifier model"
+  },
+  "models.default_agent_model": {
+    "description": "Model assigned to newly registered agents.",
+    "label": "Default agent model"
+  },
+  "models.default_max_tokens": {
+    "description": "Output token limit when the client does not specify one.",
+    "label": "Default token limit",
+    "unit": "tokens"
+  },
+  "models.default_temperature": {
+    "description": "LLM temperature when the client does not specify one.",
+    "label": "Default temperature",
+    "unit": "0–2"
+  },
+  "oversight.history_limit": {
+    "description": "Hard limit on the number of oversight history items.",
+    "label": "Oversight history — row limit",
+    "unit": "rows"
+  },
+  "oversight.history_max_days": {
+    "description": "Maximum day range for GET /oversight/history.",
+    "label": "Oversight history — max days",
+    "unit": "days"
+  },
+  "oversight.min_review_seconds": {
+    "description": "An oversight review shorter than this number of seconds is flagged as rubber-stamping.",
+    "label": "Min. review time",
+    "unit": "seconds"
+  },
+  "oversight.ttl_seconds": {
+    "description": "Time until a task in the oversight queue is escalated.",
+    "label": "Oversight task TTL",
+    "unit": "seconds"
+  },
+  "pagination.audit_default_limit": {
+    "description": "Default number of entries in GET /audit.",
+    "label": "Audit — default limit",
+    "unit": "rows"
+  },
+  "pagination.audit_max_limit": {
+    "description": "Maximum number of entries in a single audit query.",
+    "label": "Audit — max limit",
+    "unit": "rows"
+  },
+  "pagination.dashboard_recent_blocks": {
+    "description": "Number of recent blocks shown in dashboard alerts.",
+    "label": "Dashboard — recent blocks",
+    "unit": "items"
+  },
+  "pagination.dashboard_top_agents": {
+    "description": "Number of most active agents shown on the dashboard.",
+    "label": "Dashboard — top agents",
+    "unit": "items"
+  },
+  "pagination.default_window_days": {
+    "description": "Default day range for the audit log and dashboard.",
+    "label": "Default window (days)",
+    "unit": "days"
+  },
+  "pagination.stats_default_days": {
+    "description": "Default range for GET /agents/{id}/stats.",
+    "label": "Agent statistics — default days",
+    "unit": "days"
+  },
+  "pagination.stats_max_days": {
+    "description": "Maximum range for agent statistics.",
+    "label": "Agent statistics — max days",
+    "unit": "days"
+  },
+  "pagination.timeline_default_hours": {
+    "description": "Default window of the timeline chart.",
+    "label": "Timeline — default hours",
+    "unit": "hours"
+  },
+  "pagination.timeline_max_hours": {
+    "description": "Maximum range of the timeline chart.",
+    "label": "Timeline — max hours",
+    "unit": "hours"
+  },
+  "pricing.default_rate": {
+    "description": "Rate [input, output] for models not in the map.",
+    "label": "Default rate (USD/1k tok.)",
+    "unit": "USD/1k"
+  },
+  "pricing.model_rates": {
+    "description": "Map of model → [input, output] in USD per 1,000 tokens. Models not on the list use the default rate.",
+    "label": "Model rates (USD/1k tok.)",
+    "unit": "USD/1k"
+  },
+  "pricing.usd_to_eur": {
+    "description": "Multiplier for converting model costs from USD to EUR.",
+    "label": "USD→EUR rate",
+    "unit": "multiplier"
+  },
+  "security.access_token_expire_minutes": {
+    "description": "Lifetime of the JWT access token.",
+    "label": "Access token validity",
+    "unit": "minutes"
+  },
+  "security.bcrypt_rounds": {
+    "description": "Password hashing cost (higher = slower, more secure).",
+    "label": "bcrypt rounds",
+    "unit": "rounds"
+  },
+  "security.pii_confidence_threshold": {
+    "description": "Minimum Presidio confidence level for a PII detection to be accepted.",
+    "label": "PII confidence threshold",
+    "unit": "0–1"
+  },
+  "security.refresh_token_expire_days": {
+    "description": "Lifetime of the refresh token.",
+    "label": "Refresh token validity",
+    "unit": "days"
+  }
+}

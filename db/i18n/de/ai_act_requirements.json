@@ -1,0 +1,74 @@
+{
+  "high|Art. 10": {
+    "text": "Trainings-, Validierungs- und Testdatensätze müssen Qualitätskriterien erfüllen — Relevanz, Repräsentativität, Fehlerfreiheit und Vollständigkeit. Eine Dokumentation der Datensätze ist erforderlich.",
+    "title": "Daten und Daten-Governance"
+  },
+  "high|Art. 11": {
+    "text": "Vor dem Inverkehrbringen bzw. der Inbetriebnahme ist eine vollständige technische Dokumentation gemäß Anhang IV EU AI Act erforderlich. Das Dokument muss während des gesamten Lebenszyklus des Systems auf dem neuesten Stand gehalten werden.",
+    "title": "Technische Dokumentation"
+  },
+  "high|Art. 13": {
+    "text": "Das KI-System muss betriebliche Transparenz gewährleisten. Nutzer müssen über die Interaktion mit einem KI-System informiert werden und seine Funktionsweise in dem für die Aufsicht erforderlichen Maß verstehen.",
+    "title": "Transparenz und Bereitstellung von Informationen"
+  },
+  "high|Art. 14": {
+    "text": "Es sind Maßnahmen umgesetzt, die es einem Menschen ermöglichen, die Funktionsweise des KI-Systems zu verstehen, zu überwachen und in sie einzugreifen. Jede Entscheidung des Systems kann angehalten oder rückgängig gemacht werden.",
+    "title": "Menschliche Aufsicht"
+  },
+  "high|Art. 15": {
+    "text": "Das System muss während seines gesamten Lebenszyklus ein angemessenes Maß an Genauigkeit erreichen. Erforderlich sind Tests der Robustheit gegenüber Fehlern, Angriffen und unerwarteten Eingabedaten.",
+    "title": "Genauigkeit und Robustheit"
+  },
+  "high|Art. 17": {
+    "text": "Der Anbieter richtet ein Qualitätsmanagementsystem ein, das Konzepte, Verfahren und Anweisungen zur Gewährleistung der Konformität mit dem EU AI Act umfasst.",
+    "title": "Qualitätsmanagementsystem"
+  },
+  "high|Art. 26 ust. 2": {
+    "text": "Der Betreiber eines Hochrisiko-KI-Systems muss die menschliche Aufsicht natürlichen Personen übertragen, die über die erforderliche Kompetenz, Ausbildung und Befugnis verfügen und die nötige Unterstützung erhalten.",
+    "title": "Übertragung der menschlichen Aufsicht an kompetente Personen"
+  },
+  "high|Art. 26 ust. 5": {
+    "text": "Der Betreiber muss den Betrieb des Systems anhand der Betriebsanleitung überwachen und den Anbieter sowie — falls zutreffend — die Marktüberwachungsbehörde über ein festgestelltes Risiko oder einen schwerwiegenden Vorfall informieren.",
+    "title": "Überwachung des Betriebs und Information des Anbieters"
+  },
+  "high|Art. 26 ust. 6": {
+    "text": "Der Betreiber muss die automatisch erzeugten Protokolle des Systems für einen der Zweckbestimmung des Systems angemessenen Zeitraum von mindestens sechs Monaten aufbewahren, sofern im Unionsrecht oder im nationalen Recht nichts anderes bestimmt ist.",
+    "title": "Aufbewahrung automatisch erzeugter Protokolle"
+  },
+  "high|Art. 26 ust. 8": {
+    "text": "Betreiber, die Behörden oder öffentliche Stellen sind, müssen die Registrierungspflichten nach Art. 49 erfüllen und vor der Inbetriebnahme des Systems überprüfen, ob es in der EU-Datenbank registriert ist.",
+    "title": "Überprüfung der Registrierung in der EU-Datenbank"
+  },
+  "high|Art. 27": {
+    "text": "Vor der Inbetriebnahme eines Hochrisiko-KI-Systems gemäß Anhang III Nr. 5 Buchst. b/c (Kreditwürdigkeitsprüfung, Versicherungsrisiko) oder durch eine öffentliche Stelle bzw. eine private Einrichtung, die öffentliche Dienste erbringt, muss der Betreiber eine Grundrechte-Folgenabschätzung durchführen: Beschreibung der Verwendungsprozesse, Zeitraum und Häufigkeit der Verwendung, Kategorien betroffener Personen, Schadensrisiken für diese Personen sowie Maßnahmen der menschlichen Aufsicht und Beschwerdemechanismen.",
+    "title": "Grundrechte-Folgenabschätzung (FRIA)"
+  },
+  "high|Art. 43": {
+    "text": "Hochrisiko-KI-Systeme nach Anhang III erfordern vor dem Inverkehrbringen bzw. der Inbetriebnahme die Durchführung einer Konformitätsbewertung (interne Kontrolle oder durch eine notifizierte Stelle).",
+    "title": "Konformitätsbewertung"
+  },
+  "high|Art. 49": {
+    "text": "Hochrisiko-KI-Systeme müssen vor dem Inverkehrbringen bzw. der Inbetriebnahme in der EU-Datenbank registriert werden.",
+    "title": "Registrierung in der EU-Datenbank"
+  },
+  "high|Art. 9": {
+    "text": "Ein Hochrisiko-KI-Agent erfordert ein dokumentiertes Risikomanagementsystem über den gesamten Lebenszyklus. Erforderlich sind die Ermittlung, Analyse und Bewertung von Risiken sowie die Umsetzung von Risikomanagementmaßnahmen.",
+    "title": "Risikomanagementsystem"
+  },
+  "limited|Art. 50 ust. 1": {
+    "text": "Systeme, die mit natürlichen Personen interagieren, müssen den Nutzer klar, eindeutig und rechtzeitig darüber informieren, dass er mit einem KI-System interagiert, es sei denn, dies ist offensichtlich.",
+    "title": "Pflicht zur Information über KI"
+  },
+  "limited|Art. 50 ust. 4": {
+    "text": "Von KI erzeugte Text-, Audio- und Videoinhalte müssen in maschinenlesbarem Format als künstlich erzeugt gekennzeichnet sein.",
+    "title": "Kennzeichnung KI-generierter Inhalte"
+  },
+  "minimal|Preambuła 46": {
+    "text": "Für KI-Systeme mit minimalem Risiko bestehen keine verpflichtenden rechtlichen Anforderungen. Empfohlen wird die Anwendung freiwilliger Verhaltenskodizes und allgemeiner Grundsätze vertrauenswürdiger KI (Transparenz, Fairness, Sicherheit).",
+    "title": "Freiwillige Verhaltenskodizes"
+  },
+  "unacceptable|Art. 5": {
+    "text": "Die in Art. 5 genannten KI-Praktiken sind in der EU ausnahmslos verboten. Es ist zu prüfen, ob das System unter eine der verbotenen Kategorien fällt (unterschwellige Beeinflussung, Social Scoring, biometrische Echtzeit-Fernidentifizierung).",
+    "title": "Absolutes Verbot"
+  }
+}

@@ -1,0 +1,124 @@
+{
+  "audit": {
+    "actions": {
+      "tenant_create": "Organisation created",
+      "tenant_delete": "Organisation deleted",
+      "tenant_enter": "Organisation entered",
+      "tenant_update": "Organisation changed",
+      "user_reset_password": "User password reset"
+    },
+    "columns": {
+      "action": "Action",
+      "actor": "Who",
+      "details": "Details",
+      "tenant": "Organisation",
+      "time": "Time"
+    },
+    "empty": "No entries",
+    "limit": "Entries:",
+    "loading": "Loading...",
+    "noAccess": "The platform log is available only to the platform administrator.",
+    "searchPlaceholder": "Search by person, action, organisation...",
+    "subtitle": "Operations of platform administrators: creating and changing organisations, password resets, entering organisation contexts.",
+    "title": "Platform log"
+  },
+  "tenants": {
+    "actingExpired": "The session in the organisation context has expired (60 minutes) — you are back in the platform panel. Enter the organisation again to continue.",
+    "actions": {
+      "activate": "Activate",
+      "delete": "Delete",
+      "deleteDemo": "The demo organisation cannot be deleted",
+      "deleteOwn": "You cannot delete your own organisation",
+      "enter": "Enter",
+      "enterSuspended": "The organisation is not active",
+      "suspend": "Suspend",
+      "users": "Users"
+    },
+    "add": "+ New organisation",
+    "columns": {
+      "agents": "Agents",
+      "created": "Created",
+      "status": "Status",
+      "tenant": "Organisation",
+      "users": "Users"
+    },
+    "created": {
+      "description": "First administrator: {email}. Organisation subdomain: {slug}. Pass the temporary password to the administrator — they will change it at first sign-in.",
+      "label": "Administrator temporary password",
+      "title": "Organisation {name} created"
+    },
+    "delete": {
+      "cancel": "Cancel",
+      "confirm": "Delete organisation",
+      "message": "The organisation will be deleted (soft delete — the data stays in the database, but nobody will have access to it). Users will not be able to sign in and API keys will stop working.",
+      "title": "Delete organisation {name}",
+      "typeSlug": "To confirm, type the organisation slug: <code>{slug}</code>"
+    },
+    "demo": "demo",
+    "empty": "No organisations",
+    "form": {
+      "adminEmail": "E-mail address",
+      "adminFullName": "Full name",
+      "adminHint": "The administrator gets the Partner role and a temporary password to change at first sign-in. The organisation receives a copy of the template policies.",
+      "adminSection": "First administrator",
+      "cancel": "Cancel",
+      "locale": "Default language",
+      "localePlatform": "— platform default —",
+      "name": "Name",
+      "namePlaceholder": "e.g. Nowak & Partners Law Firm",
+      "save": "Create organisation",
+      "saving": "Creating...",
+      "slug": "Slug (address)",
+      "slugErrors": {
+        "chars": "Only lowercase letters (a–z), digits and hyphens are allowed.",
+        "edges": "The slug cannot start or end with a hyphen.",
+        "length": "The slug can be at most 63 characters long.",
+        "reserved": "This slug is reserved for the platform.",
+        "taken": "This slug is already taken."
+      },
+      "slugHint": "Lowercase letters, digits and hyphens — the organisation subdomain in the platform address.",
+      "slugPreview": "Organisation subdomain: {slug}",
+      "title": "New organisation"
+    },
+    "loading": "Loading...",
+    "noAccess": "The organisations panel is available only to the platform administrator.",
+    "own": "(your organisation)",
+    "searchPlaceholder": "Search by name or slug...",
+    "showDeleted": "Show deleted ({count})",
+    "state": {
+      "active": "Active",
+      "deleted": "Deleted",
+      "suspended": "Suspended"
+    },
+    "subtitle": "Organisations (customers) of the GovAI platform — creation, suspension and entering an organisation context.",
+    "suspendConfirm": {
+      "confirm": "Suspend",
+      "message": "Suspend organisation {name}? Its users will not be able to sign in and the gateway will reject calls from its agents until it is reactivated.",
+      "title": "Suspend organisation"
+    },
+    "title": "Organisations",
+    "users": {
+      "columns": {
+        "lastLogin": "Last sign-in",
+        "role": "Role",
+        "status": "Status",
+        "user": "User"
+      },
+      "empty": "No users",
+      "loading": "Loading...",
+      "never": "never",
+      "resetConfirm": {
+        "confirm": "Reset password",
+        "message": "Issue a new temporary password to {name} ({email})? Their current sessions will be ended.",
+        "title": "Reset password"
+      },
+      "resetPassword": "Reset password",
+      "secret": {
+        "description": "Temporary password for {email}. The user will change it at first sign-in.",
+        "label": "Temporary password",
+        "title": "New temporary password"
+      },
+      "title": "Users of organisation {name}"
+    }
+  }
+}

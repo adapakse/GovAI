@@ -1,0 +1,48 @@
+{
+  "alerts": {
+    "empty": "Nema upozorenja u ovom razdoblju",
+    "title": "Nedavni sigurnosni događaji",
+    "viewAudit": "Prikaži zapisnik →"
+  },
+  "byAgent": {
+    "title": "Pozivi po agentu"
+  },
+  "chart": {
+    "allowed": "Dopušteno",
+    "blocked": "Blokirano",
+    "noData": "Nema podataka",
+    "total": "Ukupno"
+  },
+  "cost": {
+    "byAgent": "Trošak po agentu (7 dana)",
+    "note": "samo trošak Anthropic tokena",
+    "total": "Ukupni trošak (7 dana)"
+  },
+  "header": {
+    "subtitle": "Posljednjih 7 dana · osvježava se svakih 30 s",
+    "title": "Operativna nadzorna ploča"
+  },
+  "kpi": {
+    "activeAgents": "Aktivni agenti",
+    "activeAgentsSub": "{count} visokog rizika",
+    "blocked": "Blokade",
+    "blockedSub": "{rate} % svih poziva",
+    "calls": "Pozivi (7 dana)",
+    "callsSub": "prosj. latencija {latency} ms",
+    "infraErrors": "Pogreške infrastrukture",
+    "infraErrorsSub": "nema pružatelja / pogreška LLM-a",
+    "pendingOversight": "Čeka nadzor",
+    "pendingOversightSub": "potrebna odluka recenzenta"
+  },
+  "loadError": "Pogreška pri učitavanju podataka.",
+  "loading": "Učitavanje nadzorne ploče...",
+  "stats": {
+    "oversight": "Za nadzor",
+    "pii": "Otkriveni osobni podaci"
+  },
+  "timeline": {
+    "empty": "Nema podataka za posljednja 24 h",
+    "refresh": "osvježava se svakih 30 s",
+    "title": "Pozivi po satu (posljednja 24 h)"
+  }
+}

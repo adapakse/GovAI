@@ -1,0 +1,12 @@
+{
+  "errors": {
+    "invalid_sensitivity": "max_data_sensitivity non valido. Valori consentiti: {allowed}",
+    "invalid_type": "provider_type sconosciuto. Valori consentiti: {allowed}",
+    "key_and_key_env": "Una chiave propria (api_key) non può essere combinata con una chiave della piattaforma (api_key_env).",
+    "key_encryption_unavailable": "Il salvataggio di chiavi proprie non è disponibile — crittografia non configurata (PROVIDER_KEYS_SECRET).",
+    "key_env_not_allowed": "Variabile della chiave non consentita. Consentite: {allowed}.",
+    "key_env_with_base_url": "Una chiave di piattaforma (api_key_env) non può essere combinata con un base_url personalizzato.",
+    "not_found": "Provider non trovato",
+    "platform_read_only": "I provider della piattaforma sono di sola lettura. Aggiungi invece un provider della tua organizzazione."
+  }
+}

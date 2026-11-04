@@ -1,0 +1,81 @@
+{
+  "actions": {
+    "closeGap": "Schließen Sie die Lücke und aktualisieren Sie den Status im Register: {title} ({article}).",
+    "completeDeclaration": "Füllen Sie die Selbsterklärung im Tab „Register“ aus: {title} ({article}).",
+    "updateConfig": "Aktualisieren Sie die Konfiguration des KI-Agenten für: {title} ({article})."
+  },
+  "fallbackNarrative": "Das System „{name}“ wurde der Risikostufe {risk} zugeordnet. Eine vollständige Konformitätsanalyse erfordert die Überprüfung durch den KI-Klassifikator. Bitte erstellen Sie den Bericht erneut.",
+  "fileName": "ai-act-bericht-{name}.pdf",
+  "footer": "GovAI v0.2.0 · Bericht erstellt am {date} UTC · Verordnung (EU) 2024/1689 (EU AI Act). Dieses Dokument dient ausschließlich Informationszwecken und stellt keine Rechtsberatung dar.",
+  "format": {
+    "dateTime": "%d.%m.%Y %H:%M"
+  },
+  "pdf": {
+    "gaps": {
+      "article": "Artikel",
+      "beforeDeployment": "Vor der Inbetriebnahme",
+      "days": "{days} Tage",
+      "deadline": "Frist",
+      "none": "Keine Lücken festgestellt — die Anforderungen wurden in den Konformitätserklärungen (Tab „Register“) als erfüllt oder nicht zutreffend bestätigt.",
+      "requirement": "Anforderung",
+      "severity": "Schweregrad"
+    },
+    "meta": "Erstellt am: {date} UTC  ·  Verantwortlicher: {owner}  ·  Team: {team}",
+    "noPendingActions": "Keine offenen Maßnahmen — alle Anforderungen bestätigt.",
+    "profile": {
+      "annexCategory": "Kategorie nach Anhang III",
+      "annexNone": "Keine (nicht in Anhang III)",
+      "contact": "Kontakt",
+      "humanOversight": "Menschliche Aufsicht",
+      "model": "KI-Modell",
+      "monthlyBudget": "Monatsbudget",
+      "oversightNotRequired": "Nicht erforderlich",
+      "oversightRequired": "ERFORDERLICH",
+      "owner": "Verantwortlicher",
+      "property": "Eigenschaft",
+      "status": "Status",
+      "systemId": "System-ID",
+      "team": "Team",
+      "value": "Wert"
+    },
+    "riskLevel": "Risikostufe: {value}",
+    "sections": {
+      "compliance": "{n}. Konformitätsbewertung nach dem EU AI Act",
+      "legalBasis": "3. Rechtsgrundlage und Klassifizierung",
+      "profile": "2. Profil des KI-Systems",
+      "recommendations": "{n}. Prioritäre Empfehlungen",
+      "stats": "{n}. Betriebsstatistik (letzte 30 Tage)",
+      "summary": "1. Zusammenfassung für die Geschäftsleitung"
+    },
+    "stats": {
+      "apiCost": "API-Kosten (30 Tage)",
+      "apiCostNote": "geschätzte Kosten des LLM-Modells",
+      "avgLatency": "Ø Latenz",
+      "avgLatencyNote": "End-to-End-Antwortzeit",
+      "comment": "Kommentar",
+      "metric": "Kennzahl",
+      "oversight": "An die Aufsicht weitergeleitet",
+      "oversightNote": "Richtlinie A-001",
+      "piiCalls": "Aufrufe mit personenbez. Daten",
+      "piiCallsNote": "erkannte personenbezogene Daten (Presidio)",
+      "policyBlocks": "Blockierungen durch Richtlinien",
+      "policyBlocksNote": "G-001 Finanzen, G-002 Prompt Injection",
+      "totalCalls": "Aufrufe insgesamt",
+      "totalCallsNote": "alle Anfragen",
+      "value": "Wert"
+    },
+    "tagline": "Plattform für das Management von KI-Agenten · EU AI Act Compliance",
+    "title": "Konformitätsbericht zum EU AI Act"
+  },
+  "risk": {
+    "high": "Hoch",
+    "limited": "Begrenzt",
+    "minimal": "Minimal",
+    "unacceptable": "Unannehmbar"
+  },
+  "severity": {
+    "critical": "Kritisch",
+    "major": "Schwerwiegend",
+    "minor": "Geringfügig"
+  }
+}

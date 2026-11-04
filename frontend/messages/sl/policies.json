@@ -1,0 +1,86 @@
+{
+  "aiactTab": {
+    "count": "{count, plural, one {# zahteva} two {# zahtevi} few {# zahteve} other {# zahtev}}",
+    "emptyLevel": "Za to stopnjo ni zahtev.",
+    "intro": "Zahteve, dodeljene stopnjam tveganja. Vidne so v poročilih PDF in v pogledu skladnosti agenta. K posameznim členom EU AI Act lahko dodate lastne opombe."
+  },
+  "banner": {
+    "text": "Varnostni prehod pravila iz baze samodejno osveži vsakih 60 sekund. Po shranjevanju spremembe ni treba storiti ničesar drugega.",
+    "title": "Konfiguracija brez ponovnega zagona:"
+  },
+  "cancel": "Prekliči",
+  "delete": "Izbriši",
+  "edit": "Uredi",
+  "loading": "Nalaganje ...",
+  "newRequirement": {
+    "addButton": "+ Dodaj zahtevo",
+    "article": "Člen *",
+    "articlePlaceholder": "npr. člen 9(2)",
+    "deadlineDays": "Rok (dni)",
+    "declKey": "Ključ samoizjave",
+    "declKeyHint": "Ključ samoizjave poveže to zahtevo s poljem na zavihku Register agenta. Prazno = zahteve ni mogoče izpolniti s samoizjavo (npr. prepoved iz člena 5).",
+    "declKeyPlaceholder": "npr. art9_risk_management",
+    "reqText": "Opis zahteve *",
+    "reqTextPlaceholder": "Podroben opis zahteve in načina njene izpolnitve ...",
+    "reqTitle": "Naslov zahteve *",
+    "reqTitlePlaceholder": "npr. Register visokotveganih sistemov UI",
+    "riskLevel": "Stopnja tveganja *",
+    "save": "Shrani zahtevo",
+    "severity": "Privzeta resnost",
+    "sortOrder": "Vrstni red",
+    "title": "Nova zahteva EU AI Act"
+  },
+  "newRule": {
+    "addButton": "+ Dodaj novo pravilo",
+    "code": "Koda pravila",
+    "codePlaceholder": "npr. G-003",
+    "defaultReason": "Blokirano s pravilom {code}",
+    "keywords": "Ključne besede (ena na vrstico) *",
+    "keywordsPlaceholder": "izvozi podatke\nexport data\nsend all records",
+    "name": "Ime *",
+    "namePlaceholder": "npr. Blokada izvoza podatkov",
+    "priority": "Prioriteta (nižja = pomembnejša)",
+    "reason": "Sporočilo blokade",
+    "reasonPlaceholder": "Zaznana je bila nedovoljena operacija",
+    "save": "Shrani pravilo",
+    "title": "Novo pravilo blokiranja"
+  },
+  "requirement": {
+    "article": "Člen",
+    "days": "{count, plural, one {# dan} two {# dneva} few {# dni} other {# dni}}",
+    "deleteConfirm": "Ali želite izbrisati zahtevo »{title}«?",
+    "noDeclKey": "brez samoizjave",
+    "title": "Naslov"
+  },
+  "rule": {
+    "activate": "Aktiviraj",
+    "addKeyword": "+ Dodaj",
+    "addKeywordPlaceholder": "Dodajte ključno besedo ...",
+    "deactivate": "Deaktiviraj",
+    "inactive": "NEAKTIVNO",
+    "keywords": "Ključne besede ({count})",
+    "meta": "Prioriteta: {priority} · Obseg: {level} · v{version}",
+    "noKeywords": "Ni ključnih besed — pravilo se ne bo nikoli sprožilo.",
+    "reason": "Sporočilo: »{reason}«",
+    "unsaved": "Neshranjene spremembe · varnostni prehod jih bo uveljavil v 60 s."
+  },
+  "rulesTab": {
+    "empty": "Ni opredeljenih pravil.",
+    "intro": "Pravila blokiranja se preverjajo po vrstnem redu prioritete (nižja številka = višja prioriteta). Prvo ujemanje ključne besede sproži blokado pred klicem modela.",
+    "noResults": "Ni pravil, ki bi ustrezala »{query}«.",
+    "searchPlaceholder": "Iskanje pravila — ime, koda, ključna beseda, razlog ..."
+  },
+  "save": "✓ Shrani",
+  "saving": "Shranjevanje ...",
+  "severity": {
+    "critical": "Kritična",
+    "major": "Resna",
+    "minor": "Manjša"
+  },
+  "subtitle": "Upravljajte varnostna pravila in zahteve EU AI Act brez sprememb kode. Spremembe pravil so v varnostnem prehodu aktivne v 60 s.",
+  "tabs": {
+    "aiact": "Zahteve EU AI Act",
+    "rules": "Varnostna pravila"
+  },
+  "title": "Pravilniki in skladnost"
+}

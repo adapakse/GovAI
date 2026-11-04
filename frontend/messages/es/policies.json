@@ -1,0 +1,86 @@
+{
+  "aiactTab": {
+    "count": "{count, plural, one {# requisito} other {# requisitos}}",
+    "emptyLevel": "No hay requisitos para este nivel.",
+    "intro": "Requisitos asignados a los niveles de riesgo. Visibles en los informes PDF y en la vista de cumplimiento del agente. Puede añadir sus propias anotaciones a artículos concretos del EU AI Act."
+  },
+  "banner": {
+    "text": "La pasarela recarga automáticamente las reglas de la base de datos cada 60 segundos. Tras guardar un cambio, no es necesario hacer nada más.",
+    "title": "Configuración sin reinicio:"
+  },
+  "cancel": "Cancelar",
+  "delete": "Eliminar",
+  "edit": "Editar",
+  "loading": "Cargando...",
+  "newRequirement": {
+    "addButton": "+ Añadir requisito",
+    "article": "Artículo *",
+    "articlePlaceholder": "p. ej., art. 9, apartado 2",
+    "deadlineDays": "Plazo (días)",
+    "declKey": "Clave de autodeclaración",
+    "declKeyHint": "La clave de autodeclaración vincula este requisito con un campo de la pestaña Registro del agente. Vacío = requisito que no admite autodeclaración (p. ej., prohibición del art. 5).",
+    "declKeyPlaceholder": "p. ej., art9_risk_management",
+    "reqText": "Descripción del requisito *",
+    "reqTextPlaceholder": "Descripción detallada del requisito y de la forma de cumplirlo...",
+    "reqTitle": "Título del requisito *",
+    "reqTitlePlaceholder": "p. ej., Registro de sistemas de IA de alto riesgo",
+    "riskLevel": "Nivel de riesgo *",
+    "save": "Guardar requisito",
+    "severity": "Gravedad predeterminada",
+    "sortOrder": "Orden",
+    "title": "Nuevo requisito del EU AI Act"
+  },
+  "newRule": {
+    "addButton": "+ Añadir nueva regla",
+    "code": "Código de la regla",
+    "codePlaceholder": "p. ej., G-003",
+    "defaultReason": "Bloqueado por la regla {code}",
+    "keywords": "Palabras clave (una por línea) *",
+    "keywordsPlaceholder": "exportar datos\nexport data\nsend all records",
+    "name": "Nombre *",
+    "namePlaceholder": "p. ej., Bloqueo de exportación de datos",
+    "priority": "Prioridad (menor = más importante)",
+    "reason": "Mensaje de bloqueo",
+    "reasonPlaceholder": "Se ha detectado una operación no permitida",
+    "save": "Guardar regla",
+    "title": "Nueva regla de bloqueo"
+  },
+  "requirement": {
+    "article": "Artículo",
+    "days": "{count, plural, one {# día} other {# días}}",
+    "deleteConfirm": "¿Eliminar el requisito «{title}»?",
+    "noDeclKey": "sin autodeclaración",
+    "title": "Título"
+  },
+  "rule": {
+    "activate": "Activar",
+    "addKeyword": "+ Añadir",
+    "addKeywordPlaceholder": "Añadir palabra clave...",
+    "deactivate": "Desactivar",
+    "inactive": "INACTIVA",
+    "keywords": "Palabras clave ({count})",
+    "meta": "Prioridad: {priority} · Alcance: {level} · v{version}",
+    "noKeywords": "Sin palabras clave — la regla nunca se activará.",
+    "reason": "Mensaje: «{reason}»",
+    "unsaved": "Cambios sin guardar · La pasarela los aplicará en un plazo de 60 s."
+  },
+  "rulesTab": {
+    "empty": "No hay reglas definidas.",
+    "intro": "Las reglas de bloqueo se comprueban por orden de prioridad (número menor = prioridad mayor). La primera coincidencia de una palabra clave activa el bloqueo antes de llamar al modelo.",
+    "noResults": "No hay reglas que coincidan con «{query}».",
+    "searchPlaceholder": "Buscar regla — nombre, código, palabra clave, motivo..."
+  },
+  "save": "✓ Guardar",
+  "saving": "Guardando...",
+  "severity": {
+    "critical": "Crítica",
+    "major": "Grave",
+    "minor": "Leve"
+  },
+  "subtitle": "Gestione las reglas de seguridad y los requisitos del EU AI Act sin modificar el código. Los cambios en las reglas se aplican en la pasarela en un plazo de 60 s.",
+  "tabs": {
+    "aiact": "Requisitos del EU AI Act",
+    "rules": "Reglas de seguridad"
+  },
+  "title": "Políticas y cumplimiento"
+}

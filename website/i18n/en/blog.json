@@ -1,0 +1,120 @@
+{
+  "hero": {
+    "lead": "Deadlines, obligations and architectural decisions around the EU AI Act — written from the perspective of a team that has to implement it, not just describe it.",
+    "title": "AI Act compliance, made clear — not just for lawyers."
+  },
+  "list": {
+    "all": "All",
+    "empty": "No posts in this category.",
+    "sort": "Sort:",
+    "sortNewest": "Newest",
+    "sortOldest": "Oldest",
+    "sortReadTime": "Reading time"
+  },
+  "meta": {
+    "description": "EU AI Act compliance, made clear — deadlines, obligations and architectural decisions written from the perspective of a team that has to implement them.",
+    "ogDescription": "EU AI Act compliance, made clear — deadlines, obligations and architectural decisions written from the perspective of a team that has to implement them.",
+    "ogTitle": "Blog — GovAI",
+    "title": "Blog — GovAI"
+  },
+  "post": {
+    "back": "← All posts",
+    "categories": "Categories",
+    "noRelated": "No related posts.",
+    "notFound": "Post not found.",
+    "readTime": "{minutes} min read",
+    "related": "Related posts"
+  },
+  "posts": {
+    "checklist-rejestracja-agenta": {
+      "body": [
+        "Before an agent goes into the registry, it is worth having answers to a few questions: what exactly is its intended scope of use, does it process personal data, who is the business owner of the decisions it makes or supports, and what is the plan for when that scope of use changes.",
+        "The most common reason for misclassification at the outset is underestimating the scope — an agent deployed 'only to help HR sort CVs' very quickly ends up being used for the actual pre-screening of candidates, which changes its risk category.",
+        "A rule that works: classify on the basis of what the agent can actually be used for within the organisation, not only what it was designed for."
+      ],
+      "category": "Compliance ops",
+      "excerpt": "A short, practical list of what to settle before your first deployment — so that the risk classification makes sense from day one rather than being a placeholder.",
+      "tags": [
+        "onboarding",
+        "agent registry",
+        "checklist"
+      ],
+      "title": "Checklist: what to prepare before registering your first agent"
+    },
+    "dedykowana-instancja-vs-multitenant": {
+      "body": [
+        "Many \"AI governance\" platforms are shared SaaS: one database, with rows logically separated per customer. It is the standard, low-cost way to build SaaS — and usually good enough.",
+        "With an audit log for a regulated AI system, however, the auditor's question changes: not \"is the data logically separated\", but \"is there any scenario at all in which another customer's data ends up in our query\". The answer \"no, because we have a separate database\" is easier to defend than \"no, because we correctly filter by tenant_id in every query, always\".",
+        "It is a cost trade-off — a dedicated instance per customer is more expensive to run than a single shared database. For a system whose only job is to serve as evidence of compliance, we decided this is a cost to be borne, not optimised away."
+      ],
+      "category": "Security",
+      "excerpt": "A shared database is an architectural decision, not a technical detail — and in a compliance audit it becomes a question that is hard to answer well.",
+      "tags": [
+        "architecture",
+        "data isolation",
+        "audit"
+      ],
+      "title": "Why 'multi-tenant' and 'AI Act compliant' rarely go together"
+    },
+    "digital-omnibus-grudzien-2027": {
+      "body": [
+        "On 27 July 2026 the Digital Omnibus on AI (Regulation (EU) 2026/1744) entered into force — an amendment that moves the full obligations for high-risk AI systems listed in Annex III from 2 August 2026 to 2 December 2027. For systems embedded in regulated products (Annex I), the deadline has moved from August 2027 to August 2028.",
+        "This is not a general postponement of the whole Act. The prohibition of the practices banned under Art. 5 has applied since February 2025 without change, the obligations for general-purpose AI (GPAI) models since August 2025, and the transparency obligations under Art. 50 (labelling AI-generated content, informing people that they are interacting with a chatbot) since August 2026 — in other words, already now. The amendment also added a new prohibition to Art. 5 — generating non-consensual intimate content and child sexual abuse material — which applies from 2 December 2026.",
+        "The practical takeaway: 16 extra months is time to do this properly, not to put it off. An agent registry, risk classification and gap assessment take the same amount of work whether the deadline is a year away or a month away — the only difference is that today nobody is doing it under pressure."
+      ],
+      "category": "AI Act",
+      "excerpt": "Regulation 2026/1744 pushed back the full Annex III obligations by 16 months. That is no reason to slow down — it is a new window worth using before someone else does.",
+      "tags": [
+        "Digital Omnibus",
+        "deadlines",
+        "Annex III"
+      ],
+      "title": "Digital Omnibus: why the deadline for high-risk AI systems was moved to December 2027"
+    },
+    "dokumentacja-vs-egzekwowanie": {
+      "body": [
+        "Most of the AI Act tooling market solves one problem: generating the technical documentation required by Annex IV. That is real and necessary work — but documentation describes what a system should do; it does not enforce it at the moment the system is actually running.",
+        "The difference only becomes visible when an incident occurs. Documentation, however well written, did not block the call that should never have gone through — at best it can serve as evidence that you knew what correct behaviour was supposed to look like.",
+        "Real-time enforcement and documentation are not competitors — they are complementary. But only one of them physically stands between the agent and the response."
+      ],
+      "category": "AI Act",
+      "excerpt": "Documentation tools answer the question 'do we have the paperwork'. They do not answer the question 'could this breach have happened at all'.",
+      "tags": [
+        "documentation",
+        "enforcement",
+        "audit"
+      ],
+      "title": "Compliance documentation stops no one in real time"
+    },
+    "nadzor-czlowieka-art-14": {
+      "body": [
+        "Art. 14 of the AI Act requires high-risk AI systems to have a built-in human oversight mechanism. The problem is that in practice the \"mechanism\" is often a single e-mail address that someone occasionally replies to.",
+        "Auditable human oversight has three features: the decision is held until it has been reviewed (it does not run in parallel \"just in case\"), the review is assigned to a specific, authorised person, and the outcome of the review is recorded together with who made it and when.",
+        "What distinguishes a tool from a procedure on paper is whether these three elements are enforced structurally — whether the agent genuinely cannot respond until the reviewer has made a decision — or merely described in a policy document."
+      ],
+      "category": "Compliance ops",
+      "excerpt": "Human oversight on paper and human oversight that will stand up to an audit are two different things. The difference lies in what happens between 'flagged' and 'approved'.",
+      "tags": [
+        "Art. 14",
+        "oversight",
+        "process"
+      ],
+      "title": "Article 14 in practice: when 'a human reviewed it' actually means something"
+    },
+    "routing-dostawcow-wedlug-wrazliwosci": {
+      "body": [
+        "The vast majority of AI agent deployments have a single model provider base URL hard-coded. That works well until a request arrives containing personal data, financial data or data covered by professional secrecy — and it travels down exactly the same path as every other request.",
+        "Sensitivity-based routing reverses this approach: it is not the developer who decides where a request goes, but a policy that evaluates the content of the request on the fly — the presence of PII, the agent's category, its risk classification level.",
+        "In practice, this means two calls from the same agent can go to two different providers within the same minute — one to an external model, the other to a self-hosted instance — without any change to the agent's code."
+      ],
+      "category": "Security",
+      "excerpt": "The default model provider is often a historical accident, not a decision. We show what routing looks like when the destination is decided by the content of the request, not by habit.",
+      "tags": [
+        "routing",
+        "data privacy",
+        "architecture"
+      ],
+      "title": "Routing models by data sensitivity, not by whatever is in the config"
+    }
+  }
+}

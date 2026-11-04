@@ -1,0 +1,17 @@
+{
+  "Anthropic Claude (Cloud)": {
+    "notes": "Zunanji dobavitelj. Zahteva DPA. Ne uporabljajte za podatke, zaščitene z odvetniško tajnostjo."
+  },
+  "Bielik On-Prem (Local)": {
+    "notes": "Lokalni model — primeren za podatke pod odvetniško tajnostjo. Aktivirajte ga po zagonu strežnika Ollama."
+  },
+  "DeepSeek (Cloud)": {
+    "notes": "Strežniki zunaj EU (Kitajska). Izključno javni podatki — obdelava podatkov strank je prepovedana."
+  },
+  "Google Gemini (Cloud)": {
+    "notes": "Zunanji dobavitelj z EU Data Boundary. Zahteva DPA. Ne uporabljajte za privilegirane podatke."
+  },
+  "OpenAI (Cloud)": {
+    "notes": "Zunanji dobavitelj. Zahteva DPA Enterprise. Ne uporabljajte za zaupne podatke."
+  }
+}

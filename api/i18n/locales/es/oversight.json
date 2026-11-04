@@ -1,0 +1,10 @@
+{
+  "alerts": {
+    "rubber_stamp": "Supervisión aparente — revisión inferior a {seconds} segundos. Evento registrado."
+  },
+  "errors": {
+    "already_reviewed": "La tarea ya ha sido resuelta — estado: {status}",
+    "cannot_start_review": "La tarea tiene el estado '{status}' — no se puede iniciar la revisión",
+    "task_not_found": "La tarea de supervisión no existe"
+  }
+}

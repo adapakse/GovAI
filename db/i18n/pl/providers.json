@@ -1,0 +1,17 @@
+{
+  "Anthropic Claude (Cloud)": {
+    "notes": "Provider zewnętrzny. Wymaga DPA. Nie używać dla danych objętych tajemnicą adwokacką."
+  },
+  "Bielik On-Prem (Local)": {
+    "notes": "Model lokalny — tajemnica adwokacka OK. Aktywuj po uruchomieniu serwera Ollama."
+  },
+  "DeepSeek (Cloud)": {
+    "notes": "Serwery poza UE (Chiny). Wyłącznie dane publiczne — zakaz przetwarzania danych klientów."
+  },
+  "Google Gemini (Cloud)": {
+    "notes": "Provider zewnętrzny z EU Data Boundary. Wymaga DPA. Nie używać dla danych uprzywilejowanych."
+  },
+  "OpenAI (Cloud)": {
+    "notes": "Provider zewnętrzny. Wymaga DPA Enterprise. Nie używać dla danych poufnych."
+  }
+}

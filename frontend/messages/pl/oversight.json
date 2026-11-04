@@ -1,0 +1,20 @@
+{
+  "allApproved": "Wszystko zatwierdzone",
+  "empty": {
+    "subtitle": "Wszystkie decyzje zostały rozpatrzone.",
+    "title": "Brak oczekujących zadań"
+  },
+  "header": {
+    "subtitle": "Decyzje agentów wysokiego ryzyka wymagają zatwierdzenia · odświeżane co 10s",
+    "title": "Nadzór Człowieka"
+  },
+  "info": {
+    "text": "Czas przeglądu każdego zadania jest mierzony. Zatwierdzenie w mniej niż 10 sekund od otwarcia karty generuje alert i jest rejestrowane w dzienniku audytowym (art. 14 EU AI Act).",
+    "title": "Ochrona przed pozornym nadzorem:"
+  },
+  "loading": "Ładowanie zadań nadzoru...",
+  "pendingCount": "{count} oczekuje",
+  "refresh": "Odśwież",
+  "review": "Przejrzyj",
+  "timer": "{mins}m {secs}s"
+}

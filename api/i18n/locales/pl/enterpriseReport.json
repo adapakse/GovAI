@@ -1,0 +1,139 @@
+{
+  "agentStatus": {
+    "active": "Aktywny",
+    "quarantined": "Kwarantanna",
+    "retired": "Wycofany",
+    "suspended": "Zawieszony"
+  },
+  "fallbackNarrative": "W analizowanym okresie {days} dni organizacja eksploatowała {agents} agentów AI, z czego {high} klasyfikowanych jako wysokie ryzyko wg EU AI Act. Odnotowano {total} wywołań, z czego {blocked} ({block_pct}%) zostało zablokowanych przez silnik polityk bezpieczeństwa. Wykryto {pii} incydentów z danymi osobowymi. Łączny koszt API wyniósł {cost} EUR. Szczegółowa analiza zgodności z EU AI Act wymaga weryfikacji przez właściwy organ compliance.",
+  "fileName": "govai-raport-enterprise-{date}.pdf",
+  "pdf": {
+    "activity": {
+      "topByBlocks": "Top agenci wg blokad:",
+      "topByCalls": "Top agenci wg wywołań:"
+    },
+    "alerts": {
+      "budgetExceeded": "⚠ Przekroczenie budżetu: {name} — {actual} EUR ({pct}% progu {threshold} EUR)",
+      "overdueReview": "⚠ Zaległy przegląd compliance: {name} (termin: {date})"
+    },
+    "columns": {
+      "agent": "Agent",
+      "avgLatency": "Śr. latencja",
+      "blockRate": "% blokad",
+      "blocks": "Blokady",
+      "calls": "Wywołania",
+      "costEur": "Koszt EUR",
+      "oversight": "Nadzór",
+      "pii": "PII",
+      "review": "Przegląd",
+      "risk": "Ryzyko",
+      "status": "Status"
+    },
+    "cover": {
+      "agents": "Agentów AI",
+      "agentsActive": "{n} aktywnych",
+      "apiCost": "Koszt API",
+      "blocks": "Blokady",
+      "blocksShare": "{pct}% wszystkich",
+      "calls": "Wywołań",
+      "lastDays": "ostatnie {days} dni",
+      "pii": "Incydenty PII",
+      "piiNote": "wykryte dane osobowe",
+      "totalDays": "łącznie {days} dni"
+    },
+    "declarationsLegend": "✓ Spełnione · ◑ Częściowo · ✗ Luka · N/A Nie dotyczy · — Nie oceniono",
+    "generated": "Wygenerowano: {date} UTC",
+    "incidents": {
+      "approved": "Zatwierdzone",
+      "avgReviewTime": "Śr. czas przeglądu",
+      "blockCount": "Liczba blokad",
+      "escalated": "Eskalowane",
+      "incidentCount": "Liczba incydentów",
+      "noPii": "Brak wykrytych incydentów PII w analizowanym okresie.",
+      "oversightHistory": "Historia kolejki nadzoru człowieka (art. 14):",
+      "pending": "Oczekujące",
+      "piiCategories": "Wykryte kategorie danych osobowych (PII):",
+      "piiCategory": "Kategoria PII",
+      "policyCode": "Polityka (kod)",
+      "policyHits": "Aktywacje reguł blokujących:",
+      "rejected": "Odrzucone",
+      "tasksTotal": "Zadania ogółem"
+    },
+    "kpi": {
+      "apiCost": "Koszt API łącznie",
+      "apiCostNote": "szacowany koszt modeli LLM",
+      "avgLatency": "Śr. latencja",
+      "avgLatencyNote": "end-to-end",
+      "avgReview": "śr. czas przeglądu: {min} min",
+      "comment": "Komentarz",
+      "maxLatency": "Maks. latencja",
+      "maxLatencyNote": "najwolniejsze wywołanie",
+      "metric": "Metryka",
+      "oversight": "Skierowane do nadzoru",
+      "oversightNote": "polityka A-001 (art. 14)",
+      "oversightQueue": "Kolejka nadzoru",
+      "oversightQueueValue": "{total} zadań ({pending} oczekuje)",
+      "pii": "Incydenty PII",
+      "piiNote": "łącznie {n} encji",
+      "policyBlocks": "Blokady polityk",
+      "policyBlocksNote": "G-001 finansowe, G-002 prompt injection",
+      "tokensIn": "Tokeny wejściowe",
+      "tokensInNote": "prompt",
+      "tokensOut": "Tokeny wyjściowe",
+      "tokensOutNote": "completion",
+      "totalCalls": "Wywołania ogółem",
+      "totalCallsNote": "wszystkie agenty",
+      "value": "Wartość"
+    },
+    "no": "nie",
+    "noData": "brak danych",
+    "period": "Okres analizy: ostatnie {days} dni",
+    "recommendations": {
+      "basis": "Podstawa",
+      "priority": "Priorytet",
+      "recommendation": "Zalecenie"
+    },
+    "risk": {
+      "agentCount": "Liczba agentów",
+      "agents": "Agenci",
+      "level": "Poziom ryzyka",
+      "requiresOversight": "Wymaga nadzoru"
+    },
+    "riskShort": {
+      "high": "WYS",
+      "limited": "OGR",
+      "minimal": "MIN",
+      "unacceptable": "NIE"
+    },
+    "sections": {
+      "activity": "5. Analiza Aktywności Agentów",
+      "declarations": "7. Deklaracje Zgodności EU AI Act — Agenci Wysokiego Ryzyka",
+      "incidents": "6. Incydenty Bezpieczeństwa",
+      "kpi": "3. KPI Operacyjne (ostatnie {days} dni)",
+      "recommendations": "{n}. Zalecenia Priorytetowe",
+      "registry": "4. Rejestr Agentów AI",
+      "riskDistribution": "2. Rozkład Ryzyka EU AI Act",
+      "summary": "1. Streszczenie dla Zarządu"
+    },
+    "title": "Raport Zarządzania AI Przedsiębiorstwa",
+    "yes": "TAK"
+  },
+  "priority": {
+    "critical": "Krytyczny",
+    "high": "Wysoki",
+    "medium": "Średni"
+  },
+  "recommendations": {
+    "basisBestPractices": "Najlepsze praktyki",
+    "basisCostControl": "Kontrola kosztów",
+    "basisInternalPolicy": "Wewnętrzna polityka",
+    "budgetReview": "Przegląd budżetów agentów przekraczających progi alertów: {names}.",
+    "highBlockRate": "Wskaźnik blokad wynosi {pct}% — przejrzeć reguły polityk i dostroić słowa kluczowe.",
+    "implementOversight": "Wdrożyć procedury nadzoru człowieka dla: {names}.",
+    "keepMonitoring": "Kontynuować monitorowanie agentów. Przeprowadzić kwartalny przegląd compliance.",
+    "missingTechnicalDocs": "Brak dokumentacji technicznej (art. 11) dla: {names}. Opracować w ciągu 60 dni.",
+    "overdueReviews": "Przeprowadzić zaległe przeglądy compliance dla: {names}.",
+    "pendingOversight": "Rozpatrzyć {n} oczekujących zadań w kolejce nadzoru.",
+    "suspendUnacceptable": "Natychmiast zawiesić agentów klasyfikowanych jako ryzyko NIEDOPUSZCZALNE. Skonsultować się z radcą prawnym."
+  }
+}

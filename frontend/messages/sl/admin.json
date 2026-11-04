@@ -1,0 +1,98 @@
+{
+  "apiKeys": {
+    "add": "+ Nov ključ API",
+    "anyAgent": "kateri koli agent",
+    "columns": {
+      "agent": "Agent",
+      "expires": "Velja do",
+      "lastUsed": "Zadnja uporaba",
+      "name": "Ime",
+      "prefix": "Predpona",
+      "status": "Stanje"
+    },
+    "createdAt": "ustvarjen {date}",
+    "empty": "Ni ključev API",
+    "form": {
+      "agent": "Agent",
+      "agentHint": "Ključ bo deloval samo za izbranega agenta.",
+      "anyAgent": "— nedodeljen (kateri koli agent organizacije) —",
+      "anyAgentHint": "Nedodeljen ključ deluje za vsakega agenta organizacije, navedenega v glavi X-Agent-ID. Priporočamo dodelitev agentu.",
+      "cancel": "Prekliči",
+      "expiry": "Veljavnost",
+      "expiryDays": "{days} dni",
+      "name": "Ime",
+      "namePlaceholder": "npr. Pomočnik za pogodbe — produkcija",
+      "noExpiry": "brez roka veljavnosti",
+      "save": "Ustvari ključ",
+      "saving": "Ustvarjanje...",
+      "title": "Nov ključ API"
+    },
+    "loading": "Nalaganje...",
+    "neverUsed": "neuporabljen",
+    "noAccess": "Upravljanje ključev API je na voljo vlogama Partner in Skrbnik IT.",
+    "noExpiry": "brez roka veljavnosti",
+    "revoke": "Prekliči",
+    "revokeConfirm": {
+      "confirm": "Prekliči ključ",
+      "message": "Preklicati ključ »{name}«? Agenti, ki uporabljajo ta ključ, bodo takoj izgubili dostop do prehoda.",
+      "title": "Preklic ključa API"
+    },
+    "secret": {
+      "description": "Ključ »{name}« — nastavite ga v agentu kot glavo X-API-Key.",
+      "label": "Ključ API",
+      "title": "Ključ API ustvarjen"
+    },
+    "showRevoked": "Prikaži preklicane ({count})",
+    "state": {
+      "active": "Aktiven",
+      "expired": "Potekel",
+      "revoked": "Preklican"
+    },
+    "subtitle": "Ključi, s katerimi se agenti overijo v prehodu GovAI (glava X-API-Key).",
+    "title": "Ključi API"
+  },
+  "users": {
+    "add": "+ Dodaj uporabnika",
+    "columns": {
+      "lastLogin": "Zadnja prijava",
+      "role": "Vloga",
+      "status": "Stanje",
+      "user": "Uporabnik"
+    },
+    "empty": "Ni uporabnikov",
+    "form": {
+      "cancel": "Prekliči",
+      "email": "E-poštni naslov",
+      "fullName": "Ime in priimek",
+      "passwordHint": "Začasno geslo bo ustvarjeno samodejno — uporabnik ga bo spremenil ob prvi prijavi.",
+      "role": "Vloga",
+      "save": "Ustvari račun",
+      "saving": "Ustvarjanje...",
+      "title": "Nov uporabnik"
+    },
+    "loading": "Nalaganje...",
+    "never": "nikoli",
+    "noAccess": "Upravljanje uporabnikov je na voljo vlogama Partner in Skrbnik IT.",
+    "resetConfirm": {
+      "confirm": "Ponastavi geslo",
+      "message": "Dodeliti novo začasno geslo uporabniku {name} ({email})? Njegove trenutne seje bodo končane, ob naslednji prijavi pa bo moral nastaviti svoje geslo.",
+      "title": "Ponastavitev gesla"
+    },
+    "resetPassword": "Ponastavi geslo",
+    "searchPlaceholder": "Iskanje po imenu, e-pošti, vlogi...",
+    "secret": {
+      "createdTitle": "Račun ustvarjen",
+      "description": "Začasno geslo za {email}. Uporabnik ga bo spremenil ob prvi prijavi.",
+      "label": "Začasno geslo",
+      "resetTitle": "Novo začasno geslo"
+    },
+    "status": {
+      "active": "Aktiven",
+      "pending": "V čakanju",
+      "suspended": "Blokiran"
+    },
+    "subtitle": "Računi v organizaciji {tenant}",
+    "title": "Uporabniki",
+    "you": "(vi)"
+  }
+}

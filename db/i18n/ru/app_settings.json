@@ -1,0 +1,159 @@
+{
+  "budget.default_alert_threshold_eur": {
+    "description": "Порог оповещения о расходах для новых агентов (0 = отключено).",
+    "label": "Порог оповещения по умолчанию",
+    "unit": "EUR"
+  },
+  "budget.default_monthly_eur": {
+    "description": "Бюджет, назначаемый новым агентам (0 = без ограничений).",
+    "label": "Ежемесячный бюджет по умолчанию",
+    "unit": "EUR"
+  },
+  "compliance.deadline_days": {
+    "description": "Количество дней на устранение отдельных пробелов в соответствии для систем высокого риска (ключ = контрольное поле).",
+    "label": "Сроки устранения пробелов (дни)",
+    "unit": "дни"
+  },
+  "compliance.enterprise_report_max_tokens": {
+    "description": "Лимит токенов текстовой части корпоративного отчёта.",
+    "label": "Корпоративный отчёт — макс. токенов",
+    "unit": "токены"
+  },
+  "compliance.report_max_tokens": {
+    "description": "Лимит токенов текстовой части отчёта о соответствии агента.",
+    "label": "Отчёт по агенту — макс. токенов",
+    "unit": "токены"
+  },
+  "i18n.default_locale": {
+    "description": "Язык интерфейса, отчётов и сообщений для пользователей, не выбравших собственный язык. Коды: pl, en, de, it, es, fr, ro, ru, sl, hr.",
+    "label": "Язык по умолчанию"
+  },
+  "intervals.policy_refresh_seconds": {
+    "description": "Интервал в секундах, с которым шлюз перезагружает правила политик из базы данных.",
+    "label": "Обновление политик",
+    "unit": "секунды"
+  },
+  "intervals.ttl_monitor_seconds": {
+    "description": "Интервал в секундах, с которым монитор эскалирует просроченные задачи надзора.",
+    "label": "Монитор TTL надзора",
+    "unit": "секунды"
+  },
+  "models.classifier_model": {
+    "description": "Модель, используемая для оценки уровня риска агента.",
+    "label": "Модель классификатора AI Act"
+  },
+  "models.default_agent_model": {
+    "description": "Модель, назначаемая вновь регистрируемым агентам.",
+    "label": "Модель агента по умолчанию"
+  },
+  "models.default_max_tokens": {
+    "description": "Лимит выходных токенов, если клиент его не указал.",
+    "label": "Лимит токенов по умолчанию",
+    "unit": "токены"
+  },
+  "models.default_temperature": {
+    "description": "Температура LLM, если клиент её не указал.",
+    "label": "Температура по умолчанию",
+    "unit": "0–2"
+  },
+  "oversight.history_limit": {
+    "description": "Жёсткий лимит количества записей истории надзора.",
+    "label": "История надзора — лимит строк",
+    "unit": "строки"
+  },
+  "oversight.history_max_days": {
+    "description": "Максимальный диапазон дней для GET /oversight/history.",
+    "label": "История надзора — макс. дней",
+    "unit": "дни"
+  },
+  "oversight.min_review_seconds": {
+    "description": "Проверка, занявшая меньше указанного числа секунд, помечается как формальный надзор (rubber-stamp).",
+    "label": "Мин. время проверки",
+    "unit": "секунды"
+  },
+  "oversight.ttl_seconds": {
+    "description": "Время до эскалации задачи в очереди надзора.",
+    "label": "TTL задачи надзора",
+    "unit": "секунды"
+  },
+  "pagination.audit_default_limit": {
+    "description": "Количество записей по умолчанию в GET /audit.",
+    "label": "Аудит — лимит по умолчанию",
+    "unit": "строки"
+  },
+  "pagination.audit_max_limit": {
+    "description": "Максимальное количество записей в одном запросе аудита.",
+    "label": "Аудит — макс. лимит",
+    "unit": "строки"
+  },
+  "pagination.dashboard_recent_blocks": {
+    "description": "Количество последних блокировок в оповещениях панели.",
+    "label": "Панель — последние блокировки",
+    "unit": "элементы"
+  },
+  "pagination.dashboard_top_agents": {
+    "description": "Количество наиболее активных агентов на панели.",
+    "label": "Панель — топ агентов",
+    "unit": "элементы"
+  },
+  "pagination.default_window_days": {
+    "description": "Диапазон дней по умолчанию для аудита и панели.",
+    "label": "Окно по умолчанию (дни)",
+    "unit": "дни"
+  },
+  "pagination.stats_default_days": {
+    "description": "Диапазон по умолчанию для GET /agents/{id}/stats.",
+    "label": "Статистика агента — дней по умолчанию",
+    "unit": "дни"
+  },
+  "pagination.stats_max_days": {
+    "description": "Максимальный диапазон статистики агента.",
+    "label": "Статистика агента — макс. дней",
+    "unit": "дни"
+  },
+  "pagination.timeline_default_hours": {
+    "description": "Окно графика timeline по умолчанию.",
+    "label": "Timeline — часов по умолчанию",
+    "unit": "часы"
+  },
+  "pagination.timeline_max_hours": {
+    "description": "Максимальный диапазон графика timeline.",
+    "label": "Timeline — макс. часов",
+    "unit": "часы"
+  },
+  "pricing.default_rate": {
+    "description": "Тариф [вход, выход] для моделей, отсутствующих в таблице.",
+    "label": "Тариф по умолчанию (USD/1k ток.)",
+    "unit": "USD/1k"
+  },
+  "pricing.model_rates": {
+    "description": "Таблица модель → [вход, выход] в USD за 1000 токенов. Для модели вне списка применяется тариф по умолчанию.",
+    "label": "Тарифы моделей (USD/1k ток.)",
+    "unit": "USD/1k"
+  },
+  "pricing.usd_to_eur": {
+    "description": "Коэффициент пересчёта стоимости моделей из USD в EUR.",
+    "label": "Курс USD→EUR",
+    "unit": "коэффициент"
+  },
+  "security.access_token_expire_minutes": {
+    "description": "Срок действия JWT access token.",
+    "label": "Срок действия access token",
+    "unit": "минуты"
+  },
+  "security.bcrypt_rounds": {
+    "description": "Сложность хеширования паролей (выше = медленнее, но безопаснее).",
+    "label": "Раунды bcrypt",
+    "unit": "раунды"
+  },
+  "security.pii_confidence_threshold": {
+    "description": "Минимальный уровень уверенности Presidio для признания выявления ПДн.",
+    "label": "Порог уверенности для ПДн",
+    "unit": "0–1"
+  },
+  "security.refresh_token_expire_days": {
+    "description": "Срок действия refresh token.",
+    "label": "Срок действия refresh token",
+    "unit": "дни"
+  }
+}

@@ -1,0 +1,159 @@
+{
+  "budget.default_alert_threshold_eur": {
+    "description": "Umbral de alerta de costes para nuevos agentes (0 = desactivado).",
+    "label": "Umbral de alerta predeterminado",
+    "unit": "EUR"
+  },
+  "budget.default_monthly_eur": {
+    "description": "Presupuesto asignado a los nuevos agentes (0 = sin límite).",
+    "label": "Presupuesto mensual predeterminado",
+    "unit": "EUR"
+  },
+  "compliance.deadline_days": {
+    "description": "Número de días para subsanar cada carencia de cumplimiento de alto riesgo (clave = campo de control).",
+    "label": "Plazos de las carencias de cumplimiento (días)",
+    "unit": "días"
+  },
+  "compliance.enterprise_report_max_tokens": {
+    "description": "Límite de tokens de la narrativa del informe corporativo.",
+    "label": "Informe corporativo — máx. de tokens",
+    "unit": "tokens"
+  },
+  "compliance.report_max_tokens": {
+    "description": "Límite de tokens de la narrativa del informe de conformidad del agente.",
+    "label": "Informe del agente — máx. de tokens",
+    "unit": "tokens"
+  },
+  "i18n.default_locale": {
+    "description": "Idioma de la interfaz, los informes y los mensajes para los usuarios que no han elegido uno propio. Códigos: pl, en, de, it, es, fr, ro, ru, sl, hr.",
+    "label": "Idioma predeterminado"
+  },
+  "intervals.policy_refresh_seconds": {
+    "description": "Cada cuántos segundos la pasarela recarga las reglas de las políticas desde la base de datos.",
+    "label": "Recarga de políticas",
+    "unit": "segundos"
+  },
+  "intervals.ttl_monitor_seconds": {
+    "description": "Cada cuántos segundos el monitor escala las tareas de supervisión vencidas.",
+    "label": "Monitor de TTL de supervisión",
+    "unit": "segundos"
+  },
+  "models.classifier_model": {
+    "description": "Modelo utilizado para evaluar el nivel de riesgo del agente.",
+    "label": "Modelo del clasificador AI Act"
+  },
+  "models.default_agent_model": {
+    "description": "Modelo asignado a los agentes recién registrados.",
+    "label": "Modelo predeterminado del agente"
+  },
+  "models.default_max_tokens": {
+    "description": "Límite de tokens de salida cuando el cliente no lo indica.",
+    "label": "Límite de tokens predeterminado",
+    "unit": "tokens"
+  },
+  "models.default_temperature": {
+    "description": "Temperatura del LLM cuando el cliente no la indica.",
+    "label": "Temperatura predeterminada",
+    "unit": "0–2"
+  },
+  "oversight.history_limit": {
+    "description": "Límite estricto del número de elementos del historial de supervisión.",
+    "label": "Historial de supervisión — límite de filas",
+    "unit": "filas"
+  },
+  "oversight.history_max_days": {
+    "description": "Rango máximo de días para GET /oversight/history.",
+    "label": "Historial de supervisión — máx. de días",
+    "unit": "días"
+  },
+  "oversight.min_review_seconds": {
+    "description": "Por debajo de este número de segundos, la revisión de supervisión se marca como aparente (rubber-stamp).",
+    "label": "Tiempo mín. de revisión",
+    "unit": "segundos"
+  },
+  "oversight.ttl_seconds": {
+    "description": "Tiempo hasta el escalado de una tarea en la cola de supervisión.",
+    "label": "TTL de la tarea de supervisión",
+    "unit": "segundos"
+  },
+  "pagination.audit_default_limit": {
+    "description": "Número predeterminado de entradas en GET /audit.",
+    "label": "Auditoría — límite predeterminado",
+    "unit": "filas"
+  },
+  "pagination.audit_max_limit": {
+    "description": "Número máximo de entradas en una consulta de auditoría.",
+    "label": "Auditoría — límite máximo",
+    "unit": "filas"
+  },
+  "pagination.dashboard_recent_blocks": {
+    "description": "Número de bloqueos recientes en las alertas del panel.",
+    "label": "Panel — bloqueos recientes",
+    "unit": "elementos"
+  },
+  "pagination.dashboard_top_agents": {
+    "description": "Número de agentes más activos en el panel.",
+    "label": "Panel — agentes más activos",
+    "unit": "elementos"
+  },
+  "pagination.default_window_days": {
+    "description": "Rango de días predeterminado para la auditoría y el panel.",
+    "label": "Ventana predeterminada (días)",
+    "unit": "días"
+  },
+  "pagination.stats_default_days": {
+    "description": "Rango predeterminado de GET /agents/{id}/stats.",
+    "label": "Estadísticas del agente — días predeterminados",
+    "unit": "días"
+  },
+  "pagination.stats_max_days": {
+    "description": "Rango máximo de las estadísticas del agente.",
+    "label": "Estadísticas del agente — máx. de días",
+    "unit": "días"
+  },
+  "pagination.timeline_default_hours": {
+    "description": "Ventana predeterminada del gráfico cronológico.",
+    "label": "Cronología — horas predeterminadas",
+    "unit": "horas"
+  },
+  "pagination.timeline_max_hours": {
+    "description": "Rango máximo del gráfico cronológico.",
+    "label": "Cronología — máx. de horas",
+    "unit": "horas"
+  },
+  "pricing.default_rate": {
+    "description": "Tarifa [entrada, salida] para los modelos que no figuran en el mapa.",
+    "label": "Tarifa predeterminada (USD/1k tok.)",
+    "unit": "USD/1k"
+  },
+  "pricing.model_rates": {
+    "description": "Mapa modelo → [entrada, salida] en USD por cada 1000 tokens. Un modelo que no figure en la lista utiliza la tarifa predeterminada.",
+    "label": "Tarifas de los modelos (USD/1k tok.)",
+    "unit": "USD/1k"
+  },
+  "pricing.usd_to_eur": {
+    "description": "Multiplicador de conversión de los costes de los modelos de USD a EUR.",
+    "label": "Tipo de cambio USD→EUR",
+    "unit": "multiplicador"
+  },
+  "security.access_token_expire_minutes": {
+    "description": "Vigencia del JWT access token.",
+    "label": "Validez del access token",
+    "unit": "minutos"
+  },
+  "security.bcrypt_rounds": {
+    "description": "Coste del hash de contraseñas (mayor = más lento, más seguro).",
+    "label": "Rondas de bcrypt",
+    "unit": "rondas"
+  },
+  "security.pii_confidence_threshold": {
+    "description": "Nivel mínimo de confianza de Presidio para considerar válida una detección de datos personales.",
+    "label": "Umbral de confianza de datos personales",
+    "unit": "0–1"
+  },
+  "security.refresh_token_expire_days": {
+    "description": "Vigencia del refresh token.",
+    "label": "Validez del refresh token",
+    "unit": "días"
+  }
+}

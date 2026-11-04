@@ -1,0 +1,8 @@
+{
+  "agent_inactive": "Agent ima status '{status}' — poziv je odbijen prije obrade",
+  "llm_error": "Pogreška jezičnog modela ({provider}): {error}",
+  "no_eligible_provider": "Nema pružatelja koji može obraditi model '{model}' agenta uz potrebnu razinu osjetljivosti podataka '{sensitivity}'. Ili nijedan aktivni pružatelj ne podržava tu razinu osjetljivosti, ili nijedan od prihvatljivih pružatelja nema taj model na popisu (gateway namjerno ne zamjenjuje model drugim bez upozorenja). Obratite se administratoru — aktivirajte pružatelja koji podržava taj model i razinu osjetljivosti ili snizite osjetljivost podataka u upitu.",
+  "policy_custom": "{reason}",
+  "policy_default": "Blokirano sigurnosnim pravilom",
+  "unknown_agent": "Nepoznat agent_id: {agent_id} — ne postoji u registru GovAI"
+}

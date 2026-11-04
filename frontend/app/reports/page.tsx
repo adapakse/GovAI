@@ -1,14 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { authHeaders, handle401 } from '@/lib/api';
+import { useFormat } from '@/lib/format';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
 
-const RISK_PL: Record<string, string> = {
-  minimal: 'Minimalne', limited: 'Ograniczone',
-  high: 'Wysokie', unacceptable: 'Niedopuszczalne',
-};
 const RISK_COLOR: Record<string, string> = {
   minimal: 'text-green-400', limited: 'text-blue-400',
   high: 'text-orange-400', unacceptable: 'text-red-400',
@@ -35,6 +33,9 @@ interface Summary {
 }
 
 export default function ReportsPage() {
+  const t = useTranslations('reports');
+  const tc = useTranslations('common');
+  const fmt = useFormat();
   const [days, setDays] = useState(30);
   const [summary, setSummary] = useState<Summary | null>(null);
   const [loading, setLoading] = useState(false);
@@ -53,7 +54,7 @@ export default function ReportsPage() {
         cache: 'no-store',
         headers: await authHeaders(),
       });
-      if (r.status === 401) { handle401(); throw new Error('Sesja wygasła'); }
+      if (r.status === 401) { handle401(); throw new Error(t('sessionExpired')); }
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       setSummary(await r.json());
     } catch (e) {
@@ -69,7 +70,7 @@ export default function ReportsPage() {
       const r = await fetch(`${API}/reports/enterprise/pdf?days=${days}`, {
         headers: await authHeaders(),
       });
-      if (r.status === 401) { handle401(); throw new Error('Sesja wygasła'); }
+      if (r.status === 401) { handle401(); throw new Error(t('sessionExpired')); }
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       const blob = await r.blob();
       const url  = URL.createObjectURL(blob);
@@ -79,7 +80,7 @@ export default function ReportsPage() {
       a.click();
       URL.revokeObjectURL(url);
     } catch (e) {
-      alert('Błąd generowania PDF: ' + String(e));
+      alert(t('pdfError', { error: String(e) }));
     } finally {
       setGenerating(false);
     }
@@ -96,12 +97,12 @@ export default function ReportsPage() {
       {/* Nagłówek */}
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white">Raporty Zarządzania AI</h1>
-          <p className="text-mgray text-sm mt-1">Raport korporacyjny zgodności EU AI Act dla całej organizacji</p>
+          <h1 className="text-2xl font-bold text-white">{t('header.title')}</h1>
+          <p className="text-mgray text-sm mt-1">{t('header.subtitle')}</p>
         </div>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 text-sm text-mgray">
-            <span>Okres:</span>
+            <span>{t('period')}</span>
             {[7, 30, 90].map(d => (
               <button
                 key={d}
@@ -110,7 +111,7 @@ export default function ReportsPage() {
                   days === d ? 'bg-teal text-dark' : 'bg-navy border border-blue/30 text-mgray hover:text-white'
                 }`}
               >
-                {d} dni
+                {t('days', { days: d })}
               </button>
             ))}
           </div>
@@ -120,9 +121,9 @@ export default function ReportsPage() {
             className="px-5 py-2 bg-teal text-dark font-semibold rounded-lg hover:bg-teal/90 disabled:opacity-50 transition-colors flex items-center gap-2"
           >
             {generating ? (
-              <><span className="animate-spin inline-block w-4 h-4 border-2 border-dark/30 border-t-dark rounded-full" /> Generowanie...</>
+              <><span className="animate-spin inline-block w-4 h-4 border-2 border-dark/30 border-t-dark rounded-full" /> {t('generating')}</>
             ) : (
-              '↓ Pobierz PDF'
+              t('download')
             )}
           </button>
         </div>
@@ -130,12 +131,12 @@ export default function ReportsPage() {
 
       {error && (
         <div className="bg-red-900/20 border border-red-700 rounded-lg px-4 py-3 text-sm text-red-300">
-          Błąd: {error}
+          {t('error', { error })}
         </div>
       )}
 
       {loading && (
-        <div className="text-mgray text-sm animate-pulse">Ładowanie danych...</div>
+        <div className="text-mgray text-sm animate-pulse">{t('loading')}</div>
       )}
 
       {summary && (
@@ -143,17 +144,25 @@ export default function ReportsPage() {
           {/* Alerty */}
           {(summary.budget_alerts.length > 0 || summary.overdue_reviews.length > 0) && (
             <div className="bg-yellow-900/20 border border-yellow-600 rounded-xl p-4 space-y-1.5">
-              <div className="text-xs font-semibold text-yellow-400 mb-2">ALERTY WYMAGAJĄCE UWAGI</div>
+              <div className="text-xs font-semibold text-yellow-400 mb-2">{t('alerts.title')}</div>
               {summary.budget_alerts.map((a, i) => (
                 <div key={i} className="text-sm text-yellow-200">
-                  ⚠ Przekroczenie budżetu: <span className="font-semibold">{a.name}</span> —{' '}
-                  {a.actual.toFixed(2)} EUR ({a.pct}% progu {a.threshold.toFixed(0)} EUR)
+                  {t.rich('alerts.budgetExceeded', {
+                    name: a.name,
+                    actual: a.actual.toFixed(2),
+                    pct: String(a.pct),
+                    threshold: a.threshold.toFixed(0),
+                    b: (c) => <span className="font-semibold">{c}</span>,
+                  })}
                 </div>
               ))}
               {summary.overdue_reviews.map((o, i) => (
                 <div key={i} className="text-sm text-yellow-200">
-                  ⚠ Zaległy przegląd compliance: <span className="font-semibold">{o.name}</span>{' '}
-                  (termin: {o.next_review_date?.slice(0, 10) ?? '—'})
+                  {t.rich('alerts.overdueReview', {
+                    name: o.name,
+                    date: o.next_review_date?.slice(0, 10) ?? '—',
+                    b: (c) => <span className="font-semibold">{c}</span>,
+                  })}
                 </div>
               ))}
             </div>
@@ -162,11 +171,11 @@ export default function ReportsPage() {
           {/* KPI kafelki */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
             {[
-              { label: 'Agentów AI', value: summary.agents_count, sub: 'w rejestrze', color: 'text-teal' },
-              { label: 'Wywołania', value: total.toLocaleString('pl-PL'), sub: `${days} dni`, color: 'text-white' },
-              { label: 'Blokady', value: blocked, sub: `${(blocked/Math.max(total,1)*100).toFixed(1)}%`, color: 'text-red-400' },
-              { label: 'Incydenty PII', value: pii, sub: 'wykryte', color: 'text-yellow-400' },
-              { label: 'Koszt API', value: `${cost.toFixed(2)} EUR`, sub: 'łącznie', color: 'text-orange-400' },
+              { label: t('kpi.agents'), value: summary.agents_count, sub: t('kpi.agentsSub'), color: 'text-teal' },
+              { label: t('kpi.calls'), value: fmt.number(total), sub: t('days', { days }), color: 'text-white' },
+              { label: t('kpi.blocked'), value: blocked, sub: `${(blocked/Math.max(total,1)*100).toFixed(1)}%`, color: 'text-red-400' },
+              { label: t('kpi.pii'), value: pii, sub: t('kpi.piiSub'), color: 'text-yellow-400' },
+              { label: t('kpi.cost'), value: `${cost.toFixed(2)} EUR`, sub: t('kpi.costSub'), color: 'text-orange-400' },
             ].map(({ label, value, sub, color }) => (
               <div key={label} className="bg-navy border border-blue/30 rounded-xl p-4">
                 <div className="text-xs text-mgray mb-1">{label}</div>
@@ -179,7 +188,7 @@ export default function ReportsPage() {
           <div className="grid grid-cols-2 gap-6">
             {/* Rozkład ryzyka */}
             <div className="bg-navy border border-blue/30 rounded-xl p-5">
-              <h3 className="text-sm font-semibold text-white mb-4">Rozkład ryzyka EU AI Act</h3>
+              <h3 className="text-sm font-semibold text-white mb-4">{t('riskDistribution')}</h3>
               <div className="space-y-3">
                 {(['unacceptable','high','limited','minimal'] as const).map(rl => {
                   const cnt = summary.risk_dist[rl] ?? 0;
@@ -189,7 +198,7 @@ export default function ReportsPage() {
                   return (
                     <div key={rl}>
                       <div className="flex items-center justify-between mb-1">
-                        <span className={`text-sm font-medium ${RISK_COLOR[rl]}`}>{RISK_PL[rl]}</span>
+                        <span className={`text-sm font-medium ${RISK_COLOR[rl]}`}>{tc(`risk.${rl}`)}</span>
                         <span className="text-sm text-white font-bold">{cnt} <span className="text-mgray font-normal">({pct}%)</span></span>
                       </div>
                       <div className="h-2 bg-dark rounded-full overflow-hidden">
@@ -209,14 +218,14 @@ export default function ReportsPage() {
 
             {/* Kolejka nadzoru */}
             <div className="bg-navy border border-blue/30 rounded-xl p-5">
-              <h3 className="text-sm font-semibold text-white mb-4">Kolejka nadzoru (Art. 14)</h3>
+              <h3 className="text-sm font-semibold text-white mb-4">{t('oversight.title')}</h3>
               <div className="space-y-2">
                 {[
-                  { label: 'Zadania ogółem', value: summary.oversight_hist.total ?? 0, color: 'text-white' },
-                  { label: 'Zatwierdzone',   value: summary.oversight_hist.approved ?? 0, color: 'text-green-400' },
-                  { label: 'Odrzucone',      value: summary.oversight_hist.rejected ?? 0, color: 'text-red-400' },
-                  { label: 'Eskalowane',     value: summary.oversight_hist.escalated ?? 0, color: 'text-orange-400' },
-                  { label: 'Oczekujące',     value: summary.oversight_hist.pending ?? 0, color: 'text-yellow-400' },
+                  { label: t('oversight.total'), value: summary.oversight_hist.total ?? 0, color: 'text-white' },
+                  { label: tc('oversightStatus.approved'), value: summary.oversight_hist.approved ?? 0, color: 'text-green-400' },
+                  { label: tc('oversightStatus.rejected'), value: summary.oversight_hist.rejected ?? 0, color: 'text-red-400' },
+                  { label: tc('oversightStatus.escalated'), value: summary.oversight_hist.escalated ?? 0, color: 'text-orange-400' },
+                  { label: tc('oversightStatus.pending'), value: summary.oversight_hist.pending ?? 0, color: 'text-yellow-400' },
                 ].map(({ label, value, color }) => (
                   <div key={label} className="flex justify-between items-center py-1 border-b border-blue/10 last:border-0">
                     <span className="text-sm text-mgray">{label}</span>
@@ -225,7 +234,7 @@ export default function ReportsPage() {
                 ))}
                 {summary.oversight_hist.avg_review_min && (
                   <div className="text-xs text-mgray/60 pt-1">
-                    Śr. czas przeglądu: {Number(summary.oversight_hist.avg_review_min).toFixed(1)} min
+                    {t('oversight.avgReview', { minutes: Number(summary.oversight_hist.avg_review_min).toFixed(1) })}
                   </div>
                 )}
               </div>
@@ -235,15 +244,15 @@ export default function ReportsPage() {
           <div className="grid grid-cols-2 gap-6">
             {/* Top agenci */}
             <div className="bg-navy border border-blue/30 rounded-xl p-5">
-              <h3 className="text-sm font-semibold text-white mb-4">Top agenci wg wywołań</h3>
+              <h3 className="text-sm font-semibold text-white mb-4">{t('topAgents.title')}</h3>
               <div className="space-y-2">
                 {summary.top_agents.map((a, i) => (
                   <div key={i} className="flex items-center justify-between py-1 border-b border-blue/10 last:border-0">
                     <div className="min-w-0">
                       <div className="text-sm text-white truncate">{a.agent_name}</div>
-                      <div className="text-xs text-mgray">{a.blocked} blokad · {Number(a.cost_eur).toFixed(4)} EUR</div>
+                      <div className="text-xs text-mgray">{t('topAgents.blockedCost', { blocked: String(a.blocked), cost: Number(a.cost_eur).toFixed(4) })}</div>
                     </div>
-                    <span className="text-sm font-bold text-teal ml-2">{Number(a.calls).toLocaleString('pl-PL')}</span>
+                    <span className="text-sm font-bold text-teal ml-2">{fmt.number(Number(a.calls))}</span>
                   </div>
                 ))}
               </div>
@@ -253,7 +262,7 @@ export default function ReportsPage() {
             <div className="space-y-4">
               {summary.pii_cats.length > 0 && (
                 <div className="bg-navy border border-blue/30 rounded-xl p-5">
-                  <h3 className="text-sm font-semibold text-white mb-3">Kategorie PII</h3>
+                  <h3 className="text-sm font-semibold text-white mb-3">{t('piiCategories')}</h3>
                   <div className="space-y-1.5">
                     {summary.pii_cats.slice(0, 6).map((c, i) => (
                       <div key={i} className="flex justify-between items-center text-sm">
@@ -266,7 +275,7 @@ export default function ReportsPage() {
               )}
               {summary.policy_hits.length > 0 && (
                 <div className="bg-navy border border-blue/30 rounded-xl p-5">
-                  <h3 className="text-sm font-semibold text-white mb-3">Aktywacje polityk</h3>
+                  <h3 className="text-sm font-semibold text-white mb-3">{t('policyHits')}</h3>
                   <div className="space-y-1.5">
                     {summary.policy_hits.map((p, i) => (
                       <div key={i} className="flex justify-between items-center text-sm">
@@ -281,8 +290,8 @@ export default function ReportsPage() {
           </div>
 
           <p className="text-xs text-mgray/50 text-right">
-            Dane z: {new Date(summary.generated_at).toLocaleString('pl-PL')} ·{' '}
-            <button onClick={fetchSummary} className="underline hover:text-mgray">odśwież</button>
+            {t('dataFrom', { date: fmt.dateTime(summary.generated_at) })}{' '}
+            <button onClick={fetchSummary} className="underline hover:text-mgray">{t('refresh')}</button>
           </p>
         </>
       )}

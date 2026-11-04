@@ -1,0 +1,49 @@
+{
+  "changes": {
+    "text": "Putem actualiza această politică dacă se modifică modul de funcționare a site-ului sau cerințele legale. Versiunea actuală este întotdeauna disponibilă la această adresă.",
+    "title": "Modificări ale politicii"
+  },
+  "controller": {
+    "contact": "Contact în chestiuni privind protecția datelor:",
+    "intro": "Operatorul datelor cu caracter personal prelucrate în legătură cu utilizarea acestui site este:",
+    "title": "Operatorul de date"
+  },
+  "cookies": {
+    "text": "Acest site nu utilizează module cookie pentru urmărire sau publicitate. Singurele informații salvate local în browserul dumneavoastră sunt tema de culori aleasă (deschisă/întunecată) și — dacă o selectați din comutator — limba site-ului, stocate în <span class=\"mono\">localStorage</span> — acestea nu părăsesc dispozitivul dumneavoastră și nu ne sunt transmise în niciun fel.",
+    "title": "Module cookie și localStorage"
+  },
+  "data": {
+    "form": "Acest site colectează date cu caracter personal numai atunci când le furnizați dumneavoastră — prin intermediul formularului de contact. Formularul solicită: numele și prenumele, denumirea companiei, adresa de e-mail de serviciu, opțional numărul de telefon, precum și conținutul mesajului.",
+    "noTracking": "Nu efectuăm pe acest site urmărirea sau crearea de profiluri ale vizitatorilor — nu există aici instrumente de analiză sau de publicitate.",
+    "title": "Ce date colectăm"
+  },
+  "meta": {
+    "description": "Politica de confidențialitate a site-ului govai.pl — ce date colectăm prin formularul de contact, în temeiul cărei baze legale și cât timp le păstrăm.",
+    "title": "Politica de confidențialitate — GovAI"
+  },
+  "purpose": {
+    "text": "Prelucrăm datele din formular exclusiv în scopul de a răspunde solicitării și, eventual, de a pregăti o ofertă comercială — temeiul juridic este art. 6 alin. (1) lit. (b) din RGPD (demersuri înainte de încheierea unui contract, la cererea dumneavoastră) și art. 6 alin. (1) lit. (f) din RGPD (interesul nostru legitim de a purta corespondență de afaceri).",
+    "title": "Scopul și temeiul juridic al prelucrării"
+  },
+  "recipients": {
+    "text": "Pentru gestionarea formularului de contact utilizăm un furnizor extern, <strong style=\"color:var(--text)\">Web3Forms</strong>, care intermediază transmiterea mesajelor din formular către căsuța noastră <span class=\"mono\">kontakt@govai.pl</span>. Web3Forms acționează în acest caz ca persoană împuternicită de operator, prelucrând datele în numele nostru. În afara acestui furnizor, nu transmitem datele din formular niciunei alte entități, cu excepția cazului în care legea impune acest lucru.",
+    "title": "Cui transmitem datele"
+  },
+  "retention": {
+    "text": "Păstrăm datele din formularul de contact pe durata necesară pentru gestionarea solicitării și a corespondenței purtate, iar ulterior — dacă nu se ajunge la o colaborare — pe perioada justificată de eventuale pretenții. Dacă doriți să vă ștergem datele mai devreme, scrieți-ne la <a href=\"mailto:kontakt@govai.pl\">kontakt@govai.pl</a>.",
+    "title": "Perioada de păstrare"
+  },
+  "rights": {
+    "access": "Dreptul de acces la datele dumneavoastră și de a obține o copie a acestora",
+    "complaint": "Dreptul de a depune o plângere la Președintele Oficiului pentru Protecția Datelor cu Caracter Personal din Polonia (PUODO)",
+    "erasure": "Dreptul la ștergerea datelor („dreptul de a fi uitat”)",
+    "howTo": "Pentru a vă exercita drepturile de mai sus, scrieți-ne la <a href=\"mailto:kontakt@govai.pl\">kontakt@govai.pl</a>.",
+    "objection": "Dreptul de a vă opune prelucrării",
+    "portability": "Dreptul la portabilitatea datelor",
+    "rectification": "Dreptul la rectificarea (corectarea) datelor",
+    "restriction": "Dreptul la restricționarea prelucrării",
+    "title": "Drepturile dumneavoastră"
+  },
+  "scope": "Se aplică site-ului <span class=\"mono\">govai.pl</span> și <span class=\"mono\">govai.pl/blog.html</span>.",
+  "title": "Politica de confidențialitate"
+}

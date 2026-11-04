@@ -1,0 +1,159 @@
+{
+  "budget.default_alert_threshold_eur": {
+    "description": "Prag upozorenja o troškovima za nove agente (0 = isključeno).",
+    "label": "Zadani prag upozorenja",
+    "unit": "EUR"
+  },
+  "budget.default_monthly_eur": {
+    "description": "Proračun koji se dodjeljuje novim agentima (0 = bez ograničenja).",
+    "label": "Zadani mjesečni proračun",
+    "unit": "EUR"
+  },
+  "compliance.deadline_days": {
+    "description": "Broj dana za otklanjanje pojedinih nedostataka u usklađenosti visokorizičnih sustava (ključ = kontrolno polje).",
+    "label": "Rokovi za nedostatke u usklađenosti (dani)",
+    "unit": "dani"
+  },
+  "compliance.enterprise_report_max_tokens": {
+    "description": "Ograničenje broja tokena za narativ korporativnog izvješća.",
+    "label": "Korporativno izvješće — maks. tokena",
+    "unit": "tokeni"
+  },
+  "compliance.report_max_tokens": {
+    "description": "Ograničenje broja tokena za narativ izvješća o usklađenosti agenta.",
+    "label": "Izvješće agenta — maks. tokena",
+    "unit": "tokeni"
+  },
+  "i18n.default_locale": {
+    "description": "Jezik sučelja, izvješća i poruka za korisnike koji nisu odabrali vlastiti jezik. Kodovi: pl, en, de, it, es, fr, ro, ru, sl, hr.",
+    "label": "Zadani jezik"
+  },
+  "intervals.policy_refresh_seconds": {
+    "description": "Svakih koliko sekundi gateway ponovno učitava sigurnosna pravila iz baze.",
+    "label": "Osvježavanje pravila",
+    "unit": "sekunde"
+  },
+  "intervals.ttl_monitor_seconds": {
+    "description": "Svakih koliko sekundi monitor eskalira zakašnjele zadatke nadzora.",
+    "label": "TTL monitor nadzora",
+    "unit": "sekunde"
+  },
+  "models.classifier_model": {
+    "description": "Model koji se upotrebljava za ocjenu razine rizika agenta.",
+    "label": "Model klasifikatora za AI Act"
+  },
+  "models.default_agent_model": {
+    "description": "Model koji se dodjeljuje novoregistriranim agentima.",
+    "label": "Zadani model agenta"
+  },
+  "models.default_max_tokens": {
+    "description": "Ograničenje izlaznih tokena kada ga klijent ne navede.",
+    "label": "Zadano ograničenje tokena",
+    "unit": "tokeni"
+  },
+  "models.default_temperature": {
+    "description": "Temperatura LLM-a kada je klijent ne navede.",
+    "label": "Zadana temperatura",
+    "unit": "0–2"
+  },
+  "oversight.history_limit": {
+    "description": "Strogo ograničenje broja stavki povijesti nadzora.",
+    "label": "Povijest nadzora — ograničenje redaka",
+    "unit": "retci"
+  },
+  "oversight.history_max_days": {
+    "description": "Najveći raspon dana za GET /oversight/history.",
+    "label": "Povijest nadzora — maks. dana",
+    "unit": "dani"
+  },
+  "oversight.min_review_seconds": {
+    "description": "Pregled nadzora kraći od ovog broja sekundi označava se kao prividni (rubber-stamp).",
+    "label": "Min. vrijeme pregleda",
+    "unit": "sekunde"
+  },
+  "oversight.ttl_seconds": {
+    "description": "Vrijeme do eskalacije zadatka u redu čekanja za nadzor.",
+    "label": "TTL zadatka nadzora",
+    "unit": "sekunde"
+  },
+  "pagination.audit_default_limit": {
+    "description": "Zadani broj zapisa u GET /audit.",
+    "label": "Revizija — zadano ograničenje",
+    "unit": "retci"
+  },
+  "pagination.audit_max_limit": {
+    "description": "Najveći broj zapisa u jednom revizijskom upitu.",
+    "label": "Revizija — maks. ograničenje",
+    "unit": "retci"
+  },
+  "pagination.dashboard_recent_blocks": {
+    "description": "Broj nedavnih blokada u upozorenjima nadzorne ploče.",
+    "label": "Nadzorna ploča — nedavne blokade",
+    "unit": "stavke"
+  },
+  "pagination.dashboard_top_agents": {
+    "description": "Broj najaktivnijih agenata na nadzornoj ploči.",
+    "label": "Nadzorna ploča — najaktivniji agenti",
+    "unit": "stavke"
+  },
+  "pagination.default_window_days": {
+    "description": "Zadani raspon dana za reviziju i nadzornu ploču.",
+    "label": "Zadani vremenski okvir (dani)",
+    "unit": "dani"
+  },
+  "pagination.stats_default_days": {
+    "description": "Zadani raspon za GET /agents/{id}/stats.",
+    "label": "Statistika agenta — zadani broj dana",
+    "unit": "dani"
+  },
+  "pagination.stats_max_days": {
+    "description": "Najveći raspon statistike agenta.",
+    "label": "Statistika agenta — maks. dana",
+    "unit": "dani"
+  },
+  "pagination.timeline_default_hours": {
+    "description": "Zadani vremenski okvir vremenskog grafikona.",
+    "label": "Vremenski grafikon — zadani sati",
+    "unit": "sati"
+  },
+  "pagination.timeline_max_hours": {
+    "description": "Najveći raspon vremenskog grafikona.",
+    "label": "Vremenski grafikon — maks. sati",
+    "unit": "sati"
+  },
+  "pricing.default_rate": {
+    "description": "Cijena [ulaz, izlaz] za modele koji nisu na popisu.",
+    "label": "Zadana cijena (USD/1k tok.)",
+    "unit": "USD/1k"
+  },
+  "pricing.model_rates": {
+    "description": "Mapa model → [ulaz, izlaz] u USD za 1000 tokena. Model koji nije na popisu koristi zadanu cijenu.",
+    "label": "Cijene modela (USD/1k tok.)",
+    "unit": "USD/1k"
+  },
+  "pricing.usd_to_eur": {
+    "description": "Faktor pretvorbe troškova modela iz USD u EUR.",
+    "label": "Tečaj USD→EUR",
+    "unit": "faktor"
+  },
+  "security.access_token_expire_minutes": {
+    "description": "Trajanje JWT access tokena.",
+    "label": "Valjanost access tokena",
+    "unit": "minute"
+  },
+  "security.bcrypt_rounds": {
+    "description": "Trošak hashiranja lozinki (više = sporije, sigurnije).",
+    "label": "Krugovi bcrypt",
+    "unit": "krugovi"
+  },
+  "security.pii_confidence_threshold": {
+    "description": "Najmanja razina pouzdanosti Presidija za prihvaćanje otkrivanja osobnih podataka.",
+    "label": "Prag pouzdanosti za osobne podatke",
+    "unit": "0–1"
+  },
+  "security.refresh_token_expire_days": {
+    "description": "Trajanje refresh tokena.",
+    "label": "Valjanost refresh tokena",
+    "unit": "dani"
+  }
+}

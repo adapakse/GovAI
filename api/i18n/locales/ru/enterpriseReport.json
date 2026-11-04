@@ -1,0 +1,139 @@
+{
+  "agentStatus": {
+    "active": "Активен",
+    "quarantined": "Карантин",
+    "retired": "Выведен из эксплуатации",
+    "suspended": "Приостановлен"
+  },
+  "fallbackNarrative": "За анализируемый период ({days} дн.) организация эксплуатировала агентов ИИ: {agents}, из них отнесены к высокому риску согласно EU AI Act: {high}. Зарегистрировано вызовов: {total}, из них {blocked} ({block_pct}%) заблокированы механизмом политик безопасности. Выявлено инцидентов с персональными данными: {pii}. Общая стоимость API составила {cost} EUR. Детальный анализ соответствия EU AI Act требует проверки компетентным подразделением по комплаенсу.",
+  "fileName": "govai-enterprise-report-{date}.pdf",
+  "pdf": {
+    "activity": {
+      "topByBlocks": "Топ агентов по блокировкам:",
+      "topByCalls": "Топ агентов по вызовам:"
+    },
+    "alerts": {
+      "budgetExceeded": "⚠ Превышение бюджета: {name} — {actual} EUR ({pct}% от порога {threshold} EUR)",
+      "overdueReview": "⚠ Просрочена проверка соответствия: {name} (срок: {date})"
+    },
+    "columns": {
+      "agent": "Агент",
+      "avgLatency": "Ср. задержка",
+      "blockRate": "% блокировок",
+      "blocks": "Блокировки",
+      "calls": "Вызовы",
+      "costEur": "Стоимость EUR",
+      "oversight": "Надзор",
+      "pii": "ПДн",
+      "review": "Проверка",
+      "risk": "Риск",
+      "status": "Статус"
+    },
+    "cover": {
+      "agents": "Агенты ИИ",
+      "agentsActive": "активных: {n}",
+      "apiCost": "Стоимость API",
+      "blocks": "Блокировки",
+      "blocksShare": "{pct}% от всех",
+      "calls": "Вызовы",
+      "lastDays": "последние {days} дн.",
+      "pii": "Инциденты с ПДн",
+      "piiNote": "выявленные персональные данные",
+      "totalDays": "всего за {days} дн."
+    },
+    "declarationsLegend": "✓ Выполнено · ◑ Частично · ✗ Пробел · N/A Не применимо · — Не оценено",
+    "generated": "Сформирован: {date} UTC",
+    "incidents": {
+      "approved": "Утверждено",
+      "avgReviewTime": "Ср. время проверки",
+      "blockCount": "Число блокировок",
+      "escalated": "Эскалировано",
+      "incidentCount": "Число инцидентов",
+      "noPii": "За анализируемый период инциденты с ПДн не выявлены.",
+      "oversightHistory": "История очереди человеческого надзора (ст. 14):",
+      "pending": "Ожидает",
+      "piiCategories": "Выявленные категории персональных данных (ПДн):",
+      "piiCategory": "Категория ПДн",
+      "policyCode": "Политика (код)",
+      "policyHits": "Срабатывания блокирующих правил:",
+      "rejected": "Отклонено",
+      "tasksTotal": "Всего задач"
+    },
+    "kpi": {
+      "apiCost": "Общая стоимость API",
+      "apiCostNote": "расчётная стоимость моделей LLM",
+      "avgLatency": "Ср. задержка",
+      "avgLatencyNote": "end-to-end",
+      "avgReview": "ср. время проверки: {min} мин",
+      "comment": "Комментарий",
+      "maxLatency": "Макс. задержка",
+      "maxLatencyNote": "самый медленный вызов",
+      "metric": "Показатель",
+      "oversight": "Направлено на надзор",
+      "oversightNote": "политика A-001 (ст. 14)",
+      "oversightQueue": "Очередь надзора",
+      "oversightQueueValue": "задач: {total} (ожидает: {pending})",
+      "pii": "Инциденты с ПДн",
+      "piiNote": "всего объектов: {n}",
+      "policyBlocks": "Блокировки политиками",
+      "policyBlocksNote": "G-001 финансовые операции, G-002 prompt injection",
+      "tokensIn": "Входные токены",
+      "tokensInNote": "prompt",
+      "tokensOut": "Выходные токены",
+      "tokensOutNote": "completion",
+      "totalCalls": "Всего вызовов",
+      "totalCallsNote": "все агенты",
+      "value": "Значение"
+    },
+    "no": "нет",
+    "noData": "нет данных",
+    "period": "Период анализа: последние {days} дн.",
+    "recommendations": {
+      "basis": "Основание",
+      "priority": "Приоритет",
+      "recommendation": "Рекомендация"
+    },
+    "risk": {
+      "agentCount": "Число агентов",
+      "agents": "Агенты",
+      "level": "Уровень риска",
+      "requiresOversight": "Требует надзора"
+    },
+    "riskShort": {
+      "high": "ВЫС",
+      "limited": "ОГР",
+      "minimal": "МИН",
+      "unacceptable": "НЕПР"
+    },
+    "sections": {
+      "activity": "5. Анализ активности агентов",
+      "declarations": "7. Декларации соответствия EU AI Act — агенты высокого риска",
+      "incidents": "6. Инциденты безопасности",
+      "kpi": "3. Операционные KPI (последние {days} дн.)",
+      "recommendations": "{n}. Приоритетные рекомендации",
+      "registry": "4. Реестр агентов ИИ",
+      "riskDistribution": "2. Распределение рисков EU AI Act",
+      "summary": "1. Резюме для правления"
+    },
+    "title": "Отчёт по корпоративному управлению ИИ",
+    "yes": "ДА"
+  },
+  "priority": {
+    "critical": "Критический",
+    "high": "Высокий",
+    "medium": "Средний"
+  },
+  "recommendations": {
+    "basisBestPractices": "Передовая практика",
+    "basisCostControl": "Контроль расходов",
+    "basisInternalPolicy": "Внутренняя политика",
+    "budgetReview": "Пересмотреть бюджеты агентов, превышающих пороги оповещений: {names}.",
+    "highBlockRate": "Доля блокировок составляет {pct}% — пересмотреть правила политик и скорректировать ключевые слова.",
+    "implementOversight": "Внедрить процедуры человеческого надзора для: {names}.",
+    "keepMonitoring": "Продолжать мониторинг агентов. Проводить ежеквартальную проверку соответствия.",
+    "missingTechnicalDocs": "Отсутствует техническая документация (ст. 11) для: {names}. Подготовить в течение 60 дней.",
+    "overdueReviews": "Провести просроченные проверки соответствия для: {names}.",
+    "pendingOversight": "Рассмотреть ожидающие задачи в очереди надзора: {n}.",
+    "suspendUnacceptable": "Немедленно приостановить агентов, отнесённых к категории НЕПРИЕМЛЕМОГО риска. Проконсультироваться с юристом."
+  }
+}

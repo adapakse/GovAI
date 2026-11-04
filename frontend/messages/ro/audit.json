@@ -1,0 +1,53 @@
+{
+  "count": "{count, plural, one {# înregistrare} few {# înregistrări} other {# de înregistrări}}",
+  "details": {
+    "blockReason": "Motivul blocării",
+    "errorDetails": "Detaliile erorii",
+    "fields": {
+      "agent": "Agent",
+      "callId": "Call ID",
+      "cost": "Cost",
+      "eventType": "Tipul evenimentului",
+      "inputHash": "Hash-ul intrării",
+      "latency": "Latență",
+      "piiCategories": "Categorii de date personale",
+      "result": "Rezultat",
+      "taskId": "Task ID"
+    },
+    "title": "Detaliile apelului"
+  },
+  "filters": {
+    "days": {
+      "1": "Ultima zi",
+      "7": "Ultimele 7 zile",
+      "30": "Ultimele 30 de zile"
+    },
+    "pii": {
+      "all": "Toate (date personale)",
+      "with": "Cu date personale detectate",
+      "without": "Fără date personale"
+    },
+    "result": {
+      "all": "Toate rezultatele"
+    }
+  },
+  "header": {
+    "subtitle": "Evidență imuabilă a tuturor apelurilor agenților AI",
+    "title": "Jurnal de audit"
+  },
+  "table": {
+    "columns": {
+      "agent": "Agent",
+      "details": "Detalii",
+      "eventType": "Tipul evenimentului",
+      "latency": "Latență",
+      "pii": "Date personale",
+      "result": "Rezultat",
+      "time": "Ora"
+    },
+    "empty": "Nicio înregistrare în această perioadă",
+    "loading": "Se încarcă...",
+    "piiEntities": "{count, plural, one {# entitate} few {# entități} other {# de entități}}",
+    "show": "Afișați"
+  }
+}

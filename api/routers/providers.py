@@ -1,17 +1,25 @@
 """
 Router /providers — zarządzanie dostawcami modeli LLM.
 Dostęp: partner, it_admin.
+
+Multitenancy: lista = providerzy platformy (tenant_id NULL, is_platform=true)
++ własni providerzy organizacji. Wiersze platformy są dla organizacji tylko do
+odczytu (403); super-admin zmienia je w trybie platformy (platform_db).
 """
 from __future__ import annotations
 
 import logging
+from contextlib import nullcontext
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
+from database import platform_db
 from dependencies.auth import CurrentUser, get_current_user, require_role
+from i18n import t
 from repositories import providers_repository as providers_repo
+from services import secret_box
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/providers", tags=["providers"])
@@ -23,6 +31,34 @@ _WRITE_ROLES = require_role("partner", "it_admin")
 VALID_SENSITIVITY = {"public", "internal", "confidential", "privileged"}
 VALID_TYPES = {"openai", "anthropic", "deepseek", "google", "bielik", "ollama", "vllm", "custom"}
 
+# Zmienne środowiskowe z kluczami platformy, do których provider może się odwołać
+# (api_key_env). Bez białej listy dowolna zmienna procesu gatewaya (np. JWT_SECRET,
+# DB_PASSWORD) mogła trafić do dostawcy jako klucz. Trzymaj w synchronizacji z
+# gateway/models.py (PLATFORM_KEY_ENVS).
+PLATFORM_KEY_ENVS = {"ANTHROPIC_API_KEY", "OPENAI_API_KEY", "DEEPSEEK_API_KEY", "GOOGLE_API_KEY"}
+
+
+def _validate_key_config(api_key_env: Optional[str], base_url: Optional[str]) -> None:
+    """Klucz platformy tylko z białej listy i nigdy razem z własnym base_url —
+    inaczej klucz platformy dałoby się wysłać na dowolny serwer."""
+    if api_key_env and api_key_env not in PLATFORM_KEY_ENVS:
+        raise HTTPException(400, t("providers.errors.key_env_not_allowed", allowed=", ".join(sorted(PLATFORM_KEY_ENVS))))
+    if api_key_env and base_url:
+        raise HTTPException(400, t("providers.errors.key_env_with_base_url"))
+
+
+def _validate_own_key(api_key_env: Optional[str], has_own_key: bool) -> None:
+    """Własny klucz organizacji (api_key) i klucz platformy (api_key_env) wykluczają się.
+    Własny klucz może iść z własnym base_url — należy do organizacji."""
+    if api_key_env and has_own_key:
+        raise HTTPException(400, t("providers.errors.key_and_key_env"))
+
+
+def _encrypt_key(api_key: str) -> str:
+    if not secret_box.is_configured():
+        raise HTTPException(503, t("providers.errors.key_encryption_unavailable"))
+    return secret_box.encrypt(api_key)
+
 
 class ProviderCreate(BaseModel):
     name: str
@@ -30,9 +66,13 @@ class ProviderCreate(BaseModel):
     model_ids: list[str] = []
     base_url: Optional[str] = None
     api_key_env: Optional[str] = None
+    # Własny klucz organizacji — tylko zapis (szyfrowany, nigdy nie wraca w odpowiedzi)
+    api_key: Optional[str] = None
     max_data_sensitivity: str = "internal"
     priority: int = 100
     notes: Optional[str] = None
+    # true = provider platformy (wspólny dla wszystkich organizacji) — tylko super-admin
+    is_platform: bool = False
 
 
 class ProviderUpdate(BaseModel):
@@ -40,6 +80,8 @@ class ProviderUpdate(BaseModel):
     model_ids: Optional[list[str]] = None
     base_url: Optional[str] = None
     api_key_env: Optional[str] = None
+    # None = bez zmian, "" = usuń własny klucz, wartość = nowy klucz
+    api_key: Optional[str] = None
     max_data_sensitivity: Optional[str] = None
     priority: Optional[int] = None
     active: Optional[bool] = None
@@ -62,6 +104,27 @@ def _row_to_dict(row) -> dict:
     return d
 
 
+def _deny_platform_write(user: CurrentUser) -> None:
+    if not user.is_super_admin:
+        raise HTTPException(403, t("providers.errors.platform_read_only"))
+
+
+async def _get_writable(provider_id: str, user: CurrentUser):
+    """Provider do zmiany: 404 gdy niewidoczny, 403 gdy to wiersz platformy,
+    a użytkownik nie jest super-adminem (RLS i tak odrzuciłby zapis — jako 500)."""
+    existing = await providers_repo.get_provider(provider_id)
+    if not existing:
+        raise HTTPException(404, t("providers.errors.not_found"))
+    if existing["is_platform"]:
+        _deny_platform_write(user)
+    return existing
+
+
+def _write_scope(is_platform: bool):
+    """Wiersze platformy zapisujemy w trybie platformy, własne — w kontekście żądania."""
+    return platform_db() if is_platform else nullcontext()
+
+
 # ── Endpoints ─────────────────────────────────────────────────────────────────
 
 @router.get("")
@@ -80,7 +143,7 @@ async def get_provider(
 ):
     row = await providers_repo.get_provider(provider_id)
     if not row:
-        raise HTTPException(status_code=404, detail="Provider nie znaleziony")
+        raise HTTPException(status_code=404, detail=t("providers.errors.not_found"))
     return _row_to_dict(row)
 
 
@@ -90,22 +153,31 @@ async def create_provider(
     user: CurrentUser = Depends(_WRITE_ROLES),
 ):
     if body.provider_type not in VALID_TYPES:
-        raise HTTPException(400, f"Nieznany provider_type. Dozwolone: {sorted(VALID_TYPES)}")
+        raise HTTPException(400, t("providers.errors.invalid_type", allowed=sorted(VALID_TYPES)))
     if body.max_data_sensitivity not in VALID_SENSITIVITY:
-        raise HTTPException(400, f"Nieprawidłowy max_data_sensitivity. Dozwolone: {sorted(VALID_SENSITIVITY)}")
+        raise HTTPException(400, t("providers.errors.invalid_sensitivity", allowed=sorted(VALID_SENSITIVITY)))
+    _validate_key_config(body.api_key_env, body.base_url)
+    _validate_own_key(body.api_key_env, bool(body.api_key))
+    if body.is_platform:
+        _deny_platform_write(user)
+    encrypted = _encrypt_key(body.api_key) if body.api_key else None
 
-    row = await providers_repo.insert_provider(
-        name=body.name,
-        provider_type=body.provider_type,
-        model_ids=body.model_ids,
-        base_url=body.base_url,
-        api_key_env=body.api_key_env,
-        max_data_sensitivity=body.max_data_sensitivity,
-        priority=body.priority,
-        notes=body.notes,
-        created_by=user.id,
-    )
-    logger.info("Provider '%s' utworzony przez %s", body.name, user.email)
+    # tenant_id z DEFAULT current_tenant_id(): w kontekście organizacji — jej
+    # własny wiersz; w trybie platformy — NULL (provider platformy).
+    async with _write_scope(body.is_platform):
+        row = await providers_repo.insert_provider(
+            name=body.name,
+            provider_type=body.provider_type,
+            model_ids=body.model_ids,
+            base_url=body.base_url,
+            api_key_env=body.api_key_env,
+            max_data_sensitivity=body.max_data_sensitivity,
+            priority=body.priority,
+            notes=body.notes,
+            created_by=user.id,
+            api_key_encrypted=encrypted,
+        )
+    logger.info("Provider '%s' utworzony przez %s (platforma: %s)", body.name, user.email, body.is_platform)
     return _row_to_dict(row)
 
 
@@ -115,27 +187,43 @@ async def update_provider(
     body: ProviderUpdate,
     user: CurrentUser = Depends(_WRITE_ROLES),
 ):
-    existing = await providers_repo.get_provider_id(provider_id)
-    if not existing:
-        raise HTTPException(404, "Provider nie znaleziony")
+    existing = await _get_writable(provider_id, user)
 
     if body.max_data_sensitivity and body.max_data_sensitivity not in VALID_SENSITIVITY:
-        raise HTTPException(400, f"Nieprawidłowy max_data_sensitivity. Dozwolone: {sorted(VALID_SENSITIVITY)}")
-
-    row = await providers_repo.update_provider(
-        provider_id,
-        name=body.name,
-        base_url=body.base_url,
-        api_key_env=body.api_key_env,
-        priority=body.priority,
-        active=body.active,
-        is_healthy=body.is_healthy,
-        notes=body.notes,
-        model_ids=body.model_ids,
-        max_data_sensitivity=body.max_data_sensitivity,
+        raise HTTPException(400, t("providers.errors.invalid_sensitivity", allowed=sorted(VALID_SENSITIVITY)))
+    # PATCH nie czyści pól (None = bez zmian) — walidujemy stan po zmianie.
+    effective_key_env = body.api_key_env if body.api_key_env is not None else existing["api_key_env"]
+    _validate_key_config(
+        effective_key_env,
+        body.base_url if body.base_url is not None else existing["base_url"],
     )
+    _validate_own_key(
+        effective_key_env,
+        bool(body.api_key) if body.api_key is not None else bool(existing["has_api_key"]),
+    )
+    if body.api_key is None:
+        new_key = None
+    elif body.api_key == "":
+        new_key = providers_repo.CLEAR
+    else:
+        new_key = _encrypt_key(body.api_key)
+
+    async with _write_scope(existing["is_platform"]):
+        row = await providers_repo.update_provider(
+            provider_id,
+            name=body.name,
+            base_url=body.base_url,
+            api_key_env=body.api_key_env,
+            priority=body.priority,
+            active=body.active,
+            is_healthy=body.is_healthy,
+            notes=body.notes,
+            model_ids=body.model_ids,
+            max_data_sensitivity=body.max_data_sensitivity,
+            api_key_encrypted=new_key,
+        )
     if row is None:
-        return await get_provider(provider_id, user)
+        return _row_to_dict(existing)
 
     logger.info("Provider '%s' zaktualizowany przez %s", provider_id, user.email)
     return _row_to_dict(row)
@@ -146,9 +234,13 @@ async def delete_provider(
     provider_id: str,
     user: CurrentUser = Depends(_WRITE_ROLES),
 ):
-    row = await providers_repo.delete_provider(provider_id)
+    # Jawna kontrola konieczna: polityka RLS katalogu przy DELETE sprawdza tylko
+    # USING (widoczność), a wiersze platformy są widoczne dla organizacji.
+    existing = await _get_writable(provider_id, user)
+    async with _write_scope(existing["is_platform"]):
+        row = await providers_repo.delete_provider(provider_id)
     if not row:
-        raise HTTPException(404, "Provider nie znaleziony")
+        raise HTTPException(404, t("providers.errors.not_found"))
     logger.info("Provider '%s' usunięty przez %s", row["name"], user.email)
     return {"deleted": str(row["id"]), "name": row["name"]}
 
@@ -160,7 +252,9 @@ async def update_health(
     user: CurrentUser = Depends(_WRITE_ROLES),
 ):
     """Ręczna aktualizacja stanu zdrowia providera (np. po teście połączenia)."""
-    row = await providers_repo.set_health(provider_id, healthy)
+    existing = await _get_writable(provider_id, user)
+    async with _write_scope(existing["is_platform"]):
+        row = await providers_repo.set_health(provider_id, healthy)
     if not row:
-        raise HTTPException(404, "Provider nie znaleziony")
+        raise HTTPException(404, t("providers.errors.not_found"))
     return _row_to_dict(row)

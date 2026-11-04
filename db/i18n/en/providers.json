@@ -1,0 +1,17 @@
+{
+  "Anthropic Claude (Cloud)": {
+    "notes": "External provider. Requires a DPA. Do not use for data covered by legal professional privilege."
+  },
+  "Bielik On-Prem (Local)": {
+    "notes": "Local model — suitable for data covered by legal professional privilege. Activate once the Ollama server is running."
+  },
+  "DeepSeek (Cloud)": {
+    "notes": "Servers outside the EU (China). Public data only — processing of client data is prohibited."
+  },
+  "Google Gemini (Cloud)": {
+    "notes": "External provider with EU Data Boundary. Requires a DPA. Do not use for privileged data."
+  },
+  "OpenAI (Cloud)": {
+    "notes": "External provider. Requires an Enterprise DPA. Do not use for confidential data."
+  }
+}

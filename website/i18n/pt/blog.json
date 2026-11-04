@@ -1,0 +1,120 @@
+{
+  "hero": {
+    "lead": "Prazos, obrigações e decisões de arquitetura em torno do EU AI Act — escritos na perspetiva de uma equipa que tem de o implementar, e não apenas descrever.",
+    "title": "Conformidade com o AI Act, de forma clara — não só para juristas."
+  },
+  "list": {
+    "all": "Todos",
+    "empty": "Não há artigos nesta categoria.",
+    "sort": "Ordenar:",
+    "sortNewest": "Mais recentes",
+    "sortOldest": "Mais antigos",
+    "sortReadTime": "Tempo de leitura"
+  },
+  "meta": {
+    "description": "Conformidade com o EU AI Act, de forma clara — prazos, obrigações e decisões de arquitetura escritos na perspetiva de uma equipa que tem de o implementar.",
+    "ogDescription": "Conformidade com o EU AI Act, de forma clara — prazos, obrigações e decisões de arquitetura escritos na perspetiva de uma equipa que tem de o implementar.",
+    "ogTitle": "Blog — GovAI",
+    "title": "Blog — GovAI"
+  },
+  "post": {
+    "back": "← Todos os artigos",
+    "categories": "Categorias",
+    "noRelated": "Não há artigos relacionados.",
+    "notFound": "Artigo não encontrado.",
+    "readTime": "{minutes} min de leitura",
+    "related": "Artigos relacionados"
+  },
+  "posts": {
+    "checklist-rejestracja-agenta": {
+      "body": [
+        "Antes de um agente entrar no registo, convém ter resposta a algumas perguntas: qual é o seu âmbito de utilização exato, se trata dados pessoais, quem é o responsável de negócio pelas decisões que toma ou apoia, e qual é o plano para a situação em que o âmbito de utilização se altere.",
+        "O motivo mais frequente de uma classificação errada logo à partida é a subestimação do âmbito — um agente implementado 'apenas para apoiar os RH na triagem de CV' passa muito rapidamente a ser utilizado na efetiva pré-seleção de candidatos, o que altera a categoria de risco.",
+        "A regra que funciona: classificar com base naquilo para que o agente pode efetivamente ser utilizado na organização, e não apenas naquilo para que foi concebido."
+      ],
+      "category": "Compliance ops",
+      "excerpt": "Uma lista curta e prática do que convém definir antes da primeira implementação — para que a classificação de risco faça sentido desde o início, e não seja provisória.",
+      "tags": [
+        "onboarding",
+        "registo de agentes",
+        "checklist"
+      ],
+      "title": "Checklist: o que preparar antes de registar o primeiro agente no registo"
+    },
+    "dedykowana-instancja-vs-multitenant": {
+      "body": [
+        "Muitas plataformas de \"AI governance\" são SaaS partilhado: uma única base de dados, com linhas logicamente separadas por cliente. É a forma padrão e económica de construir SaaS — e normalmente suficiente.",
+        "No caso de um registo de auditoria para um sistema de IA regulado, porém, a pergunta do auditor muda: já não é \"os dados estão logicamente separados?\", mas sim \"existe sequer algum cenário em que os dados de outro cliente acabem na nossa consulta?\". A resposta \"não, porque temos uma base de dados separada\" é mais fácil de defender do que \"não, porque filtramos corretamente por tenant_id em todas as consultas, sempre\".",
+        "É um compromisso de custos — uma instância dedicada por cliente é mais cara de manter do que uma base de dados partilhada. Para um sistema cuja única função é servir de prova de conformidade, considerámos que se trata de um custo que tem de ser suportado, e não otimizado."
+      ],
+      "category": "Segurança",
+      "excerpt": "Uma base de dados partilhada é uma decisão de arquitetura, não um pormenor técnico — e, numa auditoria de conformidade, torna-se uma pergunta a que é difícil responder bem.",
+      "tags": [
+        "arquitetura",
+        "isolamento de dados",
+        "auditoria"
+      ],
+      "title": "Porque é que 'multi-tenant' e 'conforme com o AI Act' raramente andam juntos"
+    },
+    "digital-omnibus-grudzien-2027": {
+      "body": [
+        "A 27 de julho de 2026 entrou em vigor o Digital Omnibus AI (Regulamento (UE) 2026/1744) — uma alteração que adia as obrigações plenas para os sistemas de risco elevado do anexo III de 2 de agosto de 2026 para 2 de dezembro de 2027. Para os sistemas incorporados em produtos regulamentados (anexo I), o prazo passou de agosto de 2027 para agosto de 2028.",
+        "Não se trata de um adiamento geral de todo o regulamento. A proibição das práticas proibidas do artigo 5.º aplica-se desde fevereiro de 2025 sem alterações, as obrigações relativas aos modelos de IA de finalidade geral (GPAI) — desde agosto de 2025, e as obrigações de transparência do artigo 50.º (marcação de conteúdos gerados por IA, informação sobre a interação com um chatbot) — desde agosto de 2026, ou seja, já agora. A alteração acrescentou também uma nova proibição ao artigo 5.º — a geração de conteúdos íntimos sem consentimento e de material de abuso sexual de crianças — que entra em vigor a 2 de dezembro de 2026.",
+        "Conclusão prática: 16 meses adicionais são tempo para fazer isto bem, não para adiar o tema. O registo de agentes, a classificação de risco e a análise de lacunas exigem o mesmo trabalho, independentemente de o prazo ser daqui a um ano ou daqui a um mês — a única diferença é que hoje ninguém o está a fazer sob pressão."
+      ],
+      "category": "AI Act",
+      "excerpt": "O Regulamento 2026/1744 adiou as obrigações plenas do anexo III em 16 meses. Não é motivo para abrandar — é uma nova janela temporal que vale a pena aproveitar antes que outros o façam.",
+      "tags": [
+        "Digital Omnibus",
+        "prazos",
+        "anexo III"
+      ],
+      "title": "Digital Omnibus: porque é que o prazo para os sistemas de risco elevado foi adiado para dezembro de 2027"
+    },
+    "dokumentacja-vs-egzekwowanie": {
+      "body": [
+        "O mercado de ferramentas para o AI Act resolve, na sua maioria, um único problema: a produção da documentação técnica exigida pelo anexo IV. É um trabalho real e necessário — mas a documentação descreve o que o sistema deve fazer, não o impõe no momento em que o sistema está efetivamente em funcionamento.",
+        "A diferença só se torna visível no momento de um incidente. A documentação, por mais bem redigida que esteja, não bloqueou a chamada que não deveria ter passado — pode, quando muito, servir de prova de que se sabia como deveria ser o funcionamento correto.",
+        "A aplicação em tempo real e a documentação não são concorrentes — são complementares. Mas apenas uma delas se interpõe fisicamente entre o agente e a resposta."
+      ],
+      "category": "AI Act",
+      "excerpt": "As ferramentas de documentação respondem à pergunta 'temos o papel?'. Não respondem à pergunta 'esta violação podia sequer ter acontecido?'.",
+      "tags": [
+        "documentação",
+        "aplicação",
+        "auditoria"
+      ],
+      "title": "A documentação de conformidade não trava ninguém em tempo real"
+    },
+    "nadzor-czlowieka-art-14": {
+      "body": [
+        "O artigo 14.º do AI Act exige que os sistemas de IA de risco elevado disponham de um mecanismo de supervisão humana integrado. O problema é que, na prática, o \"mecanismo\" se resume muitas vezes a um endereço de correio eletrónico a que alguém, de vez em quando, responde.",
+        "Uma supervisão humana auditável tem três características: a decisão fica suspensa até à revisão (não avança em paralelo \"por precaução\"), a revisão é atribuída a uma pessoa concreta e autorizada, e o resultado da revisão é registado juntamente com quem a efetuou e quando.",
+        "O que distingue uma ferramenta de um procedimento no papel é saber se estes três elementos são impostos estruturalmente — se o agente efetivamente não pode responder enquanto o revisor não tomar uma decisão — ou apenas descritos num documento de política."
+      ],
+      "category": "Compliance ops",
+      "excerpt": "A supervisão humana no papel e a supervisão humana que resiste a uma auditoria são duas coisas diferentes. A diferença reside no que acontece entre 'assinalado' e 'aprovado'.",
+      "tags": [
+        "artigo 14.º",
+        "supervisão",
+        "processo"
+      ],
+      "title": "Artigo 14.º na prática: quando 'um humano reviu isto' significa realmente alguma coisa"
+    },
+    "routing-dostawcow-wedlug-wrazliwosci": {
+      "body": [
+        "A grande maioria das implementações de agentes de IA tem um único base URL do fornecedor de modelos, fixado no código. Funciona bem, até surgir um pedido que contém dados pessoais, dados financeiros ou dados abrangidos por sigilo profissional — que seguem exatamente o mesmo caminho que qualquer outro.",
+        "O encaminhamento com base na sensibilidade dos dados inverte esta abordagem: não é o programador que decide para onde vai o pedido, mas sim uma política que avalia o conteúdo do pedido em tempo real — a presença de dados pessoais, a categoria do agente, o nível de classificação de risco.",
+        "Na prática, isto significa que duas chamadas do mesmo agente podem ser encaminhadas para dois fornecedores diferentes no mesmo minuto — uma para um modelo externo, outra para uma instância self-hosted — sem qualquer alteração no código do agente."
+      ],
+      "category": "Segurança",
+      "excerpt": "O fornecedor de modelos predefinido é muitas vezes um acaso histórico, não uma decisão. Mostramos como funciona um encaminhamento em que o destino é decidido pelo conteúdo do pedido, e não pelo hábito.",
+      "tags": [
+        "encaminhamento",
+        "privacidade dos dados",
+        "arquitetura"
+      ],
+      "title": "Encaminhamento de modelos segundo a sensibilidade dos dados, e não segundo o que está na configuração"
+    }
+  }
+}

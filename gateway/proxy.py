@@ -10,7 +10,8 @@ from fastapi import HTTPException, Request
 import app_settings
 from audit_logger import write_audit_fire_and_forget
 from config import settings
-from database import get_agent
+from database import fetch_active_policies, get_agent
+from i18n import t
 from models import AgentRecord, AuditEntry, PIIScanResult, PolicyDecision, ProviderRecord
 from oversight import push_oversight_task
 from pii_scanner import PIIScanner
@@ -25,76 +26,42 @@ _policy_engine: PolicyEngine | None = None
 _sensitivity_classifier: DataSensitivityClassifier = DataSensitivityClassifier()
 
 # ── Tryb demo — gotowe odpowiedzi bez wywoływania Anthropic ───────────────────
-_DEMO_RESPONSES: dict[str, str] = {
-    # Agent 1 — Obsługa Klienta
-    "a1000000-0000-0000-0000-000000000001": (
-        "Dziękuję za pytanie!\n\n"
-        "Ubezpieczenie od utraty pracy (UOP) to produkt chroniący kredytobiorcę "
-        "w razie niedobrowolnej utraty zatrudnienia. Dla kredytu hipotecznego 450 000 zł "
-        "typowa składka miesięczna wynosi 0,05–0,10% salda kredytu (225–450 zł/mies.). "
-        "Składka wliczana jest w ratę kredytu.\n\n"
-        "Oferujemy dwa warianty:\n"
-        "• Wariant STANDARD — spłata rat przez 6 miesięcy (maks. 12 000 zł)\n"
-        "• Wariant PREMIUM — spłata rat przez 12 miesięcy + ochrona na wypadek niezdolności do pracy\n\n"
-        "Zachęcam do wizyty w oddziale lub kontaktu z doradcą: 800 123 456 (pon.–pt., 8:00–18:00).\n\n"
-        "[TRYB DEMO — odpowiedź symulowana przez GovAI Gateway]"
-    ),
-    # Agent 2 — Ocena Kredytowa
-    "a2000000-0000-0000-0000-000000000002": (
-        "OCENA KREDYTOWA — WYNIK WSTĘPNY [TRYB DEMO]\n\n"
-        "OCENA: WARUNKOWA AKCEPTACJA\n\n"
-        "UZASADNIENIE:\n"
-        "Na podstawie przedstawionych danych zdolność kredytowa wnioskodawcy jest "
-        "wystarczająca. Wskaźnik DTI wynosi ok. 31% (poniżej progu 45%). "
-        "Stabilne zatrudnienie i pozytywna historia kredytowa (BIK 820/1000) "
-        "stanowią mocne punkty profilu.\n\n"
-        "WARUNKI:\n"
-        "• Obowiązkowa polisa na życie jako zabezpieczenie kredytu\n"
-        "• Weryfikacja dochodów: wyciąg z konta za 6 ostatnich miesięcy\n"
-        "• Wkład własny 26% spełnia wymóg minimalny 20%\n\n"
-        "REKOMENDACJA: Przekazać do analityka kredytowego w celu ostatecznej decyzji.\n\n"
-        "⚠ Ta decyzja wymaga zatwierdzenia przez człowieka zgodnie z EU AI Act art. 14.\n"
-        "[TRYB DEMO — decyzja symulowana, niewiążąca prawnie]"
-    ),
-    # Agent 3 — Rekrutacja
-    "a3000000-0000-0000-0000-000000000003": (
-        "ANALIZA CV — WYNIK WSTĘPNY [TRYB DEMO]\n\n"
-        "DOPASOWANIE: 85%\n\n"
-        "MOCNE STRONY:\n"
-        "• Solidne doświadczenie techniczne (Java/Spring Boot — 7 lat)\n"
-        "• Certyfikaty branżowe: AWS Solutions Architect, Oracle Java SE 17\n"
-        "• Doświadczenie w środowisku bankowym (PKO BP — systemy transakcyjne)\n"
-        "• Praca zespołowa: Lead Developer (3 lata)\n\n"
-        "BRAKI:\n"
-        "• Brak doświadczenia z systemami mainframe (wymaganie dodatkowe)\n"
-        "• Brak certyfikacji Kubernetes\n\n"
-        "REKOMENDACJA: Kandydat spełnia kluczowe wymagania — "
-        "zaproponować rozmowę techniczną z Lead Developerem i test architektoniczny.\n\n"
-        "⚠ Ta rekomendacja wymaga akceptacji HR zgodnie z EU AI Act art. 14.\n"
-        "[TRYB DEMO — analiza symulowana, wymaga weryfikacji przez człowieka]"
-    ),
+# agent_id → klucz tekstu w gateway/i18n/locales/<locale>/demo.json
+_DEMO_RESPONSE_KEYS: dict[str, str] = {
+    "a1000000-0000-0000-0000-000000000001": "demo.responses.customerService",  # Obsługa Klienta
+    "a2000000-0000-0000-0000-000000000002": "demo.responses.creditScoring",    # Ocena Kredytowa
+    "a3000000-0000-0000-0000-000000000003": "demo.responses.recruitment",      # Rekrutacja
 }
 
 
 def _demo_response(agent_id: str, messages: list[dict]) -> str:
-    """Zwraca gotową odpowiedź dla trybu demo."""
-    if agent_id in _DEMO_RESPONSES:
-        return _DEMO_RESPONSES[agent_id]
+    """Zwraca gotową odpowiedź dla trybu demo (w języku żądania)."""
+    if agent_id in _DEMO_RESPONSE_KEYS:
+        return t(_DEMO_RESPONSE_KEYS[agent_id])
     system = next((m.get("content", "") for m in messages if m.get("role") == "system"), "")
     if any(k in system.lower() for k in ["kredyt", "ocena", "wniosek"]):
-        return _DEMO_RESPONSES["a2000000-0000-0000-0000-000000000002"]
+        return t("demo.responses.creditScoring")
     if any(k in system.lower() for k in ["cv", "rekrut", "kandydat"]):
-        return _DEMO_RESPONSES["a3000000-0000-0000-0000-000000000003"]
-    return (
-        "Dziękuję za zapytanie. Przetwarzam Twoją prośbę i przygotowuję odpowiedź.\n\n"
-        "[TRYB DEMO — odpowiedź symulowana przez GovAI Gateway]"
-    )
+        return t("demo.responses.recruitment")
+    return t("demo.responses.generic")
 
 
 def init_components(pii: PIIScanner, policy: PolicyEngine) -> None:
     global _pii_scanner, _policy_engine
     _pii_scanner = pii
     _policy_engine = policy
+
+
+def _block_reason(code: str, **params: Any) -> dict[str, Any]:
+    """Pola AuditEntry dla powodu blokady/błędu: tekst (block_reason, dla zgodności
+    wstecznej, w języku żądania) + kod i parametry, z których API tłumaczy powód
+    na język czytającego (api/services/block_reasons.py)."""
+    params = {k: str(v) for k, v in params.items()}
+    return {
+        "block_reason": t(f"blockReasons.{code}", **params),
+        "block_reason_code": code,
+        "block_reason_params": params,
+    }
 
 
 def _hash(text: str) -> str:
@@ -174,23 +141,38 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
     task_id = request.headers.get("X-Task-ID", str(uuid4()))
     agent_id = request.headers.get("X-Agent-ID", "")
 
+    # Klucz API przypisany do agenta (api_keys.agent_id) może wywoływać wyłącznie
+    # tego agenta — bez tego dowolny ważny klucz działał za dowolny X-Agent-ID.
+    # Brak nagłówka przy kluczu przypisanym do agenta = agent z klucza.
+    key_agent_id = getattr(request.state, "auth_agent_id", None)
+    if key_agent_id:
+        if not agent_id:
+            agent_id = key_agent_id
+        elif agent_id != key_agent_id:
+            logger.warning("Klucz API agenta %s użyty dla X-Agent-ID %s — odrzucono", key_agent_id, agent_id)
+            raise HTTPException(status_code=403, detail=t("errors.apiKeyAgentMismatch", agent_id=agent_id))
+
     if not agent_id:
-        raise HTTPException(status_code=400, detail="Brak nagłówka X-Agent-ID")
+        raise HTTPException(status_code=400, detail=t("errors.missingAgentId"))
 
     body = await request.json()
     messages = body.get("messages", [])
 
     if not messages:
-        raise HTTPException(status_code=400, detail="Brak wiadomości w żądaniu")
+        raise HTTPException(status_code=400, detail=t("errors.missingMessages"))
 
     # ── 1. Weryfikacja agenta ──────────────────────────────────────────────────
-    agent = await get_agent(agent_id)
+    # Organizacja ustalona w AuthMiddleware (klucz API / JWT). Agent spoza
+    # organizacji jest dla niej nieznany.
+    tenant_id: str = request.state.tenant_id
+    agent = await get_agent(tenant_id, agent_id)
 
     if agent is None:
         logger.warning("Nieznany agent: %s", agent_id)
         write_audit_fire_and_forget(AuditEntry(
+            tenant_id=tenant_id,
             agent_id=agent_id,
-            agent_name="(nieznany agent)",
+            agent_name=t("audit.unknownAgentName"),
             task_id=task_id,
             call_id=call_id,
             event_type="unknown_agent",
@@ -199,17 +181,17 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
             pii_count=0,
             input_hash=None,
             model_used=None,
-            block_reason=f"Nieznany agent_id: {agent_id} — brak w rejestrze GovAI",
+            **_block_reason("unknown_agent", agent_id=agent_id),
         ))
         raise HTTPException(
             status_code=403,
-            detail=f"Agent '{agent_id}' nie jest zarejestrowany w GovAI. "
-                   "Zarejestruj agenta przed użyciem bramki.",
+            detail=t("errors.agentNotRegistered", agent_id=agent_id),
         )
 
     if agent.status != "active":
         logger.warning("Agent %s ma status: %s", agent.name, agent.status)
         write_audit_fire_and_forget(AuditEntry(
+            tenant_id=tenant_id,
             agent_id=agent.id,
             agent_name=agent.name,
             task_id=task_id,
@@ -220,11 +202,11 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
             pii_count=0,
             input_hash=None,
             model_used=agent.model_id,
-            block_reason=f"Agent ma status '{agent.status}' — wywołanie odrzucone przed przetworzeniem",
+            **_block_reason("agent_inactive", status=agent.status),
         ))
         raise HTTPException(
             status_code=403,
-            detail=f"Agent '{agent.name}' ma status '{agent.status}' i nie może wykonywać wywołań.",
+            detail=t("errors.agentInactive", agent=agent.name, status=agent.status),
         )
 
     # ── 2. Skan PII ────────────────────────────────────────────────────────────
@@ -240,6 +222,12 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
     clean_messages = pii_result.redacted_messages
 
     # ── 3. Ocena polityk ────────────────────────────────────────────────────────
+    try:
+        await _policy_engine.ensure_loaded(tenant_id, fetch_active_policies)
+    except Exception as exc:
+        # Fail closed — bez reguł organizacji nie przepuszczamy wywołania.
+        logger.error("Nie można załadować polityk organizacji %s: %s", tenant_id, exc)
+        raise HTTPException(status_code=503, detail=t("errors.policiesUnavailable")) from exc
     decision: PolicyDecision = _policy_engine.evaluate(agent, clean_messages, pii_result)
 
     # ── 3.5. Klasyfikacja wrażliwości danych ────────────────────────────────────
@@ -261,6 +249,7 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
     # tego etapu bramka nawet nie próbowała szukać providera.
     if decision.result == "blocked":
         write_audit_fire_and_forget(AuditEntry(
+            tenant_id=tenant_id,
             agent_id=agent.id,
             agent_name=agent.name,
             task_id=task_id,
@@ -273,6 +262,8 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
             input_hash=input_hash,
             model_used=agent.model_id,
             block_reason=decision.reason,
+            block_reason_code=decision.reason_code,
+            block_reason_params=decision.reason_params,
             data_sensitivity=sensitivity.level,
             provider_id=None,
         ))
@@ -291,6 +282,7 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
         oversight_id = await push_oversight_task(agent, clean_messages, task_id, input_hash)
 
         write_audit_fire_and_forget(AuditEntry(
+            tenant_id=tenant_id,
             agent_id=agent.id,
             agent_name=agent.name,
             task_id=task_id,
@@ -310,10 +302,7 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
         return {
             "status": "awaiting_oversight",
             "oversight_id": oversight_id,
-            "message": (
-                f"Wywołanie agenta '{agent.name}' zostało wstrzymane — "
-                "wymagane zatwierdzenie przez recenzenta zgodnie z EU AI Act."
-            ),
+            "message": t("oversight.awaitingMessage", agent=agent.name),
             "call_id": call_id,
             "task_id": task_id,
         }
@@ -321,18 +310,14 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
     # ── 3.6. Wybór providera (tylko dla zapytań "allowed") ──────────────────────
     selected_provider: Optional[ProviderRecord] = None
     if not settings.demo_mode:
-        selected_provider = await select_provider(agent.model_id, sensitivity.level)
+        selected_provider = await select_provider(tenant_id, agent.model_id, sensitivity.level)
         if selected_provider is None:
-            reason = (
-                f"Brak providera zdolnego obsłużyć model '{agent.model_id}' agenta przy "
-                f"wymaganym poziomie wrażliwości danych '{sensitivity.level}'. "
-                "Albo żaden aktywny provider nie obsługuje tego poziomu wrażliwości, "
-                "albo żaden z kwalifikujących się providerów nie ma tego modelu na liście "
-                "(gateway celowo nie podmienia po cichu na inny model). "
-                "Skontaktuj się z administratorem — aktywuj providera obsługującego ten "
-                "model i poziom wrażliwości, albo obniż wrażliwość danych w zapytaniu."
+            block = _block_reason(
+                "no_eligible_provider", model=agent.model_id, sensitivity=sensitivity.level,
             )
+            reason = block["block_reason"]
             write_audit_fire_and_forget(AuditEntry(
+                tenant_id=tenant_id,
                 agent_id=agent.id,
                 agent_name=agent.name,
                 task_id=task_id,
@@ -343,7 +328,7 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
                 pii_count=pii_result.pii_count,
                 input_hash=input_hash,
                 model_used=agent.model_id,
-                block_reason=reason,
+                **block,
                 data_sensitivity=sensitivity.level,
             ))
             raise HTTPException(
@@ -372,6 +357,7 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
         output_hash = _hash(response_text)
 
         write_audit_fire_and_forget(AuditEntry(
+            tenant_id=tenant_id,
             agent_id=agent.id,
             agent_name=agent.name,
             task_id=task_id,
@@ -414,9 +400,13 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
     if selected_provider.base_url:
         extra_kwargs["api_base"] = selected_provider.base_url
 
-    api_key = selected_provider.api_key_from_env()
+    api_key = selected_provider.resolve_api_key()
     if api_key:
         extra_kwargs["api_key"] = api_key
+    # Domyślny klucz platformy tylko dla oficjalnego endpointu dostawcy — nigdy
+    # dla providera z własnym base_url (klucz trafiłby na dowolny serwer).
+    elif selected_provider.base_url:
+        pass
     elif selected_provider.provider_type == "anthropic" and settings.anthropic_api_key:
         extra_kwargs["api_key"] = settings.anthropic_api_key
     elif selected_provider.provider_type == "deepseek" and settings.deepseek_api_key:
@@ -433,6 +423,7 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
     except Exception as exc:
         logger.exception("Błąd wywołania LLM dla agenta %s (provider: %s)", agent.name, selected_provider.name)
         write_audit_fire_and_forget(AuditEntry(
+            tenant_id=tenant_id,
             agent_id=agent.id,
             agent_name=agent.name,
             task_id=task_id,
@@ -443,11 +434,11 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
             pii_count=pii_result.pii_count,
             input_hash=input_hash,
             model_used=model_to_call,
-            block_reason=f"Błąd modelu językowego ({selected_provider.name}): {exc}",
+            **_block_reason("llm_error", provider=selected_provider.name, error=str(exc)),
             data_sensitivity=sensitivity.level,
             provider_id=selected_provider.id,
         ))
-        raise HTTPException(status_code=502, detail=f"Błąd modelu językowego: {exc}") from exc
+        raise HTTPException(status_code=502, detail=t("errors.llmError", error=exc)) from exc
 
     latency_ms = int((time.monotonic() - t0) * 1000)
 
@@ -469,6 +460,7 @@ async def handle_chat_completion(request: Request) -> dict[str, Any]:
 
     # ── 6. Dziennik audytowy ────────────────────────────────────────────────────
     write_audit_fire_and_forget(AuditEntry(
+        tenant_id=tenant_id,
         agent_id=agent.id,
         agent_name=agent.name,
         task_id=task_id,

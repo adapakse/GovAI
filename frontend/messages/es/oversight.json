@@ -1,0 +1,20 @@
+{
+  "allApproved": "Todo aprobado",
+  "empty": {
+    "subtitle": "Se han resuelto todas las decisiones.",
+    "title": "No hay tareas pendientes"
+  },
+  "header": {
+    "subtitle": "Las decisiones de los agentes de alto riesgo requieren aprobación · actualización cada 10 s",
+    "title": "Supervisión humana"
+  },
+  "info": {
+    "text": "Se mide el tiempo de revisión de cada tarea. Una aprobación en menos de 10 segundos desde la apertura de la ficha genera una alerta y queda anotada en el registro de auditoría (art. 14 del EU AI Act).",
+    "title": "Protección frente a la supervisión aparente:"
+  },
+  "loading": "Cargando tareas de supervisión...",
+  "pendingCount": "{count} pendientes",
+  "refresh": "Actualizar",
+  "review": "Revisar",
+  "timer": "{mins}m {secs}s"
+}

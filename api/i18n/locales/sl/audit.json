@@ -1,0 +1,5 @@
+{
+  "errors": {
+    "call_not_found": "Klica '{call_id}' ni bilo mogoče najti v dnevniku"
+  }
+}

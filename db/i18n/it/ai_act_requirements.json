@@ -1,0 +1,74 @@
+{
+  "high|Art. 10": {
+    "text": "I set di dati di addestramento, convalida e prova devono soddisfare criteri di qualità: pertinenza, rappresentatività, assenza di errori e completezza. È richiesta la documentazione dei set di dati.",
+    "title": "Dati e governance dei dati"
+  },
+  "high|Art. 11": {
+    "text": "Prima della messa in servizio è richiesta una documentazione tecnica completa conforme all'allegato IV dell'EU AI Act. Il documento deve essere tenuto aggiornato per l'intero ciclo di vita del sistema.",
+    "title": "Documentazione tecnica"
+  },
+  "high|Art. 13": {
+    "text": "Il sistema di IA deve garantire la trasparenza del funzionamento. Gli utenti devono essere informati dell'interazione con un sistema di IA e comprenderne il funzionamento nella misura necessaria alla sorveglianza.",
+    "title": "Trasparenza e fornitura di informazioni"
+  },
+  "high|Art. 14": {
+    "text": "Misure attuate che consentono alle persone fisiche di comprendere, monitorare e intervenire sul funzionamento del sistema di IA. Possibilità di arrestare o annullare qualsiasi decisione del sistema.",
+    "title": "Sorveglianza umana"
+  },
+  "high|Art. 15": {
+    "text": "Il sistema deve conseguire un adeguato livello di accuratezza per l'intero ciclo di vita. Sono richiesti test di robustezza rispetto a errori, attacchi e dati di input imprevisti.",
+    "title": "Accuratezza e robustezza"
+  },
+  "high|Art. 17": {
+    "text": "Il fornitore istituisce un sistema di gestione della qualità che comprende politiche, procedure e istruzioni volte a garantire la conformità all'EU AI Act.",
+    "title": "Sistema di gestione della qualità"
+  },
+  "high|Art. 26 ust. 2": {
+    "text": "Il deployer di un sistema ad alto rischio deve affidare la sorveglianza umana a persone fisiche che dispongono della competenza, della formazione, dell'autorità e del sostegno necessari.",
+    "title": "Sorveglianza umana affidata a una persona competente"
+  },
+  "high|Art. 26 ust. 5": {
+    "text": "Il deployer deve monitorare il funzionamento del sistema sulla base delle istruzioni per l'uso e informare il fornitore e, se del caso, l'autorità di vigilanza del mercato di un rischio individuato o di un incidente grave.",
+    "title": "Monitoraggio del funzionamento e informazione del fornitore"
+  },
+  "high|Art. 26 ust. 6": {
+    "text": "Il deployer deve conservare i log generati automaticamente dal sistema per un periodo adeguato alla finalità prevista del sistema, pari ad almeno sei mesi, salvo diversamente disposto dal diritto dell'Unione o nazionale.",
+    "title": "Conservazione dei log generati automaticamente"
+  },
+  "high|Art. 26 ust. 8": {
+    "text": "Il deployer che è un'autorità pubblica deve rispettare gli obblighi di registrazione di cui all'art. 49 e, prima di mettere in uso il sistema, verificare che sia registrato nella banca dati dell'UE.",
+    "title": "Verifica della registrazione nella banca dati dell'UE"
+  },
+  "high|Art. 27": {
+    "text": "Prima di utilizzare un sistema ad alto rischio di cui all'allegato III, punto 5, lettere b) e c) (valutazione dell'affidabilità creditizia, rischio assicurativo), o se si tratta di un organismo di diritto pubblico o di un ente privato che fornisce servizi pubblici, il deployer deve effettuare una valutazione d'impatto sui diritti fondamentali: descrizione dei processi di utilizzo, periodo e frequenza di utilizzo, categorie di persone interessate, rischi di danno per tali persone, nonché misure di sorveglianza umana e meccanismi di reclamo.",
+    "title": "Valutazione d'impatto sui diritti fondamentali (FRIA)"
+  },
+  "high|Art. 43": {
+    "text": "I sistemi ad alto rischio di cui all'allegato III richiedono una valutazione della conformità (controllo interno o tramite organismo notificato) prima dell'immissione sul mercato o della messa in servizio.",
+    "title": "Valutazione della conformità"
+  },
+  "high|Art. 49": {
+    "text": "I sistemi ad alto rischio devono essere registrati nella banca dati dell'UE prima dell'immissione sul mercato o della messa in servizio.",
+    "title": "Registrazione nella banca dati dell'UE"
+  },
+  "high|Art. 9": {
+    "text": "Un agente ad alto rischio richiede un sistema di gestione dei rischi documentato per l'intero ciclo di vita. Sono richieste l'identificazione, l'analisi e la valutazione dei rischi e l'adozione di misure di gestione.",
+    "title": "Sistema di gestione dei rischi"
+  },
+  "limited|Art. 50 ust. 1": {
+    "text": "I sistemi destinati a interagire con persone fisiche devono informare l'utente in modo chiaro, distinguibile e tempestivo della natura automatizzata del sistema, a meno che ciò non risulti evidente.",
+    "title": "Obbligo di informazione sull'IA"
+  },
+  "limited|Art. 50 ust. 4": {
+    "text": "I contenuti testuali, audio e video generati dall'IA devono essere contrassegnati in un formato leggibile meccanicamente come generati dall'IA.",
+    "title": "Marcatura dei contenuti generati dall'IA"
+  },
+  "minimal|Preambuła 46": {
+    "text": "Nessun requisito giuridico obbligatorio per i sistemi a rischio minimo. Si raccomanda l'adozione di codici di condotta volontari e dei principi generali per un'IA affidabile (trasparenza, equità, sicurezza).",
+    "title": "Codici di condotta volontari"
+  },
+  "unacceptable|Art. 5": {
+    "text": "Le pratiche di IA elencate all'art. 5 sono tassativamente vietate nell'UE. È necessario verificare che il sistema non rientri in alcuna delle categorie vietate (manipolazione subliminale, social scoring, identificazione biometrica in tempo reale).",
+    "title": "Divieto assoluto di utilizzo"
+  }
+}

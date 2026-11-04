@@ -1,0 +1,34 @@
+{
+  "acting": {
+    "back": "Wróć",
+    "message": "Działasz jako administrator platformy w organizacji <b>{tenant}</b>"
+  },
+  "logout": "Wyloguj",
+  "meta": {
+    "description": "Zgodność z EU AI Act | Bramka Bezpieczeństwa | Nadzór Człowieka",
+    "title": "GovAI — Platforma Zarządzania Agentami AI"
+  },
+  "nav": {
+    "admin": "Admin",
+    "agents": "Agenci",
+    "apiKeys": "Klucze API",
+    "audit": "Dziennik",
+    "dashboard": "Pulpit",
+    "demo": "Symulator",
+    "oversight": "Nadzór",
+    "platformAudit": "Dziennik platformy",
+    "policies": "Polityki",
+    "providers": "Providerzy",
+    "reports": "Raporty",
+    "settings": "Parametry",
+    "tenants": "Organizacje",
+    "users": "Użytkownicy"
+  },
+  "roles": {
+    "associate": "Associate",
+    "compliance_officer": "Compliance officer",
+    "it_admin": "Administrator IT",
+    "partner": "Partner",
+    "reviewer": "Recenzent"
+  }
+}

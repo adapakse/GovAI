@@ -1,0 +1,86 @@
+{
+  "aiactTab": {
+    "count": "{count, plural, one {# wymaganie} few {# wymagania} many {# wymagań} other {# wymagania}}",
+    "emptyLevel": "Brak wymagań dla tego poziomu.",
+    "intro": "Wymagania przypisane do poziomów ryzyka. Widoczne w raportach PDF i widoku zgodności agenta. Możesz dodawać własne adnotacje do konkretnych artykułów EU AI Act."
+  },
+  "banner": {
+    "text": "Gateway odświeża reguły z bazy co 60 sekund automatycznie. Po zapisaniu zmiany — nic więcej nie trzeba robić.",
+    "title": "Konfiguracja bez restartu:"
+  },
+  "cancel": "Anuluj",
+  "delete": "Usuń",
+  "edit": "Edytuj",
+  "loading": "Ładowanie...",
+  "newRequirement": {
+    "addButton": "+ Dodaj wymaganie",
+    "article": "Artykuł *",
+    "articlePlaceholder": "np. Art. 9 ust. 2",
+    "deadlineDays": "Termin (dni)",
+    "declKey": "Klucz samo-deklaracji",
+    "declKeyHint": "Klucz samo-deklaracji łączy to wymaganie z polem w zakładce Rejestr agenta. Puste = wymaganie nie do samo-zadeklarowania (np. zakaz z art. 5).",
+    "declKeyPlaceholder": "np. art9_risk_management",
+    "reqText": "Opis wymagania *",
+    "reqTextPlaceholder": "Szczegółowy opis wymagania i sposobu jego spełnienia...",
+    "reqTitle": "Tytuł wymagania *",
+    "reqTitlePlaceholder": "np. Rejestr systemów AI wysokiego ryzyka",
+    "riskLevel": "Poziom ryzyka *",
+    "save": "Zapisz wymaganie",
+    "severity": "Waga domyślna",
+    "sortOrder": "Kolejność",
+    "title": "Nowe wymaganie EU AI Act"
+  },
+  "newRule": {
+    "addButton": "+ Dodaj nową regułę",
+    "code": "Kod reguły",
+    "codePlaceholder": "np. G-003",
+    "defaultReason": "Zablokowane przez regułę {code}",
+    "keywords": "Słowa kluczowe (jedno na linię) *",
+    "keywordsPlaceholder": "eksportuj dane\nexport data\nsend all records",
+    "name": "Nazwa *",
+    "namePlaceholder": "np. Blokada eksportu danych",
+    "priority": "Priorytet (niższy = ważniejszy)",
+    "reason": "Komunikat blokady",
+    "reasonPlaceholder": "Wykryto niedozwoloną operację",
+    "save": "Zapisz regułę",
+    "title": "Nowa reguła blokująca"
+  },
+  "requirement": {
+    "article": "Artykuł",
+    "days": "{count, plural, one {# dzień} few {# dni} many {# dni} other {# dnia}}",
+    "deleteConfirm": "Usunąć wymaganie \"{title}\"?",
+    "noDeclKey": "brak samo-deklaracji",
+    "title": "Tytuł"
+  },
+  "rule": {
+    "activate": "Aktywuj",
+    "addKeyword": "+ Dodaj",
+    "addKeywordPlaceholder": "Dodaj słowo kluczowe...",
+    "deactivate": "Dezaktywuj",
+    "inactive": "NIEAKTYWNA",
+    "keywords": "Słowa kluczowe ({count})",
+    "meta": "Priorytet: {priority} · Zasięg: {level} · v{version}",
+    "noKeywords": "Brak słów kluczowych — reguła nigdy nie aktywuje.",
+    "reason": "Komunikat: „{reason}\"",
+    "unsaved": "Niezapisane zmiany · Gateway zastosuje je w ciągu 60s."
+  },
+  "rulesTab": {
+    "empty": "Brak zdefiniowanych reguł.",
+    "intro": "Reguły blokujące sprawdzane są w kolejności priorytetu (niższy numer = wyższy priorytet). Pierwsze dopasowanie słowa kluczowego aktywuje blokadę przed wywołaniem modelu.",
+    "noResults": "Brak reguł pasujących do „{query}”.",
+    "searchPlaceholder": "Szukaj reguły — nazwa, kod, słowo kluczowe, powód..."
+  },
+  "save": "✓ Zapisz",
+  "saving": "Zapisywanie...",
+  "severity": {
+    "critical": "Krytyczna",
+    "major": "Poważna",
+    "minor": "Drobna"
+  },
+  "subtitle": "Zarządzaj regułami bezpieczeństwa i wymaganiami EU AI Act bez zmian w kodzie. Zmiany reguł aktywne w Gateway w ciągu 60s.",
+  "tabs": {
+    "aiact": "Wymagania EU AI Act",
+    "rules": "Reguły Bezpieczeństwa"
+  },
+  "title": "Polityki i Compliance"
+}

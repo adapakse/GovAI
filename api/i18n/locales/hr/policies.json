@@ -1,0 +1,10 @@
+{
+  "errors": {
+    "agent_policy_requires_agent_id": "Pravilo na razini agenta zahtijeva agent_id",
+    "invalid_level": "Razina mora biti: org, team ili agent",
+    "invalid_rule_type": "Vrsta pravila mora biti: allow, deny ili require_oversight",
+    "keywords_not_list": "Polje 'keywords' mora biti popis",
+    "not_found": "Pravilo '{policy_id}' ne postoji",
+    "team_policy_requires_team": "Pravilo na razini tima zahtijeva polje team"
+  }
+}

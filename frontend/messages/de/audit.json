@@ -1,0 +1,53 @@
+{
+  "count": "{count, plural, one {# Eintrag} other {# Einträge}}",
+  "details": {
+    "blockReason": "Grund der Blockierung",
+    "errorDetails": "Fehlerdetails",
+    "fields": {
+      "agent": "KI-Agent",
+      "callId": "Call ID",
+      "cost": "Kosten",
+      "eventType": "Ereignistyp",
+      "inputHash": "Eingabe-Hash",
+      "latency": "Latenz",
+      "piiCategories": "Kategorien personenbez. Daten",
+      "result": "Ergebnis",
+      "taskId": "Task ID"
+    },
+    "title": "Aufrufdetails"
+  },
+  "filters": {
+    "days": {
+      "1": "Letzter Tag",
+      "7": "Letzte 7 Tage",
+      "30": "Letzte 30 Tage"
+    },
+    "pii": {
+      "all": "Alle (personenbez. Daten)",
+      "with": "Mit erkannten personenbez. Daten",
+      "without": "Ohne personenbez. Daten"
+    },
+    "result": {
+      "all": "Alle Ergebnisse"
+    }
+  },
+  "header": {
+    "subtitle": "Unveränderliche Aufzeichnung aller Aufrufe von KI-Agenten",
+    "title": "Audit-Log"
+  },
+  "table": {
+    "columns": {
+      "agent": "KI-Agent",
+      "details": "Details",
+      "eventType": "Ereignistyp",
+      "latency": "Latenz",
+      "pii": "PII",
+      "result": "Ergebnis",
+      "time": "Zeit"
+    },
+    "empty": "Keine Einträge in diesem Zeitraum",
+    "loading": "Wird geladen...",
+    "piiEntities": "{count, plural, one {# Entität} other {# Entitäten}}",
+    "show": "Anzeigen"
+  }
+}

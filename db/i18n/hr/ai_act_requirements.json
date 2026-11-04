@@ -1,0 +1,74 @@
+{
+  "high|Art. 10": {
+    "text": "Skupovi podataka za treniranje, validaciju i testiranje moraju ispunjavati kriterije kvalitete — relevantnost, reprezentativnost, odsutnost pogrešaka i potpunost. Potrebna je dokumentacija skupova podataka.",
+    "title": "Podaci i upravljanje podacima"
+  },
+  "high|Art. 11": {
+    "text": "Prije stavljanja u upotrebu potrebna je potpuna tehnička dokumentacija u skladu s Prilogom IV. EU AI Acta. Dokumentacija se mora ažurirati tijekom cijelog životnog ciklusa sustava.",
+    "title": "Tehnička dokumentacija"
+  },
+  "high|Art. 13": {
+    "text": "UI sustav mora osigurati operativnu transparentnost. Korisnici moraju biti obaviješteni o interakciji s UI sustavom i razumjeti njegov rad u mjeri potrebnoj za nadzor.",
+    "title": "Transparentnost i pružanje informacija"
+  },
+  "high|Art. 14": {
+    "text": "Uvedene mjere koje čovjeku omogućuju razumijevanje i praćenje rada UI sustava te intervenciju u njegov rad. Mogućnost zaustavljanja ili poništavanja svake odluke sustava.",
+    "title": "Ljudski nadzor"
+  },
+  "high|Art. 15": {
+    "text": "Sustav mora postizati odgovarajuću razinu točnosti tijekom cijelog životnog ciklusa. Potrebna su testiranja otpornosti na pogreške, napade i neočekivane ulazne podatke.",
+    "title": "Točnost i otpornost"
+  },
+  "high|Art. 17": {
+    "text": "Dobavljač uspostavlja sustav upravljanja kvalitetom koji obuhvaća politike, postupke i upute kojima se osigurava usklađenost s EU AI Actom.",
+    "title": "Sustav upravljanja kvalitetom"
+  },
+  "high|Art. 26 ust. 2": {
+    "text": "Subjekt koji uvodi visokorizični UI sustav mora ljudski nadzor povjeriti fizičkim osobama koje imaju potrebne kompetencije, osposobljenost i ovlasti te potrebnu potporu za njegovo provođenje.",
+    "title": "Ljudski nadzor povjeren kompetentnoj osobi"
+  },
+  "high|Art. 26 ust. 5": {
+    "text": "Subjekt koji uvodi sustav mora pratiti rad sustava u skladu s uputama za upotrebu te obavijestiti dobavljača i — ako je primjenjivo — tijelo za nadzor tržišta o utvrđenom riziku ili ozbiljnom incidentu.",
+    "title": "Praćenje rada i obavješćivanje dobavljača"
+  },
+  "high|Art. 26 ust. 6": {
+    "text": "Subjekt koji uvodi sustav mora čuvati automatski generirane zapise sustava tijekom razdoblja primjerenog namjeni sustava, a najmanje šest mjeseci, osim ako je pravom Unije ili nacionalnim pravom propisano drukčije.",
+    "title": "Čuvanje automatski generiranih zapisa"
+  },
+  "high|Art. 26 ust. 8": {
+    "text": "Subjekt koji uvodi sustav, a koji je tijelo javne vlasti, mora ispunjavati obveze registracije iz članka 49. te prije stavljanja sustava u upotrebu provjeriti je li sustav registriran u bazi podataka EU-a.",
+    "title": "Provjera registracije u bazi podataka EU-a"
+  },
+  "high|Art. 27": {
+    "text": "Prije uvođenja visokorizičnog UI sustava iz točke 5. podtočaka (b) i (c) Priloga III. (procjena kreditne sposobnosti, rizik u osiguranju) ili ako je riječ o tijelu javnog prava ili privatnom subjektu koji pruža javne usluge, subjekt koji uvodi sustav mora provesti procjenu učinka na temeljna prava: opis postupaka u kojima se sustav upotrebljava, razdoblje i učestalost upotrebe, kategorije pogođenih osoba, rizike od štete za te osobe te mjere ljudskog nadzora i mehanizme pravne zaštite.",
+    "title": "Procjena učinka na temeljna prava (FRIA)"
+  },
+  "high|Art. 43": {
+    "text": "Za visokorizične sustave iz Priloga III. potrebno je prije stavljanja u upotrebu provesti ocjenjivanje sukladnosti (interna kontrola ili uz sudjelovanje prijavljenog tijela).",
+    "title": "Ocjenjivanje sukladnosti"
+  },
+  "high|Art. 49": {
+    "text": "Visokorizični sustavi moraju biti registrirani u bazi podataka EU-a za UI sustave prije stavljanja u upotrebu.",
+    "title": "Registracija u bazi podataka EU-a"
+  },
+  "high|Art. 9": {
+    "text": "Visokorizični agent zahtijeva dokumentirani sustav upravljanja rizikom tijekom cijelog životnog ciklusa. Potrebni su utvrđivanje, analiza i procjena rizika te provedba mjera za njihovo ublažavanje.",
+    "title": "Sustav upravljanja rizikom"
+  },
+  "limited|Art. 50 ust. 1": {
+    "text": "Sustavi koji su u interakciji s ljudima moraju korisnika na jasan, razgovijetan i pravodoban način obavijestiti o automatiziranoj prirodi sustava, osim ako je to očito.",
+    "title": "Obveza obavješćivanja o umjetnoj inteligenciji"
+  },
+  "limited|Art. 50 ust. 4": {
+    "text": "Tekstualni, audio i videosadržaj generiran umjetnom inteligencijom mora biti označen u strojno čitljivom formatu kao umjetno generiran.",
+    "title": "Označavanje sadržaja generiranog umjetnom inteligencijom"
+  },
+  "minimal|Preambuła 46": {
+    "text": "Za sustave minimalnog rizika ne postoje obvezni pravni zahtjevi. Preporučuje se primjena dobrovoljnih kodeksa ponašanja i općih načela pouzdane umjetne inteligencije (transparentnost, pravednost, sigurnost).",
+    "title": "Dobrovoljni kodeksi ponašanja"
+  },
+  "unacceptable|Art. 5": {
+    "text": "Prakse umjetne inteligencije navedene u članku 5. u EU-u su bezuvjetno zabranjene. Potrebno je provjeriti da sustav ne pripada nijednoj od zabranjenih kategorija (subliminalna manipulacija, društveno vrednovanje, biometrijska identifikacija u stvarnom vremenu).",
+    "title": "Bezuvjetna zabrana upotrebe"
+  }
+}

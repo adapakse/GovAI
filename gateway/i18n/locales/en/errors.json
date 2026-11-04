@@ -1,0 +1,19 @@
+{
+  "agentInactive": "Agent '{agent}' has status '{status}' and cannot make calls.",
+  "agentNotRegistered": "Agent '{agent_id}' is not registered in GovAI. Register the agent before using the gateway.",
+  "apiKeyAgentMismatch": "This API key is not assigned to agent '{agent_id}'.",
+  "auth": {
+    "actingNotAllowed": "Acting in the context of another organisation requires super-administrator rights.",
+    "invalidApiKey": "API key invalid or expired",
+    "invalidToken": "Token invalid or expired",
+    "missing": "Not authorised",
+    "missingDetail": "Header Authorization: Bearer <token> or X-API-Key: <key> required",
+    "passwordChangeRequired": "Password change required — set a new password in the GovAI panel before using the gateway.",
+    "tenantInactive": "The organisation is suspended or deleted — access blocked.",
+    "userInactive": "The user account is blocked or does not exist."
+  },
+  "llmError": "Language model error: {error}",
+  "missingAgentId": "Missing X-Agent-ID header",
+  "missingMessages": "No messages in the request",
+  "policiesUnavailable": "The organisation's policies are temporarily unavailable — please try again later."
+}

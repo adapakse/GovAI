@@ -8,6 +8,7 @@ Endpointy publiczne (bez JWT):
 Endpointy wymagające JWT (dowolna rola):
   POST /auth/logout
   GET  /auth/me
+  PUT  /auth/me/locale
 
 Endpointy wymagające roli partner lub it_admin:
   GET    /auth/users
@@ -23,18 +24,25 @@ Endpointy wymagające roli it_admin:
 from __future__ import annotations
 
 import logging
+from contextlib import nullcontext
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from pydantic import BaseModel, field_validator
 
+from database import platform_db, tenant_db
 from dependencies.auth import CurrentUser, get_current_user, require_role
+from i18n import DEFAULT_LOCALE, LOCALES, is_locale, t
+from repositories import agents_repository as agents_repo
 from repositories import auth_repository as auth_repo
+from services import settings_service
+from services.tenant_host import slug_from_host
 from services.auth_service import (
     change_password, create_api_key, create_refresh_token, create_user,
+    find_login_identities, generate_temporary_password, get_identity,
     get_user_by_email, get_user_by_id, list_users, revoke_refresh_token,
-    update_last_login, update_user, verify_api_key, verify_refresh_token,
-    create_access_token,
+    update_last_login, update_user, update_user_locale, verify_api_key,
+    verify_refresh_token, create_access_token,
 )
 
 logger = logging.getLogger(__name__)
@@ -53,7 +61,8 @@ class UserCreate(BaseModel):
     email: str
     full_name: str
     role: str
-    password: str
+    # Brak hasła — generowane hasło tymczasowe (zwracane raz, wymuszona zmiana)
+    password: Optional[str] = None
     department: Optional[str] = None
     phone: Optional[str] = None
 
@@ -62,14 +71,14 @@ class UserCreate(BaseModel):
     def valid_role(cls, v: str) -> str:
         allowed = {"partner", "associate", "compliance_officer", "it_admin", "reviewer"}
         if v not in allowed:
-            raise ValueError(f"Nieprawidłowa rola. Dozwolone: {allowed}")
+            raise ValueError(t("auth.errors.invalid_role", allowed=allowed))
         return v
 
     @field_validator("password")
     @classmethod
-    def password_strength(cls, v: str) -> str:
-        if len(v) < 12:
-            raise ValueError("Hasło musi mieć co najmniej 12 znaków")
+    def password_strength(cls, v: Optional[str]) -> Optional[str]:
+        if v is not None and len(v) < 12:
+            raise ValueError(t("auth.errors.password_too_short", min=12))
         return v
 
 class UserUpdate(BaseModel):
@@ -85,14 +94,14 @@ class UserUpdate(BaseModel):
         if v is not None:
             allowed = {"partner", "associate", "compliance_officer", "it_admin", "reviewer"}
             if v not in allowed:
-                raise ValueError(f"Nieprawidłowa rola. Dozwolone: {allowed}")
+                raise ValueError(t("auth.errors.invalid_role", allowed=allowed))
         return v
 
     @field_validator("status")
     @classmethod
     def valid_status(cls, v: Optional[str]) -> Optional[str]:
         if v is not None and v not in {"active", "suspended", "pending"}:
-            raise ValueError("Nieprawidłowy status")
+            raise ValueError(t("auth.errors.invalid_status"))
         return v
 
 class PasswordChange(BaseModel):
@@ -102,7 +111,7 @@ class PasswordChange(BaseModel):
     @classmethod
     def password_strength(cls, v: str) -> str:
         if len(v) < 12:
-            raise ValueError("Hasło musi mieć co najmniej 12 znaków")
+            raise ValueError(t("auth.errors.password_too_short", min=12))
         return v
 
 class ApiKeyCreate(BaseModel):
@@ -110,41 +119,95 @@ class ApiKeyCreate(BaseModel):
     agent_id: Optional[str] = None
     expires_days: Optional[int] = None
 
+class LocaleUpdate(BaseModel):
+    locale: Optional[str] = None      # None = domyślny język instancji
+
+    @field_validator("locale")
+    @classmethod
+    def valid_locale(cls, v: Optional[str]) -> Optional[str]:
+        if v is not None and not is_locale(v):
+            raise ValueError(t("auth.errors.invalid_locale", allowed=", ".join(LOCALES)))
+        return v
+
+
+def _locale_fields(user: dict) -> dict:
+    """Język z profilu + domyślny instancji — frontend wylicza z nich język UI."""
+    return {
+        "locale": user.get("locale"),
+        "default_locale": settings_service.get_str("i18n.default_locale", DEFAULT_LOCALE),
+    }
+
 # ── Endpointy publiczne ────────────────────────────────────────────────────────
+
+def _tenant_fields(identity: dict) -> dict:
+    return {
+        "is_super_admin": bool(identity.get("is_super_admin")),
+        "must_change_password": bool(identity.get("must_change_password")),
+        "tenant": {
+            "id": str(identity["tenant_id"]),
+            "slug": identity["tenant_slug"],
+            "name": identity["tenant_name"],
+            "is_demo": bool(identity["tenant_is_demo"]),
+        },
+    }
+
+
+def _ensure_active(identity: dict) -> None:
+    if identity["tenant_deleted_at"] is not None or identity["tenant_status"] != "active":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=t("auth.errors.tenant_inactive"))
+    if identity["status"] != "active":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail=t("auth.errors.account_status", status=identity["status"]))
+
 
 @router.post("/login")
 async def login(body: LoginRequest, request: Request):
     """
     Logowanie — zwraca access_token (JWT, 60 min) i refresh_token (7 dni).
     Refresh token należy przechowywać bezpiecznie i używać do odnowienia sesji.
-    """
-    user = await get_user_by_email(str(body.email))
 
-    if not user or not user.get("password_hash"):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail="Nieprawidłowy email lub hasło.")
+    Organizacja: na subdomenie {slug}.<domena> — tylko konta tej organizacji;
+    na adresie uniwersalnym (app.<domena>) — konto o danym e-mailu i haśle
+    w dowolnej organizacji (gdy pasuje kilka — trzeba użyć adresu organizacji).
+    """
+    host_slug = slug_from_host(request.headers.get("host"))
+    async with platform_db():
+        tenant_id = None
+        if host_slug:
+            tenant_id = await auth_repo.tenant_id_by_slug(host_slug)
+            if tenant_id is None:
+                raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                                    detail=t("auth.errors.invalid_credentials"))
+        candidates = await find_login_identities(str(body.email), tenant_id)
 
     from services.auth_service import verify_password
-    if not verify_password(body.password, user["password_hash"]):
+    matches = [c for c in candidates
+               if c.get("password_hash") and verify_password(body.password, c["password_hash"])]
+    if not matches:
         logger.warning("Nieudane logowanie dla: %s (IP: %s)", body.email,
                        request.client.host if request.client else "unknown")
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail="Nieprawidłowy email lub hasło.")
+                            detail=t("auth.errors.invalid_credentials"))
+    if len(matches) > 1:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=t("auth.errors.ambiguous_login"))
 
-    if user["status"] != "active":
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
-                            detail=f"Konto jest {user['status']}.")
+    user = matches[0]
+    _ensure_active(user)
 
     user_id = str(user["id"])
-    access_token = create_access_token(user_id, str(body.email), str(user["role"]))
-    refresh_token = await create_refresh_token(
-        user_id,
-        ip_address=request.client.host if request.client else None,
-        user_agent=request.headers.get("User-Agent"),
-    )
-    await update_last_login(user_id)
+    tenant_id = str(user["tenant_id"])
+    access_token = create_access_token(user_id, user["email"], str(user["role"]), tenant_id)
+    async with tenant_db(tenant_id):
+        refresh_token = await create_refresh_token(
+            user_id,
+            tenant_id,
+            ip_address=request.client.host if request.client else None,
+            user_agent=request.headers.get("User-Agent"),
+        )
+        await update_last_login(user_id)
+        locale_fields = _locale_fields(user)
 
-    logger.info("Zalogowano: %s (%s)", body.email, user["role"])
+    logger.info("Zalogowano: %s (%s, organizacja %s)", body.email, user["role"], user["tenant_slug"])
     return {
         "access_token": access_token,
         "refresh_token": refresh_token,
@@ -152,27 +215,33 @@ async def login(body: LoginRequest, request: Request):
         "expires_in": 3600,
         "user": {
             "id": user_id,
-            "email": str(body.email),
+            "email": user["email"],
             "full_name": user["full_name"],
             "role": user["role"],
+            **locale_fields,
+            **_tenant_fields(user),
         },
     }
 
 
 @router.post("/refresh")
-async def refresh(body: RefreshRequest):
+async def refresh(body: RefreshRequest, request: Request):
     """Odnawia access_token na podstawie refresh_token."""
-    token_data = await verify_refresh_token(body.refresh_token)
+    async with platform_db():
+        token_data = await verify_refresh_token(body.refresh_token)
+        user = await get_identity(token_data["user_id"]) if token_data else None
     if not token_data:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail="Refresh token nieprawidłowy lub wygasły.")
-
-    user = await get_user_by_id(token_data["user_id"])
-    if not user or user["status"] != "active":
+                            detail=t("auth.errors.invalid_refresh_token"))
+    if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail="Konto nieaktywne.")
+                            detail=t("auth.errors.account_inactive"))
+    _ensure_active(user)
+    host_slug = slug_from_host(request.headers.get("host"))
+    if host_slug is not None and host_slug != user["tenant_slug"]:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=t("auth.errors.tenant_host_mismatch"))
 
-    access_token = create_access_token(user["id"], user["email"], user["role"])
+    access_token = create_access_token(str(user["id"]), user["email"], user["role"], str(user["tenant_id"]))
     return {"access_token": access_token, "token_type": "bearer", "expires_in": 3600}
 
 # ── Endpointy wymagające JWT ───────────────────────────────────────────────────
@@ -180,16 +249,49 @@ async def refresh(body: RefreshRequest):
 @router.post("/logout")
 async def logout(body: RefreshRequest, user: CurrentUser = Depends(get_current_user)):
     """Unieważnia refresh token (wylogowanie)."""
-    await revoke_refresh_token(body.refresh_token)
+    async with _own_account_scope(user):
+        await revoke_refresh_token(body.refresh_token)
     logger.info("Wylogowano: %s", user.email)
-    return {"message": "Wylogowano pomyślnie."}
+    return {"message": t("auth.messages.logged_out")}
+
+
+def _own_account_scope(user: CurrentUser):
+    """Operacje na własnym koncie. Super-admin w kontekście innej organizacji
+    (acting_as) — jego rekord jest w organizacji macierzystej, niewidocznej
+    w kontekście żądania (RLS), więc tryb platformy."""
+    return platform_db() if user.acting_as else nullcontext()
 
 
 @router.get("/me")
 async def me(user: CurrentUser = Depends(get_current_user)):
     """Dane aktualnie zalogowanego użytkownika."""
-    full = await get_user_by_id(user.id)
-    return full
+    async with _own_account_scope(user):
+        full = await get_user_by_id(user.id)
+    if not full:
+        return full
+    return {
+        **full, **_locale_fields(full),
+        "must_change_password": bool(full.get("must_change_password")),
+        "is_super_admin": user.is_super_admin,
+        "acting_as": user.acting_as,
+        "tenant": {"id": user.tenant_id, "slug": user.tenant_slug, "name": user.tenant_name,
+                   "is_demo": user.tenant_is_demo},
+    }
+
+
+@router.put("/me/locale")
+async def set_my_locale(body: LocaleUpdate, user: CurrentUser = Depends(get_current_user)):
+    """Zmiana języka interfejsu zalogowanego użytkownika (null = domyślny instancji)."""
+    async with _own_account_scope(user):
+        await update_user_locale(user.id, body.locale)
+        full = await get_user_by_id(user.id)
+    return {
+        "id": str(full["id"]),
+        "email": full["email"],
+        "full_name": full["full_name"],
+        "role": full["role"],
+        **_locale_fields(full),
+    }
 
 # ── Zarządzanie użytkownikami (partner / it_admin) ────────────────────────────
 
@@ -209,22 +311,28 @@ async def create_new_user(
     """Tworzy nowe konto użytkownika. Tylko partner lub it_admin."""
     existing = await get_user_by_email(str(body.email))
     if existing:
-        raise HTTPException(status_code=409, detail=f"Użytkownik '{body.email}' już istnieje.")
+        raise HTTPException(status_code=409, detail=t("auth.errors.user_exists", email=body.email))
 
     # it_admin nie może tworzyć kont partner
     if user.role == "it_admin" and body.role == "partner":
-        raise HTTPException(status_code=403, detail="it_admin nie może tworzyć kont partner.")
+        raise HTTPException(status_code=403, detail=t("auth.errors.it_admin_cannot_create_partner"))
 
+    # Bez hasła w żądaniu — hasło tymczasowe (zwracane tylko w tej odpowiedzi),
+    # użytkownik musi je zmienić przy pierwszym logowaniu.
+    temporary_password = None if body.password else generate_temporary_password()
     new_user = await create_user(
         email=str(body.email),
         full_name=body.full_name,
         role=body.role,
-        password=body.password,
+        password=body.password or temporary_password,
         department=body.department,
         phone=body.phone,
         created_by=user.id,
+        must_change_password=temporary_password is not None,
     )
     logger.info("Nowy użytkownik: %s (%s) — utworzył: %s", body.email, body.role, user.email)
+    if temporary_password:
+        new_user["temporary_password"] = temporary_password
     return new_user
 
 
@@ -238,9 +346,9 @@ async def update_existing_user(
     # it_admin nie może edytować partnerów
     target = await get_user_by_id(target_id)
     if not target:
-        raise HTTPException(404, "Użytkownik nie znaleziony.")
+        raise HTTPException(404, t("auth.errors.user_not_found"))
     if user.role == "it_admin" and target.get("role") == "partner":
-        raise HTTPException(403, "it_admin nie może edytować kont partner.")
+        raise HTTPException(403, t("auth.errors.it_admin_cannot_edit_partner"))
 
     updated = await update_user(
         target_id, body.full_name, body.role, body.status, body.department, body.phone,
@@ -257,13 +365,14 @@ async def reset_password(
     """Zmienia hasło użytkownika i unieważnia wszystkie jego sesje."""
     target = await get_user_by_id(target_id)
     if not target:
-        raise HTTPException(404, "Użytkownik nie znaleziony.")
+        raise HTTPException(404, t("auth.errors.user_not_found"))
     if user.role == "it_admin" and target.get("role") == "partner":
-        raise HTTPException(403, "it_admin nie może zmieniać hasła partner.")
+        raise HTTPException(403, t("auth.errors.it_admin_cannot_change_partner_password"))
 
-    await change_password(target_id, body.new_password)
+    # Hasło nadane przez administratora — użytkownik musi je zmienić przy logowaniu
+    await change_password(target_id, body.new_password, must_change=target_id != user.id)
     logger.info("Zmieniono hasło dla %s — zmienił: %s", target["email"], user.email)
-    return {"message": "Hasło zmienione. Wszystkie sesje użytkownika zostały unieważnione."}
+    return {"message": t("auth.messages.password_changed_sessions_revoked")}
 
 
 @router.post("/me/password")
@@ -271,9 +380,10 @@ async def change_own_password(
     body: PasswordChange,
     user: CurrentUser = Depends(get_current_user),
 ):
-    """Zmiana własnego hasła przez zalogowanego użytkownika."""
-    await change_password(user.id, body.new_password)
-    return {"message": "Hasło zmienione. Zaloguj się ponownie."}
+    """Zmiana własnego hasła przez zalogowanego użytkownika (zeruje wymóg zmiany hasła)."""
+    async with _own_account_scope(user):
+        await change_password(user.id, body.new_password, must_change=False)
+    return {"message": t("auth.messages.password_changed_relogin")}
 
 # ── Klucze API (it_admin) ─────────────────────────────────────────────────────
 
@@ -295,6 +405,10 @@ async def new_api_key(
     Tworzy nowy klucz API. Surowy klucz widoczny TYLKO w tej odpowiedzi —
     zapisz go natychmiast, nie jest przechowywany w czytelnej formie.
     """
+    # Klucz obcy api_keys.agent_id nie podlega RLS — bez tej kontroli dałoby się
+    # przypiąć klucz do agenta innej organizacji (RLS ukrywa cudzych agentów).
+    if body.agent_id and not await agents_repo.get_agent_id_only(body.agent_id):
+        raise HTTPException(status_code=404, detail=t("agents.errors.not_found", agent_id=body.agent_id))
     result = await create_api_key(
         name=body.name,
         created_by=user.id,
@@ -313,8 +427,8 @@ async def revoke_api_key(
     """Dezaktywuje klucz API."""
     result = await auth_repo.deactivate_api_key(key_id)
     if result == "UPDATE 0":
-        raise HTTPException(404, "Klucz API nie znaleziony.")
-    return {"message": f"Klucz API {key_id} dezaktywowany."}
+        raise HTTPException(404, t("auth.errors.api_key_not_found"))
+    return {"message": t("auth.messages.api_key_deactivated", key_id=key_id)}
 
 # ── Helper ────────────────────────────────────────────────────────────────────
 

@@ -1,0 +1,5 @@
+{
+  "agentDecision": "El agente '{agent}' está procesando la solicitud y espera la aprobación de un revisor. Contenido de la solicitud (abreviado): {content}...",
+  "awaitingMessage": "La llamada del agente '{agent}' se ha suspendido — se requiere la aprobación de un revisor conforme al EU AI Act.",
+  "decisionType": "Llamada del agente {risk}"
+}

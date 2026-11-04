@@ -3,32 +3,58 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/components/AuthProvider';
+import LanguagePicker from '@/components/LanguagePicker';
+import { isActingAsTenant } from '@/lib/auth';
 
+// label = klucz shell.nav.<label> w messages/<locale>/shell.json
 const NAV = [
-  { href: '/dashboard', label: 'Pulpit',     icon: <DashIcon /> },
-  { href: '/agents',    label: 'Agenci',     icon: <AgentsIcon /> },
-  { href: '/oversight', label: 'Nadzór',     icon: <OversightIcon /> },
-  { href: '/audit',     label: 'Dziennik',   icon: <AuditIcon /> },
-  { href: '/policies',  label: 'Polityki',   icon: <PoliciesIcon /> },
-  { href: '/providers', label: 'Providerzy', icon: <ProvidersIcon /> },
-  { href: '/reports',   label: 'Raporty',    icon: <ReportsIcon /> },
+  { href: '/dashboard', label: 'dashboard', icon: <DashIcon /> },
+  { href: '/agents',    label: 'agents', icon: <AgentsIcon /> },
+  { href: '/oversight', label: 'oversight', icon: <OversightIcon /> },
+  { href: '/audit',     label: 'audit', icon: <AuditIcon /> },
+  { href: '/policies',  label: 'policies', icon: <PoliciesIcon /> },
+  { href: '/providers', label: 'providers', icon: <ProvidersIcon /> },
+  { href: '/reports',   label: 'reports', icon: <ReportsIcon /> },
 ];
 
-const ADMIN_NAV = [
-  { href: '/demo',     label: 'Symulator', icon: <DemoIcon /> },
-  { href: '/settings', label: 'Parametry', icon: <SettingsIcon /> },
+// access: kto widzi pozycję — 'all' (każdy zalogowany, API pilnuje uprawnień),
+// 'orgAdmin' (partner / it_admin), 'superAdmin' (super-admin platformy, nie w trybie
+// działania w cudzej organizacji — wtedy wraca się paskiem u góry).
+type NavAccess = 'all' | 'orgAdmin' | 'superAdmin';
+
+const ADMIN_NAV: { href: string; label: string; icon: React.ReactNode; access: NavAccess }[] = [
+  { href: '/demo',             label: 'demo', icon: <DemoIcon />, access: 'all' },
+  { href: '/settings',         label: 'settings', icon: <SettingsIcon />, access: 'all' },
+  { href: '/users',            label: 'users', icon: <UsersIcon />, access: 'orgAdmin' },
+  { href: '/api-keys',         label: 'apiKeys', icon: <KeyIcon />, access: 'orgAdmin' },
+  { href: '/platform/tenants', label: 'tenants', icon: <TenantsIcon />, access: 'superAdmin' },
+  { href: '/platform/audit',   label: 'platformAudit', icon: <AuditIcon />, access: 'superAdmin' },
 ];
+
+// Strony bez paska bocznego
+const NO_SIDEBAR = ['/login', '/change-password'];
 
 export default function Sidebar() {
   const path = usePathname();
   const [pendingCount, setPendingCount] = useState(0);
   const { user, logout } = useAuth();
+  const t = useTranslations('shell');
+  const isOrgAdmin = user?.role === 'partner' || user?.role === 'it_admin';
+  const isPlatformAdmin = user?.is_super_admin === true && !user?.acting_as && !isActingAsTenant();
+  const adminNav = ADMIN_NAV.filter(({ href, access }) => {
+    // Symulator (/demo) tylko w organizacji demo — API i tak zwraca 403 dla pozostałych
+    if (href === '/demo') return user?.tenant?.is_demo === true;
+    if (access === 'orgAdmin') return isOrgAdmin;
+    if (access === 'superAdmin') return isPlatformAdmin;
+    return true;
+  });
   const isAdminPath = ADMIN_NAV.some(({ href }) => path === href || path.startsWith(href + '/'));
   const [adminOpen, setAdminOpen] = useState(isAdminPath);
 
   useEffect(() => {
-    if (path === '/login') return;
+    if (NO_SIDEBAR.includes(path)) return;
     const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
 
     async function fetchCount() {
@@ -38,7 +64,7 @@ export default function Sidebar() {
         if (!token) return;
         const r = await fetch(`${API}/oversight/pending`, {
           cache: 'no-store',
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${token}`, 'Accept-Language': document.documentElement.lang },
         });
         if (r.ok) {
           const data = await r.json();
@@ -52,7 +78,7 @@ export default function Sidebar() {
     return () => clearInterval(id);
   }, [path]);
 
-  if (path === '/login') return null;
+  if (NO_SIDEBAR.includes(path)) return null;
 
   return (
     <aside className="w-52 bg-navy flex flex-col flex-shrink-0 border-r border-blue/30">
@@ -100,7 +126,7 @@ export default function Sidebar() {
               <span className={`w-4 h-4 flex-shrink-0 ${active ? 'text-teal' : 'text-mgray/70'}`}>
                 {icon}
               </span>
-              <span className="flex-1 font-medium">{label}</span>
+              <span className="flex-1 font-medium">{t(`nav.${label}`)}</span>
               {showBadge && (
                 <span className="text-xs font-bold bg-orange-500 text-white rounded-full w-5 h-5 flex items-center justify-center">
                   {pendingCount > 9 ? '9+' : pendingCount}
@@ -120,12 +146,12 @@ export default function Sidebar() {
           <span className={`w-4 h-4 flex-shrink-0 ${isAdminPath ? 'text-teal' : 'text-mgray/70'}`}>
             <AdminIcon />
           </span>
-          <span className="flex-1 font-medium text-left">Admin</span>
+          <span className="flex-1 font-medium text-left">{t('nav.admin')}</span>
           <span className={`w-3 h-3 flex-shrink-0 transition-transform ${adminOpen ? 'rotate-90' : ''}`}>
             <ChevronIcon />
           </span>
         </button>
-        {adminOpen && ADMIN_NAV.map(({ href, icon, label }) => {
+        {adminOpen && adminNav.map(({ href, icon, label }) => {
           const active = path === href || path.startsWith(href + '/');
           return (
             <Link
@@ -140,7 +166,7 @@ export default function Sidebar() {
               <span className={`w-4 h-4 flex-shrink-0 ${active ? 'text-teal' : 'text-mgray/70'}`}>
                 {icon}
               </span>
-              <span className="flex-1 font-medium">{label}</span>
+              <span className="flex-1 font-medium">{t(`nav.${label}`)}</span>
             </Link>
           );
         })}
@@ -150,15 +176,23 @@ export default function Sidebar() {
       <div className="px-4 py-4 border-t border-blue/30 text-xs text-mgray/60">
         {user && (
           <div className="mb-2.5">
+            {user.tenant?.name && (
+              <div className="text-mgray/50 truncate text-[10px] mb-0.5" title={user.tenant.name}>{user.tenant.name}</div>
+            )}
             <div className="text-white/80 font-medium truncate">{user.full_name}</div>
-            <div className="text-mgray/50 truncate uppercase tracking-wider text-[10px] mt-0.5">{user.role}</div>
+            <div className="text-mgray/50 truncate uppercase tracking-wider text-[10px] mt-0.5">{t(`roles.${user.role}`)}</div>
+          </div>
+        )}
+        {user && (
+          <div className="mb-2.5">
+            <LanguagePicker mode="user" />
           </div>
         )}
         <button
           onClick={logout}
           className="text-mgray/50 hover:text-govred transition-colors"
         >
-          Wyloguj
+          {t('logout')}
         </button>
         <div className="mt-1 text-[10px] text-mgray/30">EU AI Act 2024/1689</div>
       </div>
@@ -257,6 +291,35 @@ function ChevronIcon() {
   return (
     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="M6 3l5 5-5 5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+function UsersIcon() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <circle cx="6" cy="5" r="2.5"/>
+      <path d="M1.5 14c0-2.5 2-4.5 4.5-4.5s4.5 2 4.5 4.5" strokeLinecap="round"/>
+      <path d="M10.5 3a2.5 2.5 0 010 4.5M12.5 9.8c1.2.6 2 1.9 2 3.4" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+function KeyIcon() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <circle cx="5" cy="10.5" r="3"/>
+      <path d="M7.2 8.3L14 1.5M11.5 4l2 2M9.5 6l1.5 1.5" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+function TenantsIcon() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <rect x="1.5" y="5" width="6" height="9.5" rx="0.5"/>
+      <rect x="8.5" y="1.5" width="6" height="13" rx="0.5"/>
+      <path d="M3.5 8h2M3.5 11h2M10.5 4.5h2M10.5 7.5h2M10.5 10.5h2" strokeLinecap="round"/>
     </svg>
   );
 }

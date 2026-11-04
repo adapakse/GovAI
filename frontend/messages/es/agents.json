@@ -1,0 +1,268 @@
+{
+  "detail": {
+    "breadcrumb": "Agentes",
+    "compliance": {
+      "automatic": "automático",
+      "complianceOfficer": "Responsable de cumplimiento",
+      "dataRetention": "Conservación de datos",
+      "dataRetentionValue": "{days, plural, one {# día} other {# días}}",
+      "deadline": "Plazo: {days, plural, one {# día} other {# días}}",
+      "fillDeclaration": "→ Complete la autodeclaración en la pestaña Registro.",
+      "geographicScope": "Ámbito geográfico",
+      "immediately": "INMEDIATAMENTE",
+      "integrationPoints": "Puntos de integración",
+      "intendedPurpose": "Finalidad prevista y alcance del sistema",
+      "intendedUsers": "Usuarios previstos",
+      "missingLegalBasis": "sin base jurídica",
+      "notFilled": "Sin completar — véase la pestaña Registro",
+      "note": "Nota: {notes}",
+      "personalData": "Tratamiento de datos personales",
+      "personalDataNo": "No",
+      "personalDataYes": "Sí — ",
+      "requirementsHeading": "Requisitos del EU AI Act ({met}/{total} cumplidos)",
+      "systemProfile": "Perfil del sistema",
+      "technicalContact": "Contacto técnico"
+    },
+    "generateReport": "Generar informe PDF →",
+    "loading": "Cargando...",
+    "oversightRequired": "Supervisión<br></br>requerida",
+    "profile": {
+      "budgetPerMonth": "Presupuesto / mes",
+      "budgetValue": "{amount} EUR",
+      "lastReview": "Última revisión: ",
+      "legalBasis": "Base jurídica: ",
+      "model": "Modelo",
+      "nextReview": "Próxima: ",
+      "owner": "Responsable",
+      "team": "Equipo"
+    },
+    "stats": {
+      "avgLatency": "Latencia media",
+      "blocked": "Bloqueos",
+      "calls": "Llamadas",
+      "oversight": "Para supervisión",
+      "pii": "Con datos personales",
+      "piiDetected": "Datos personales detectados",
+      "totalCost": "Coste total"
+    },
+    "tabs": {
+      "compliance": "Cumplimiento del AI Act",
+      "registry": "Registro",
+      "registryWithCount": "Registro ({count} declarados)",
+      "stats": "Estadísticas de 30 días"
+    }
+  },
+  "form": {
+    "cancel": "Cancelar",
+    "done": "Listo",
+    "errors": {
+      "register": "Error de registro"
+    },
+    "fields": {
+      "description": "Descripción del agente (utilizada para la clasificación conforme al AI Act)",
+      "descriptionPlaceholder": "Describa con precisión qué hace el agente, qué decisiones toma y qué datos trata...",
+      "model": "Modelo",
+      "monthlyBudget": "Presupuesto mensual (EUR)",
+      "name": "Nombre del agente",
+      "namePlaceholder": "p. ej., Agente de Atención al Cliente",
+      "owner": "Responsable",
+      "ownerEmail": "Correo electrónico del responsable",
+      "ownerEmailPlaceholder": "j.kowalski@firma.pl",
+      "ownerPlaceholder": "Juan García",
+      "team": "Equipo",
+      "teamPlaceholder": "p. ej., Atención al Cliente"
+    },
+    "result": {
+      "annexIIICategory": "Categoría del anexo III:",
+      "no": "NO",
+      "oversightRequired": "Supervisión requerida:",
+      "riskLevel": "Nivel de riesgo:",
+      "yes": "SÍ"
+    },
+    "submit": "Registrar + Clasificar",
+    "submitting": "Clasificando...",
+    "subtitle": "Claude clasificará automáticamente el riesgo conforme al AI Act",
+    "success": "¡Agente registrado correctamente!",
+    "title": "Registro de agente de IA"
+  },
+  "list": {
+    "actions": {
+      "activate": "Activar",
+      "details": "Detalles",
+      "suspend": "Suspender"
+    },
+    "annexIII": "Anexo III: {category}",
+    "columns": {
+      "actions": "Acciones",
+      "model": "Modelo",
+      "name": "Nombre",
+      "oversight": "Supervisión",
+      "owner": "Responsable",
+      "risk": "Riesgo",
+      "status": "Estado"
+    },
+    "count": "{count, plural, one {# agente} other {# agentes}}",
+    "countFiltered": "{shown} de {total} agentes",
+    "empty": "No hay agentes",
+    "filters": {
+      "allStatuses": "Todos los estados"
+    },
+    "loading": "Cargando...",
+    "noMatches": "No hay agentes que coincidan con «{query}»",
+    "oversightRequired": "● Requerida",
+    "registerButton": "+ Registrar agente",
+    "searchPlaceholder": "Buscar — nombre, modelo, proveedor, responsable, equipo...",
+    "title": "Registro de agentes"
+  },
+  "options": {
+    "autoCheck": {
+      "art14_human_oversight": "verificado a partir del campo «Requiere supervisión»",
+      "art26_2_human_oversight": "verificado a partir del campo «Requiere supervisión»",
+      "art26_6_log_retention": "garantía arquitectónica — registro de auditoría sin mecanismo de borrado"
+    },
+    "declStatus": {
+      "na": "N/A — no aplicable",
+      "no": "✗ No — carencia",
+      "none": "— sin evaluar —",
+      "partial": "◑ Parcialmente",
+      "yes": "✓ Sí — cumplido"
+    },
+    "gdprBasis": {
+      "consent": "Consentimiento del interesado (art. 6, apartado 1, letra a)",
+      "contract": "Ejecución de un contrato (art. 6, apartado 1, letra b)",
+      "legal_obligation": "Obligación legal (art. 6, apartado 1, letra c)",
+      "legitimate_interest": "Interés legítimo (letra f)",
+      "public_task": "Misión de interés público (art. 6, apartado 1, letra e)",
+      "vital_interests": "Protección de intereses vitales (letra d)"
+    },
+    "requirementStatus": {
+      "na": "No aplicable",
+      "no": "Carencia",
+      "partial": "Parcialmente",
+      "undeclared": "Sin evaluar",
+      "yes": "Cumplido"
+    },
+    "riskFilter": {
+      "all": "Todos los niveles de riesgo",
+      "high": "Riesgo alto",
+      "limited": "Riesgo limitado",
+      "minimal": "Riesgo mínimo",
+      "unacceptable": "Riesgo inaceptable"
+    },
+    "severity": {
+      "critical": "Crítica",
+      "major": "Grave",
+      "minor": "Leve"
+    }
+  },
+  "registry": {
+    "autoStatusGap": "✗ Carencia",
+    "autoStatusMet": "✓ Cumplido",
+    "automatic": "automático",
+    "declarationsIntro": "Evaluación de cada requisito por la persona responsable — visible en los informes PDF y en la evaluación de la conformidad. La lista procede del catálogo de requisitos del EU AI Act (Políticas → Requisitos del EU AI Act) para el nivel de riesgo «{risk}».",
+    "fields": {
+      "complianceOfficer": "Responsable de cumplimiento",
+      "costAlertThreshold": "Umbral de alerta presupuestaria (EUR)",
+      "costAlertThresholdPlaceholder": "p. ej., 160 = alerta al 80 %",
+      "dataRetentionDays": "Conservación de datos (días)",
+      "dataRetentionDaysPlaceholder": "p. ej., 365",
+      "gdprLegalBasis": "Base jurídica según el RGPD",
+      "geographicScope": "Ámbito geográfico",
+      "geographicScopePlaceholder": "p. ej., PL, UE",
+      "inputModalities": "Modalidades de entrada (lista)",
+      "integrationPoints": "Puntos de integración (uno por línea)",
+      "integrationPointsPlaceholder": "Core Banking System (CBS)\nCRM Salesforce\nBase de datos BIK",
+      "intendedPurpose": "Finalidad prevista y alcance del sistema (intended purpose)",
+      "intendedPurposePlaceholder": "Breve descripción de para qué sirve el sistema y en qué contexto se utiliza...",
+      "intendedUsers": "Usuarios previstos",
+      "intendedUsersPlaceholder": "p. ej., analistas de riesgos crediticios, personal de RR. HH.",
+      "lastReviewedAt": "Última revisión de cumplimiento",
+      "modelVersion": "Versión del modelo",
+      "modelVersionPlaceholder": "p. ej., claude-haiku-4-5-20251001",
+      "monthlyBudget": "Presupuesto mensual (EUR)",
+      "nextReviewDate": "Próxima revisión prevista",
+      "outputModalities": "Modalidades de salida (lista)",
+      "processesPersonalData": "El sistema trata datos personales",
+      "selectPlaceholder": "— seleccione —",
+      "technicalContact": "Contacto técnico",
+      "version": "Versión del sistema"
+    },
+    "lastUpdated": "Última actualización: {date}",
+    "loadingRequirements": "Cargando requisitos...",
+    "noRequirements": "No hay requisitos definidos en el catálogo para el nivel de riesgo «{risk}».",
+    "notSelfDeclarable": "No admite autodeclaración — requiere subsanar realmente el problema.",
+    "notePlaceholder": "Nota (opcional) — p. ej., «Documentación en Confluence, espacio AI-GOV»",
+    "save": "Guardar registro",
+    "saved": "✓ Guardado correctamente",
+    "saving": "Guardando...",
+    "sections": {
+      "contactsBudget": "Contactos y presupuesto",
+      "declarations": "Declaraciones de conformidad con el EU AI Act",
+      "personalData": "Datos personales y RGPD",
+      "technical": "Datos técnicos",
+      "versionReviews": "Versión y revisiones"
+    }
+  },
+  "report": {
+    "annexIII": "Anexo III: {category}",
+    "backToAgent": "← Volver al agente",
+    "breadcrumbAgents": "Agentes",
+    "breadcrumbReport": "Informe AI Act",
+    "columns": {
+      "article": "Artículo",
+      "deadline": "Plazo",
+      "requirement": "Requisito",
+      "severity": "Gravedad"
+    },
+    "deadlineDays": "{days, plural, one {# día} other {# días}}",
+    "downloadPdf": "Descargar PDF",
+    "error": "Error al generar el informe: {error}",
+    "errors": {
+      "sessionExpired": "La sesión ha caducado"
+    },
+    "footer": "Informe generado por GovAI v0.2.0 · EU AI Act (Reglamento (UE) 2024/1689) · Documento de carácter informativo. No constituye asesoramiento jurídico.",
+    "generatingPdf": "Generando PDF...",
+    "header": "GovAI · Informe de conformidad con el EU AI Act · Reglamento (UE) 2024/1689",
+    "immediately": "INMEDIATAMENTE",
+    "loading": "Generando el informe de conformidad con el AI Act...",
+    "meta": {
+      "generatedAt": "Generado: ",
+      "model": "Modelo: ",
+      "owner": "Responsable: ",
+      "team": "Equipo: "
+    },
+    "noGaps": "No se han identificado carencias — requisitos confirmados como cumplidos o no aplicables en las declaraciones de conformidad (pestaña Registro).",
+    "oversightRequired": "◎ Supervisión requerida",
+    "pdfFilename": "informe-ai-act-{id}.pdf",
+    "print": "Imprimir",
+    "profile": {
+      "annexIIICategory": "Categoría del anexo III",
+      "annexIIINone": "Ninguna",
+      "budgetPerMonth": "Presupuesto / mes",
+      "budgetValue": "{amount} EUR",
+      "humanOversight": "Supervisión humana",
+      "legalBasis": "Base jurídica y clasificación",
+      "model": "Modelo de IA",
+      "oversightNotRequired": "No requerida",
+      "oversightRequired": "REQUERIDA",
+      "ownerEmail": "Correo electrónico del responsable",
+      "status": "Estado"
+    },
+    "risk": "Riesgo: {risk}",
+    "sections": {
+      "compliance": "4. Evaluación de la conformidad con el EU AI Act",
+      "profile": "2. Perfil del sistema de IA",
+      "stats": "3. Estadísticas operativas (30 días)",
+      "summary": "1. Resumen ejecutivo"
+    },
+    "stats": {
+      "apiCost": "Coste de la API",
+      "avgLatency": "Latencia media",
+      "blocked": "Bloqueos",
+      "blockedValue": "{count} ({rate}%)",
+      "calls": "Llamadas",
+      "oversight": "Para supervisión",
+      "pii": "Con datos personales"
+    }
+  }
+}

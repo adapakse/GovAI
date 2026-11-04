@@ -1,0 +1,5 @@
+{
+  "errors": {
+    "call_not_found": "Appel '{call_id}' introuvable dans le journal"
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "hero": {
+    "lead": "Fristen, Pflichten und Architekturentscheidungen rund um den EU AI Act — geschrieben aus der Perspektive eines Teams, das ihn umsetzen und nicht nur beschreiben muss.",
+    "title": "AI-Act-Konformität verständlich — nicht nur für Juristen."
+  },
+  "list": {
+    "all": "Alle",
+    "empty": "Keine Beiträge in dieser Kategorie.",
+    "sort": "Sortieren:",
+    "sortNewest": "Neueste",
+    "sortOldest": "Älteste",
+    "sortReadTime": "Lesedauer"
+  },
+  "meta": {
+    "description": "Konformität mit dem EU AI Act verständlich erklärt — Fristen, Pflichten und Architekturentscheidungen aus der Perspektive eines Teams, das ihn umsetzen muss.",
+    "ogDescription": "Konformität mit dem EU AI Act verständlich erklärt — Fristen, Pflichten und Architekturentscheidungen aus der Perspektive eines Teams, das ihn umsetzen muss.",
+    "ogTitle": "Blog — GovAI",
+    "title": "Blog — GovAI"
+  },
+  "post": {
+    "back": "← Alle Beiträge",
+    "categories": "Kategorien",
+    "noRelated": "Keine verwandten Beiträge.",
+    "notFound": "Beitrag nicht gefunden.",
+    "readTime": "{minutes} Min. Lesezeit",
+    "related": "Verwandte Beiträge"
+  },
+  "posts": {
+    "checklist-rejestracja-agenta": {
+      "body": [
+        "Bevor ein Agent ins Register aufgenommen wird, sollten einige Fragen beantwortet sein: Wie genau sieht sein Einsatzbereich aus, verarbeitet er personenbezogene Daten, wer ist fachlich verantwortlich für die Entscheidungen, die er trifft oder unterstützt, und wie ist das Vorgehen, wenn sich der Einsatzbereich ändert?",
+        "Der häufigste Grund für eine falsche Einstufung zu Beginn ist ein unterschätzter Einsatzbereich — ein Agent, der „nur zur Unterstützung der Personalabteilung beim Sortieren von Lebensläufen“ eingeführt wurde, wird sehr schnell für die tatsächliche Vorauswahl von Bewerbern genutzt, was die Risikokategorie ändert.",
+        "Eine Regel, die sich bewährt: Stufen Sie danach ein, wofür der Agent in der Organisation tatsächlich verwendet werden kann, nicht nur danach, wofür er konzipiert wurde."
+      ],
+      "category": "Compliance Ops",
+      "excerpt": "Eine kurze, praktische Liste dessen, was vor dem ersten Einsatz geklärt sein sollte — damit die Risikoeinstufung von Anfang an belastbar ist und nicht nur vorläufig.",
+      "tags": [
+        "Onboarding",
+        "Agentenregister",
+        "Checkliste"
+      ],
+      "title": "Checkliste: Was Sie vor der Registrierung Ihres ersten Agenten im Register vorbereiten sollten"
+    },
+    "dedykowana-instancja-vs-multitenant": {
+      "body": [
+        "Viele „AI Governance“-Plattformen sind geteiltes SaaS: eine Datenbank, logisch getrennte Zeilen pro Kunde. Das ist eine gängige, kostengünstige Art, SaaS zu bauen — und in der Regel ausreichend.",
+        "Bei einem Audit-Log für ein reguliertes KI-System ändert sich jedoch die Frage des Prüfers: nicht „Sind die Daten logisch getrennt?“, sondern „Gibt es überhaupt ein Szenario, in dem Daten eines anderen Kunden in unserer Abfrage landen?“. Die Antwort „Nein, weil wir eine eigene Datenbank haben“ lässt sich leichter verteidigen als „Nein, weil wir in allen Abfragen immer korrekt nach tenant_id filtern“.",
+        "Es ist ein Kostenkompromiss — eine dedizierte Instanz pro Kunde ist im Betrieb teurer als eine gemeinsam genutzte Datenbank. Für ein System, dessen einzige Aufgabe es ist, als Konformitätsnachweis zu dienen, haben wir entschieden, dass diese Kosten getragen und nicht wegoptimiert werden müssen."
+      ],
+      "category": "Sicherheit",
+      "excerpt": "Eine gemeinsam genutzte Datenbank ist eine Architekturentscheidung, kein technisches Detail — und bei einem Konformitätsaudit wird sie zu einer Frage, die sich nur schwer gut beantworten lässt.",
+      "tags": [
+        "Architektur",
+        "Datenisolation",
+        "Audit"
+      ],
+      "title": "Warum „Multi-Tenant“ und „AI-Act-konform“ selten zusammenpassen"
+    },
+    "digital-omnibus-grudzien-2027": {
+      "body": [
+        "Am 27. Juli 2026 ist der Digital Omnibus AI (Verordnung (EU) 2026/1744) in Kraft getreten — eine Änderung, die die vollständigen Pflichten für Hochrisiko-KI-Systeme nach Anhang III vom 2. August 2026 auf den 2. Dezember 2027 verschiebt. Für Systeme, die in regulierte Produkte eingebettet sind (Anhang I), verschiebt sich die Frist von August 2027 auf August 2028.",
+        "Es handelt sich nicht um einen allgemeinen Aufschub der gesamten Verordnung. Das Verbot der verbotenen Praktiken nach Art. 5 gilt unverändert seit Februar 2025, die Pflichten für KI-Modelle mit allgemeinem Verwendungszweck (GPAI) seit August 2025 und die Transparenzpflichten nach Art. 50 (Kennzeichnung von KI-Inhalten, Hinweis auf die Interaktion mit einem Chatbot) seit August 2026, also bereits jetzt. Die Änderung hat zudem ein neues Verbot in Art. 5 eingeführt — die Erzeugung intimer Inhalte ohne Einwilligung sowie von Darstellungen sexuellen Kindesmissbrauchs —, das am 2. Dezember 2026 in Kraft tritt.",
+        "Die praktische Schlussfolgerung: 16 zusätzliche Monate sind Zeit, um es gründlich zu machen, nicht um das Thema aufzuschieben. Agentenregister, Risikoeinstufung und Lückenanalyse erfordern denselben Aufwand, unabhängig davon, ob die Frist in einem Jahr oder in einem Monat abläuft — der einzige Unterschied ist, dass heute niemand unter Druck arbeitet."
+      ],
+      "category": "AI Act",
+      "excerpt": "Die Verordnung 2026/1744 hat die vollständigen Pflichten nach Anhang III um 16 Monate verschoben. Das ist kein Grund, das Tempo zu drosseln — sondern ein neues Zeitfenster, das man nutzen sollte, bevor es ein anderer tut.",
+      "tags": [
+        "Digital Omnibus",
+        "Fristen",
+        "Anhang III"
+      ],
+      "title": "Digital Omnibus: Warum die Frist für Hochrisiko-KI-Systeme auf Dezember 2027 verschoben wurde"
+    },
+    "dokumentacja-vs-egzekwowanie": {
+      "body": [
+        "Der Markt für AI-Act-Tools löst überwiegend ein Problem: die Erstellung der nach Anhang IV erforderlichen technischen Dokumentation. Das ist echte und notwendige Arbeit — aber Dokumentation beschreibt, was das System tun soll; sie setzt es nicht in dem Moment durch, in dem das System tatsächlich arbeitet.",
+        "Der Unterschied wird erst im Moment eines Vorfalls sichtbar. Selbst die beste Dokumentation hat keinen Aufruf blockiert, der nicht hätte durchgehen dürfen — sie kann allenfalls als Nachweis dienen, dass Sie wussten, wie korrektes Verhalten aussehen sollte.",
+        "Durchsetzung in Echtzeit und Dokumentation konkurrieren nicht miteinander — sie ergänzen sich. Aber nur eines von beiden steht tatsächlich zwischen dem Agenten und der Antwort."
+      ],
+      "category": "AI Act",
+      "excerpt": "Dokumentationstools beantworten die Frage „Haben wir das schriftlich?“. Sie beantworten nicht die Frage „Hätte dieser Verstoß überhaupt passieren können?“.",
+      "tags": [
+        "Dokumentation",
+        "Durchsetzung",
+        "Audit"
+      ],
+      "title": "Konformitätsdokumentation hält niemanden in Echtzeit auf"
+    },
+    "nadzor-czlowieka-art-14": {
+      "body": [
+        "Art. 14 AI Act verlangt, dass Hochrisiko-KI-Systeme einen integrierten Mechanismus der menschlichen Aufsicht haben. Das Problem: Dieser „Mechanismus“ ist in der Praxis oft eine einzige E-Mail-Adresse, auf die gelegentlich jemand antwortet.",
+        "Prüffähige menschliche Aufsicht hat drei Merkmale: Die Entscheidung wird bis zur Überprüfung angehalten (sie läuft nicht „sicherheitshalber“ parallel weiter), die Überprüfung ist einer konkreten, befugten Person zugewiesen, und das Ergebnis wird zusammen mit der Angabe gespeichert, wer es wann getroffen hat.",
+        "Was ein Werkzeug von einem Verfahren auf dem Papier unterscheidet, ist, ob diese drei Elemente strukturell erzwungen werden — ob der Agent also tatsächlich nicht antworten kann, bis der Prüfer entschieden hat — oder ob sie nur in einem Richtliniendokument beschrieben sind."
+      ],
+      "category": "Compliance Ops",
+      "excerpt": "Menschliche Aufsicht auf dem Papier und menschliche Aufsicht, die einem Audit standhält, sind zwei verschiedene Dinge. Der Unterschied liegt darin, was zwischen „markiert“ und „freigegeben“ geschieht.",
+      "tags": [
+        "Art. 14",
+        "Aufsicht",
+        "Prozess"
+      ],
+      "title": "Artikel 14 in der Praxis: Wann „ein Mensch hat es geprüft“ wirklich etwas bedeutet"
+    },
+    "routing-dostawcow-wedlug-wrazliwosci": {
+      "body": [
+        "Die allermeisten Einsätze von KI-Agenten haben eine einzige, fest im Code hinterlegte Base-URL des Modellanbieters. Das funktioniert gut, bis eine Anfrage mit personenbezogenen Daten, Finanzdaten oder Daten unter Berufsgeheimnis auftaucht — die genau denselben Weg nimmt wie jede andere.",
+        "Routing nach Datensensibilität kehrt diesen Ansatz um: Nicht der Entwickler entscheidet, wohin eine Anfrage geht, sondern eine Richtlinie, die den Inhalt der Anfrage in Echtzeit bewertet — das Vorhandensein personenbezogener Daten, die Kategorie des Agenten, die Risikoeinstufung.",
+        "In der Praxis bedeutet das, dass zwei Aufrufe desselben Agenten innerhalb derselben Minute bei zwei verschiedenen Anbietern landen können — einer bei einem externen Modell, der andere bei einer selbst gehosteten Instanz — ohne jede Änderung am Code des Agenten."
+      ],
+      "category": "Sicherheit",
+      "excerpt": "Der Standard-Modellanbieter ist oft ein historischer Zufall, keine Entscheidung. Wir zeigen, wie ein Routing aussieht, bei dem der Inhalt der Anfrage über das Ziel entscheidet, nicht die Gewohnheit.",
+      "tags": [
+        "Routing",
+        "Datenschutz",
+        "Architektur"
+      ],
+      "title": "Modell-Routing nach Datensensibilität, nicht danach, was in der Konfiguration steht"
+    }
+  }
+}

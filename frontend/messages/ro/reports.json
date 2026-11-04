@@ -1,0 +1,43 @@
+{
+  "alerts": {
+    "budgetExceeded": "⚠ Depășirea bugetului: <b>{name}</b> — {actual} EUR ({pct}% din pragul de {threshold} EUR)",
+    "overdueReview": "⚠ Revizuire de conformitate restantă: <b>{name}</b> (termen: {date})",
+    "title": "ALERTE CARE NECESITĂ ATENȚIE"
+  },
+  "dataFrom": "Date din: {date} ·",
+  "days": "{days} zile",
+  "download": "↓ Descărcați PDF",
+  "error": "Eroare: {error}",
+  "generating": "Se generează...",
+  "header": {
+    "subtitle": "Raport de conformitate EU AI Act la nivelul întregii organizații",
+    "title": "Rapoarte de guvernanță AI"
+  },
+  "kpi": {
+    "agents": "Agenți AI",
+    "agentsSub": "în registru",
+    "blocked": "Blocări",
+    "calls": "Apeluri",
+    "cost": "Cost API",
+    "costSub": "total",
+    "pii": "Incidente cu date personale",
+    "piiSub": "detectate"
+  },
+  "loading": "Se încarcă datele...",
+  "oversight": {
+    "avgReview": "Timp mediu de revizuire: {minutes} min",
+    "title": "Coada de supraveghere (art. 14)",
+    "total": "Total sarcini"
+  },
+  "pdfError": "Eroare la generarea PDF-ului: {error}",
+  "period": "Perioadă:",
+  "piiCategories": "Categorii de date personale",
+  "policyHits": "Activări ale politicilor",
+  "refresh": "actualizați",
+  "riskDistribution": "Distribuția riscului EU AI Act",
+  "sessionExpired": "Sesiunea a expirat",
+  "topAgents": {
+    "blockedCost": "{blocked} blocări · {cost} EUR",
+    "title": "Agenți de top după numărul de apeluri"
+  }
+}

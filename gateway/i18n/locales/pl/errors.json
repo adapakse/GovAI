@@ -1,0 +1,19 @@
+{
+  "agentInactive": "Agent '{agent}' ma status '{status}' i nie może wykonywać wywołań.",
+  "agentNotRegistered": "Agent '{agent_id}' nie jest zarejestrowany w GovAI. Zarejestruj agenta przed użyciem bramki.",
+  "apiKeyAgentMismatch": "Klucz API nie jest przypisany do agenta '{agent_id}'.",
+  "auth": {
+    "actingNotAllowed": "Działanie w kontekście innej organizacji wymaga uprawnień super-administratora.",
+    "invalidApiKey": "Klucz API nieprawidłowy lub wygasły",
+    "invalidToken": "Token nieprawidłowy lub wygasły",
+    "missing": "Brak autoryzacji",
+    "missingDetail": "Wymagany nagłówek Authorization: Bearer <token> lub X-API-Key: <key>",
+    "passwordChangeRequired": "Wymagana zmiana hasła — ustaw nowe hasło w panelu GovAI, zanim skorzystasz z bramki.",
+    "tenantInactive": "Organizacja jest zawieszona lub usunięta — dostęp zablokowany.",
+    "userInactive": "Konto użytkownika jest zablokowane lub nie istnieje."
+  },
+  "llmError": "Błąd modelu językowego: {error}",
+  "missingAgentId": "Brak nagłówka X-Agent-ID",
+  "missingMessages": "Brak wiadomości w żądaniu",
+  "policiesUnavailable": "Polityki organizacji są chwilowo niedostępne — spróbuj ponownie później."
+}

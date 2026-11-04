@@ -1,0 +1,268 @@
+{
+  "detail": {
+    "breadcrumb": "Агенты",
+    "compliance": {
+      "automatic": "автоматически",
+      "complianceOfficer": "Специалист по комплаенсу",
+      "dataRetention": "Срок хранения данных",
+      "dataRetentionValue": "{days, plural, one {# день} few {# дня} many {# дней} other {# дня}}",
+      "deadline": "Срок: {days, plural, one {# день} few {# дня} many {# дней} other {# дня}}",
+      "fillDeclaration": "→ Заполните самодекларацию на вкладке «Реестр».",
+      "geographicScope": "Географический охват",
+      "immediately": "НЕМЕДЛЕННО",
+      "integrationPoints": "Точки интеграции",
+      "intendedPurpose": "Назначение и сфера применения системы",
+      "intendedUsers": "Целевые пользователи",
+      "missingLegalBasis": "правовое основание не указано",
+      "notFilled": "Не заполнено — см. вкладку «Реестр»",
+      "note": "Примечание: {notes}",
+      "personalData": "Обработка персональных данных",
+      "personalDataNo": "Нет",
+      "personalDataYes": "Да — ",
+      "requirementsHeading": "Требования EU AI Act (выполнено {met} из {total})",
+      "systemProfile": "Профиль системы",
+      "technicalContact": "Технический контакт"
+    },
+    "generateReport": "Сформировать отчёт PDF →",
+    "loading": "Загрузка...",
+    "oversightRequired": "Требуется<br></br>надзор",
+    "profile": {
+      "budgetPerMonth": "Бюджет / мес.",
+      "budgetValue": "{amount} EUR",
+      "lastReview": "Последняя проверка: ",
+      "legalBasis": "Правовое основание: ",
+      "model": "Модель",
+      "nextReview": "Следующая: ",
+      "owner": "Владелец",
+      "team": "Команда"
+    },
+    "stats": {
+      "avgLatency": "Ср. задержка",
+      "blocked": "Блокировки",
+      "calls": "Вызовы",
+      "oversight": "На надзор",
+      "pii": "С ПДн",
+      "piiDetected": "Выявлено ПДн",
+      "totalCost": "Общая стоимость"
+    },
+    "tabs": {
+      "compliance": "Соответствие AI Act",
+      "registry": "Реестр",
+      "registryWithCount": "Реестр (задекларировано: {count})",
+      "stats": "Статистика за 30 дней"
+    }
+  },
+  "form": {
+    "cancel": "Отмена",
+    "done": "Готово",
+    "errors": {
+      "register": "Ошибка регистрации"
+    },
+    "fields": {
+      "description": "Описание агента (используется для классификации по AI Act)",
+      "descriptionPlaceholder": "Подробно опишите, что делает агент, какие решения принимает, какие данные обрабатывает...",
+      "model": "Модель",
+      "monthlyBudget": "Ежемесячный бюджет (EUR)",
+      "name": "Название агента",
+      "namePlaceholder": "напр. Агент по обслуживанию клиентов",
+      "owner": "Владелец",
+      "ownerEmail": "Email владельца",
+      "ownerEmailPlaceholder": "j.kowalski@firma.pl",
+      "ownerPlaceholder": "Иван Иванов",
+      "team": "Команда",
+      "teamPlaceholder": "напр. Обслуживание клиентов"
+    },
+    "result": {
+      "annexIIICategory": "Категория Приложения III:",
+      "no": "НЕТ",
+      "oversightRequired": "Требуется надзор:",
+      "riskLevel": "Уровень риска:",
+      "yes": "ДА"
+    },
+    "submit": "Зарегистрировать + Классифицировать",
+    "submitting": "Классификация...",
+    "subtitle": "Claude автоматически классифицирует риск по AI Act",
+    "success": "Агент успешно зарегистрирован!",
+    "title": "Регистрация агента ИИ"
+  },
+  "list": {
+    "actions": {
+      "activate": "Активировать",
+      "details": "Подробнее",
+      "suspend": "Приостановить"
+    },
+    "annexIII": "Приложение III: {category}",
+    "columns": {
+      "actions": "Действия",
+      "model": "Модель",
+      "name": "Название",
+      "oversight": "Надзор",
+      "owner": "Владелец",
+      "risk": "Риск",
+      "status": "Статус"
+    },
+    "count": "{count, plural, one {# агент} few {# агента} many {# агентов} other {# агента}}",
+    "countFiltered": "{shown} из {total} агентов",
+    "empty": "Агенты отсутствуют",
+    "filters": {
+      "allStatuses": "Все статусы"
+    },
+    "loading": "Загрузка...",
+    "noMatches": "Нет агентов, соответствующих запросу «{query}»",
+    "oversightRequired": "● Требуется",
+    "registerButton": "+ Зарегистрировать агента",
+    "searchPlaceholder": "Поиск — название, модель, поставщик, владелец, команда...",
+    "title": "Реестр агентов"
+  },
+  "options": {
+    "autoCheck": {
+      "art14_human_oversight": "проверяется по полю «Требуется надзор»",
+      "art26_2_human_oversight": "проверяется по полю «Требуется надзор»",
+      "art26_6_log_retention": "архитектурная гарантия — журнал аудита без механизма удаления"
+    },
+    "declStatus": {
+      "na": "N/A — не применимо",
+      "no": "✗ Нет — пробел",
+      "none": "— не оценено —",
+      "partial": "◑ Частично",
+      "yes": "✓ Да — выполнено"
+    },
+    "gdprBasis": {
+      "consent": "Согласие субъекта (ст. 6(1)(a))",
+      "contract": "Исполнение договора (ст. 6(1)(b))",
+      "legal_obligation": "Юридическая обязанность (ст. 6(1)(c))",
+      "legitimate_interest": "Законный интерес (пп. f)",
+      "public_task": "Задача в общественных интересах (ст. 6(1)(e))",
+      "vital_interests": "Защита жизненно важных интересов (пп. d)"
+    },
+    "requirementStatus": {
+      "na": "Не применимо",
+      "no": "Пробел",
+      "partial": "Частично",
+      "undeclared": "Не оценено",
+      "yes": "Выполнено"
+    },
+    "riskFilter": {
+      "all": "Все уровни риска",
+      "high": "Высокий риск",
+      "limited": "Ограниченный риск",
+      "minimal": "Минимальный риск",
+      "unacceptable": "Неприемлемый риск"
+    },
+    "severity": {
+      "critical": "Критическая",
+      "major": "Существенная",
+      "minor": "Незначительная"
+    }
+  },
+  "registry": {
+    "autoStatusGap": "✗ Пробел",
+    "autoStatusMet": "✓ Выполнено",
+    "automatic": "автоматически",
+    "declarationsIntro": "Оценка каждого требования ответственным лицом — отображается в отчётах PDF и в оценке соответствия. Список формируется из каталога требований EU AI Act (Политики → Требования EU AI Act) для уровня риска «{risk}».",
+    "fields": {
+      "complianceOfficer": "Специалист по комплаенсу",
+      "costAlertThreshold": "Порог бюджетного оповещения (EUR)",
+      "costAlertThresholdPlaceholder": "напр. 160 = оповещение при 80%",
+      "dataRetentionDays": "Срок хранения данных (дни)",
+      "dataRetentionDaysPlaceholder": "напр. 365",
+      "gdprLegalBasis": "Правовое основание по GDPR",
+      "geographicScope": "Географический охват",
+      "geographicScopePlaceholder": "напр. PL, ЕС",
+      "inputModalities": "Входные модальности (список)",
+      "integrationPoints": "Точки интеграции (каждая с новой строки)",
+      "integrationPointsPlaceholder": "Core Banking System (CBS)\nCRM Salesforce\nБаза BIK",
+      "intendedPurpose": "Назначение и сфера применения системы (intended purpose)",
+      "intendedPurposePlaceholder": "Краткое описание того, для чего предназначена система и в каком контексте она используется...",
+      "intendedUsers": "Целевые пользователи",
+      "intendedUsersPlaceholder": "напр. кредитные аналитики, сотрудники HR",
+      "lastReviewedAt": "Последняя проверка соответствия",
+      "modelVersion": "Версия модели",
+      "modelVersionPlaceholder": "напр. claude-haiku-4-5-20251001",
+      "monthlyBudget": "Ежемесячный бюджет (EUR)",
+      "nextReviewDate": "Плановая следующая проверка",
+      "outputModalities": "Выходные модальности (список)",
+      "processesPersonalData": "Система обрабатывает персональные данные",
+      "selectPlaceholder": "— выберите —",
+      "technicalContact": "Технический контакт",
+      "version": "Версия системы"
+    },
+    "lastUpdated": "Последнее обновление: {date}",
+    "loadingRequirements": "Загрузка требований...",
+    "noRequirements": "В каталоге нет требований для уровня риска «{risk}».",
+    "notSelfDeclarable": "Не подлежит самодекларации — требуется фактическое устранение проблемы.",
+    "notePlaceholder": "Примечание (необязательно) — напр. «Документация в Confluence, пространство AI-GOV»",
+    "save": "Сохранить реестр",
+    "saved": "✓ Успешно сохранено",
+    "saving": "Сохранение...",
+    "sections": {
+      "contactsBudget": "Контакты и бюджет",
+      "declarations": "Декларации соответствия EU AI Act",
+      "personalData": "Персональные данные и GDPR",
+      "technical": "Технические данные",
+      "versionReviews": "Версия и проверки"
+    }
+  },
+  "report": {
+    "annexIII": "Приложение III: {category}",
+    "backToAgent": "← Назад к агенту",
+    "breadcrumbAgents": "Агенты",
+    "breadcrumbReport": "Отчёт по AI Act",
+    "columns": {
+      "article": "Статья",
+      "deadline": "Срок",
+      "requirement": "Требование",
+      "severity": "Значимость"
+    },
+    "deadlineDays": "{days, plural, one {# день} few {# дня} many {# дней} other {# дня}}",
+    "downloadPdf": "Скачать PDF",
+    "error": "Ошибка формирования отчёта: {error}",
+    "errors": {
+      "sessionExpired": "Сеанс истёк"
+    },
+    "footer": "Отчёт сформирован GovAI v0.2.0 · EU AI Act (Регламент (ЕС) 2024/1689) · Документ носит информационный характер и не является юридической консультацией.",
+    "generatingPdf": "Формирование PDF...",
+    "header": "GovAI · Отчёт о соответствии EU AI Act · Регламент (ЕС) 2024/1689",
+    "immediately": "НЕМЕДЛЕННО",
+    "loading": "Формирование отчёта о соответствии AI Act...",
+    "meta": {
+      "generatedAt": "Сформирован: ",
+      "model": "Модель: ",
+      "owner": "Владелец: ",
+      "team": "Команда: "
+    },
+    "noGaps": "Пробелы не выявлены — требования подтверждены как выполненные или неприменимые в декларациях соответствия (вкладка «Реестр»).",
+    "oversightRequired": "◎ Требуется надзор",
+    "pdfFilename": "ai-act-report-{id}.pdf",
+    "print": "Печать",
+    "profile": {
+      "annexIIICategory": "Категория Прил. III",
+      "annexIIINone": "Нет",
+      "budgetPerMonth": "Бюджет / мес.",
+      "budgetValue": "{amount} EUR",
+      "humanOversight": "Человеческий надзор",
+      "legalBasis": "Правовое основание и классификация",
+      "model": "Модель ИИ",
+      "oversightNotRequired": "Не требуется",
+      "oversightRequired": "ТРЕБУЕТСЯ",
+      "ownerEmail": "Email владельца",
+      "status": "Статус"
+    },
+    "risk": "Риск: {risk}",
+    "sections": {
+      "compliance": "4. Оценка соответствия EU AI Act",
+      "profile": "2. Профиль системы ИИ",
+      "stats": "3. Операционная статистика (30 дней)",
+      "summary": "1. Краткое резюме для руководства"
+    },
+    "stats": {
+      "apiCost": "Стоимость API",
+      "avgLatency": "Ср. задержка",
+      "blocked": "Блокировки",
+      "blockedValue": "{count} ({rate}%)",
+      "calls": "Вызовы",
+      "oversight": "На надзор",
+      "pii": "С ПДн"
+    }
+  }
+}

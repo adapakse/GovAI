@@ -1,0 +1,34 @@
+{
+  "acting": {
+    "back": "Nazaj",
+    "message": "Delujete kot skrbnik platforme v organizaciji <b>{tenant}</b>"
+  },
+  "logout": "Odjava",
+  "meta": {
+    "description": "Skladnost z EU AI Act | Varnostni prehod | Človeški nadzor",
+    "title": "GovAI — Platforma za upravljanje agentov UI"
+  },
+  "nav": {
+    "admin": "Skrbništvo",
+    "agents": "Agenti",
+    "apiKeys": "Ključi API",
+    "audit": "Dnevnik",
+    "dashboard": "Nadzorna plošča",
+    "demo": "Simulator",
+    "oversight": "Nadzor",
+    "platformAudit": "Dnevnik platforme",
+    "policies": "Pravilniki",
+    "providers": "Dobavitelji",
+    "reports": "Poročila",
+    "settings": "Parametri",
+    "tenants": "Organizacije",
+    "users": "Uporabniki"
+  },
+  "roles": {
+    "associate": "Sodelavec",
+    "compliance_officer": "Pooblaščenec za skladnost",
+    "it_admin": "Skrbnik IT",
+    "partner": "Partner",
+    "reviewer": "Pregledovalec"
+  }
+}

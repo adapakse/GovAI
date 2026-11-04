@@ -1,0 +1,13 @@
+{
+  "compliance": {
+    "summary_action_required": "Agentul '{name}' necesită acțiuni: {parts}.",
+    "summary_compliant": "Agentul '{name}' îndeplinește cerințele EU AI Act.",
+    "summary_critical_gaps": "{count} lacune critice necesită acțiune imediată",
+    "summary_major_gaps": "{count} lacune majore de remediat"
+  },
+  "errors": {
+    "invalid_status": "Stare nevalidă. Valori permise: {allowed}",
+    "name_empty": "Numele agentului nu poate fi gol",
+    "not_found": "Agentul '{agent_id}' nu există"
+  }
+}

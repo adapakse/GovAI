@@ -1,0 +1,49 @@
+{
+  "changes": {
+    "text": "Podemos actualizar esta política si cambia el funcionamiento del sitio o los requisitos legales. La versión vigente está siempre disponible en esta dirección.",
+    "title": "Cambios en la política"
+  },
+  "controller": {
+    "contact": "Contacto en materia de protección de datos:",
+    "intro": "El responsable del tratamiento de los datos personales tratados en relación con el uso de este sitio es:",
+    "title": "Responsable del tratamiento"
+  },
+  "cookies": {
+    "text": "Este sitio no utiliza cookies de seguimiento ni de publicidad. La única información que se guarda localmente en su navegador es el tema de color elegido (claro/oscuro) y, si lo selecciona en el selector, el idioma del sitio, almacenados en <span class=\"mono\">localStorage</span>; no salen de su dispositivo y no se nos transmiten de ningún modo.",
+    "title": "Cookies y localStorage"
+  },
+  "data": {
+    "form": "Este sitio recoge datos personales únicamente cuando usted mismo/a los facilita a través del formulario de contacto. El formulario solicita: nombre y apellidos, nombre de la empresa, dirección de correo electrónico profesional, opcionalmente un número de teléfono, y el contenido del mensaje.",
+    "noTracking": "No realizamos en este sitio ningún seguimiento ni elaboración de perfiles de los visitantes: no hay herramientas analíticas ni publicitarias.",
+    "title": "Qué datos recogemos"
+  },
+  "meta": {
+    "description": "Política de privacidad del sitio govai.pl: qué datos recogemos a través del formulario de contacto, sobre qué base jurídica y durante cuánto tiempo los conservamos.",
+    "title": "Política de privacidad — GovAI"
+  },
+  "purpose": {
+    "text": "Tratamos los datos del formulario exclusivamente para responder a su consulta y, en su caso, preparar una oferta comercial. La base jurídica es el artículo 6, apartado 1, letra b), del RGPD (aplicación de medidas precontractuales a petición suya) y el artículo 6, apartado 1, letra f), del RGPD (nuestro interés legítimo en mantener correspondencia comercial).",
+    "title": "Finalidad y base jurídica del tratamiento"
+  },
+  "recipients": {
+    "text": "Para gestionar el formulario de contacto utilizamos un proveedor externo, <strong style=\"color:var(--text)\">Web3Forms</strong>, que actúa como intermediario en la transmisión de los mensajes del formulario a nuestro buzón <span class=\"mono\">kontakt@govai.pl</span>. Web3Forms actúa en este caso como encargado del tratamiento por cuenta nuestra. Aparte de este proveedor, no comunicamos los datos del formulario a ninguna otra entidad, salvo que así lo exija la ley.",
+    "title": "A quién comunicamos los datos"
+  },
+  "retention": {
+    "text": "Conservamos los datos del formulario de contacto durante el tiempo necesario para atender la consulta y la correspondencia mantenida y, posteriormente, si no se inicia una colaboración, durante el plazo justificado por posibles reclamaciones. Si desea que suprimamos sus datos antes, escríbanos a <a href=\"mailto:kontakt@govai.pl\">kontakt@govai.pl</a>.",
+    "title": "Plazo de conservación"
+  },
+  "rights": {
+    "access": "Derecho de acceso a sus datos y a obtener una copia de los mismos",
+    "complaint": "Derecho a presentar una reclamación ante el Presidente de la Oficina de Protección de Datos Personales (PUODO)",
+    "erasure": "Derecho de supresión de los datos (\"derecho al olvido\")",
+    "howTo": "Para ejercer los derechos anteriores, escríbanos a <a href=\"mailto:kontakt@govai.pl\">kontakt@govai.pl</a>.",
+    "objection": "Derecho de oposición al tratamiento",
+    "portability": "Derecho a la portabilidad de los datos",
+    "rectification": "Derecho de rectificación (corrección) de los datos",
+    "restriction": "Derecho a la limitación del tratamiento",
+    "title": "Sus derechos"
+  },
+  "scope": "Se aplica al sitio <span class=\"mono\">govai.pl</span> y a <span class=\"mono\">govai.pl/blog.html</span>.",
+  "title": "Política de privacidad"
+}

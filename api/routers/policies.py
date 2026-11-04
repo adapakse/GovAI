@@ -6,6 +6,8 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, field_validator
 
 from dependencies.auth import CurrentUser, get_current_user, require_role
+from i18n import t
+from repositories import agents_repository as agents_repo
 from repositories import policies_repository as policies_repo
 
 logger = logging.getLogger(__name__)
@@ -30,14 +32,14 @@ class PolicyCreate(BaseModel):
     @classmethod
     def valid_level(cls, v: str) -> str:
         if v not in {"org", "team", "agent"}:
-            raise ValueError("Poziom musi być: org, team lub agent")
+            raise ValueError(t("policies.errors.invalid_level"))
         return v
 
     @field_validator("rule_type")
     @classmethod
     def valid_rule_type(cls, v: str) -> str:
         if v not in {"allow", "deny", "require_oversight"}:
-            raise ValueError("Typ reguły musi być: allow, deny lub require_oversight")
+            raise ValueError(t("policies.errors.invalid_rule_type"))
         return v
 
 
@@ -65,9 +67,13 @@ async def list_policies(
 async def create_policy(data: PolicyCreate, user: CurrentUser = Depends(_WRITE_ROLES)):
     """Dodanie nowej polityki."""
     if data.level == "agent" and not data.agent_id:
-        raise HTTPException(400, "Polityka agentowa wymaga agent_id")
+        raise HTTPException(400, t("policies.errors.agent_policy_requires_agent_id"))
     if data.level == "team" and not data.team:
-        raise HTTPException(400, "Polityka zespołu wymaga pola team")
+        raise HTTPException(400, t("policies.errors.team_policy_requires_team"))
+    # Klucz obcy nie podlega RLS — bez tej kontroli dałoby się przypiąć politykę
+    # do agenta innej organizacji (i sprawdzać istnienie cudzych agentów).
+    if data.agent_id and not await agents_repo.get_agent_id_only(data.agent_id):
+        raise HTTPException(404, t("agents.errors.not_found", agent_id=data.agent_id))
 
     policy_id = str(uuid4())
     await policies_repo.insert_policy(
@@ -84,7 +90,7 @@ async def update_policy(policy_id: str, data: PolicyUpdate, user: CurrentUser = 
     """Aktualizacja polityki (wersjonowanie automatyczne)."""
     row = await policies_repo.get_policy_by_id(policy_id)
     if not row:
-        raise HTTPException(404, f"Polityka '{policy_id}' nie istnieje")
+        raise HTTPException(404, t("policies.errors.not_found", policy_id=policy_id))
 
     result = await policies_repo.update_policy(
         policy_id,
@@ -95,7 +101,7 @@ async def update_policy(policy_id: str, data: PolicyUpdate, user: CurrentUser = 
         active=data.active,
     )
     if result is None:
-        raise HTTPException(400, "Brak pól do aktualizacji")
+        raise HTTPException(400, t("common.errors.no_fields_to_update"))
 
     row = await policies_repo.get_policy_by_id(policy_id)
     return _row_to_dict(row)
@@ -109,11 +115,11 @@ async def update_keywords(policy_id: str, body: dict, user: CurrentUser = Depend
     """
     row = await policies_repo.get_policy_condition(policy_id)
     if not row:
-        raise HTTPException(404, f"Polityka '{policy_id}' nie istnieje")
+        raise HTTPException(404, t("policies.errors.not_found", policy_id=policy_id))
 
     keywords = body.get("keywords")
     if not isinstance(keywords, list):
-        raise HTTPException(400, "Pole 'keywords' musi być listą")
+        raise HTTPException(400, t("policies.errors.keywords_not_list"))
 
     existing = dict(row["condition_json"]) if row["condition_json"] else {}
     existing["keywords"] = [str(k).strip() for k in keywords if str(k).strip()]
@@ -128,7 +134,7 @@ async def toggle_policy(policy_id: str, user: CurrentUser = Depends(_WRITE_ROLES
     """Przełącza active ↔ inactive."""
     row = await policies_repo.get_policy_active(policy_id)
     if not row:
-        raise HTTPException(404, f"Polityka '{policy_id}' nie istnieje")
+        raise HTTPException(404, t("policies.errors.not_found", policy_id=policy_id))
     new_active = not row["active"]
     await policies_repo.toggle_policy(policy_id, new_active)
     return {"policy_id": policy_id, "name": row["name"], "active": new_active}
@@ -139,7 +145,7 @@ async def deactivate_policy(policy_id: str, user: CurrentUser = Depends(_WRITE_R
     """Dezaktywacja polityki (soft delete — nie usuwa z historii)."""
     row = await policies_repo.get_policy_active(policy_id)
     if not row:
-        raise HTTPException(404, f"Polityka '{policy_id}' nie istnieje")
+        raise HTTPException(404, t("policies.errors.not_found", policy_id=policy_id))
     await policies_repo.deactivate_policy(policy_id)
     return {"policy_id": policy_id, "name": row["name"], "status": "deactivated"}
 

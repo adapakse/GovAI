@@ -1,0 +1,29 @@
+{
+  "cta": {
+    "bookDemo": "Rezervirajte predstavitev"
+  },
+  "footer": {
+    "home": "Domača stran",
+    "owner": "Lastnik platforme:",
+    "privacy": "Zasebnost",
+    "rights": "© 2026 GovAI. Vse pravice pridržane.",
+    "terms": "Pogoji uporabe"
+  },
+  "lang": {
+    "label": "Jezik",
+    "picker": "Jezik strani"
+  },
+  "nav": {
+    "act": "AI Act",
+    "backHome": "← Domača stran",
+    "blog": "Blog",
+    "faq": "Pogosta vprašanja",
+    "login": "Prijava",
+    "menu": "Meni",
+    "platform": "Platforma",
+    "pricing": "Cenik"
+  },
+  "theme": {
+    "toggle": "Preklopi temo"
+  }
+}

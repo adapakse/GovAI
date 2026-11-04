@@ -1,0 +1,5 @@
+{
+  "agentDecision": "Agent '{agent}' is processing a request and awaiting reviewer approval. Request content (truncated): {content}...",
+  "awaitingMessage": "The call by agent '{agent}' has been put on hold — reviewer approval is required under the EU AI Act.",
+  "decisionType": "Call by {risk} agent"
+}

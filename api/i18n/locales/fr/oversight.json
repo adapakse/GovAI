@@ -1,0 +1,10 @@
+{
+  "alerts": {
+    "rubber_stamp": "Contrôle de pure forme — examen de moins de {seconds} secondes. Événement journalisé."
+  },
+  "errors": {
+    "already_reviewed": "Tâche déjà traitée — statut : {status}",
+    "cannot_start_review": "La tâche a le statut '{status}' — impossible de commencer l’examen",
+    "task_not_found": "La tâche de contrôle n’existe pas"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "errors": {
+    "agent_policy_requires_agent_id": "Политика уровня агента требует agent_id",
+    "invalid_level": "Уровень должен иметь одно из значений: org, team или agent",
+    "invalid_rule_type": "Тип правила должен иметь одно из значений: allow, deny или require_oversight",
+    "keywords_not_list": "Поле 'keywords' должно быть списком",
+    "not_found": "Политика «{policy_id}» не существует",
+    "team_policy_requires_team": "Политика уровня команды требует поля team"
+  }
+}

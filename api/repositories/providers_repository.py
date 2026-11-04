@@ -11,19 +11,36 @@ from __future__ import annotations
 from typing import Any, Optional
 
 from database import get_pool
+from i18n import DEFAULT_LOCALE, get_locale
 
-_SELECT_COLS = """id, name, provider_type, model_ids, base_url, api_key_env,
-                  max_data_sensitivity, active, priority, is_healthy,
-                  last_health_check_at, notes, created_by, created_at, updated_at"""
+
+def _notes_col() -> str:
+    """notes w języku żądania (notes_i18n), fallback na kolumnę bazową (polski).
+    Locale pochodzi z białej listy i18n.LOCALES — bezpieczne do wstawienia w SQL."""
+    loc = get_locale()
+    if loc == DEFAULT_LOCALE:
+        return "notes"
+    return f"COALESCE(NULLIF(notes_i18n ->> '{loc}', ''), notes) AS notes"
+
+
+def _columns() -> str:
+    """Kolumny zwracane do API. is_platform = wiersz platformy (tenant_id NULL),
+    dla organizacji tylko do odczytu. api_key_encrypted nigdy nie wychodzi z bazy."""
+    return f"""id, name, provider_type, model_ids, base_url, api_key_env,
+               max_data_sensitivity, active, priority, is_healthy,
+               last_health_check_at, {_notes_col()}, created_by, created_at, updated_at,
+               (tenant_id IS NULL) AS is_platform,
+               (api_key_encrypted IS NOT NULL) AS has_api_key"""
+
+# PATCH: wartość "usuń klucz" (None = bez zmian)
+CLEAR = object()
 
 
 async def list_providers(active_only: bool = False):
     pool = get_pool()
     where = "WHERE active = true" if active_only else ""
     return await pool.fetch(
-        f"""SELECT id, name, provider_type, model_ids, base_url, api_key_env,
-                   max_data_sensitivity, active, priority, is_healthy,
-                   last_health_check_at, notes, created_by, created_at, updated_at
+        f"""SELECT {_columns()}
             FROM providers
             {where}
             ORDER BY priority ASC, name ASC"""
@@ -33,9 +50,7 @@ async def list_providers(active_only: bool = False):
 async def get_provider(provider_id: str):
     pool = get_pool()
     return await pool.fetchrow(
-        """SELECT id, name, provider_type, model_ids, base_url, api_key_env,
-                  max_data_sensitivity, active, priority, is_healthy,
-                  last_health_check_at, notes, created_by, created_at, updated_at
+        f"""SELECT {_columns()}
            FROM providers WHERE id = $1""",
         provider_id,
     )
@@ -51,16 +66,15 @@ async def insert_provider(
     priority: int,
     notes: Optional[str],
     created_by: Any,
+    api_key_encrypted: Optional[str] = None,
 ):
     pool = get_pool()
     return await pool.fetchrow(
-        """INSERT INTO providers
+        f"""INSERT INTO providers
                (name, provider_type, model_ids, base_url, api_key_env,
-                max_data_sensitivity, priority, notes, created_by)
-           VALUES ($1, $2, $3, $4, $5, $6::data_sensitivity_level, $7, $8, $9)
-           RETURNING id, name, provider_type, model_ids, base_url, api_key_env,
-                     max_data_sensitivity, active, priority, is_healthy,
-                     last_health_check_at, notes, created_by, created_at, updated_at""",
+                max_data_sensitivity, priority, notes, created_by, api_key_encrypted)
+           VALUES ($1, $2, $3, $4, $5, $6::data_sensitivity_level, $7, $8, $9, $10)
+           RETURNING {_columns()}""",
         name,
         provider_type,
         model_ids,
@@ -70,6 +84,7 @@ async def insert_provider(
         priority,
         notes,
         created_by,
+        api_key_encrypted,
     )
 
 
@@ -90,11 +105,20 @@ async def update_provider(
     notes: Optional[str] = None,
     model_ids: Optional[list[str]] = None,
     max_data_sensitivity: Optional[str] = None,
+    api_key_encrypted: Any = None,
 ):
-    """Dynamiczny UPDATE pól opcjonalnych. Zwraca None gdy brak pól do zmiany."""
+    """Dynamiczny UPDATE pól opcjonalnych. Zwraca None gdy brak pól do zmiany.
+    api_key_encrypted: None = bez zmian, CLEAR = usunięcie klucza, str = nowy szyfrogram."""
     pool = get_pool()
     updates, params = [], []
     idx = 1
+
+    if api_key_encrypted is CLEAR:
+        updates.append("api_key_encrypted = NULL")
+    elif api_key_encrypted is not None:
+        updates.append(f"api_key_encrypted = ${idx}")
+        params.append(api_key_encrypted)
+        idx += 1
 
     simple_fields = [
         ("name", name),
@@ -103,8 +127,15 @@ async def update_provider(
         ("priority", priority),
         ("active", active),
         ("is_healthy", is_healthy),
-        ("notes", notes),
     ]
+    # Notatka w języku innym niż polski trafia do notes_i18n[locale] — kolumna
+    # bazowa (polski, źródło tłumaczeń) zostaje nietknięta.
+    if notes is not None and get_locale() != DEFAULT_LOCALE:
+        updates.append(f"notes_i18n = COALESCE(notes_i18n, '{{}}'::jsonb) || ${idx}::jsonb")
+        params.append({get_locale(): notes})
+        idx += 1
+        notes = None
+    simple_fields.append(("notes", notes))
     for field, val in simple_fields:
         if val is not None:
             updates.append(f"{field} = ${idx}")
@@ -129,9 +160,7 @@ async def update_provider(
 
     return await pool.fetchrow(
         f"""UPDATE providers SET {', '.join(updates)} WHERE id = ${idx}
-            RETURNING id, name, provider_type, model_ids, base_url, api_key_env,
-                      max_data_sensitivity, active, priority, is_healthy,
-                      last_health_check_at, notes, created_by, created_at, updated_at""",
+            RETURNING {_columns()}""",
         *params,
     )
 
@@ -149,6 +178,7 @@ async def set_health(provider_id: str, healthy: bool):
         """UPDATE providers
            SET is_healthy = $1, last_health_check_at = NOW(), updated_at = NOW()
            WHERE id = $2
-           RETURNING id, name, is_healthy, last_health_check_at""",
+           RETURNING id, name, is_healthy, last_health_check_at,
+                     (tenant_id IS NULL) AS is_platform""",
         healthy, provider_id,
     )

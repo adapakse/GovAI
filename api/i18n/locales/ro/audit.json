@@ -1,0 +1,5 @@
+{
+  "errors": {
+    "call_not_found": "Apelul '{call_id}' nu a fost găsit în jurnal"
+  }
+}

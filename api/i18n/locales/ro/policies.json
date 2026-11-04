@@ -1,0 +1,10 @@
+{
+  "errors": {
+    "agent_policy_requires_agent_id": "Politica la nivel de agent necesită agent_id",
+    "invalid_level": "Nivelul trebuie să fie: org, team sau agent",
+    "invalid_rule_type": "Tipul regulii trebuie să fie: allow, deny sau require_oversight",
+    "keywords_not_list": "Câmpul 'keywords' trebuie să fie o listă",
+    "not_found": "Politica '{policy_id}' nu există",
+    "team_policy_requires_team": "Politica la nivel de echipă necesită câmpul team"
+  }
+}

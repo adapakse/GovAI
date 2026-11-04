@@ -1,0 +1,8 @@
+{
+  "agent_inactive": "KI-Agent hat den Status '{status}' — Aufruf vor der Verarbeitung abgelehnt",
+  "llm_error": "Fehler des Sprachmodells ({provider}): {error}",
+  "no_eligible_provider": "Kein Modellanbieter verfügbar, der das Modell '{model}' des KI-Agenten bei der erforderlichen Datensensibilitätsstufe '{sensitivity}' bedienen kann. Entweder unterstützt kein aktiver Modellanbieter diese Sensibilitätsstufe, oder keiner der infrage kommenden Modellanbieter führt dieses Modell (das Gateway ersetzt es bewusst nicht stillschweigend durch ein anderes Modell). Bitte wenden Sie sich an den Administrator — aktivieren Sie einen Modellanbieter, der dieses Modell und diese Sensibilitätsstufe unterstützt, oder senken Sie die Datensensibilität der Anfrage.",
+  "policy_custom": "{reason}",
+  "policy_default": "Durch Sicherheitsrichtlinie blockiert",
+  "unknown_agent": "Unbekannte agent_id: {agent_id} — nicht im GovAI-Register vorhanden"
+}

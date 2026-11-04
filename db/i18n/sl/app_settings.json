@@ -1,0 +1,159 @@
+{
+  "budget.default_alert_threshold_eur": {
+    "description": "Prag opozorila o stroških za nove agente (0 = izklopljeno).",
+    "label": "Privzeti prag opozorila",
+    "unit": "EUR"
+  },
+  "budget.default_monthly_eur": {
+    "description": "Proračun, dodeljen novim agentom (0 = brez omejitve).",
+    "label": "Privzeti mesečni proračun",
+    "unit": "EUR"
+  },
+  "compliance.deadline_days": {
+    "description": "Število dni za odpravo posameznih vrzeli v skladnosti pri visokem tveganju (ključ = polje kontrole).",
+    "label": "Roki za vrzeli v skladnosti (dni)",
+    "unit": "dni"
+  },
+  "compliance.enterprise_report_max_tokens": {
+    "description": "Omejitev žetonov za pripovedni del korporativnega poročila.",
+    "label": "Poročilo enterprise — najv. žetonov",
+    "unit": "žetoni"
+  },
+  "compliance.report_max_tokens": {
+    "description": "Omejitev žetonov za pripovedni del poročila o skladnosti agenta.",
+    "label": "Poročilo agenta — najv. žetonov",
+    "unit": "žetoni"
+  },
+  "i18n.default_locale": {
+    "description": "Jezik vmesnika, poročil in sporočil za uporabnike, ki niso izbrali svojega. Kode: pl, en, de, it, es, fr, ro, ru, sl, hr.",
+    "label": "Privzeti jezik"
+  },
+  "intervals.policy_refresh_seconds": {
+    "description": "Na koliko sekund varnostni prehod znova naloži pravila pravilnikov iz baze.",
+    "label": "Osveževanje pravilnikov",
+    "unit": "sekunde"
+  },
+  "intervals.ttl_monitor_seconds": {
+    "description": "Na koliko sekund nadzornik eskalira zapadle naloge nadzora.",
+    "label": "Nadzornik TTL nadzora",
+    "unit": "sekunde"
+  },
+  "models.classifier_model": {
+    "description": "Model, ki se uporablja za oceno stopnje tveganja agenta.",
+    "label": "Model klasifikatorja AI Act"
+  },
+  "models.default_agent_model": {
+    "description": "Model, dodeljen na novo registriranim agentom.",
+    "label": "Privzeti model agenta"
+  },
+  "models.default_max_tokens": {
+    "description": "Omejitev izhodnih žetonov, kadar je odjemalec ne navede.",
+    "label": "Privzeta omejitev žetonov",
+    "unit": "žetoni"
+  },
+  "models.default_temperature": {
+    "description": "Temperatura LLM, kadar je odjemalec ne navede.",
+    "label": "Privzeta temperatura",
+    "unit": "0–2"
+  },
+  "oversight.history_limit": {
+    "description": "Trda omejitev števila postavk v zgodovini nadzora.",
+    "label": "Zgodovina nadzora — omejitev vrstic",
+    "unit": "vrstice"
+  },
+  "oversight.history_max_days": {
+    "description": "Največji razpon dni za GET /oversight/history.",
+    "label": "Zgodovina nadzora — najv. dni",
+    "unit": "dni"
+  },
+  "oversight.min_review_seconds": {
+    "description": "Pregled nadzora, krajši od tega števila sekund, se označi kot navidezen (rubber-stamp).",
+    "label": "Najkrajši čas pregleda",
+    "unit": "sekunde"
+  },
+  "oversight.ttl_seconds": {
+    "description": "Čas do eskalacije naloge v čakalni vrsti nadzora.",
+    "label": "TTL naloge nadzora",
+    "unit": "sekunde"
+  },
+  "pagination.audit_default_limit": {
+    "description": "Privzeto število vnosov v GET /audit.",
+    "label": "Revizija — privzeta omejitev",
+    "unit": "vrstice"
+  },
+  "pagination.audit_max_limit": {
+    "description": "Največje število vnosov v eni revizijski poizvedbi.",
+    "label": "Revizija — najv. omejitev",
+    "unit": "vrstice"
+  },
+  "pagination.dashboard_recent_blocks": {
+    "description": "Število zadnjih blokad v opozorilih nadzorne plošče.",
+    "label": "Nadzorna plošča — zadnje blokade",
+    "unit": "postavke"
+  },
+  "pagination.dashboard_top_agents": {
+    "description": "Število najaktivnejših agentov na nadzorni plošči.",
+    "label": "Nadzorna plošča — najaktivnejši agenti",
+    "unit": "postavke"
+  },
+  "pagination.default_window_days": {
+    "description": "Privzeti razpon dni za revizijo in nadzorno ploščo.",
+    "label": "Privzeto okno (dni)",
+    "unit": "dni"
+  },
+  "pagination.stats_default_days": {
+    "description": "Privzeti razpon za GET /agents/{id}/stats.",
+    "label": "Statistika agenta — privzeto dni",
+    "unit": "dni"
+  },
+  "pagination.stats_max_days": {
+    "description": "Največji razpon statistike agenta.",
+    "label": "Statistika agenta — najv. dni",
+    "unit": "dni"
+  },
+  "pagination.timeline_default_hours": {
+    "description": "Privzeto okno časovnega grafa.",
+    "label": "Časovnica — privzete ure",
+    "unit": "ure"
+  },
+  "pagination.timeline_max_hours": {
+    "description": "Največji razpon časovnega grafa.",
+    "label": "Časovnica — najv. ur",
+    "unit": "ure"
+  },
+  "pricing.default_rate": {
+    "description": "Cena [vhod, izhod] za modele, ki niso v preslikavi.",
+    "label": "Privzeta cena (USD/1k žet.)",
+    "unit": "USD/1k"
+  },
+  "pricing.model_rates": {
+    "description": "Preslikava model → [vhod, izhod] v USD za 1000 žetonov. Model, ki ni na seznamu, uporablja privzeto ceno.",
+    "label": "Cene modelov (USD/1k žet.)",
+    "unit": "USD/1k"
+  },
+  "pricing.usd_to_eur": {
+    "description": "Množitelj za pretvorbo stroškov modelov iz USD v EUR.",
+    "label": "Tečaj USD→EUR",
+    "unit": "množitelj"
+  },
+  "security.access_token_expire_minutes": {
+    "description": "Življenjska doba dostopnega žetona JWT (access token).",
+    "label": "Veljavnost dostopnega žetona",
+    "unit": "minute"
+  },
+  "security.bcrypt_rounds": {
+    "description": "Zahtevnost zgoščevanja gesel (višje = počasneje, varneje).",
+    "label": "Krogi bcrypt",
+    "unit": "krogi"
+  },
+  "security.pii_confidence_threshold": {
+    "description": "Najmanjša stopnja zanesljivosti Presidio, da se zaznava PII upošteva.",
+    "label": "Prag zanesljivosti PII",
+    "unit": "0–1"
+  },
+  "security.refresh_token_expire_days": {
+    "description": "Življenjska doba žetona za osvežitev (refresh token).",
+    "label": "Veljavnost žetona za osvežitev",
+    "unit": "dni"
+  }
+}

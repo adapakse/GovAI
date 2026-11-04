@@ -1,0 +1,14 @@
+{
+  "errors": {
+    "cannot_delete_demo": "Organizația demonstrativă nu poate fi ștearsă.",
+    "cannot_delete_own": "Nu vă puteți șterge propria organizație.",
+    "cannot_suspend_own": "Nu vă puteți suspenda propria organizație.",
+    "field_required": "Acest câmp este obligatoriu.",
+    "invalid_email": "Adresă de e-mail invalidă.",
+    "invalid_slug": "Identificator de organizație invalid: doar litere mici, cifre și cratime (fără cratimă la început sau la sfârșit), max. 63 de caractere; numele tehnice (de ex. app, api, www) sunt rezervate.",
+    "slug_taken": "Identificatorul de organizație „{slug}” este deja folosit.",
+    "tenant_deleted": "Organizația a fost ștearsă.",
+    "tenant_not_found": "Organizația nu a fost găsită.",
+    "tenant_suspended": "Organizația este suspendată — activați-o mai întâi."
+  }
+}

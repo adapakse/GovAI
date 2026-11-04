@@ -1,0 +1,53 @@
+{
+  "count": "{count, plural, one {# voce} other {# voci}}",
+  "details": {
+    "blockReason": "Motivo del blocco",
+    "errorDetails": "Dettagli dell'errore",
+    "fields": {
+      "agent": "Agente",
+      "callId": "Call ID",
+      "cost": "Costo",
+      "eventType": "Tipo di evento",
+      "inputHash": "Hash dell'input",
+      "latency": "Latenza",
+      "piiCategories": "Categorie di dati personali",
+      "result": "Esito",
+      "taskId": "Task ID"
+    },
+    "title": "Dettagli della chiamata"
+  },
+  "filters": {
+    "days": {
+      "1": "Ultimo giorno",
+      "7": "Ultimi 7 giorni",
+      "30": "Ultimi 30 giorni"
+    },
+    "pii": {
+      "all": "Tutte (dati personali)",
+      "with": "Con dati personali rilevati",
+      "without": "Senza dati personali"
+    },
+    "result": {
+      "all": "Tutti gli esiti"
+    }
+  },
+  "header": {
+    "subtitle": "Registrazione immodificabile di tutte le chiamate degli agenti AI",
+    "title": "Log di audit"
+  },
+  "table": {
+    "columns": {
+      "agent": "Agente",
+      "details": "Dettagli",
+      "eventType": "Tipo di evento",
+      "latency": "Latenza",
+      "pii": "Dati personali",
+      "result": "Esito",
+      "time": "Ora"
+    },
+    "empty": "Nessuna voce in questo periodo",
+    "loading": "Caricamento...",
+    "piiEntities": "{count, plural, one {# entità} other {# entità}}",
+    "show": "Mostra"
+  }
+}

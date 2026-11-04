@@ -1,0 +1,81 @@
+{
+  "actions": {
+    "closeGap": "Subsane la carencia y actualice el estado en el Registro: {title} ({article}).",
+    "completeDeclaration": "Complete la autodeclaración en la pestaña Registro: {title} ({article}).",
+    "updateConfig": "Actualice la configuración del agente relativa a: {title} ({article})."
+  },
+  "fallbackNarrative": "El sistema \"{name}\" se ha clasificado con el nivel de riesgo {risk}. El análisis completo de la conformidad requiere la verificación por el clasificador de IA. Le rogamos que vuelva a generar el informe.",
+  "fileName": "informe-ai-act-{name}.pdf",
+  "footer": "GovAI v0.2.0 · Informe generado el {date} UTC · Reglamento (UE) 2024/1689 (EU AI Act). Documento de carácter informativo; no constituye asesoramiento jurídico.",
+  "format": {
+    "dateTime": "%d/%m/%Y %H:%M"
+  },
+  "pdf": {
+    "gaps": {
+      "article": "Artículo",
+      "beforeDeployment": "Antes de la puesta en servicio",
+      "days": "{days} días",
+      "deadline": "Plazo",
+      "none": "No se han identificado carencias — requisitos confirmados como cumplidos o no aplicables en las declaraciones de conformidad (pestaña Registro).",
+      "requirement": "Requisito",
+      "severity": "Gravedad"
+    },
+    "meta": "Generado: {date} UTC  ·  Responsable: {owner}  ·  Equipo: {team}",
+    "noPendingActions": "No hay actuaciones pendientes — todos los requisitos están confirmados.",
+    "profile": {
+      "annexCategory": "Categoría del anexo III",
+      "annexNone": "Ninguna (fuera del anexo)",
+      "contact": "Contacto",
+      "humanOversight": "Supervisión humana",
+      "model": "Modelo de IA",
+      "monthlyBudget": "Presupuesto mensual",
+      "oversightNotRequired": "No requerida",
+      "oversightRequired": "REQUERIDA",
+      "owner": "Responsable",
+      "property": "Propiedad",
+      "status": "Estado",
+      "systemId": "ID del sistema",
+      "team": "Equipo",
+      "value": "Valor"
+    },
+    "riskLevel": "Nivel de riesgo: {value}",
+    "sections": {
+      "compliance": "{n}. Evaluación de la conformidad con el EU AI Act",
+      "legalBasis": "3. Base jurídica y clasificación",
+      "profile": "2. Perfil del sistema de IA",
+      "recommendations": "{n}. Recomendaciones prioritarias",
+      "stats": "{n}. Estadísticas operativas (últimos 30 días)",
+      "summary": "1. Resumen ejecutivo"
+    },
+    "stats": {
+      "apiCost": "Coste de la API (30 días)",
+      "apiCostNote": "costes estimados del modelo LLM",
+      "avgLatency": "Latencia media",
+      "avgLatencyNote": "tiempo de respuesta de extremo a extremo",
+      "comment": "Comentario",
+      "metric": "Métrica",
+      "oversight": "Remitidas a supervisión",
+      "oversightNote": "política A-001",
+      "piiCalls": "Llamadas con datos personales",
+      "piiCallsNote": "datos personales detectados (Presidio)",
+      "policyBlocks": "Bloqueos por políticas",
+      "policyBlocksNote": "G-001 financieras, G-002 prompt injection",
+      "totalCalls": "Total de llamadas",
+      "totalCallsNote": "todas las solicitudes",
+      "value": "Valor"
+    },
+    "tagline": "Plataforma de gestión de agentes de IA · EU AI Act Compliance",
+    "title": "Informe de conformidad con el EU AI Act"
+  },
+  "risk": {
+    "high": "Alto",
+    "limited": "Limitado",
+    "minimal": "Mínimo",
+    "unacceptable": "Inaceptable"
+  },
+  "severity": {
+    "critical": "Crítica",
+    "major": "Grave",
+    "minor": "Leve"
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "apiKeys": {
+    "add": "+ Nouvelle clé API",
+    "anyAgent": "tout agent",
+    "columns": {
+      "agent": "Agent",
+      "expires": "Valide jusqu’au",
+      "lastUsed": "Dernière utilisation",
+      "name": "Nom",
+      "prefix": "Préfixe",
+      "status": "Statut"
+    },
+    "createdAt": "créée le {date}",
+    "empty": "Aucune clé API",
+    "form": {
+      "agent": "Agent",
+      "agentHint": "La clé ne fonctionnera que pour l’agent sélectionné.",
+      "anyAgent": "— non attribuée (tout agent de l’organisation) —",
+      "anyAgentHint": "Une clé non attribuée fonctionne pour tout agent de l’organisation indiqué dans l’en-tête X-Agent-ID. Il est recommandé de l’attribuer à un agent.",
+      "cancel": "Annuler",
+      "expiry": "Validité",
+      "expiryDays": "{days} jours",
+      "name": "Nom",
+      "namePlaceholder": "p. ex. Assistant contrats — production",
+      "noExpiry": "sans expiration",
+      "save": "Créer la clé",
+      "saving": "Création...",
+      "title": "Nouvelle clé API"
+    },
+    "loading": "Chargement...",
+    "neverUsed": "jamais utilisée",
+    "noAccess": "La gestion des clés API est réservée aux rôles Partner et Administrateur informatique.",
+    "noExpiry": "sans expiration",
+    "revoke": "Révoquer",
+    "revokeConfirm": {
+      "confirm": "Révoquer la clé",
+      "message": "Révoquer la clé « {name} » ? Les agents qui l’utilisent perdront immédiatement l’accès à la passerelle.",
+      "title": "Révoquer la clé API"
+    },
+    "secret": {
+      "description": "Clé « {name} » — configurez-la dans l’agent comme en-tête X-API-Key.",
+      "label": "Clé API",
+      "title": "Clé API créée"
+    },
+    "showRevoked": "Afficher les clés révoquées ({count})",
+    "state": {
+      "active": "Active",
+      "expired": "Expirée",
+      "revoked": "Révoquée"
+    },
+    "subtitle": "Clés utilisées par les agents pour s’authentifier auprès de la passerelle GovAI (en-tête X-API-Key).",
+    "title": "Clés API"
+  },
+  "users": {
+    "add": "+ Ajouter un utilisateur",
+    "columns": {
+      "lastLogin": "Dernière connexion",
+      "role": "Rôle",
+      "status": "Statut",
+      "user": "Utilisateur"
+    },
+    "empty": "Aucun utilisateur",
+    "form": {
+      "cancel": "Annuler",
+      "email": "Adresse e-mail",
+      "fullName": "Nom complet",
+      "passwordHint": "Un mot de passe temporaire sera généré automatiquement — l’utilisateur le modifiera lors de sa première connexion.",
+      "role": "Rôle",
+      "save": "Créer le compte",
+      "saving": "Création...",
+      "title": "Nouvel utilisateur"
+    },
+    "loading": "Chargement...",
+    "never": "jamais",
+    "noAccess": "La gestion des utilisateurs est réservée aux rôles Partner et Administrateur informatique.",
+    "resetConfirm": {
+      "confirm": "Réinitialiser le mot de passe",
+      "message": "Attribuer un nouveau mot de passe temporaire à {name} ({email}) ? Ses sessions en cours seront fermées et il devra définir son propre mot de passe à la prochaine connexion.",
+      "title": "Réinitialiser le mot de passe"
+    },
+    "resetPassword": "Réinitialiser le mot de passe",
+    "searchPlaceholder": "Rechercher par nom, e-mail, rôle...",
+    "secret": {
+      "createdTitle": "Compte créé",
+      "description": "Mot de passe temporaire pour {email}. L’utilisateur le modifiera lors de sa première connexion.",
+      "label": "Mot de passe temporaire",
+      "resetTitle": "Nouveau mot de passe temporaire"
+    },
+    "status": {
+      "active": "Actif",
+      "pending": "En attente",
+      "suspended": "Bloqué"
+    },
+    "subtitle": "Comptes de l’organisation {tenant}",
+    "title": "Utilisateurs",
+    "you": "(vous)"
+  }
+}

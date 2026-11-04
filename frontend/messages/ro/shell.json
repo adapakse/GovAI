@@ -1,0 +1,34 @@
+{
+  "acting": {
+    "back": "Înapoi",
+    "message": "Acționați ca administrator al platformei în organizația <b>{tenant}</b>"
+  },
+  "logout": "Deconectare",
+  "meta": {
+    "description": "Conformitate cu EU AI Act | Gateway de securitate | Supraveghere umană",
+    "title": "GovAI — Platformă de guvernanță a agenților AI"
+  },
+  "nav": {
+    "admin": "Administrare",
+    "agents": "Agenți",
+    "apiKeys": "Chei API",
+    "audit": "Jurnal",
+    "dashboard": "Tablou de bord",
+    "demo": "Simulator",
+    "oversight": "Supraveghere",
+    "platformAudit": "Jurnalul platformei",
+    "policies": "Politici",
+    "providers": "Furnizori de modele",
+    "reports": "Rapoarte",
+    "settings": "Parametri",
+    "tenants": "Organizații",
+    "users": "Utilizatori"
+  },
+  "roles": {
+    "associate": "Associate",
+    "compliance_officer": "Responsabil de conformitate",
+    "it_admin": "Administrator IT",
+    "partner": "Partener",
+    "reviewer": "Evaluator"
+  }
+}

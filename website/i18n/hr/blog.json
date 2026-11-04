@@ -1,0 +1,120 @@
+{
+  "hero": {
+    "lead": "Rokovi, obveze i arhitekturne odluke u vezi s EU AI Actom — pisano iz perspektive tima koji ga mora provesti, a ne samo opisati.",
+    "title": "Usklađenost s AI Actom, jasno — ne samo za pravnike."
+  },
+  "list": {
+    "all": "Sve",
+    "empty": "U ovoj kategoriji nema objava.",
+    "sort": "Poredaj:",
+    "sortNewest": "Najnovije",
+    "sortOldest": "Najstarije",
+    "sortReadTime": "Vrijeme čitanja"
+  },
+  "meta": {
+    "description": "Usklađenost s EU AI Actom, jasno — rokovi, obveze i arhitekturne odluke pisane iz perspektive tima koji ga mora provesti.",
+    "ogDescription": "Usklađenost s EU AI Actom, jasno — rokovi, obveze i arhitekturne odluke pisane iz perspektive tima koji ga mora provesti.",
+    "ogTitle": "Blog — GovAI",
+    "title": "Blog — GovAI"
+  },
+  "post": {
+    "back": "← Sve objave",
+    "categories": "Kategorije",
+    "noRelated": "Nema povezanih objava.",
+    "notFound": "Objava nije pronađena.",
+    "readTime": "{minutes} min čitanja",
+    "related": "Povezane objave"
+  },
+  "posts": {
+    "checklist-rejestracja-agenta": {
+      "body": [
+        "Prije nego što UI agent uđe u registar, dobro je imati odgovore na nekoliko pitanja: koji je njegov točan opseg upotrebe, obrađuje li osobne podatke, tko je poslovni vlasnik odluka koje donosi ili podupire te koji je plan za situaciju u kojoj se opseg upotrebe promijeni.",
+        "Najčešći razlog pogrešne klasifikacije na početku jest podcjenjivanje opsega — agent uveden „samo kao podrška HR-u pri razvrstavanju životopisa” vrlo brzo se počne koristiti za stvarni preliminarni odabir kandidata, što mijenja kategoriju rizika.",
+        "Pravilo koje se pokazalo dobrim: klasificirajte na temelju onoga za što se agent u organizaciji stvarno može upotrijebiti, a ne samo onoga za što je projektiran."
+      ],
+      "category": "Usklađenost u praksi",
+      "excerpt": "Kratak, praktičan popis onoga što je dobro utvrditi prije prvog uvođenja — kako bi klasifikacija rizika odmah bila smislena, a ne privremena.",
+      "tags": [
+        "uvođenje",
+        "registar agenata",
+        "kontrolni popis"
+      ],
+      "title": "Kontrolni popis: što pripremiti prije registracije prvog agenta u registru"
+    },
+    "dedykowana-instancja-vs-multitenant": {
+      "body": [
+        "Mnoge platforme za „AI governance” zajednički su SaaS: jedna baza podataka, logički odvojeni retci po klijentu. To je standardan, jeftin način izgradnje SaaS-a — i obično dovoljan.",
+        "Kod revizijskog dnevnika za regulirani UI sustav, međutim, mijenja se pitanje revizora: ne „jesu li podaci logički odvojeni”, nego „postoji li uopće scenarij u kojem podaci drugog klijenta završe u našem upitu”. Odgovor „ne, jer imamo zasebnu bazu” lakše je obraniti od odgovora „ne, jer u svim upitima ispravno filtriramo po tenant_id, uvijek”.",
+        "Riječ je o kompromisu u pogledu troškova — namjenska instanca po klijentu skuplja je za održavanje od jedne zajedničke baze. Za sustav čija je jedina zadaća biti dokaz usklađenosti zaključili smo da je to trošak koji treba podnijeti, a ne optimizirati."
+      ],
+      "category": "Sigurnost",
+      "excerpt": "Zajednička baza podataka arhitekturna je odluka, a ne tehnički detalj — a pri reviziji usklađenosti postaje pitanje na koje je teško dobro odgovoriti.",
+      "tags": [
+        "arhitektura",
+        "izolacija podataka",
+        "revizija"
+      ],
+      "title": "Zašto „multi-tenant” i „usklađeno s AI Actom” rijetko idu zajedno"
+    },
+    "digital-omnibus-grudzien-2027": {
+      "body": [
+        "Dana 27. srpnja 2026. stupio je na snagu Digital Omnibus AI (Uredba (EU) 2026/1744) — izmjena kojom su pune obveze za visokorizične UI sustave iz Priloga III. pomaknute s 2. kolovoza 2026. na 2. prosinca 2027. Za sustave ugrađene u regulirane proizvode (Prilog I.) rok je pomaknut s kolovoza 2027. na kolovoz 2028.",
+        "To nije opća odgoda cijelog akta. Zabrana zabranjenih praksi iz članka 5. primjenjuje se od veljače 2025. bez izmjena, obveze za UI modele opće namjene (GPAI) — od kolovoza 2025., a transparentnost iz članka 50. (označivanje sadržaja koji generira UI, obavješćivanje o interakciji s chatbotom) — od kolovoza 2026., dakle već sada. Izmjena je u članak 5. dodala i novu zabranu — generiranje intimnog sadržaja bez pristanka i materijala koji prikazuje seksualno zlostavljanje djece — koja stupa na snagu 2. prosinca 2026.",
+        "Praktični zaključak: 16 dodatnih mjeseci vrijeme je da se to napravi kako treba, a ne da se tema odgodi. Registar agenata, klasifikacija rizika i procjena nedostataka zahtijevaju jednako mnogo rada bez obzira na to je li rok za godinu dana ili za mjesec dana — jedina je razlika u tome što to danas nitko ne radi pod pritiskom."
+      ],
+      "category": "AI Act",
+      "excerpt": "Uredba 2026/1744 pomaknula je pune obveze iz Priloga III. za 16 mjeseci. To nije razlog za usporavanje — to je novi vremenski okvir koji vrijedi iskoristiti prije nego što to učini netko drugi.",
+      "tags": [
+        "Digital Omnibus",
+        "rokovi",
+        "Prilog III."
+      ],
+      "title": "Digital Omnibus: zašto je rok za visokorizične UI sustave pomaknut na prosinac 2027."
+    },
+    "dokumentacja-vs-egzekwowanie": {
+      "body": [
+        "Tržište alata za AI Act većinom rješava jedan problem: izradu tehničke dokumentacije koju zahtijeva Prilog IV. To je stvaran i potreban posao — ali dokumentacija opisuje što bi sustav trebao raditi, a ne nameće to u trenutku u kojem sustav stvarno radi.",
+        "Razlika postaje vidljiva tek u trenutku incidenta. Dokumentacija, ma koliko dobro napisana, nije blokirala poziv koji nije smio proći — može najviše poslužiti kao dokaz da ste znali kako bi ispravan rad trebao izgledati.",
+        "Provedba u stvarnom vremenu i dokumentacija nisu konkurentne — komplementarne su. Ali samo jedna od njih fizički stoji između agenta i odgovora."
+      ],
+      "category": "AI Act",
+      "excerpt": "Alati za dokumentaciju odgovaraju na pitanje „imamo li papir”. Ne odgovaraju na pitanje „je li se ta povreda uopće mogla dogoditi”.",
+      "tags": [
+        "dokumentacija",
+        "provedba",
+        "revizija"
+      ],
+      "title": "Dokumentacija o usklađenosti nikoga ne zaustavlja u stvarnom vremenu"
+    },
+    "nadzor-czlowieka-art-14": {
+      "body": [
+        "Članak 14. AI Acta zahtijeva da visokorizični UI sustavi imaju ugrađen mehanizam ljudskog nadzora. Problem je u tome što je taj „mehanizam” u praksi često jedna adresa e-pošte na koju netko ponekad odgovori.",
+        "Ljudski nadzor koji se može revidirati ima tri obilježja: odluka je zadržana do pregleda (ne izvršava se usporedno „za svaki slučaj”), pregled je dodijeljen određenoj, ovlaštenoj osobi, a rezultat pregleda zabilježen je zajedno s podatkom o tome tko ga je donio i kada.",
+        "Ono što alat razlikuje od postupka na papiru jest jesu li ta tri elementa strukturno nametnuta — može li agent doista ne odgovoriti dok recenzent ne donese odluku — ili su samo opisana u dokumentu politike."
+      ],
+      "category": "Usklađenost u praksi",
+      "excerpt": "Ljudski nadzor na papiru i ljudski nadzor koji izdrži reviziju dvije su različite stvari. Razlika je u onome što se događa između „označeno” i „odobreno”.",
+      "tags": [
+        "čl. 14.",
+        "nadzor",
+        "postupak"
+      ],
+      "title": "Članak 14. u praksi: kada „pregledao je čovjek” doista nešto znači"
+    },
+    "routing-dostawcow-wedlug-wrazliwosci": {
+      "body": [
+        "Velika većina uvođenja UI agenata ima jedan, u kôd ugrađen osnovni URL (base URL) pružatelja modela. To dobro funkcionira dok se ne pojavi upit koji sadrži osobne podatke, financijske podatke ili podatke zaštićene poslovnom tajnom — koji putuju potpuno istim putem kao i svi drugi.",
+        "Usmjeravanje na temelju osjetljivosti podataka preokreće taj pristup: ne odlučuje razvojni programer kamo upit odlazi, nego politika koja sadržaj upita procjenjuje u hodu — prisutnost osobnih podataka, kategoriju agenta, razinu klasifikacije rizika.",
+        "U praksi to znači da dva poziva istog agenta mogu unutar iste minute otići dvama različitim pružateljima — jedan vanjskom modelu, drugi instanci na vlastitoj infrastrukturi (self-hosted) — bez ikakve promjene u kôdu agenta."
+      ],
+      "category": "Sigurnost",
+      "excerpt": "Zadani pružatelj modela često je povijesna slučajnost, a ne odluka. Pokazujemo kako izgleda usmjeravanje u kojem o odredištu odlučuje sadržaj upita, a ne navika.",
+      "tags": [
+        "usmjeravanje",
+        "privatnost podataka",
+        "arhitektura"
+      ],
+      "title": "Usmjeravanje modela prema osjetljivosti podataka, a ne prema onome što piše u konfiguraciji"
+    }
+  }
+}

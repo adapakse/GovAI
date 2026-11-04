@@ -4,8 +4,10 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
 
 from dependencies.auth import CurrentUser, get_current_user, require_role
+from i18n import t
 from repositories import audit_repository as audit_repo
 from services import settings_service
+from services.block_reasons import localize_block_reason
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/audit", tags=["audit"])
@@ -37,7 +39,7 @@ async def list_audit(
         policy_result=policy_result,
         has_pii=has_pii,
     )
-    return [_row_to_dict(r) for r in rows]
+    return [_row_to_dict(r, keep_metadata=False) for r in rows]
 
 
 @router.get("/summary")
@@ -56,12 +58,18 @@ async def get_call(call_id: str, user: CurrentUser = Depends(_AUDIT_ROLES)):
     """Szczegóły pojedynczego wywołania."""
     row = await audit_repo.get_call(call_id)
     if not row:
-        raise HTTPException(404, f"Wywołanie '{call_id}' nie znalezione w dzienniku")
+        raise HTTPException(404, t("audit.errors.call_not_found", call_id=call_id))
     return _row_to_dict(row)
 
 
-def _row_to_dict(row) -> dict:
+def _row_to_dict(row, keep_metadata: bool = True) -> dict:
     d = dict(row)
+    # Powód blokady w języku żądania (kod + parametry z metadata, fallback: tekst z bazy)
+    metadata = d.get("metadata") if isinstance(d.get("metadata"), dict) else None
+    if "block_reason" in d:
+        d["block_reason"] = localize_block_reason(d["block_reason"], metadata)
+    if not keep_metadata:
+        d.pop("metadata", None)
     for k, v in d.items():
         if hasattr(v, 'isoformat'):
             d[k] = v.isoformat()

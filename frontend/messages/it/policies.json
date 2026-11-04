@@ -1,0 +1,86 @@
+{
+  "aiactTab": {
+    "count": "{count, plural, one {# requisito} other {# requisiti}}",
+    "emptyLevel": "Nessun requisito per questo livello.",
+    "intro": "Requisiti associati ai livelli di rischio. Visibili nei report PDF e nella vista di conformità dell'agente. È possibile aggiungere annotazioni proprie a specifici articoli dell'EU AI Act."
+  },
+  "banner": {
+    "text": "Il Gateway ricarica automaticamente le regole dal database ogni 60 secondi. Dopo aver salvato una modifica non è necessario fare altro.",
+    "title": "Configurazione senza riavvio:"
+  },
+  "cancel": "Annulla",
+  "delete": "Elimina",
+  "edit": "Modifica",
+  "loading": "Caricamento...",
+  "newRequirement": {
+    "addButton": "+ Aggiungi requisito",
+    "article": "Articolo *",
+    "articlePlaceholder": "es. art. 9, par. 2",
+    "deadlineDays": "Scadenza (giorni)",
+    "declKey": "Chiave di autodichiarazione",
+    "declKeyHint": "La chiave di autodichiarazione collega questo requisito a un campo nella scheda Registro dell'agente. Vuota = requisito non autodichiarabile (es. divieto ai sensi dell'art. 5).",
+    "declKeyPlaceholder": "es. art9_risk_management",
+    "reqText": "Descrizione del requisito *",
+    "reqTextPlaceholder": "Descrizione dettagliata del requisito e delle modalità per soddisfarlo...",
+    "reqTitle": "Titolo del requisito *",
+    "reqTitlePlaceholder": "es. Registro dei sistemi di IA ad alto rischio",
+    "riskLevel": "Livello di rischio *",
+    "save": "Salva requisito",
+    "severity": "Gravità predefinita",
+    "sortOrder": "Ordine",
+    "title": "Nuovo requisito EU AI Act"
+  },
+  "newRule": {
+    "addButton": "+ Aggiungi nuova regola",
+    "code": "Codice della regola",
+    "codePlaceholder": "es. G-003",
+    "defaultReason": "Bloccato dalla regola {code}",
+    "keywords": "Parole chiave (una per riga) *",
+    "keywordsPlaceholder": "esporta dati\nexport data\nsend all records",
+    "name": "Nome *",
+    "namePlaceholder": "es. Blocco esportazione dati",
+    "priority": "Priorità (più bassa = più importante)",
+    "reason": "Messaggio di blocco",
+    "reasonPlaceholder": "Rilevata operazione non consentita",
+    "save": "Salva regola",
+    "title": "Nuova regola di blocco"
+  },
+  "requirement": {
+    "article": "Articolo",
+    "days": "{count, plural, one {# giorno} other {# giorni}}",
+    "deleteConfirm": "Eliminare il requisito \"{title}\"?",
+    "noDeclKey": "nessuna autodichiarazione",
+    "title": "Titolo"
+  },
+  "rule": {
+    "activate": "Attiva",
+    "addKeyword": "+ Aggiungi",
+    "addKeywordPlaceholder": "Aggiungi parola chiave...",
+    "deactivate": "Disattiva",
+    "inactive": "INATTIVA",
+    "keywords": "Parole chiave ({count})",
+    "meta": "Priorità: {priority} · Ambito: {level} · v{version}",
+    "noKeywords": "Nessuna parola chiave — la regola non si attiverà mai.",
+    "reason": "Messaggio: «{reason}»",
+    "unsaved": "Modifiche non salvate · Il Gateway le applicherà entro 60 s."
+  },
+  "rulesTab": {
+    "empty": "Nessuna regola definita.",
+    "intro": "Le regole di blocco vengono verificate in ordine di priorità (numero più basso = priorità più alta). La prima corrispondenza di una parola chiave attiva il blocco prima della chiamata al modello.",
+    "noResults": "Nessuna regola corrispondente a «{query}».",
+    "searchPlaceholder": "Cerca regola — nome, codice, parola chiave, motivo..."
+  },
+  "save": "✓ Salva",
+  "saving": "Salvataggio...",
+  "severity": {
+    "critical": "Critica",
+    "major": "Grave",
+    "minor": "Lieve"
+  },
+  "subtitle": "Gestisca le regole di sicurezza e i requisiti dell'EU AI Act senza modifiche al codice. Le modifiche alle regole sono attive nel Gateway entro 60 s.",
+  "tabs": {
+    "aiact": "Requisiti EU AI Act",
+    "rules": "Regole di sicurezza"
+  },
+  "title": "Policy e compliance"
+}

@@ -1,0 +1,10 @@
+{
+  "alerts": {
+    "rubber_stamp": "Rubber-stamp oversight — review shorter than {seconds} seconds. Event logged."
+  },
+  "errors": {
+    "already_reviewed": "Task already reviewed — status: {status}",
+    "cannot_start_review": "Task has status '{status}' — review cannot be started",
+    "task_not_found": "Oversight task does not exist"
+  }
+}

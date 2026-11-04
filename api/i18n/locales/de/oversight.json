@@ -1,0 +1,10 @@
+{
+  "alerts": {
+    "rubber_stamp": "Scheinaufsicht — Prüfung kürzer als {seconds} Sekunden. Ereignis protokolliert."
+  },
+  "errors": {
+    "already_reviewed": "Aufgabe bereits bearbeitet — Status: {status}",
+    "cannot_start_review": "Aufgabe hat den Status '{status}' — Prüfung kann nicht gestartet werden",
+    "task_not_found": "Aufsichtsaufgabe existiert nicht"
+  }
+}
