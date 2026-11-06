@@ -1,0 +1,70 @@
+# govai-edge — reverse proxy dla Azure Container Apps (HTTP :80, BEZ TLS:
+# TLS kończy się na ingress Azure / Cloudflare). Szablon renderuje
+# caddy/edge-entrypoint.sh:
+#   {{SITE_BLOCK}}  — landing (hosty z SITE_HOSTS) albo nic,
+#   upstreamy z env: API_UPSTREAM, GATEWAY_UPSTREAM, FRONTEND_UPSTREAM
+#   (np. http://govai-api-int — krótka nazwa aplikacji w środowisku).
+#
+# Do aplikacji wewnętrznych idzie Host = nazwa aplikacji docelowej (wymóg
+# routingu wewnętrznego Container Apps), oryginalny host w X-Forwarded-Host
+# (api: TRUST_FORWARDED_HOST=true, frontend: middleware.ts).
+{
+	admin off
+	auto_https off
+	servers {
+		# Ingress Container Apps (Envoy) to proxy z adresu prywatnego —
+		# zachowujemy X-Forwarded-For klienta.
+		trusted_proxies static private_ranges
+	}
+}
+
+(upstream_headers) {
+	header_up Host {http.reverse_proxy.upstream.host}
+	header_up X-Forwarded-Host {host}
+	header_up X-Forwarded-Proto https
+}
+
+# Wywołania LLM (raporty z narracją, bramka) bywają długie.
+(long_timeouts) {
+	transport http {
+		dial_timeout 10s
+		read_timeout 600s
+		write_timeout 600s
+	}
+}
+
+:80 {
+	encode gzip
+
+	# Sonda zdrowia edge (Container Apps probe, smoke test CI).
+	handle /healthz {
+		respond "ok" 200
+	}
+
+{{SITE_BLOCK}}
+
+	# Panel: app.<domena> i subdomeny organizacji {slug}.<domena> (każdy
+	# host spoza SITE_HOSTS; nieznany slug obsługuje aplikacja).
+	handle {
+		handle_path /api/* {
+			reverse_proxy {$API_UPSTREAM} {
+				import upstream_headers
+				import long_timeouts
+			}
+		}
+
+		handle_path /gateway/* {
+			reverse_proxy {$GATEWAY_UPSTREAM} {
+				import upstream_headers
+				import long_timeouts
+			}
+		}
+
+		handle {
+			reverse_proxy {$FRONTEND_UPSTREAM} {
+				import upstream_headers
+				import long_timeouts
+			}
+		}
+	}
+}

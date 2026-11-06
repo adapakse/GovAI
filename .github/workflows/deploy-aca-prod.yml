@@ -1,0 +1,21 @@
+# PROD na Azure Container Apps — po push do master; GitHub Environment "prod"
+# wymaga zatwierdzenia. Aplikacje govai-*, tagi <run_number>.
+name: Deploy ACA PROD
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/_deploy-aca.yml
+    with:
+      environment: prod
+      suffix: ''
+      tag_prefix: ''
+    secrets: inherit

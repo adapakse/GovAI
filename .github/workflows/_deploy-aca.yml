@@ -1,0 +1,102 @@
+# Wspólny deploy na Azure Container Apps (wywoływany przez deploy-aca-int.yml
+# i deploy-aca-prod.yml). Nazwy zasobów: docs/azure-environments-plan.md.
+# Kolejność: obrazy → migracje (przed aplikacjami, wstecznie zgodne) →
+# api/gateway/frontend → edge → smoke test.
+name: Deploy ACA (reusable)
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: 'GitHub Environment (int / prod) — sekrety OIDC i zatwierdzenia'
+        required: true
+        type: string
+      suffix:
+        description: 'Sufiks nazw aplikacji i sekretów Key Vault ("-int" albo "")'
+        required: true
+        type: string
+      tag_prefix:
+        description: 'Prefiks tagu obrazów ("int-" albo "")'
+        required: true
+        type: string
+
+env:
+  SUBSCRIPTION: 5e23c5f2-d269-41d3-b558-7d65dad68f1e
+  RESOURCE_GROUP: rg-govai
+  ACR: govaicr
+  REGISTRY: govaicr.azurecr.io
+  VAULT: govai-vault
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    concurrency:
+      group: deploy-aca-${{ inputs.environment }}
+      cancel-in-progress: false
+    env:
+      TAG: ${{ inputs.tag_prefix }}${{ github.run_number }}
+      SUFFIX: ${{ inputs.suffix }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Logowanie do ACR
+        run: az acr login -n "$ACR" --subscription "$SUBSCRIPTION"
+
+      - name: Build i push obrazów
+        run: |
+          set -e
+          label="org.opencontainers.image.revision=${GITHUB_SHA}"
+          docker build -f caddy/Dockerfile.edge --label "$label" -t "$REGISTRY/govai-edge:$TAG" .
+          docker build --label "$label" -t "$REGISTRY/govai-api:$TAG" ./api
+          docker build --label "$label" -t "$REGISTRY/govai-gateway:$TAG" ./gateway
+          docker build --label "$label" \
+            --build-arg NEXT_PUBLIC_API_URL=/api \
+            --build-arg NEXT_PUBLIC_WS_URL=/api \
+            --build-arg NEXT_PUBLIC_GATEWAY_URL=/gateway \
+            -t "$REGISTRY/govai-frontend:$TAG" ./frontend
+          for app in edge api gateway frontend; do
+            docker push "$REGISTRY/govai-$app:$TAG"
+          done
+
+      - name: Migracje bazy (tryb zdalny)
+        run: |
+          set -e
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq postgresql-client >/dev/null
+          admin_url=$(az keyvault secret show --vault-name "$VAULT" --subscription "$SUBSCRIPTION" \
+            -n "database-admin-url$SUFFIX" --query value -o tsv)
+          app_password=$(az keyvault secret show --vault-name "$VAULT" --subscription "$SUBSCRIPTION" \
+            -n "db-app-password$SUFFIX" --query value -o tsv)
+          echo "::add-mask::$admin_url"
+          echo "::add-mask::$app_password"
+          DATABASE_ADMIN_URL="$admin_url" DB_APP_PASSWORD="$app_password" sh infra/scripts/migrate.sh
+
+      - name: Aktualizacja Container Apps
+        run: |
+          set -e
+          az extension add --name containerapp --upgrade --only-show-errors -y
+          for app in api gateway frontend edge; do
+            echo "govai-$app$SUFFIX → $REGISTRY/govai-$app:$TAG"
+            az containerapp update -n "govai-$app$SUFFIX" -g "$RESOURCE_GROUP" --subscription "$SUBSCRIPTION" \
+              --image "$REGISTRY/govai-$app:$TAG" --only-show-errors -o none
+          done
+
+      - name: Smoke test
+        run: |
+          set -e
+          fqdn=$(az containerapp show -n "govai-edge$SUFFIX" -g "$RESOURCE_GROUP" --subscription "$SUBSCRIPTION" \
+            --query properties.configuration.ingress.fqdn -o tsv)
+          echo "Edge: https://$fqdn"
+          curl -fsS --retry 10 --retry-delay 6 --retry-all-errors "https://$fqdn/healthz"
+          echo
+          # API przez edge (host FQDN edge nie jest hostem landingu → panel).
+          curl -fsS --retry 10 --retry-delay 6 --retry-all-errors "https://$fqdn/api/health"
+          echo

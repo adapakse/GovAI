@@ -12,14 +12,14 @@ from fastapi import APIRouter, HTTPException, Request
 from database import platform_db
 from i18n import DEFAULT_LOCALE, is_locale, t
 from repositories import platform_repository as platform_repo
-from services.tenant_host import slug_from_host
+from services.tenant_host import request_host, slug_from_host
 
 router = APIRouter(prefix="/public", tags=["public"])
 
 
 @router.get("/tenant")
 async def public_tenant(request: Request):
-    slug = slug_from_host(request.headers.get("host"))
+    slug = slug_from_host(request_host(request.headers))
     if slug is None:
         raise HTTPException(404, t("platform.errors.tenant_not_found"))
     async with platform_db():
