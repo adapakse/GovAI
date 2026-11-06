@@ -26,6 +26,10 @@ GH_ID=id-govai-github
 GH_REPO=adapakse/GovAI
 PG_VERSION=15
 PG_SKU=Standard_B1ms
+# Region Postgresa i strefa — nadpisywalne, bo nowe subskrypcje PAYG dostają
+# SkuNotAvailable w regionach/strefach z ograniczoną pojemnością.
+PG_LOC="${GOVAI_PG_LOCATION:-$LOC}"
+PG_ZONE="${GOVAI_PG_ZONE:-}"
 PG_ADMIN=govaiadmin
 DB_NAME=govai
 
@@ -94,7 +98,7 @@ step_data() {
     local admin_pw; admin_pw=$(rand 24)
     kv_set_if_missing "db-admin-password$sfx" "$admin_pw"
     admin_pw=$(kv_get "db-admin-password$sfx")
-    $AZ postgres flexible-server create -g "$RG" -n "$pg" -l "$LOC" \
+    $AZ postgres flexible-server create -g "$RG" -n "$pg" -l "$PG_LOC" ${PG_ZONE:+--zone "$PG_ZONE"} \
       --version "$PG_VERSION" --tier Burstable --sku-name "$PG_SKU" --storage-size 32 \
       --admin-user "$PG_ADMIN" --admin-password "$admin_pw" \
       --public-access 0.0.0.0 --backup-retention "$([ "$env" = prod ] && echo 35 || echo 7)" \
