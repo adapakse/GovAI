@@ -56,7 +56,7 @@ względem CRMtree: **`docs/azure-environments-plan.md`**. Model VM zostaje jako 
 
 ### P1 — infrastruktura INT/PROD na Container Apps (`docs/azure-environments-plan.md` §7)
 4. Gałąź PROD: `main` → **`master`** (rename w GitHub + odwołania w repo).
-5. Zasoby wspólne (`rg-govai-prod`, `govai-env`, `govairegistry`, `govai-vault`, Log Analytics) — jako skrypt/Bicep w `infra/aca/`.
+5. Zasoby wspólne (`rg-govai-prod`, `govai-env`, `govairegistry`, `kv-govai`, Log Analytics) — jako skrypt/Bicep w `infra/aca/`.
 6. Zmiany w kodzie pod Container Apps:
    - `caddy/Caddyfile.edge` + obraz `govai-edge` (routing hostów/ścieżek, landing, `X-Forwarded-Host`);
    - rozpoznawanie organizacji z `X-Forwarded-Host` (API: `services/tenant_host.py`, `dependencies/auth.py`,
@@ -96,7 +96,7 @@ względem CRMtree: **`docs/azure-environments-plan.md`**. Model VM zostaje jako 
 ## 6. Dostępy do nadania (Adam)
 - GitHub `adapakse/GovAI`: Kacper jako collaborator (write). Repo jest publiczne.
 - Azure („Azure subscription 1”, tenant `8fc0088b-…`): konto Kacpra (gość) z rolą Contributor na `rg-govai-prod`
-  (po utworzeniu) i `rg-govai-int`, Key Vault Secrets Officer na `govai-vault`. Dla agenta Claude — osobny
+  (po utworzeniu) i `rg-govai-int`, Key Vault Secrets Officer na `kv-govai`. Dla agenta Claude — osobny
   service principal z ograniczonymi uprawnieniami (jak `sp-claude-agent-crmtree` w CRMtree).
 - Cloudflare: dostęp do strefy `govai.pl`.
 - Sekrety przekazywać przez Key Vault, nigdy w czacie / repo.

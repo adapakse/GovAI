@@ -37,7 +37,7 @@ region **polandcentral**. Zawsze `az … --subscription "Azure subscription 1"` 
 | Log Analytics | `govai-logs` | PerGB2018, retencja 30 dni |
 | Container Apps Environment | `govai-env` | profil Consumption, bez VNet (jak `crmtree-env`) |
 | Container Registry | `govairegistry` | Basic. **[poprawka]** pull przez managed identity (rola AcrPull), bez admin usera |
-| Key Vault | `govai-vault` | tryb RBAC; aplikacje czytają sekrety referencjami KV przez system-assigned identity (jak CRMtree). **[poprawka]** osobne nazwy sekretów per środowisko (`*-int`) — w CRMtree INT dzieli sekrety z PROD |
+| Key Vault | `kv-govai` | tryb RBAC; aplikacje czytają sekrety referencjami KV przez system-assigned identity (jak CRMtree). **[poprawka]** osobne nazwy sekretów per środowisko (`*-int`) — w CRMtree INT dzieli sekrety z PROD |
 | PostgreSQL Flexible | `govai-db` (PROD), `govai-db-int` (INT) | PG 15, Standard_B1ms (Burstable), backup 7 dni (PROD: rozważ 35). **[poprawka]** osobny serwer dla INT — patrz §4 |
 | Redis | `govai-redis` (PROD), `govai-redis-int` | **Azure Cache for Redis Basic C0** (TLS 6380). GovAI używa Redis tylko do pub/sub zdarzeń na żywo (gateway → API → WebSocket) — trwałość niepotrzebna. Redis jako Container App wymagałby ingressu TCP, a ten działa tylko w środowisku z własnym VNet |
 | Storage | (na razie niepotrzebny) | GovAI nie przechowuje plików; raporty PDF generowane w locie |
@@ -112,7 +112,7 @@ TLS kończy się na ingress Azure.
 
 ## 5. Sekrety i konfiguracja
 
-Key Vault `govai-vault`, referencje `keyvaultref:https://govai-vault.vault.azure.net/secrets/<nazwa>,identityref:system`
+Key Vault `kv-govai`, referencje `keyvaultref:https://kv-govai.vault.azure.net/secrets/<nazwa>,identityref:system`
 → `secretRef` w env aplikacji (jak CRMtree). Proponowane nazwy (PROD / INT z sufiksem `-int`):
 
 | Sekret KV | Zmienna | Aplikacje |
@@ -155,7 +155,7 @@ Obecne `ci.yml` (i18n, build obrazów, testy izolacji na pełnym stosie docker c
 1. Dostępy (Adam): Kacper w GitHub (write) i Azure (Contributor na `rg-govai-prod`, Key Vault Secrets Officer),
    Cloudflare (strefa `govai.pl`).
 2. DNS `govai.pl` → Cloudflare (Adam) + certyfikat Origin CA.
-3. Zasoby wspólne: `rg-govai-prod`, Log Analytics, `govai-env`, `govairegistry`, `govai-vault` (skrypt `az` w repo,
+3. Zasoby wspólne: `rg-govai-prod`, Log Analytics, `govai-env`, `govairegistry`, `kv-govai` (skrypt `az` w repo,
    np. `infra/aca/bootstrap.sh` — do napisania; CRMtree nie ma IaC, ale GovAI ma Bicep dla VM — warto dopisać
    `infra/aca/*.bicep`).
 4. INT na Container Apps: `govai-db-int` (+ init.sql + migracje), aplikacje `-int`, domeny `*.int.govai.pl`,

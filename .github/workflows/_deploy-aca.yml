@@ -25,7 +25,7 @@ env:
   RESOURCE_GROUP: rg-govai
   ACR: govaicr
   REGISTRY: govaicr.azurecr.io
-  VAULT: govai-vault
+  VAULT: kv-govai
 
 jobs:
   deploy:
