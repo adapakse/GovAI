@@ -187,7 +187,7 @@ az containerapp hostname bind --subscription "$S" -g $RG -n crmtree-frontend-int
   --hostname "*.int.crmtree.pl" --environment $ENV --certificate "wildcard-int-crmtree-pl-$TAG"
 
 # 6. Weryfikacja — data ważności ~90 dni od dziś
-for H in gessel.crmtree.pl app.int.crmtree.pl; do
+for H in demo.crmtree.pl app.int.crmtree.pl; do
   echo | openssl s_client -connect $H:443 -servername $H 2>/dev/null | openssl x509 -noout -subject -enddate
 done
 az containerapp env certificate list --subscription "$S" -g $RG -n $ENV \
