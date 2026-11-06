@@ -158,6 +158,11 @@ step_secrets() {
       echo "         az keyvault secret set --subscription $SUB --vault-name $KV -n $s$sfx --value <klucz>"
     fi
   done
+  # Token Cloudflare (wspólny dla INT i PROD) — dla .github/workflows/renew-certs.yml.
+  if ! $AZ keyvault secret show --vault-name "$KV" -n cloudflare-api-token --query id -o tsv >/dev/null 2>&1; then
+    echo "  UWAGA: brak cloudflare-api-token (token „Edit zone DNS” dla govai.pl) — bez niego certyfikaty się nie odnowią:"
+    echo "         az keyvault secret set --subscription $SUB --vault-name $KV -n cloudflare-api-token --value <token>"
+  fi
 }
 
 # ── github ───────────────────────────────────────────────────────────────────

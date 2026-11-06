@@ -81,14 +81,19 @@ przeniesione bez zmian. Rekordy aplikacji: `@`, `www`, `app`, `*`, `int`, `app.i
 `govai-edge` / `govai-edge-int` (+ rekordy TXT `asuid.*` do weryfikacji domen w Container Apps).
 
 ### Certyfikaty — **[poprawka względem CRMtree]**
-Container Apps nie wystawia zarządzanych certyfikatów wildcard. CRMtree wgrał ręcznie certyfikaty
-`*.crmtree.pl` / `*.int.crmtree.pl`, których nic nie odnawia (wygasają 8 i 10.11.2026 — ryzyko awarii).
-Dla GovAI: **Cloudflare w trybie proxy (pomarańczowa chmurka) + Cloudflare Origin CA**:
-- certyfikat Origin CA na `govai.pl, *.govai.pl, *.int.govai.pl` (ważność do 15 lat) wgrany jako PFX do `govai-env`
-  i podpięty do domen `govai-edge` / `govai-edge-int`;
-- Cloudflare SSL/TLS: **Full (strict)**; publiczny certyfikat przy kliencie obsługuje Cloudflare (odnawia sam);
-- uwagi: limit czasu żądania przez proxy Cloudflare (plan Free ~100 s) — długie operacje LLM muszą się mieścić albo
-  przejść na tryb asynchroniczny; WebSocket przez proxy Cloudflare działa.
+Container Apps nie wystawia zarządzanych certyfikatów wildcard (subdomeny organizacji `<slug>.govai.pl`).
+**Decyzja (2026-11-06): Cloudflare DNS-only (szara chmurka) + Let's Encrypt z automatycznym odnawianiem**
+— zamiast wcześniej planowanego proxy Cloudflare + Origin CA, bo:
+- Universal SSL Cloudflare (Free) nie obejmuje `*.int.govai.pl` (wildcard drugiego poziomu wymaga płatnego
+  Advanced Certificate Manager),
+- proxy Cloudflare (Free) ucina żądania po ~100 s, a wywołania LLM bywają dłuższe.
+
+Realizacja: workflow `.github/workflows/renew-certs.yml` — jeden certyfikat SAN `govai.pl, *.govai.pl, *.int.govai.pl`
+(DNS-01 przez API Cloudflare, token w Key Vault jako `cloudflare-api-token`), wgrywany do `govai-env` jako
+`govai-le-YYYYMMDD` i podpinany do hostów `govai.pl`, `*.govai.pl` (`govai-edge`) oraz `int.govai.pl`,
+`*.int.govai.pl` (`govai-edge-int`). Co tydzień sprawdza ważność, odnawia przy < 30 dniach, usuwa stare
+certyfikaty. Hosty dodaje się raz przy przełączeniu DNS (`az containerapp hostname add` + TXT `asuid.<host>`),
+potem pierwsze wystawienie: ręczne uruchomienie workflow z `force=true`.
 Kod etapu 5 (Caddy z `caddy-dns/cloudflare`, DNS-01) dotyczy modelu VM / instancji dedykowanych — w Container Apps
 TLS kończy się na ingress Azure.
 
@@ -154,7 +159,7 @@ Obecne `ci.yml` (i18n, build obrazów, testy izolacji na pełnym stosie docker c
 
 1. Dostępy (Adam): Kacper w GitHub (write) i Azure (Contributor na `rg-govai-prod`, Key Vault Secrets Officer),
    Cloudflare (strefa `govai.pl`).
-2. DNS `govai.pl` → Cloudflare (Adam) + certyfikat Origin CA.
+2. DNS `govai.pl` → Cloudflare (Adam) + token `cloudflare-api-token` w `kv-govai`; certyfikaty: `renew-certs.yml` (§3).
 3. Zasoby wspólne: `rg-govai-prod`, Log Analytics, `govai-env`, `govairegistry`, `kv-govai` (skrypt `az` w repo,
    np. `infra/aca/bootstrap.sh` — do napisania; CRMtree nie ma IaC, ale GovAI ma Bicep dla VM — warto dopisać
    `infra/aca/*.bicep`).

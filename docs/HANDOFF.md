@@ -65,7 +65,7 @@ względem CRMtree: **`docs/azure-environments-plan.md`**. Model VM zostaje jako 
    - `DATABASE_URL`/Redis z sekretów KV (`config.py`), mniejsze pule połączeń (B1ms ma 50 połączeń);
    - probe HTTP `/health` (api, gateway).
 7. INT na Container Apps: `govai-db-int` (PG 15 + TimescaleDB, `init.sql` + migracje), `govai-redis-int`, aplikacje `-int`,
-   domeny `app.int.govai.pl`, `*.int.govai.pl` (Cloudflare proxy + certyfikat Origin CA), workflow `deploy-int.yml` (push `develop`).
+   domeny `app.int.govai.pl`, `*.int.govai.pl` (Cloudflare DNS-only + Let's Encrypt odnawiany przez `renew-certs.yml`), workflow `deploy-int.yml` (push `develop`).
 8. PROD: `govai-db`, `govai-redis`, aplikacje, domeny `govai.pl`, `app.govai.pl`, `*.govai.pl`, workflow `deploy.yml`
    (push `master`, GitHub Environment `prod` z zatwierdzeniem Adama), backup bazy (rozważ 35 dni).
 9. Przełączenie `govai.pl` z VM na PROD; organizacja **Gessel** z panelu super-admina; hasło admina platformy PROD.

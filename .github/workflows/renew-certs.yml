@@ -1,0 +1,158 @@
+# Automatyczne odnawianie certyfikatu Let's Encrypt dla domen GovAI na Azure Container Apps.
+# Jeden certyfikat SAN: govai.pl, *.govai.pl, *.int.govai.pl (DNS-01 przez Cloudflare), wgrany jako
+# PFX do govai-env i podpięty do wszystkich hostów z listy BINDINGS, które są już dodane do aplikacji.
+# Managed Certificate w Container Apps nie obsługuje wildcarda (subdomeny organizacji: <slug>.govai.pl).
+#
+# Co tydzień sprawdza ważność certyfikatu podpiętego do pierwszego obecnego hosta; odnawia, gdy zostało
+# < RENEW_DAYS dni albo przy ręcznym uruchomieniu z force=true. Dopóki żaden host z listy nie jest dodany
+# do aplikacji (przed przełączeniem DNS) — nic nie robi.
+# Harmonogram działa tylko z gałęzi domyślnej repo. Nieudany run → mail z GitHub Actions.
+#
+# Logowanie: OIDC (id-govai-github, environment prod). Token Cloudflare: sekret `cloudflare-api-token`
+# w Key Vault kv-govai (token „Edit zone DNS” dla strefy govai.pl) — nie w sekretach GitHub.
+name: Renew certificates
+
+on:
+  schedule:
+    - cron: '23 4 * * 1'   # poniedziałki 04:23 UTC
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Odnów niezależnie od daty ważności'
+        type: boolean
+        default: false
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: renew-certs
+  cancel-in-progress: false
+
+env:
+  SUBSCRIPTION: 5e23c5f2-d269-41d3-b558-7d65dad68f1e
+  RG: rg-govai
+  CAE: govai-env
+  VAULT: kv-govai
+  CERT_PREFIX: govai-le
+  DOMAINS: 'govai.pl *.govai.pl *.int.govai.pl'
+  # host:aplikacja — host musi być wcześniej dodany do aplikacji (az containerapp hostname add,
+  # z rekordem TXT asuid.<host>); workflow tylko przepina na nim certyfikat.
+  BINDINGS: >-
+    govai.pl:govai-edge
+    *.govai.pl:govai-edge
+    int.govai.pl:govai-edge-int
+    *.int.govai.pl:govai-edge-int
+  RENEW_DAYS: 30
+  ACME_EMAIL: adapakse@gmail.com
+
+jobs:
+  renew:
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Sprawdzenie podpiętych hostów i ważności
+        id: check
+        run: |
+          set -euo pipefail; set -f   # bez globbingu — *.govai.pl to nazwy hostów, nie wzorce plików
+          az account set --subscription "$SUBSCRIPTION"
+          az extension add --name containerapp --upgrade --only-show-errors -y
+          present=""; expires=""
+          for b in $BINDINGS; do
+            host="${b%%:*}"; app="${b#*:}"
+            cert=$(az containerapp hostname list -g "$RG" -n "$app" \
+              --query "[?name=='$host'] | [0].certificateId" -o tsv 2>/dev/null || true)
+            if az containerapp hostname list -g "$RG" -n "$app" --query "[?name=='$host'].name" -o tsv 2>/dev/null | grep -qx -- "$host"; then
+              present="$present $b"
+              if [ -z "$expires" ] && [ -n "$cert" ]; then
+                expires=$(az containerapp env certificate list -g "$RG" -n "$CAE" \
+                  --query "[?name=='${cert##*/}'].properties.expirationDate | [0]" -o tsv)
+              fi
+            fi
+          done
+          if [ -z "$present" ]; then
+            echo "Żaden host z BINDINGS nie jest dodany do aplikacji (przed przełączeniem DNS) — pomijam."
+            echo "renew=false" >> "$GITHUB_OUTPUT"
+            echo "### Brak podpiętych hostów — pominięto" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          days=-1
+          [ -n "$expires" ] && days=$(( ( $(date -d "$expires" +%s) - $(date +%s) ) / 86400 ))
+          renew=false
+          if [ "${{ inputs.force }}" = "true" ] || [ "$days" -lt "$RENEW_DAYS" ]; then renew=true; fi
+          echo "Hosty:$present | wygasa: ${expires:-brak certyfikatu} ($days dni) | odnowienie: $renew"
+          echo "present=$present" >> "$GITHUB_OUTPUT"
+          echo "renew=$renew" >> "$GITHUB_OUTPUT"
+          echo "### Certyfikat wygasa ${expires:-—} ($days dni), odnowienie: $renew" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Wystawienie certyfikatu (Let's Encrypt DNS-01 / Cloudflare)
+        if: steps.check.outputs.renew == 'true'
+        run: |
+          set -euo pipefail; set -f   # bez globbingu — *.govai.pl to nazwy hostów, nie wzorce plików
+          token=$(az keyvault secret show --vault-name "$VAULT" -n cloudflare-api-token --query value -o tsv)
+          echo "::add-mask::$token"
+          python3 -m pip install --quiet --user certbot certbot-dns-cloudflare
+          umask 077
+          printf 'dns_cloudflare_api_token = %s\n' "$token" > "$RUNNER_TEMP/cf.ini"
+          args=""
+          for d in $DOMAINS; do args="$args -d $d"; done
+          # shellcheck disable=SC2086  # celowe dzielenie listy domen na argumenty
+          ~/.local/bin/certbot certonly --non-interactive --agree-tos -m "$ACME_EMAIL" \
+            --config-dir "$RUNNER_TEMP/le" --work-dir "$RUNNER_TEMP/le-work" --logs-dir "$RUNNER_TEMP/le-logs" \
+            --dns-cloudflare --dns-cloudflare-credentials "$RUNNER_TEMP/cf.ini" \
+            --dns-cloudflare-propagation-seconds 60 \
+            --cert-name govai $args
+          rm -f "$RUNNER_TEMP/cf.ini"
+
+      - name: Wgranie do Container Apps i przepięcie hostów
+        if: steps.check.outputs.renew == 'true'
+        env:
+          PRESENT: ${{ steps.check.outputs.present }}
+        run: |
+          set -euo pipefail; set -f   # bez globbingu — *.govai.pl to nazwy hostów, nie wzorce plików
+          umask 077
+          live="$RUNNER_TEMP/le/live/govai"
+          pass=$(openssl rand -hex 16)
+          echo "::add-mask::$pass"
+          openssl pkcs12 -export -out "$RUNNER_TEMP/cert.pfx" -passout "pass:$pass" \
+            -inkey "$live/privkey.pem" -in "$live/fullchain.pem"
+          name="$CERT_PREFIX-$(date +%Y%m%d)"
+          az containerapp env certificate upload -g "$RG" -n "$CAE" \
+            --certificate-file "$RUNNER_TEMP/cert.pfx" --certificate-name "$name" --password "$pass" -o none
+          rm -f "$RUNNER_TEMP/cert.pfx"
+          for b in $PRESENT; do
+            host="${b%%:*}"; app="${b#*:}"
+            az containerapp hostname bind -g "$RG" -n "$app" --hostname "$host" \
+              --environment "$CAE" --certificate "$name" -o none
+            echo "  $host ($app) → $name"
+          done
+          echo "new=$name" >> "$GITHUB_ENV"
+
+      - name: Weryfikacja i sprzątanie starych certyfikatów
+        if: steps.check.outputs.renew == 'true'
+        env:
+          PRESENT: ${{ steps.check.outputs.present }}
+        run: |
+          set -euo pipefail; set -f   # bez globbingu — *.govai.pl to nazwy hostów, nie wzorce plików
+          for b in $PRESENT; do
+            host="${b%%:*}"; app="${b#*:}"
+            bound=$(az containerapp hostname list -g "$RG" -n "$app" \
+              --query "[?name=='$host'] | [0].certificateId" -o tsv)
+            [ "${bound##*/}" = "$new" ] || { echo "::error::$host wskazuje na '${bound##*/}', oczekiwano '$new'"; exit 1; }
+          done
+          for c in $(az containerapp env certificate list -g "$RG" -n "$CAE" \
+                       --query "[?starts_with(name, '$CERT_PREFIX-')].name" -o tsv); do
+            [ "$c" = "$new" ] && continue
+            echo "Usuwam stary certyfikat $c"
+            az containerapp env certificate delete -g "$RG" -n "$CAE" --certificate "$c" --yes -o none \
+              || echo "::warning::Nie udało się usunąć $c — zostawiam"
+          done
+          echo "Nowy certyfikat: $new" >> "$GITHUB_STEP_SUMMARY"
