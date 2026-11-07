@@ -45,7 +45,7 @@ env:
     int.govai.pl:govai-edge-int
     *.int.govai.pl:govai-edge-int
   RENEW_DAYS: 30
-  ACME_EMAIL: adapakse@gmail.com
+  ACME_EMAIL: adamgmanka@gmail.com   # powiadomienia Let's Encrypt (konto Azure GovAI)
 
 jobs:
   renew:

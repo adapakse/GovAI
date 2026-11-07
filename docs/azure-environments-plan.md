@@ -140,10 +140,12 @@ Frontend: bez zmiennych (adresy względne wkompilowane w obraz — jeden obraz d
 
 Jak CRMtree (`deploy-int.yml` na push `develop`, `deploy.yml` na push `master`), z poprawkami:
 
-1. Logowanie do Azure przez **OIDC** (bez sekretu klienta) — tożsamość `oidc-msi-govai` (`rg-adapakse-8986`) ma już
-   federated credential `repo:adapakse/GovAI:environment:int`; dodać `…:environment:prod` i role: AcrPush na
-   `govairegistry`, Contributor na aplikacjach w `rg-govai-prod`, Key Vault Secrets User (odczyt hasła admina do migracji).
-   **[poprawka]** CRMtree używa sekretu klienta service principala.
+1. Logowanie do Azure przez **OIDC** (bez sekretu klienta) — tożsamość `id-govai-github` w `rg-govai`
+   (subskrypcja GovAI `5e23c5f2-…`, konto Azure adamgmanka@gmail.com) z federated credentials
+   `repo:adapakse/GovAI:environment:int` i `…:prod` (`adapakse` = właściciel repo na GitHubie, nie konto Azure);
+   role: Contributor na `rg-govai`, AcrPush na `govaicr`, Key Vault Secrets User na `kv-govai`
+   (tworzy `infra/aca/bootstrap.sh github`). Stara tożsamość `oidc-msi-govai` (`rg-adapakse-8986`, stara
+   subskrypcja) obsługuje tylko deploy na VM do czasu przełączenia. **[poprawka]** CRMtree używa sekretu klienta service principala.
 2. Build i push 4 obrazów (`edge`, `frontend`, `api`, `gateway`) z tagami
    `int-<run_number>` / `<run_number>` (jak CRMtree) + etykieta z SHA commita.
 3. **Migracje przed aktualizacją aplikacji** (jak CRMtree): runner pobiera hasło admina z KV i uruchamia migracje
