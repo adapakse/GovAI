@@ -30,7 +30,7 @@ from i18n import match_locale, set_locale, t
 from repositories import platform_repository as platform_repo
 from services import settings_service
 from services.auth_service import decode_access_token, get_identity
-from services.tenant_host import slug_from_host
+from services.tenant_host import request_host, slug_from_host
 
 _bearer = HTTPBearer(auto_error=False)
 
@@ -159,7 +159,7 @@ async def get_current_user(
     """
     if not credentials:
         raise _unauthorized(t("auth.errors.missing_token"))
-    user = await authenticate_token(credentials.credentials, request.headers.get("host"))
+    user = await authenticate_token(credentials.credentials, request_host(request.headers))
 
     if user.must_change_password:
         route = request.scope.get("route")

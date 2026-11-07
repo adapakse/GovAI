@@ -30,6 +30,16 @@ class Settings(BaseSettings):
     # (CSV, jak ALLOWED_ORIGINS). Puste = brak subdomen (tryb dedykowany / lokalny).
     tenant_base_domains_raw: str = Field(default="", alias="TENANT_BASE_DOMAINS")
 
+    # Za reverse proxy podmieniającym Host (Azure Container Apps: govai-edge
+    # wysyła Host = nazwa aplikacji wewnętrznej) oryginalny host jest w
+    # X-Forwarded-Host. Włączać TYLKO gdy API jest osiągalne wyłącznie przez
+    # zaufane proxy (ingress wewnętrzny) — inaczej nagłówek można podrobić.
+    trust_forwarded_host: bool = False
+
+    # Maksymalny rozmiar puli połączeń asyncpg (Postgres B1ms: max_connections 50
+    # na serwer — przy wielu replikach zmniejszyć).
+    db_pool_max: int = 20
+
     @property
     def tenant_base_domains(self) -> list[str]:
         return [d.strip().lower() for d in self.tenant_base_domains_raw.split(",") if d.strip()]

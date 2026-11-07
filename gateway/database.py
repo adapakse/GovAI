@@ -39,8 +39,8 @@ async def init_pool() -> None:
     global _pool
     _pool = await asyncpg.create_pool(
         dsn=settings.database_url,
-        min_size=2,
-        max_size=10,
+        min_size=min(2, settings.db_pool_max),
+        max_size=settings.db_pool_max,   # DB_POOL_MAX (domyślnie 10)
         command_timeout=5,
     )
     logger.info("Pula połączeń z bazą danych zainicjalizowana")

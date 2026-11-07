@@ -10,6 +10,7 @@ from i18n import t
 from repositories import dashboard_repository as dashboard_repo
 from services import settings_service
 from services.block_reasons import localize_block_reason
+from services.tenant_host import request_host
 
 logger = logging.getLogger(__name__)
 router = APIRouter(tags=["dashboard"])
@@ -86,7 +87,7 @@ async def live_feed(websocket: WebSocket):
     try:
         if not token:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
-        user = await authenticate_token(token, websocket.headers.get("host"))
+        user = await authenticate_token(token, request_host(websocket.headers))
         if user.must_change_password:   # najpierw zmiana hasła tymczasowego
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
     except HTTPException:

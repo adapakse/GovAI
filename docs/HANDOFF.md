@@ -46,8 +46,6 @@ względem CRMtree: **`docs/azure-environments-plan.md`**. Model VM zostaje jako 
 ## 4. Plan prac (kolejność)
 
 ### P0 — natychmiast
-0. **CRMtree — odnowić certyfikaty wildcard przed 8.11.2026** (procedura: §9). Bez tego przestają działać
-   subdomeny wszystkich organizacji CRMtree (`*.crmtree.pl` wygasa 2026-11-08, `*.int.crmtree.pl` 2026-11-10).
 1. **Zmienić hasło `admin@kancelaria.local` na INT** — repozytorium jest **publiczne**, hasło startowe jest w
    `db/migrations/002_auth.sql`, a INT obsługuje publiczne `app.govai.pl`. (Po wdrożeniu PR #9 — w UI; przed — `POST /auth/me/password`.)
 2. PR #9 → `develop` → deploy INT; zalogować się ponownie (stare tokeny są nieważne).
@@ -55,8 +53,8 @@ względem CRMtree: **`docs/azure-environments-plan.md`**. Model VM zostaje jako 
    (lista w `docs/azure-environments-plan.md` §3).
 
 ### P1 — infrastruktura INT/PROD na Container Apps (`docs/azure-environments-plan.md` §7)
-4. Gałąź PROD: `main` → **`master`** (rename w GitHub + odwołania w repo).
-5. Zasoby wspólne (`rg-govai-prod`, `govai-env`, `govairegistry`, `govai-vault`, Log Analytics) — jako skrypt/Bicep w `infra/aca/`.
+4. ~~Gałąź PROD: `main` → `master`~~ — zrobione 2026-11-07 (lokalnie: `git branch -m main master && git fetch origin && git branch -u origin/master master`).
+5. Zasoby wspólne (`rg-govai-prod`, `govai-env`, `govairegistry`, `kv-govai`, Log Analytics) — jako skrypt/Bicep w `infra/aca/`.
 6. Zmiany w kodzie pod Container Apps:
    - `caddy/Caddyfile.edge` + obraz `govai-edge` (routing hostów/ścieżek, landing, `X-Forwarded-Host`);
    - rozpoznawanie organizacji z `X-Forwarded-Host` (API: `services/tenant_host.py`, `dependencies/auth.py`,
@@ -65,7 +63,7 @@ względem CRMtree: **`docs/azure-environments-plan.md`**. Model VM zostaje jako 
    - `DATABASE_URL`/Redis z sekretów KV (`config.py`), mniejsze pule połączeń (B1ms ma 50 połączeń);
    - probe HTTP `/health` (api, gateway).
 7. INT na Container Apps: `govai-db-int` (PG 15 + TimescaleDB, `init.sql` + migracje), `govai-redis-int`, aplikacje `-int`,
-   domeny `app.int.govai.pl`, `*.int.govai.pl` (Cloudflare proxy + certyfikat Origin CA), workflow `deploy-int.yml` (push `develop`).
+   domeny `app.int.govai.pl`, `*.int.govai.pl` (Cloudflare DNS-only + Let's Encrypt odnawiany przez `renew-certs.yml`), workflow `deploy-int.yml` (push `develop`).
 8. PROD: `govai-db`, `govai-redis`, aplikacje, domeny `govai.pl`, `app.govai.pl`, `*.govai.pl`, workflow `deploy.yml`
    (push `master`, GitHub Environment `prod` z zatwierdzeniem Adama), backup bazy (rozważ 35 dni).
 9. Przełączenie `govai.pl` z VM na PROD; organizacja **Gessel** z panelu super-admina; hasło admina platformy PROD.
@@ -96,7 +94,7 @@ względem CRMtree: **`docs/azure-environments-plan.md`**. Model VM zostaje jako 
 ## 6. Dostępy do nadania (Adam)
 - GitHub `adapakse/GovAI`: Kacper jako collaborator (write). Repo jest publiczne.
 - Azure („Azure subscription 1”, tenant `8fc0088b-…`): konto Kacpra (gość) z rolą Contributor na `rg-govai-prod`
-  (po utworzeniu) i `rg-govai-int`, Key Vault Secrets Officer na `govai-vault`. Dla agenta Claude — osobny
+  (po utworzeniu) i `rg-govai-int`, Key Vault Secrets Officer na `kv-govai`. Dla agenta Claude — osobny
   service principal z ograniczonymi uprawnieniami (jak `sp-claude-agent-crmtree` w CRMtree).
 - Cloudflare: dostęp do strefy `govai.pl`.
 - Sekrety przekazywać przez Key Vault, nigdy w czacie / repo.
@@ -127,83 +125,5 @@ sh tests/isolation/run.sh
 # deploy INT (obecny model VM) — z GitHub Actions: Deploy → environment=int, ref=develop
 gh workflow run deploy.yml --ref develop -f environment=int
 # Azure — zawsze z jawną subskrypcją
-az containerapp list --subscription "Azure subscription 1" -g rg-crmtree-prod -o table   # wzorzec CRMtree
+az containerapp list --subscription 5e23c5f2-d269-41d3-b558-7d65dad68f1e -g rg-govai -o table   # GovAI (AZURE_CONFIG_DIR=C:/Users/apt/.azure-govai)
 ```
-
-## 9. CRMtree — odnowienie certyfikatów wildcard (pilne, potem co ~60 dni)
-
-**Stan (sprawdzony 2026-11-04):** w środowisku Container Apps `crmtree-env` (`rg-crmtree-prod`) są dwa
-certyfikaty wgrane ręcznie jako PFX, wystawione przez **Let's Encrypt** (ważność 90 dni, nic ich nie odnawia):
-
-| Certyfikat w Azure | Domena | Wygasa | Podpięty do |
-|---|---|---|---|
-| `wildcard-crmtree-pl` | `*.crmtree.pl` | **2026-11-08** | `crmtree-frontend` (PROD — subdomeny organizacji) |
-| `wildcard-int-crmtree-pl` | `*.int.crmtree.pl` | **2026-11-10** | `crmtree-frontend-int` (INT) |
-
-`app.crmtree.pl` i `api.crmtree.pl` mają certyfikaty zarządzane przez Azure (odnawiają się same) — nie ruszać.
-DNS `crmtree.pl` jest w Cloudflare, rekordy **bez proxy** (szara chmurka) → CNAME na `crmtree-frontend(-int)…azurecontainerapps.io`.
-
-**Wymagane:** token API Cloudflare (Profile → API Tokens → Create Token → szablon „Edit zone DNS”, strefa
-`crmtree.pl`), uprawnienia Azure do `rg-crmtree-prod` (Contributor), Docker, openssl, az CLI.
-Kroki wykonuje człowiek (agent Claude w trybie auto nie zapisze sekretów i nie zmieni produkcji CRMtree).
-Polecenia dla Git Bash (Windows) albo WSL/Linux; w Git Bash poprzedź je `export MSYS_NO_PATHCONV=1`.
-
-```sh
-export MSYS_NO_PATHCONV=1
-S="Azure subscription 1"; RG=rg-crmtree-prod; ENV=crmtree-env
-mkdir -p ~/crmtree-certs && cd ~/crmtree-certs
-# Katalog bieżący w formacie dla `docker -v` (Git Bash: C:/..., Linux/WSL: /home/...)
-HERE=$(pwd -W 2>/dev/null || pwd)
-
-# 1. Token Cloudflare do pliku (nie commitować, usunąć po wszystkim)
-printf 'dns_cloudflare_api_token = %s\n' '<TOKEN_CLOUDFLARE>' > cloudflare.ini && chmod 600 cloudflare.ini
-
-# 2. Wystawienie certyfikatów Let's Encrypt (wyzwanie DNS-01 przez Cloudflare)
-for D in crmtree.pl int.crmtree.pl; do
-  docker run --rm -v "$HERE/le:/etc/letsencrypt" -v "$HERE/cloudflare.ini:/cf.ini:ro" \
-    certbot/dns-cloudflare certonly \
-    --dns-cloudflare --dns-cloudflare-credentials /cf.ini --dns-cloudflare-propagation-seconds 60 \
-    -d "*.$D" --cert-name "wildcard-$D" --agree-tos -m adapakse@gmail.com --non-interactive
-done
-
-# 3. Konwersja do PFX (Container Apps wymaga PFX z hasłem)
-PFXPASS=$(openssl rand -hex 16)
-for D in crmtree.pl int.crmtree.pl; do
-  openssl pkcs12 -export -out "wildcard-$D.pfx" -passout "pass:$PFXPASS" \
-    -inkey "le/live/wildcard-$D/privkey.pem" -in "le/live/wildcard-$D/fullchain.pem"
-done
-
-# 4. Wgranie do środowiska Container Apps — NOWE nazwy (stare zostają do czasu przepięcia)
-TAG=$(date +%Y%m%d)
-az containerapp env certificate upload --subscription "$S" -g $RG -n $ENV \
-  --certificate-file wildcard-crmtree.pl.pfx --certificate-name "wildcard-crmtree-pl-$TAG" --password "$PFXPASS"
-az containerapp env certificate upload --subscription "$S" -g $RG -n $ENV \
-  --certificate-file wildcard-int.crmtree.pl.pfx --certificate-name "wildcard-int-crmtree-pl-$TAG" --password "$PFXPASS"
-
-# 5. Przepięcie domen na nowe certyfikaty (bez przerwy w działaniu)
-az containerapp hostname bind --subscription "$S" -g $RG -n crmtree-frontend \
-  --hostname "*.crmtree.pl" --environment $ENV --certificate "wildcard-crmtree-pl-$TAG"
-az containerapp hostname bind --subscription "$S" -g $RG -n crmtree-frontend-int \
-  --hostname "*.int.crmtree.pl" --environment $ENV --certificate "wildcard-int-crmtree-pl-$TAG"
-
-# 6. Weryfikacja — data ważności ~90 dni od dziś
-for H in gessel.crmtree.pl app.int.crmtree.pl; do
-  echo | openssl s_client -connect $H:443 -servername $H 2>/dev/null | openssl x509 -noout -subject -enddate
-done
-az containerapp env certificate list --subscription "$S" -g $RG -n $ENV \
-  --query "[].{n:name,s:properties.subjectName,exp:properties.expirationDate}" -o table
-
-# 7. Sprzątanie: stare certyfikaty (po potwierdzeniu, że domeny używają nowych) i lokalne pliki
-az containerapp env certificate delete --subscription "$S" -g $RG -n $ENV --certificate wildcard-crmtree-pl --yes
-az containerapp env certificate delete --subscription "$S" -g $RG -n $ENV --certificate wildcard-int-crmtree-pl --yes
-rm -f cloudflare.ini *.pfx    # katalog le/ (klucze prywatne) — usunąć albo trzymać bezpiecznie do kolejnego odnowienia
-```
-
-Kolejne odnowienie: ~60 dni po wystawieniu (Let's Encrypt zaleca odnawiać na 30 dni przed wygaśnięciem).
-Ustaw przypomnienie albo wdroż trwałe rozwiązanie:
-- **Zalecane (jak w planie GovAI):** Cloudflare w trybie proxy (pomarańczowa chmurka) dla `*.crmtree.pl` i
-  `*.int.crmtree.pl` + certyfikat **Cloudflare Origin CA** (ważny do 15 lat) wgrany zamiast Let's Encrypt,
-  SSL/TLS „Full (strict)”. Przed włączeniem sprawdzić: SSR CRMtree za proxy (nagłówki `x-forwarded-*`,
-  `allowedHosts`), limit czasu żądań przez Cloudflare (~100 s na planie Free) dla długich wywołań LLM.
-- **Albo:** zaplanowany workflow GitHub Actions w `crmtree-backend` (co miesiąc) wykonujący kroki 2–5 z sekretami
-  (token Cloudflare + OIDC do Azure).
