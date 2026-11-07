@@ -4,6 +4,23 @@ import { LOCALE_COOKIE, isLocale } from '@/i18n/locales';
 
 const PUBLIC_PATHS = ['/login'];
 
+// Za reverse proxy (Azure Container Apps: govai-edge podmienia Host na nazwę
+// aplikacji wewnętrznej) request.url wskazuje adres wewnętrzny — adres
+// przekierowania budujemy z X-Forwarded-Host / X-Forwarded-Proto (ustawia je
+// edge lub Caddy), a bez nich jak dotąd z request.url.
+function publicUrl(request: NextRequest, pathname: string): URL {
+  const url = new URL(request.url);
+  url.pathname = pathname;
+  const forwardedHost = request.headers.get('x-forwarded-host')?.split(',')[0].trim();
+  if (forwardedHost) {
+    url.host = forwardedHost;   // host[:port]; bez portu — port domyślny protokołu
+    if (!forwardedHost.includes(':')) url.port = '';
+    const forwardedProto = request.headers.get('x-forwarded-proto')?.split(',')[0].trim();
+    if (forwardedProto === 'https' || forwardedProto === 'http') url.protocol = forwardedProto + ':';
+  }
+  return url;
+}
+
 export function middleware(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
 
@@ -11,7 +28,7 @@ export function middleware(request: NextRequest) {
   // języka i przekieruj na ten sam adres bez parametru.
   const lang = searchParams.get('lang');
   if (lang !== null) {
-    const clean = request.nextUrl.clone();
+    const clean = publicUrl(request, pathname);
     clean.searchParams.delete('lang');
     const response = NextResponse.redirect(clean);
     if (isLocale(lang)) {
@@ -26,7 +43,8 @@ export function middleware(request: NextRequest) {
 
   const session = request.cookies.get('gai_session');
   if (!session?.value) {
-    const loginUrl = new URL('/login', request.url);
+    const loginUrl = publicUrl(request, '/login');
+    loginUrl.search = '';
     return NextResponse.redirect(loginUrl);
   }
 

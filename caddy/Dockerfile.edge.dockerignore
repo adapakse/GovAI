@@ -1,0 +1,6 @@
+# Kontekst = katalog główny repo — do obrazu edge trafia tylko to, co potrzebne
+# (BuildKit czyta <Dockerfile>.dockerignore obok Dockerfile.edge).
+*
+!caddy/Caddyfile.edge
+!caddy/edge-entrypoint.sh
+!website/

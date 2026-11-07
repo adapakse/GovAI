@@ -6,7 +6,7 @@ param location = 'polandcentral'
 // B-series/D*sv5) — patrz opis parametru vmSize w instance.bicep. Do zmiany
 // po zaakceptowaniu wniosku o quotę.
 param vmSize = 'Standard_D2s_v3'
-param gitBranch = 'main'
+param gitBranch = 'master'
 // Domena publiczna — po weryfikacji PROD, DNS dla govai.pl zostaje
 // przełączony tu z INT (patrz ENVIRONMENTS.md — INT wraca do roli czysto
 // wewnętrznej, bez własnej domeny).

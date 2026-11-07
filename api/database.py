@@ -46,8 +46,8 @@ async def init_pool() -> None:
     global _pool
     _pool = await asyncpg.create_pool(
         dsn=settings.database_url,
-        min_size=2,
-        max_size=20,
+        min_size=min(2, settings.db_pool_max),
+        max_size=settings.db_pool_max,   # DB_POOL_MAX (domyślnie 20)
         # Raporty z narracją LLM trzymają połączenie (transakcja żądania) dłużej
         # niż zwykłe zapytanie — limit dotyczy pojedynczego polecenia SQL.
         command_timeout=30,

@@ -3,15 +3,52 @@
 # Uruchamiany przez deploy-remote.sh; lokalnie z katalogu repo:
 #   sh infra/scripts/migrate.sh        (w Git Bash na Windows: MSYS_NO_PATHCONV=1)
 #
+# Tryb zdalny (Azure Postgres Flexible, CI): ustaw DATABASE_ADMIN_URL (URL roli
+# admina serwera, np. postgresql://govaiadmin:...@govai-db-int.postgres.database.azure.com:5432/govai?sslmode=require)
+# i DB_APP_PASSWORD — psql bezpośrednio, bez docker compose. Na świeżej bazie
+# (brak tabeli agents) najpierw db/init.sql. Wymaga psql (postgresql-client).
+#
 # Rejestr wykonanych migracji: tabela schema_migrations. Każda migracja idzie
 # w jednej transakcji z ON_ERROR_STOP — błąd przerywa deploy zamiast (jak
 # wcześniej) cicho iść dalej i powtarzać migracje przy każdym deployu.
 set -e
 
-psql_exec() {
-  # app.platform=on: migracje działają ponad RLS (FORCE dotyczy też właściciela tabel).
-  docker compose exec -T -e PGOPTIONS="-c app.platform=on" postgres psql -U govai -d "${GOVAI_DB:-govai}" -v ON_ERROR_STOP=1 -q "$@"
-}
+# app.platform=on: migracje działają ponad RLS (FORCE dotyczy też właściciela
+# tabel — na Azure admin nie jest superużytkownikiem i RLS go obejmuje).
+if [ -n "${DATABASE_ADMIN_URL:-}" ]; then
+  echo "Migracje: tryb zdalny (DATABASE_ADMIN_URL)"
+  psql_exec() {
+    PGOPTIONS="-c app.platform=on" psql "$DATABASE_ADMIN_URL" -v ON_ERROR_STOP=1 -q "$@"
+  }
+  # Plik SQL w jednej transakcji.
+  psql_file() {
+    psql_exec -1 -f "$1"
+  }
+  # SQL ze stdin (hasło nie trafia do listy procesów).
+  psql_stdin() {
+    psql "$DATABASE_ADMIN_URL" -v ON_ERROR_STOP=1 -q
+  }
+
+  # Świeża baza (Azure nie montuje init.sql jak obraz Postgresa) — schemat bazowy.
+  has_agents=$(psql_exec -tAc "SELECT to_regclass('public.agents') IS NOT NULL")
+  if [ "$has_agents" != "t" ]; then
+    echo "Świeża baza: db/init.sql"
+    psql_file db/init.sql
+  fi
+else
+  psql_exec() {
+    docker compose exec -T -e PGOPTIONS="-c app.platform=on" postgres psql -U govai -d "${GOVAI_DB:-govai}" -v ON_ERROR_STOP=1 -q "$@"
+  }
+  psql_file() {
+    container=$(docker compose ps -q postgres)
+    name=$(basename "$1")
+    docker cp "$1" "$container:/tmp/$name"
+    psql_exec -1 -f "/tmp/$name"
+  }
+  psql_stdin() {
+    docker compose exec -T postgres psql -U govai -d "${GOVAI_DB:-govai}" -v ON_ERROR_STOP=1 -q
+  }
+fi
 
 psql_exec -c "CREATE TABLE IF NOT EXISTS schema_migrations (
   filename   TEXT PRIMARY KEY,
@@ -35,7 +72,6 @@ if [ "$registered" = "0" ] && [ "$legacy" = "t" ]; then
   done
 fi
 
-container=$(docker compose ps -q postgres)
 for f in db/migrations/*.sql; do
   name=$(basename "$f")
   applied=$(psql_exec -tAc "SELECT 1 FROM schema_migrations WHERE filename = '$name'")
@@ -43,20 +79,25 @@ for f in db/migrations/*.sql; do
     continue
   fi
   echo "Migracja: $name"
-  docker cp "$f" "$container:/tmp/$name"
-  psql_exec -1 -f "/tmp/$name"
+  psql_file "$f"
   psql_exec -c "INSERT INTO schema_migrations (filename) VALUES ('$name')"
 done
 
 # Hasło roli aplikacji (govai_app, migracja 015) — z DB_APP_PASSWORD w środowisku
 # albo w .env. Przez stdin, żeby nie pojawiło się w liście procesów.
-app_password=${DB_APP_PASSWORD:-$(grep '^DB_APP_PASSWORD=' .env 2>/dev/null | cut -d= -f2-)}
+if [ -n "${DATABASE_ADMIN_URL:-}" ]; then
+  # Tryb zdalny — tylko ze zmiennej (lokalny .env nie może ustawić hasła na INT/PROD).
+  app_password=${DB_APP_PASSWORD:-}
+else
+  app_password=${DB_APP_PASSWORD:-$(grep '^DB_APP_PASSWORD=' .env 2>/dev/null | cut -d= -f2-)}
+fi
 has_role=$(psql_exec -tAc "SELECT 1 FROM pg_roles WHERE rolname = 'govai_app'")
 if [ "$has_role" = "1" ]; then
   if [ -z "$app_password" ]; then
     echo "Brak DB_APP_PASSWORD — API i gateway nie połączą się z bazą jako govai_app" >&2
     exit 1
   fi
-  printf "ALTER ROLE govai_app WITH PASSWORD '%s';\n" "$app_password" \
-    | docker compose exec -T postgres psql -U govai -d "${GOVAI_DB:-govai}" -v ON_ERROR_STOP=1 -q
+  # Apostrofy w haśle podwajamy (literał SQL).
+  escaped=$(printf "%s" "$app_password" | sed "s/'/''/g")
+  printf "ALTER ROLE govai_app WITH PASSWORD '%s';\n" "$escaped" | psql_stdin
 fi

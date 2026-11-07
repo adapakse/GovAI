@@ -36,7 +36,7 @@ from i18n import DEFAULT_LOCALE, LOCALES, is_locale, t
 from repositories import agents_repository as agents_repo
 from repositories import auth_repository as auth_repo
 from services import settings_service
-from services.tenant_host import slug_from_host
+from services.tenant_host import request_host, slug_from_host
 from services.auth_service import (
     change_password, create_api_key, create_refresh_token, create_user,
     find_login_identities, generate_temporary_password, get_identity,
@@ -170,7 +170,7 @@ async def login(body: LoginRequest, request: Request):
     na adresie uniwersalnym (app.<domena>) — konto o danym e-mailu i haśle
     w dowolnej organizacji (gdy pasuje kilka — trzeba użyć adresu organizacji).
     """
-    host_slug = slug_from_host(request.headers.get("host"))
+    host_slug = slug_from_host(request_host(request.headers))
     async with platform_db():
         tenant_id = None
         if host_slug:
@@ -237,7 +237,7 @@ async def refresh(body: RefreshRequest, request: Request):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail=t("auth.errors.account_inactive"))
     _ensure_active(user)
-    host_slug = slug_from_host(request.headers.get("host"))
+    host_slug = slug_from_host(request_host(request.headers))
     if host_slug is not None and host_slug != user["tenant_slug"]:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=t("auth.errors.tenant_host_mismatch"))
 

@@ -95,6 +95,7 @@ services:
       DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
       DEMO_MODE: ${DEMO_MODE:-false}
+      DB_POOL_MAX: ${GATEWAY_DB_POOL_MAX:-10}
       JWT_SECRET: ${JWT_SECRET:-ZMIEN_MNIE_NA_LOSOWY_32_BAJTOWY_KLUCZ_HEX}
       JWT_ALGORITHM: HS256
     depends_on:
@@ -121,6 +122,10 @@ services:
       JWT_SECRET: ${JWT_SECRET:-ZMIEN_MNIE_NA_LOSOWY_32_BAJTOWY_KLUCZ_HEX}
       JWT_ALGORITHM: HS256
       ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-https://localhost}
+      DB_POOL_MAX: ${API_DB_POOL_MAX:-20}
+      # Organizacja z X-Forwarded-Host zamiast Host — tylko za zaufanym proxy,
+      # które podmienia Host (Container Apps: govai-edge). Lokalnie/VM: false.
+      TRUST_FORWARDED_HOST: ${TRUST_FORWARDED_HOST:-false}
     depends_on:
       postgres:
         condition: service_healthy

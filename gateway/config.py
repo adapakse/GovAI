@@ -20,6 +20,10 @@ class Settings(BaseSettings):
     # Tryb demo — zwraca gotowe odpowiedzi zamiast wywoływać Anthropic API
     demo_mode: bool = False
 
+    # Maksymalny rozmiar puli połączeń asyncpg (Postgres B1ms: max_connections 50
+    # na serwer — przy wielu replikach zmniejszyć).
+    db_pool_max: int = 10
+
     # JWT — musi być identyczny z api/config.py
     jwt_secret: str = "ZMIEN_MNIE_NA_LOSOWY_32_BAJTOWY_KLUCZ_HEX"
     jwt_algorithm: str = "HS256"

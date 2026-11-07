@@ -1,0 +1,15 @@
+# govai-edge — Caddy HTTP :80 dla Azure Container Apps (bez TLS i bez modułu
+# Cloudflare DNS: certyfikaty obsługuje ingress Azure / Cloudflare).
+# Kontekst budowania = katalog główny repo:
+#   docker build -f caddy/Dockerfile.edge -t govai-edge .
+FROM caddy:2-alpine
+
+COPY caddy/Caddyfile.edge /etc/caddy/Caddyfile.edge
+COPY caddy/edge-entrypoint.sh /usr/local/bin/edge-entrypoint.sh
+COPY website/ /srv/website-src/
+# Windows (autocrlf) — usuń CR, żeby skrypt działał w sh.
+RUN sed -i 's/\r$//' /usr/local/bin/edge-entrypoint.sh /etc/caddy/Caddyfile.edge \
+    && chmod +x /usr/local/bin/edge-entrypoint.sh
+
+EXPOSE 80
+ENTRYPOINT ["/usr/local/bin/edge-entrypoint.sh"]

@@ -15,10 +15,8 @@ Status: plan (2026-11-04), do realizacji. Wzorzec: **CRMtree** (ta sama subskryp
 Przepływ (jak CRMtree): `feature/*` → PR → `develop` → test na INT → PR `develop` → `master` → PROD.
 Bezpośrednio na `master` tylko hotfix produkcyjny.
 
-**Gałąź PROD = `master`** (decyzja Adama, jak CRMtree). Dziś w repo gałęzią produkcyjną jest `main`
-(domyślna w GitHub) — do zrobienia: zmiana nazwy `main` → `master` (GitHub → Settings → Branches →
-rename; GitHub przekieruje stare odwołania) i aktualizacja odwołań w repo (`infra/params/prod.bicepparam`,
-`.github/workflows/*`, `ENVIRONMENTS.md`).
+**Gałąź PROD = `master`** (decyzja Adama, jak CRMtree). Zmiana nazwy `main` → `master` zrobiona 2026-11-07
+(gałąź domyślna w GitHub; lokalnie: `git branch -m main master && git fetch origin && git branch -u origin/master master`).
 
 ### Stan obecny (do wygaszenia po migracji)
 INT działa dziś na **VM** (`rg-govai-int`: `vm-govai-int` 74.248.18.114, `kv-govai-int`, Bicep `infra/`,
@@ -37,7 +35,7 @@ region **polandcentral**. Zawsze `az … --subscription "Azure subscription 1"` 
 | Log Analytics | `govai-logs` | PerGB2018, retencja 30 dni |
 | Container Apps Environment | `govai-env` | profil Consumption, bez VNet (jak `crmtree-env`) |
 | Container Registry | `govairegistry` | Basic. **[poprawka]** pull przez managed identity (rola AcrPull), bez admin usera |
-| Key Vault | `govai-vault` | tryb RBAC; aplikacje czytają sekrety referencjami KV przez system-assigned identity (jak CRMtree). **[poprawka]** osobne nazwy sekretów per środowisko (`*-int`) — w CRMtree INT dzieli sekrety z PROD |
+| Key Vault | `kv-govai` | tryb RBAC; aplikacje czytają sekrety referencjami KV przez system-assigned identity (jak CRMtree). **[poprawka]** osobne nazwy sekretów per środowisko (`*-int`) — w CRMtree INT dzieli sekrety z PROD |
 | PostgreSQL Flexible | `govai-db` (PROD), `govai-db-int` (INT) | PG 15, Standard_B1ms (Burstable), backup 7 dni (PROD: rozważ 35). **[poprawka]** osobny serwer dla INT — patrz §4 |
 | Redis | `govai-redis` (PROD), `govai-redis-int` | **Azure Cache for Redis Basic C0** (TLS 6380). GovAI używa Redis tylko do pub/sub zdarzeń na żywo (gateway → API → WebSocket) — trwałość niepotrzebna. Redis jako Container App wymagałby ingressu TCP, a ten działa tylko w środowisku z własnym VNet |
 | Storage | (na razie niepotrzebny) | GovAI nie przechowuje plików; raporty PDF generowane w locie |
@@ -81,14 +79,19 @@ przeniesione bez zmian. Rekordy aplikacji: `@`, `www`, `app`, `*`, `int`, `app.i
 `govai-edge` / `govai-edge-int` (+ rekordy TXT `asuid.*` do weryfikacji domen w Container Apps).
 
 ### Certyfikaty — **[poprawka względem CRMtree]**
-Container Apps nie wystawia zarządzanych certyfikatów wildcard. CRMtree wgrał ręcznie certyfikaty
-`*.crmtree.pl` / `*.int.crmtree.pl`, których nic nie odnawia (wygasają 8 i 10.11.2026 — ryzyko awarii).
-Dla GovAI: **Cloudflare w trybie proxy (pomarańczowa chmurka) + Cloudflare Origin CA**:
-- certyfikat Origin CA na `govai.pl, *.govai.pl, *.int.govai.pl` (ważność do 15 lat) wgrany jako PFX do `govai-env`
-  i podpięty do domen `govai-edge` / `govai-edge-int`;
-- Cloudflare SSL/TLS: **Full (strict)**; publiczny certyfikat przy kliencie obsługuje Cloudflare (odnawia sam);
-- uwagi: limit czasu żądania przez proxy Cloudflare (plan Free ~100 s) — długie operacje LLM muszą się mieścić albo
-  przejść na tryb asynchroniczny; WebSocket przez proxy Cloudflare działa.
+Container Apps nie wystawia zarządzanych certyfikatów wildcard (subdomeny organizacji `<slug>.govai.pl`).
+**Decyzja (2026-11-06): Cloudflare DNS-only (szara chmurka) + Let's Encrypt z automatycznym odnawianiem**
+— zamiast wcześniej planowanego proxy Cloudflare + Origin CA, bo:
+- Universal SSL Cloudflare (Free) nie obejmuje `*.int.govai.pl` (wildcard drugiego poziomu wymaga płatnego
+  Advanced Certificate Manager),
+- proxy Cloudflare (Free) ucina żądania po ~100 s, a wywołania LLM bywają dłuższe.
+
+Realizacja: workflow `.github/workflows/renew-certs.yml` — jeden certyfikat SAN `govai.pl, *.govai.pl, *.int.govai.pl`
+(DNS-01 przez API Cloudflare, token w Key Vault jako `cloudflare-api-token`), wgrywany do `govai-env` jako
+`govai-le-YYYYMMDD` i podpinany do hostów `govai.pl`, `*.govai.pl` (`govai-edge`) oraz `int.govai.pl`,
+`*.int.govai.pl` (`govai-edge-int`). Co tydzień sprawdza ważność, odnawia przy < 30 dniach, usuwa stare
+certyfikaty. Hosty dodaje się raz przy przełączeniu DNS (`az containerapp hostname add` + TXT `asuid.<host>`),
+potem pierwsze wystawienie: ręczne uruchomienie workflow z `force=true`.
 Kod etapu 5 (Caddy z `caddy-dns/cloudflare`, DNS-01) dotyczy modelu VM / instancji dedykowanych — w Container Apps
 TLS kończy się na ingress Azure.
 
@@ -112,7 +115,7 @@ TLS kończy się na ingress Azure.
 
 ## 5. Sekrety i konfiguracja
 
-Key Vault `govai-vault`, referencje `keyvaultref:https://govai-vault.vault.azure.net/secrets/<nazwa>,identityref:system`
+Key Vault `kv-govai`, referencje `keyvaultref:https://kv-govai.vault.azure.net/secrets/<nazwa>,identityref:system`
 → `secretRef` w env aplikacji (jak CRMtree). Proponowane nazwy (PROD / INT z sufiksem `-int`):
 
 | Sekret KV | Zmienna | Aplikacje |
@@ -135,10 +138,12 @@ Frontend: bez zmiennych (adresy względne wkompilowane w obraz — jeden obraz d
 
 Jak CRMtree (`deploy-int.yml` na push `develop`, `deploy.yml` na push `master`), z poprawkami:
 
-1. Logowanie do Azure przez **OIDC** (bez sekretu klienta) — tożsamość `oidc-msi-govai` (`rg-adapakse-8986`) ma już
-   federated credential `repo:adapakse/GovAI:environment:int`; dodać `…:environment:prod` i role: AcrPush na
-   `govairegistry`, Contributor na aplikacjach w `rg-govai-prod`, Key Vault Secrets User (odczyt hasła admina do migracji).
-   **[poprawka]** CRMtree używa sekretu klienta service principala.
+1. Logowanie do Azure przez **OIDC** (bez sekretu klienta) — tożsamość `id-govai-github` w `rg-govai`
+   (subskrypcja GovAI `5e23c5f2-…`, konto Azure adamgmanka@gmail.com) z federated credentials
+   `repo:adapakse/GovAI:environment:int` i `…:prod` (`adapakse` = właściciel repo na GitHubie, nie konto Azure);
+   role: Contributor na `rg-govai`, AcrPush na `govaicr`, Key Vault Secrets User na `kv-govai`
+   (tworzy `infra/aca/bootstrap.sh github`). Stara tożsamość `oidc-msi-govai` (`rg-adapakse-8986`, stara
+   subskrypcja) obsługuje tylko deploy na VM do czasu przełączenia. **[poprawka]** CRMtree używa sekretu klienta service principala.
 2. Build i push 4 obrazów (`edge`, `frontend`, `api`, `gateway`) z tagami
    `int-<run_number>` / `<run_number>` (jak CRMtree) + etykieta z SHA commita.
 3. **Migracje przed aktualizacją aplikacji** (jak CRMtree): runner pobiera hasło admina z KV i uruchamia migracje
@@ -148,14 +153,21 @@ Jak CRMtree (`deploy-int.yml` na push `develop`, `deploy.yml` na push `master`),
 5. GitHub Environments: `int` (bez zatwierdzeń), `prod` (wymagane zatwierdzenie Adama).
 6. Rollback: `az containerapp update --image <poprzedni tag>` (ACR trzyma numerowane tagi); bazy — PITR.
 
+**Realizacja:** `deploy-aca-int.yml` (push `develop`) i `deploy-aca-prod.yml` (push `master`) wołają wspólny
+`_deploy-aca.yml`. Automatyczny deploy po push jest wyłączony do przełączenia — włączają go zmienne repo
+`ACA_INT_ENABLED=true` / `ACA_PROD_ENABLED=true` (`gh variable set ACA_INT_ENABLED -R adapakse/GovAI --body true`).
+Przełączenie INT: najpierw sekrety środowiska `int` na nową subskrypcję (te same wartości co w `prod`), potem zmienna.
+Ręczne uruchomienie z `build_only=true` buduje i wypycha obrazy bez migracji i aktualizacji aplikacji; gdy aplikacji
+`govai-*` jeszcze nie ma, workflow i tak kończy na obrazach. Stary `deploy.yml` (VM) — do usunięcia po przełączeniu.
+
 Obecne `ci.yml` (i18n, build obrazów, testy izolacji na pełnym stosie docker compose) zostaje bez zmian.
 
 ## 7. Kolejność wdrożenia
 
 1. Dostępy (Adam): Kacper w GitHub (write) i Azure (Contributor na `rg-govai-prod`, Key Vault Secrets Officer),
    Cloudflare (strefa `govai.pl`).
-2. DNS `govai.pl` → Cloudflare (Adam) + certyfikat Origin CA.
-3. Zasoby wspólne: `rg-govai-prod`, Log Analytics, `govai-env`, `govairegistry`, `govai-vault` (skrypt `az` w repo,
+2. DNS `govai.pl` → Cloudflare (Adam) + token `cloudflare-api-token` w `kv-govai`; certyfikaty: `renew-certs.yml` (§3).
+3. Zasoby wspólne: `rg-govai-prod`, Log Analytics, `govai-env`, `govairegistry`, `kv-govai` (skrypt `az` w repo,
    np. `infra/aca/bootstrap.sh` — do napisania; CRMtree nie ma IaC, ale GovAI ma Bicep dla VM — warto dopisać
    `infra/aca/*.bicep`).
 4. INT na Container Apps: `govai-db-int` (+ init.sql + migracje), aplikacje `-int`, domeny `*.int.govai.pl`,
