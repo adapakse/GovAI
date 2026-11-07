@@ -46,8 +46,6 @@ względem CRMtree: **`docs/azure-environments-plan.md`**. Model VM zostaje jako 
 ## 4. Plan prac (kolejność)
 
 ### P0 — natychmiast
-0. **CRMtree — odnowić certyfikaty wildcard przed 8.11.2026** (procedura: §9). Bez tego przestają działać
-   subdomeny wszystkich organizacji CRMtree (`*.crmtree.pl` wygasa 2026-11-08, `*.int.crmtree.pl` 2026-11-10).
 1. **Zmienić hasło `admin@kancelaria.local` na INT** — repozytorium jest **publiczne**, hasło startowe jest w
    `db/migrations/002_auth.sql`, a INT obsługuje publiczne `app.govai.pl`. (Po wdrożeniu PR #9 — w UI; przed — `POST /auth/me/password`.)
 2. PR #9 → `develop` → deploy INT; zalogować się ponownie (stare tokeny są nieważne).
@@ -127,83 +125,5 @@ sh tests/isolation/run.sh
 # deploy INT (obecny model VM) — z GitHub Actions: Deploy → environment=int, ref=develop
 gh workflow run deploy.yml --ref develop -f environment=int
 # Azure — zawsze z jawną subskrypcją
-az containerapp list --subscription "Azure subscription 1" -g rg-crmtree-prod -o table   # wzorzec CRMtree
+az containerapp list --subscription 5e23c5f2-d269-41d3-b558-7d65dad68f1e -g rg-govai -o table   # GovAI (AZURE_CONFIG_DIR=C:/Users/apt/.azure-govai)
 ```
-
-## 9. CRMtree — odnowienie certyfikatów wildcard (pilne, potem co ~60 dni)
-
-**Stan (sprawdzony 2026-11-04):** w środowisku Container Apps `crmtree-env` (`rg-crmtree-prod`) są dwa
-certyfikaty wgrane ręcznie jako PFX, wystawione przez **Let's Encrypt** (ważność 90 dni, nic ich nie odnawia):
-
-| Certyfikat w Azure | Domena | Wygasa | Podpięty do |
-|---|---|---|---|
-| `wildcard-crmtree-pl` | `*.crmtree.pl` | **2026-11-08** | `crmtree-frontend` (PROD — subdomeny organizacji) |
-| `wildcard-int-crmtree-pl` | `*.int.crmtree.pl` | **2026-11-10** | `crmtree-frontend-int` (INT) |
-
-`app.crmtree.pl` i `api.crmtree.pl` mają certyfikaty zarządzane przez Azure (odnawiają się same) — nie ruszać.
-DNS `crmtree.pl` jest w Cloudflare, rekordy **bez proxy** (szara chmurka) → CNAME na `crmtree-frontend(-int)…azurecontainerapps.io`.
-
-**Wymagane:** token API Cloudflare (Profile → API Tokens → Create Token → szablon „Edit zone DNS”, strefa
-`crmtree.pl`), uprawnienia Azure do `rg-crmtree-prod` (Contributor), Docker, openssl, az CLI.
-Kroki wykonuje człowiek (agent Claude w trybie auto nie zapisze sekretów i nie zmieni produkcji CRMtree).
-Polecenia dla Git Bash (Windows) albo WSL/Linux; w Git Bash poprzedź je `export MSYS_NO_PATHCONV=1`.
-
-```sh
-export MSYS_NO_PATHCONV=1
-S="Azure subscription 1"; RG=rg-crmtree-prod; ENV=crmtree-env
-mkdir -p ~/crmtree-certs && cd ~/crmtree-certs
-# Katalog bieżący w formacie dla `docker -v` (Git Bash: C:/..., Linux/WSL: /home/...)
-HERE=$(pwd -W 2>/dev/null || pwd)
-
-# 1. Token Cloudflare do pliku (nie commitować, usunąć po wszystkim)
-printf 'dns_cloudflare_api_token = %s\n' '<TOKEN_CLOUDFLARE>' > cloudflare.ini && chmod 600 cloudflare.ini
-
-# 2. Wystawienie certyfikatów Let's Encrypt (wyzwanie DNS-01 przez Cloudflare)
-for D in crmtree.pl int.crmtree.pl; do
-  docker run --rm -v "$HERE/le:/etc/letsencrypt" -v "$HERE/cloudflare.ini:/cf.ini:ro" \
-    certbot/dns-cloudflare certonly \
-    --dns-cloudflare --dns-cloudflare-credentials /cf.ini --dns-cloudflare-propagation-seconds 60 \
-    -d "*.$D" --cert-name "wildcard-$D" --agree-tos -m adapakse@gmail.com --non-interactive
-done
-
-# 3. Konwersja do PFX (Container Apps wymaga PFX z hasłem)
-PFXPASS=$(openssl rand -hex 16)
-for D in crmtree.pl int.crmtree.pl; do
-  openssl pkcs12 -export -out "wildcard-$D.pfx" -passout "pass:$PFXPASS" \
-    -inkey "le/live/wildcard-$D/privkey.pem" -in "le/live/wildcard-$D/fullchain.pem"
-done
-
-# 4. Wgranie do środowiska Container Apps — NOWE nazwy (stare zostają do czasu przepięcia)
-TAG=$(date +%Y%m%d)
-az containerapp env certificate upload --subscription "$S" -g $RG -n $ENV \
-  --certificate-file wildcard-crmtree.pl.pfx --certificate-name "wildcard-crmtree-pl-$TAG" --password "$PFXPASS"
-az containerapp env certificate upload --subscription "$S" -g $RG -n $ENV \
-  --certificate-file wildcard-int.crmtree.pl.pfx --certificate-name "wildcard-int-crmtree-pl-$TAG" --password "$PFXPASS"
-
-# 5. Przepięcie domen na nowe certyfikaty (bez przerwy w działaniu)
-az containerapp hostname bind --subscription "$S" -g $RG -n crmtree-frontend \
-  --hostname "*.crmtree.pl" --environment $ENV --certificate "wildcard-crmtree-pl-$TAG"
-az containerapp hostname bind --subscription "$S" -g $RG -n crmtree-frontend-int \
-  --hostname "*.int.crmtree.pl" --environment $ENV --certificate "wildcard-int-crmtree-pl-$TAG"
-
-# 6. Weryfikacja — data ważności ~90 dni od dziś
-for H in demo.crmtree.pl app.int.crmtree.pl; do
-  echo | openssl s_client -connect $H:443 -servername $H 2>/dev/null | openssl x509 -noout -subject -enddate
-done
-az containerapp env certificate list --subscription "$S" -g $RG -n $ENV \
-  --query "[].{n:name,s:properties.subjectName,exp:properties.expirationDate}" -o table
-
-# 7. Sprzątanie: stare certyfikaty (po potwierdzeniu, że domeny używają nowych) i lokalne pliki
-az containerapp env certificate delete --subscription "$S" -g $RG -n $ENV --certificate wildcard-crmtree-pl --yes
-az containerapp env certificate delete --subscription "$S" -g $RG -n $ENV --certificate wildcard-int-crmtree-pl --yes
-rm -f cloudflare.ini *.pfx    # katalog le/ (klucze prywatne) — usunąć albo trzymać bezpiecznie do kolejnego odnowienia
-```
-
-Kolejne odnowienie: ~60 dni po wystawieniu (Let's Encrypt zaleca odnawiać na 30 dni przed wygaśnięciem).
-Ustaw przypomnienie albo wdroż trwałe rozwiązanie:
-- **Zalecane (jak w planie GovAI):** Cloudflare w trybie proxy (pomarańczowa chmurka) dla `*.crmtree.pl` i
-  `*.int.crmtree.pl` + certyfikat **Cloudflare Origin CA** (ważny do 15 lat) wgrany zamiast Let's Encrypt,
-  SSL/TLS „Full (strict)”. Przed włączeniem sprawdzić: SSR CRMtree za proxy (nagłówki `x-forwarded-*`,
-  `allowedHosts`), limit czasu żądań przez Cloudflare (~100 s na planie Free) dla długich wywołań LLM.
-- **Albo:** zaplanowany workflow GitHub Actions w `crmtree-backend` (co miesiąc) wykonujący kroki 2–5 z sekretami
-  (token Cloudflare + OIDC do Azure).
