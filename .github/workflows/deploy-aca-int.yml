@@ -1,11 +1,18 @@
-# INT na Azure Container Apps — automatycznie po push do develop.
-# Aplikacje govai-*-int, sekrety Key Vault z sufiksem -int, tagi int-<run_number>.
+# INT na Azure Container Apps — po push do develop; aplikacje govai-*-int, sekrety Key Vault
+# z sufiksem -int, tagi int-<run_number>.
+# Automatyczny deploy po push dopiero po włączeniu zmiennej repo ACA_INT_ENABLED=true — do
+# przełączenia środowisko GitHub "int" ma sekrety starej subskrypcji (deploy.yml na VM).
 name: Deploy ACA INT
 
 on:
   push:
     branches: [develop]
   workflow_dispatch:
+    inputs:
+      build_only:
+        description: 'Tylko build i push obrazów (bez migracji i aktualizacji aplikacji)'
+        type: boolean
+        default: true
 
 permissions:
   id-token: write
@@ -13,9 +20,11 @@ permissions:
 
 jobs:
   deploy:
+    if: vars.ACA_INT_ENABLED == 'true'
     uses: ./.github/workflows/_deploy-aca.yml
     with:
       environment: int
       suffix: '-int'
       tag_prefix: 'int-'
+      build_only: ${{ inputs.build_only == true }}
     secrets: inherit

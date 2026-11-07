@@ -1,11 +1,18 @@
-# PROD na Azure Container Apps — po push do master; GitHub Environment "prod"
-# wymaga zatwierdzenia. Aplikacje govai-*, tagi <run_number>.
+# PROD na Azure Container Apps — po push do master; aplikacje govai-*, tagi <run_number>.
+# Automatyczny deploy po push dopiero po włączeniu zmiennej repo ACA_PROD_ENABLED=true
+# (przy przełączeniu PROD). Ręczne uruchomienie działa zawsze — build_only=true sprawdza
+# sam build i push obrazów do govaicr.
 name: Deploy ACA PROD
 
 on:
   push:
     branches: [master]
   workflow_dispatch:
+    inputs:
+      build_only:
+        description: 'Tylko build i push obrazów (bez migracji i aktualizacji aplikacji)'
+        type: boolean
+        default: true
 
 permissions:
   id-token: write
@@ -13,9 +20,11 @@ permissions:
 
 jobs:
   deploy:
+    if: github.event_name == 'workflow_dispatch' || vars.ACA_PROD_ENABLED == 'true'
     uses: ./.github/workflows/_deploy-aca.yml
     with:
       environment: prod
       suffix: ''
       tag_prefix: ''
+      build_only: ${{ inputs.build_only == true }}
     secrets: inherit

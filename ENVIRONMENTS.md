@@ -7,9 +7,9 @@ wdrożenia" niżej).
 
 | Środowisko | Branch    | Gdzie                                   | Domena      |
 |------------|-----------|------------------------------------------|-------------|
-| lokalne    | dowolny (feature / `develop` / `main`) | maszyna developera, `docker compose` | — (`localhost`) |
+| lokalne    | dowolny (feature / `develop` / `master`) | maszyna developera, `docker compose` | — (`localhost`) |
 | INT        | `develop` | Azure: `vm-govai-int` w `rg-govai-int`   | brak (wewnętrzne) |
-| PROD       | `main`    | Azure: `vm-govai-prod` w `rg-govai-prod` | `govai.pl`  |
+| PROD       | `master`  | Azure: `vm-govai-prod` w `rg-govai-prod` | `govai.pl`  |
 
 Parametry instancji Azure: `infra/params/int.bicepparam`,
 `infra/params/prod.bicepparam` (szablon: `infra/instance.bicep`). Region
@@ -19,8 +19,8 @@ Parametry instancji Azure: `infra/params/int.bicepparam`,
 
 1. Praca lokalnie na branchu feature → push na GitHub.
 2. Merge do `develop` (PR) → CI (`.github/workflows/ci.yml`, odpala się na
-   push/PR do `develop` i `main`) → deploy na **INT** → testy integracyjne.
-3. Gdy stabilne: merge `develop` → `main` (PR) → deploy na **PROD**.
+   push/PR do `develop` i `master`) → deploy na **INT** → testy integracyjne.
+3. Gdy stabilne: merge `develop` → `master` (PR) → deploy na **PROD**.
 
 Lokalnie wystarcza jeden klon repo — nie ma potrzeby stawiania drugiego
 stosu (`govai-int`) na maszynie developera; INT żyje na Azure.
@@ -30,7 +30,7 @@ stosu (`govai-int`) na maszynie developera; INT żyje na Azure.
 Ręcznie przez GitHub Actions: **Actions → Deploy → Run workflow**
 (`.github/workflows/deploy.yml`):
 
-- `Use workflow from` = branch do wdrożenia (`develop` dla INT, `main` dla PROD),
+- `Use workflow from` = branch do wdrożenia (`develop` dla INT, `master` dla PROD),
 - `environment` = `int` albo `prod` (GitHub Environment + nazwa RG/VM).
 
 Workflow loguje się do Azure przez OIDC i przez `az vm run-command` robi na

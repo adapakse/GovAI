@@ -15,10 +15,8 @@ Status: plan (2026-11-04), do realizacji. Wzorzec: **CRMtree** (ta sama subskryp
 Przepływ (jak CRMtree): `feature/*` → PR → `develop` → test na INT → PR `develop` → `master` → PROD.
 Bezpośrednio na `master` tylko hotfix produkcyjny.
 
-**Gałąź PROD = `master`** (decyzja Adama, jak CRMtree). Dziś w repo gałęzią produkcyjną jest `main`
-(domyślna w GitHub) — do zrobienia: zmiana nazwy `main` → `master` (GitHub → Settings → Branches →
-rename; GitHub przekieruje stare odwołania) i aktualizacja odwołań w repo (`infra/params/prod.bicepparam`,
-`.github/workflows/*`, `ENVIRONMENTS.md`).
+**Gałąź PROD = `master`** (decyzja Adama, jak CRMtree). Zmiana nazwy `main` → `master` zrobiona 2026-11-07
+(gałąź domyślna w GitHub; lokalnie: `git branch -m main master && git fetch origin && git branch -u origin/master master`).
 
 ### Stan obecny (do wygaszenia po migracji)
 INT działa dziś na **VM** (`rg-govai-int`: `vm-govai-int` 74.248.18.114, `kv-govai-int`, Bicep `infra/`,
@@ -154,6 +152,13 @@ Jak CRMtree (`deploy-int.yml` na push `develop`, `deploy.yml` na push `master`),
 4. `az containerapp update --image …` dla każdej aplikacji; potem smoke test `/health` przez `app.<domena>`.
 5. GitHub Environments: `int` (bez zatwierdzeń), `prod` (wymagane zatwierdzenie Adama).
 6. Rollback: `az containerapp update --image <poprzedni tag>` (ACR trzyma numerowane tagi); bazy — PITR.
+
+**Realizacja:** `deploy-aca-int.yml` (push `develop`) i `deploy-aca-prod.yml` (push `master`) wołają wspólny
+`_deploy-aca.yml`. Automatyczny deploy po push jest wyłączony do przełączenia — włączają go zmienne repo
+`ACA_INT_ENABLED=true` / `ACA_PROD_ENABLED=true` (`gh variable set ACA_INT_ENABLED -R adapakse/GovAI --body true`).
+Przełączenie INT: najpierw sekrety środowiska `int` na nową subskrypcję (te same wartości co w `prod`), potem zmienna.
+Ręczne uruchomienie z `build_only=true` buduje i wypycha obrazy bez migracji i aktualizacji aplikacji; gdy aplikacji
+`govai-*` jeszcze nie ma, workflow i tak kończy na obrazach. Stary `deploy.yml` (VM) — do usunięcia po przełączeniu.
 
 Obecne `ci.yml` (i18n, build obrazów, testy izolacji na pełnym stosie docker compose) zostaje bez zmian.
 

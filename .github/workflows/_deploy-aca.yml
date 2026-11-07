@@ -19,6 +19,11 @@ on:
         description: 'Prefiks tagu obrazów ("int-" albo "")'
         required: true
         type: string
+      build_only:
+        description: 'Tylko build i push obrazów (bez migracji i aktualizacji aplikacji)'
+        required: false
+        type: boolean
+        default: false
 
 env:
   SUBSCRIPTION: 5e23c5f2-d269-41d3-b558-7d65dad68f1e
@@ -66,7 +71,22 @@ jobs:
             docker push "$REGISTRY/govai-$app:$TAG"
           done
 
+      # Przed bootstrapem (krok apps) aplikacji jeszcze nie ma — wtedy kończymy na obrazach.
+      - name: Czy aplikacje istnieją
+        id: apps
+        env:
+          BUILD_ONLY: ${{ inputs.build_only }}
+        run: |
+          if [ "$BUILD_ONLY" != "true" ] && az containerapp show -n "govai-api$SUFFIX" \
+               -g "$RESOURCE_GROUP" --subscription "$SUBSCRIPTION" --query name -o tsv >/dev/null 2>&1; then
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+            echo "### Tylko obrazy ($TAG) — build_only albo brak aplikacji govai-*$SUFFIX" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       - name: Migracje bazy (tryb zdalny)
+        if: steps.apps.outputs.deploy == 'true'
         run: |
           set -e
           sudo apt-get update -qq
@@ -80,6 +100,7 @@ jobs:
           DATABASE_ADMIN_URL="$admin_url" DB_APP_PASSWORD="$app_password" sh infra/scripts/migrate.sh
 
       - name: Aktualizacja Container Apps
+        if: steps.apps.outputs.deploy == 'true'
         run: |
           set -e
           az extension add --name containerapp --upgrade --only-show-errors -y
@@ -90,6 +111,7 @@ jobs:
           done
 
       - name: Smoke test
+        if: steps.apps.outputs.deploy == 'true'
         run: |
           set -e
           fqdn=$(az containerapp show -n "govai-edge$SUFFIX" -g "$RESOURCE_GROUP" --subscription "$SUBSCRIPTION" \

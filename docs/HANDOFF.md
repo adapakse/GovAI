@@ -53,7 +53,7 @@ względem CRMtree: **`docs/azure-environments-plan.md`**. Model VM zostaje jako 
    (lista w `docs/azure-environments-plan.md` §3).
 
 ### P1 — infrastruktura INT/PROD na Container Apps (`docs/azure-environments-plan.md` §7)
-4. Gałąź PROD: `main` → **`master`** (rename w GitHub + odwołania w repo).
+4. ~~Gałąź PROD: `main` → `master`~~ — zrobione 2026-11-07 (lokalnie: `git branch -m main master && git fetch origin && git branch -u origin/master master`).
 5. Zasoby wspólne (`rg-govai-prod`, `govai-env`, `govairegistry`, `kv-govai`, Log Analytics) — jako skrypt/Bicep w `infra/aca/`.
 6. Zmiany w kodzie pod Container Apps:
    - `caddy/Caddyfile.edge` + obraz `govai-edge` (routing hostów/ścieżek, landing, `X-Forwarded-Host`);
