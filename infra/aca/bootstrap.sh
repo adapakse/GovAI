@@ -33,10 +33,15 @@ PG_ZONE="${GOVAI_PG_ZONE:-}"
 PG_ADMIN=govaiadmin
 DB_NAME=govai
 
-# Globalny przełącznik --subscription musi stać PO nazwie komendy (az <grupa> <cmd> --subscription),
-# więc zamiast doklejać go do każdego wywołania ustawiamy subskrypcję raz.
-# UWAGA: zmienia domyślną subskrypcję az CLI. Obie subskrypcje (GovAI i CRMtree) nazywają się
-# "Azure subscription 1" — przełączaj po ID/tenancie (az account list -o table), nie po nazwie.
+# Osobny katalog konfiguracji az dla GovAI (tylko konto adamgmanka@gmail.com) — wspólnego ~/.azure
+# używają równolegle sesje innych projektów, więc nie wolno w nim przełączać subskrypcji.
+export AZURE_CONFIG_DIR="${AZURE_CONFIG_DIR:-C:/Users/apt/.azure-govai}"
+case "$AZURE_CONFIG_DIR" in
+  *.azure-govai*) ;;
+  *) echo "Uruchom z AZURE_CONFIG_DIR wskazującym katalog GovAI (C:/Users/apt/.azure-govai)" >&2; exit 1 ;;
+esac
+# Przełącznik --subscription musi stać PO nazwie komendy, więc subskrypcję ustawiamy raz —
+# tylko w katalogu konfiguracji GovAI, bez wpływu na inne projekty.
 az account set --subscription "$SUB"
 AZ="az"
 
