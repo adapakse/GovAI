@@ -1,0 +1,57 @@
+# Codzienna kontrola backupów baz (VM vm-govai-data → konto Storage stgovaibkp*, kontener backups).
+# Konto Storage przyjmuje ruch tylko z podsieci snet-data, więc sprawdzenie idzie przez
+# az vm run-command (govai-backup check w kontenerze backupu) — nieudany run = mail z GitHub Actions.
+#
+# PROD: najnowszy backup młodszy niż 26 h (codziennie 02:30 Europe/Warsaw).
+# INT: baza działa tylko pn–pt 09–18, backup robi int-schedule przy zatrzymaniu (~18:00) — sprawdzane
+# wt–pt (26 h) i w poniedziałek (74 h, backup z piątku); w weekend pomijane.
+# Logowanie: jak int-schedule.yml (vars.OPS_ENVIRONMENT, domyślnie „prod”).
+name: Backup check
+
+on:
+  schedule:
+    - cron: '0 7 * * *'   # 08:00 Warsaw zimą / 09:00 latem
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: govai-datavm
+  cancel-in-progress: false
+
+jobs:
+  check:
+    # Harmonogram dopiero po utworzeniu VM danych (zmienna repo DATAVM_ENABLED=true); ręcznie — zawsze.
+    if: github.event_name == 'workflow_dispatch' || vars.DATAVM_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    environment: ${{ vars.OPS_ENVIRONMENT || 'prod' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Wiek najnowszych backupów
+        env:
+          INT_ENABLED: ${{ vars.ACA_INT_ENABLED }}
+        run: |
+          set -euo pipefail
+          script='set -e; docker exec govai-backup govai-backup check prod 26'
+          dow=$(TZ=Europe/Warsaw date +%u)
+          if [ "$INT_ENABLED" = true ]; then
+            case "$dow" in
+              1) script="$script; docker exec govai-backup govai-backup check int 74" ;;
+              2|3|4|5) script="$script; docker exec govai-backup govai-backup check int 26" ;;
+              *) echo "Weekend — INT pomijany" ;;
+            esac
+          fi
+          script="$script; echo GOVAI_RESULT=OK"
+          out=$(bash infra/db-vm/vm-run.sh "$script") || { printf '%s\n' "$out"; echo "::error::Backup nieaktualny albo niedostępny"; exit 1; }
+          printf '%s\n' "$out"
+          grep 'GOVAI_CHECK_OK' <<<"$out" | sed 's/^/### /' >> "$GITHUB_STEP_SUMMARY"

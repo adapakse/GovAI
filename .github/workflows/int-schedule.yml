@@ -1,0 +1,116 @@
+# INT tylko w godzinach pracy: pn–pt 09:00–18:00 Europe/Warsaw. Poza godzinami: backup INT,
+# zatrzymanie pg-int i redis-int na VM vm-govai-data, aplikacje govai-*-int z min. replik 0.
+#
+# Cron GitHuba działa w UTC i bywa opóźniony, więc workflow nie zakłada godziny uruchomienia:
+# z czasu Europe/Warsaw (tzdata, DST) wylicza stan docelowy i doprowadza do niego idempotentnie.
+# Uruchomienia o 07:05 i 08:05 UTC pokrywają 09:00 czasu letniego i zimowego (start), o 16:05
+# i 17:05 UTC — 18:00 (stop). Ręcznie: action=start|stop wymusza stan.
+#
+# Logowanie: OIDC środowiska GitHub z vars.OPS_ENVIRONMENT (domyślnie „prod”) — środowisko „int”
+# do przełączenia INT trzyma sekrety starej subskrypcji. Gdy „prod” dostanie wymagane zatwierdzenia,
+# harmonogramy czekałyby na akceptację — wtedy środowisko „ops” (federated credential gh-env-ops
+# tworzy bootstrap.sh github) i zmienna repo OPS_ENVIRONMENT=ops.
+# Działa tylko przy zmiennej repo ACA_INT_ENABLED=true (jak deploy INT).
+name: INT schedule
+
+on:
+  schedule:
+    - cron: '5 7,8 * * 1-5'     # start (09:05 Warsaw latem / zimą)
+    - cron: '5 16,17 * * 1-5'   # stop (18:05 Warsaw latem / zimą)
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'auto = wg godzin pracy; start / stop wymusza stan'
+        type: choice
+        options: [auto, start, stop]
+        default: auto
+
+permissions:
+  id-token: write
+  contents: read
+
+# Jedno az vm run-command naraz na VM danych (int-schedule, backup-check, restore-test).
+concurrency:
+  group: govai-datavm
+  cancel-in-progress: false
+
+env:
+  SUBSCRIPTION: 5e23c5f2-d269-41d3-b558-7d65dad68f1e
+  RESOURCE_GROUP: rg-govai
+  # Minimalne repliki w godzinach pracy (jak w infra/aca/bootstrap.sh apps int); poza nimi 0.
+  INT_MIN_REPLICAS: 'api=1 gateway=1 frontend=0 edge=1'
+
+jobs:
+  int:
+    if: vars.ACA_INT_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    environment: ${{ vars.OPS_ENVIRONMENT || 'prod' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Stan docelowy
+        id: target
+        env:
+          ACTION: ${{ inputs.action || 'auto' }}
+        run: |
+          set -euo pipefail
+          dow=$(TZ=Europe/Warsaw date +%u); hm=$(TZ=Europe/Warsaw date +%H%M)
+          if [ "$ACTION" = start ] || [ "$ACTION" = stop ]; then
+            state=$ACTION
+          elif [ "$dow" -le 5 ] && [ "$((10#$hm))" -ge 900 ] && [ "$((10#$hm))" -lt 1800 ]; then
+            state=start
+          else
+            state=stop
+          fi
+          echo "Europe/Warsaw: dzień $dow, $hm → $state"
+          echo "state=$state" >> "$GITHUB_OUTPUT"
+          echo "### INT: $state (Europe/Warsaw $(TZ=Europe/Warsaw date '+%a %H:%M'))" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Start — bazy INT, potem aplikacje
+        if: steps.target.outputs.state == 'start'
+        run: |
+          set -euo pipefail
+          az extension add --name containerapp --upgrade --only-show-errors -y
+          bash infra/db-vm/vm-run.sh 'bash /opt/govai-data/govai-data.sh int-start' | tail -n 20
+          for pair in $INT_MIN_REPLICAS; do
+            app="govai-${pair%%=*}-int"; min="${pair#*=}"
+            cur=$(az containerapp show -n "$app" -g "$RESOURCE_GROUP" --subscription "$SUBSCRIPTION" \
+              --query properties.template.scale.minReplicas -o tsv)
+            if [ "$cur" != "$min" ]; then
+              az containerapp update -n "$app" -g "$RESOURCE_GROUP" --subscription "$SUBSCRIPTION" \
+                --min-replicas "$min" --only-show-errors -o none
+              echo "$app: min $cur → $min"
+            else
+              echo "$app: min $min (bez zmian)"
+            fi
+          done
+
+      - name: Stop — aplikacje na 0, potem backup i zatrzymanie baz INT
+        if: steps.target.outputs.state == 'stop'
+        run: |
+          set -euo pipefail
+          az extension add --name containerapp --upgrade --only-show-errors -y
+          for pair in $INT_MIN_REPLICAS; do
+            app="govai-${pair%%=*}-int"
+            cur=$(az containerapp show -n "$app" -g "$RESOURCE_GROUP" --subscription "$SUBSCRIPTION" \
+              --query properties.template.scale.minReplicas -o tsv)
+            if [ "$cur" != "0" ]; then
+              az containerapp update -n "$app" -g "$RESOURCE_GROUP" --subscription "$SUBSCRIPTION" \
+                --min-replicas 0 --only-show-errors -o none
+              echo "$app: min $cur → 0"
+            else
+              echo "$app: min 0 (bez zmian)"
+            fi
+          done
+          out=$(bash infra/db-vm/vm-run.sh 'bash /opt/govai-data/govai-data.sh int-stop') || { printf '%s\n' "$out"; exit 1; }
+          printf '%s\n' "$out" | tail -n 20
+          if grep -q 'GOVAI_WARN=int-backup-failed' <<<"$out"; then
+            echo "::warning::Backup INT przed zatrzymaniem nieudany — sprawdź logi govai-backup na VM"
+          fi
