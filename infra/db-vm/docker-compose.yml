@@ -1,0 +1,158 @@
+# GovAI — usługi danych na jednej VM (Azure: vm-govai-data) albo na serwerze on-prem:
+# Postgres 16 + TimescaleDB i Redis 7 osobno dla PROD i INT oraz kontener backupu.
+# Opis, runbook backupu i odtwarzania: infra/db-vm/README.md.
+#
+# Na VM uruchamia go govai-data.sh (systemd: govai-data.service) z plikiem /etc/govai/data.env
+# (konfiguracja z bootstrapu + hasła z Key Vault). On-prem: własny plik env, np.
+#   docker compose --env-file /etc/govai/data.env up -d pg-prod redis-prod backup
+# Usługi INT uruchamia się jawnie (pg-int, redis-int) — na Azure tylko w godzinach pracy.
+#
+# Hasła są wymagane, ale celowo bez ${VAR:?}: interpolacja obejmuje cały plik, a brak sekretów INT
+# nie może blokować startu PROD. Pusty POSTGRES_PASSWORD / REDIS_PASSWORD kończy start kontenera błędem.
+name: govai-data
+
+services:
+  pg-prod:
+    image: ${PG_IMAGE:-timescale/timescaledb:2.31.0-pg16}
+    container_name: govai-pg-prod
+    restart: unless-stopped
+    shm_size: 256m
+    mem_limit: ${PG_PROD_MEM_LIMIT:-3g}
+    environment:
+      POSTGRES_DB: govai
+      POSTGRES_USER: govai
+      POSTGRES_PASSWORD: ${DB_ADMIN_PASSWORD_PROD:-}
+      # timescaledb-tune przy inicjalizacji klastra (shared_buffers itd. wg limitu pamięci)
+      TS_TUNE_MEMORY: ${PG_PROD_TUNE_MEMORY:-3GB}
+      TS_TUNE_NUM_CPUS: "2"
+      PG_REQUIRE_SSL: ${PG_SSL:-on}
+    command: ["postgres", "-c", "ssl=${PG_SSL:-on}",
+              "-c", "ssl_cert_file=/etc/pgssl/server.crt", "-c", "ssl_key_file=/etc/pgssl/server.key",
+              "-c", "timescaledb.telemetry_level=off"]
+    volumes:
+      - ${DATA_DIR:-/data}/pg-prod:/var/lib/postgresql/data
+      - ${DATA_DIR:-/data}/ssl/prod:/etc/pgssl:ro
+      - ./initdb/10-hba.sh:/docker-entrypoint-initdb.d/10-hba.sh:ro
+    ports:
+      - "${DATA_BIND_IP:-10.50.2.10}:${PG_PROD_PORT:-5432}:5432"
+    networks: [prod]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U govai -d govai"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  pg-int:
+    image: ${PG_IMAGE:-timescale/timescaledb:2.31.0-pg16}
+    container_name: govai-pg-int
+    restart: unless-stopped
+    shm_size: 128m
+    mem_limit: ${PG_INT_MEM_LIMIT:-1536m}
+    environment:
+      POSTGRES_DB: govai
+      POSTGRES_USER: govai
+      POSTGRES_PASSWORD: ${DB_ADMIN_PASSWORD_INT:-}
+      TS_TUNE_MEMORY: ${PG_INT_TUNE_MEMORY:-1536MB}
+      TS_TUNE_NUM_CPUS: "2"
+      PG_REQUIRE_SSL: ${PG_SSL:-on}
+    command: ["postgres", "-c", "ssl=${PG_SSL:-on}",
+              "-c", "ssl_cert_file=/etc/pgssl/server.crt", "-c", "ssl_key_file=/etc/pgssl/server.key",
+              "-c", "timescaledb.telemetry_level=off"]
+    volumes:
+      - ${DATA_DIR:-/data}/pg-int:/var/lib/postgresql/data
+      - ${DATA_DIR:-/data}/ssl/int:/etc/pgssl:ro
+      - ./initdb/10-hba.sh:/docker-entrypoint-initdb.d/10-hba.sh:ro
+    ports:
+      - "${DATA_BIND_IP:-10.50.2.10}:${PG_INT_PORT:-5433}:5432"
+    networks: [int]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U govai -d govai"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  # Redis tylko do pub/sub zdarzeń na żywo (gateway → API → WebSocket) — bez trwałości.
+  # Hasło trafia do pliku konfiguracyjnego w kontenerze, nie do argumentów procesu.
+  redis-prod:
+    image: ${REDIS_IMAGE:-redis:7.4-alpine}
+    container_name: govai-redis-prod
+    restart: unless-stopped
+    user: redis
+    mem_limit: 256m
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD_PROD:-}
+    command:
+      - sh
+      - -c
+      - |
+        [ -n "$$REDIS_PASSWORD" ] || { echo "Brak REDIS_PASSWORD" >&2; exit 1; }
+        umask 077
+        printf 'requirepass %s\nbind 0.0.0.0\nprotected-mode no\nsave ""\nappendonly no\nmaxmemory 200mb\nmaxmemory-policy allkeys-lru\n' "$$REDIS_PASSWORD" > /tmp/redis.conf
+        exec redis-server /tmp/redis.conf
+    ports:
+      - "${DATA_BIND_IP:-10.50.2.10}:${REDIS_PROD_PORT:-6379}:6379"
+    networks: [prod]
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$$REDIS_PASSWORD\" --no-auth-warning ping | grep -q PONG"]
+      interval: 10s
+      timeout: 3s
+      retries: 6
+
+  redis-int:
+    image: ${REDIS_IMAGE:-redis:7.4-alpine}
+    container_name: govai-redis-int
+    restart: unless-stopped
+    user: redis
+    mem_limit: 256m
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD_INT:-}
+    command:
+      - sh
+      - -c
+      - |
+        [ -n "$$REDIS_PASSWORD" ] || { echo "Brak REDIS_PASSWORD" >&2; exit 1; }
+        umask 077
+        printf 'requirepass %s\nbind 0.0.0.0\nprotected-mode no\nsave ""\nappendonly no\nmaxmemory 200mb\nmaxmemory-policy allkeys-lru\n' "$$REDIS_PASSWORD" > /tmp/redis.conf
+        exec redis-server /tmp/redis.conf
+    ports:
+      - "${DATA_BIND_IP:-10.50.2.10}:${REDIS_INT_PORT:-6380}:6379"
+    networks: [int]
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$$REDIS_PASSWORD\" --no-auth-warning ping | grep -q PONG"]
+      interval: 10s
+      timeout: 3s
+      retries: 6
+
+  # Backup (pg_dump + globals + metadane) codziennie o BACKUP_TIME; odtwarzanie: restore.sh.
+  # Obraz z ACR (govai-backup:prod); gdy niedostępny — compose buduje go lokalnie z ./backup.
+  backup:
+    image: ${BACKUP_IMAGE:-govai-backup:local}
+    build: ./backup
+    container_name: govai-backup
+    restart: unless-stopped
+    mem_limit: 512m
+    environment:
+      TZ: ${BACKUP_TZ:-Europe/Warsaw}
+      BACKUP_TIME: ${BACKUP_TIME:-02:30}
+      BACKUP_TARGET: ${BACKUP_TARGET:-azure-blob}
+      BACKUP_SOURCES: ${BACKUP_SOURCES:-prod=pg-prod:5432 int=pg-int:5432}
+      BACKUP_REQUIRED: ${BACKUP_REQUIRED:-prod}
+      BACKUP_RETENTION_DAYS: ${BACKUP_RETENTION_DAYS:-7}
+      BACKUP_PGSSLMODE: ${BACKUP_PGSSLMODE:-prefer}
+      DB_ADMIN_PASSWORD_PROD: ${DB_ADMIN_PASSWORD_PROD:-}
+      DB_ADMIN_PASSWORD_INT: ${DB_ADMIN_PASSWORD_INT:-}
+      DB_APP_PASSWORD_PROD: ${DB_APP_PASSWORD_PROD:-}
+      DB_APP_PASSWORD_INT: ${DB_APP_PASSWORD_INT:-}
+      AZURE_STORAGE_ACCOUNT: ${BACKUP_STORAGE_ACCOUNT:-}
+      AZURE_STORAGE_CONTAINER: ${BACKUP_STORAGE_CONTAINER:-backups}
+      AZURE_CLIENT_ID: ${BACKUP_AZURE_CLIENT_ID:-}
+      BACKUP_S3_URI: ${BACKUP_S3_URI:-}
+    volumes:
+      - ${DATA_DIR:-/data}/backup-state:/var/lib/govai-backup
+      - ${DATA_DIR:-/data}/backup-work:/work
+      - ${BACKUP_LOCAL_DIR:-/data/backups}:/backups
+    networks: [prod, int]
+
+networks:
+  prod:
+  int:

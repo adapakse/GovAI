@@ -1,0 +1,5 @@
+# Kontekst = katalog repo; do obrazu trafiają tylko migracje i skrypt.
+*
+!db/init.sql
+!db/migrations/
+!infra/scripts/migrate.sh

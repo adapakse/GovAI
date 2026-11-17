@@ -3,10 +3,11 @@
 # Uruchamiany przez deploy-remote.sh; lokalnie z katalogu repo:
 #   sh infra/scripts/migrate.sh        (w Git Bash na Windows: MSYS_NO_PATHCONV=1)
 #
-# Tryb zdalny (Azure Postgres Flexible, CI): ustaw DATABASE_ADMIN_URL (URL roli
-# admina serwera, np. postgresql://govaiadmin:...@govai-db-int.postgres.database.azure.com:5432/govai?sslmode=require)
-# i DB_APP_PASSWORD — psql bezpośrednio, bez docker compose. Na świeżej bazie
-# (brak tabeli agents) najpierw db/init.sql. Wymaga psql (postgresql-client).
+# Tryb zdalny (Azure: Container Apps Job govai-migrate z obrazu infra/migrate/Dockerfile):
+# ustaw DATABASE_ADMIN_URL (URL superużytkownika govai na VM danych, np.
+# postgresql://govai:...@10.50.2.10:5433/govai?sslmode=require) i DB_APP_PASSWORD — psql
+# bezpośrednio, bez docker compose. Na świeżej bazie (brak tabeli agents) najpierw db/init.sql.
+# Wymaga psql (postgresql-client).
 #
 # Rejestr wykonanych migracji: tabela schema_migrations. Każda migracja idzie
 # w jednej transakcji z ON_ERROR_STOP — błąd przerywa deploy zamiast (jak
@@ -14,7 +15,8 @@
 set -e
 
 # app.platform=on: migracje działają ponad RLS (FORCE dotyczy też właściciela
-# tabel — na Azure admin nie jest superużytkownikiem i RLS go obejmuje).
+# tabel, gdy nie jest superużytkownikiem — np. admin Azure Postgres Flexible).
+# Superużytkownik (lokalnie, VM danych) i tak omija RLS — wtedy ustawienie jest bez znaczenia.
 if [ -n "${DATABASE_ADMIN_URL:-}" ]; then
   echo "Migracje: tryb zdalny (DATABASE_ADMIN_URL)"
   psql_exec() {
