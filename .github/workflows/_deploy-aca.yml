@@ -1,6 +1,6 @@
 # Wspólny deploy na Azure Container Apps (wywoływany przez deploy-aca-int.yml
 # i deploy-aca-prod.yml). Nazwy zasobów: docs/azure-environments-plan.md.
-# Kolejność: obrazy → migracje (przed aplikacjami, wstecznie zgodne) →
+# Kolejność: obrazy → migracje (Container Apps Job w VNet, przed aplikacjami, wstecznie zgodne) →
 # api/gateway/frontend → edge → smoke test.
 name: Deploy ACA (reusable)
 
@@ -67,7 +67,10 @@ jobs:
             --build-arg NEXT_PUBLIC_WS_URL=/api \
             --build-arg NEXT_PUBLIC_GATEWAY_URL=/gateway \
             -t "$REGISTRY/govai-frontend:$TAG" ./frontend
-          for app in edge api gateway frontend; do
+          # Job migracji (Container Apps Job w VNet) i kontener backupu na VM danych.
+          docker build -f infra/migrate/Dockerfile --label "$label" -t "$REGISTRY/govai-migrate:$TAG" .
+          docker build --label "$label" -t "$REGISTRY/govai-backup:$TAG" ./infra/db-vm/backup
+          for app in edge api gateway frontend migrate backup; do
             docker push "$REGISTRY/govai-$app:$TAG"
           done
 
@@ -85,25 +88,62 @@ jobs:
             echo "### Tylko obrazy ($TAG) — build_only albo brak aplikacji govai-*$SUFFIX" >> "$GITHUB_STEP_SUMMARY"
           fi
 
-      - name: Migracje bazy (tryb zdalny)
+      # Bazy INT działają tylko pn–pt 09–18 Europe/Warsaw (int-schedule.yml). Deploy poza tymi
+      # godzinami uruchamia je na czas migracji i smoke testu, a na końcu zatrzymuje ponownie.
+      - name: INT poza godzinami pracy — start baz
+        id: intdb
+        if: steps.apps.outputs.deploy == 'true' && inputs.suffix == '-int'
+        run: |
+          set -euo pipefail
+          dow=$(TZ=Europe/Warsaw date +%u); hm=$(TZ=Europe/Warsaw date +%H%M)
+          if [ "$dow" -le 5 ] && [ "$((10#$hm))" -ge 900 ] && [ "$((10#$hm))" -lt 1800 ]; then
+            echo "Godziny pracy — bazy INT działają"
+            echo "started=false" >> "$GITHUB_OUTPUT"
+          else
+            bash infra/db-vm/vm-run.sh 'bash /opt/govai-data/govai-data.sh int-start' | tail -n 10
+            echo "started=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Baza jest w prywatnym VNet (VM vm-govai-data) — runner nie ma do niej dostępu, więc migracje
+      # uruchamia Container Apps Job govai-migrate$SUFFIX (obraz infra/migrate/Dockerfile, migrate.sh
+      # w trybie zdalnym; DATABASE_ADMIN_URL i DB_APP_PASSWORD jako referencje Key Vault w jobie).
+      - name: Migracje bazy (Container Apps Job)
         if: steps.apps.outputs.deploy == 'true'
         run: |
-          set -e
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq postgresql-client >/dev/null
-          admin_url=$(az keyvault secret show --vault-name "$VAULT" --subscription "$SUBSCRIPTION" \
-            -n "database-admin-url$SUFFIX" --query value -o tsv)
-          app_password=$(az keyvault secret show --vault-name "$VAULT" --subscription "$SUBSCRIPTION" \
-            -n "db-app-password$SUFFIX" --query value -o tsv)
-          echo "::add-mask::$admin_url"
-          echo "::add-mask::$app_password"
-          DATABASE_ADMIN_URL="$admin_url" DB_APP_PASSWORD="$app_password" sh infra/scripts/migrate.sh
+          set -euo pipefail
+          az extension add --name containerapp --upgrade --only-show-errors -y
+          job="govai-migrate$SUFFIX"
+          if ! az containerapp job show -n "$job" -g "$RESOURCE_GROUP" --subscription "$SUBSCRIPTION" --query name -o tsv >/dev/null 2>&1; then
+            echo "::error::Brak joba $job — uruchom: bash infra/aca/bootstrap.sh apps ${{ inputs.environment }}"
+            exit 1
+          fi
+          az containerapp job update -n "$job" -g "$RESOURCE_GROUP" --subscription "$SUBSCRIPTION" \
+            --image "$REGISTRY/govai-migrate:$TAG" --only-show-errors -o none
+          execution=$(az containerapp job start -n "$job" -g "$RESOURCE_GROUP" --subscription "$SUBSCRIPTION" --query name -o tsv)
+          echo "Wykonanie: $execution"
+          status=""
+          for _ in $(seq 1 90); do   # do 15 min
+            status=$(az containerapp job execution show -n "$job" -g "$RESOURCE_GROUP" --subscription "$SUBSCRIPTION" \
+              --job-execution-name "$execution" --query properties.status -o tsv)
+            case "$status" in
+              Succeeded|Failed|Stopped|Degraded) break ;;
+            esac
+            sleep 10
+          done
+          echo "Status migracji: $status"
+          if [ "$status" != "Succeeded" ]; then
+            az containerapp job logs show -n "$job" -g "$RESOURCE_GROUP" --subscription "$SUBSCRIPTION" \
+              --execution "$execution" --container "$job" --format text 2>/dev/null | tail -n 100 || true
+            echo "::error::Migracje nieudane ($status, wykonanie $execution). Logi: Log Analytics govai-logs —" \
+              "ContainerAppConsoleLogs_CL | where ContainerJobName_s == '$job'"
+            exit 1
+          fi
+          echo "### Migracje OK ($execution)" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Aktualizacja Container Apps
         if: steps.apps.outputs.deploy == 'true'
         run: |
           set -e
-          az extension add --name containerapp --upgrade --only-show-errors -y
           for app in api gateway frontend edge; do
             echo "govai-$app$SUFFIX → $REGISTRY/govai-$app:$TAG"
             az containerapp update -n "govai-$app$SUFFIX" -g "$RESOURCE_GROUP" --subscription "$SUBSCRIPTION" \
@@ -122,3 +162,19 @@ jobs:
           # API przez edge (host FQDN edge nie jest hostem landingu → panel).
           curl -fsS --retry 10 --retry-delay 6 --retry-all-errors "https://$fqdn/api/health"
           echo
+
+      # Obraz backupu dla VM danych: tag <środowisko> (VM używa govai-backup:prod) przesuwany dopiero
+      # po udanym deployu. VM pobiera go przy starcie govai-data.service — aktualizacja działającego
+      # kontenera: infra/db-vm/vm-run.sh 'systemctl restart govai-data' (infra/db-vm/README.md).
+      - name: Tag obrazu backupu
+        if: steps.apps.outputs.deploy == 'true'
+        env:
+          ENV_TAG: ${{ inputs.environment }}
+        run: |
+          set -e
+          docker tag "$REGISTRY/govai-backup:$TAG" "$REGISTRY/govai-backup:$ENV_TAG"
+          docker push "$REGISTRY/govai-backup:$ENV_TAG"
+
+      - name: INT poza godzinami pracy — ponowne zatrzymanie baz
+        if: always() && steps.intdb.outputs.started == 'true'
+        run: bash infra/db-vm/vm-run.sh 'bash /opt/govai-data/govai-data.sh int-stop' | tail -n 10

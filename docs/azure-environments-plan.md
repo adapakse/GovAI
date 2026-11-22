@@ -1,6 +1,7 @@
 # GovAI — środowiska i infrastruktura Azure (plan docelowy)
 
-Status: plan (2026-11-04), do realizacji. Wzorzec: **CRMtree** (ta sama subskrypcja Azure,
+Status: plan (2026-11-04), w realizacji; bazy i Redis na VM zamiast Azure PG Flexible / Azure Cache for Redis
+— decyzja 2026-11-17 (§4). Wzorzec: **CRMtree** (ta sama subskrypcja Azure,
 `rg-crmtree-prod`) — te same usługi i konwencje, z poprawkami tam, gdzie CRMtree ma znane słabości
 (oznaczone **[poprawka względem CRMtree]**).
 
@@ -33,12 +34,12 @@ region **polandcentral**. Zawsze `az … --subscription "Azure subscription 1"` 
 |---|---|---|
 | Resource group | `rg-govai-prod` | jedna grupa dla PROD i INT (jak `rg-crmtree-prod`); INT rozróżniane sufiksem `-int` |
 | Log Analytics | `govai-logs` | PerGB2018, retencja 30 dni |
-| Container Apps Environment | `govai-env` | profil Consumption, bez VNet (jak `crmtree-env`) |
+| Container Apps Environment | `govai-env` | workload profiles (profil Consumption) **w VNet** `vnet-govai` / `snet-aca` (10.50.0.0/23), ingress zewnętrzny dozwolony (`govai-edge`). **[zmiana 2026-11-17]** — wcześniej bez VNet jak `crmtree-env`; VNet potrzebny do prywatnej VM baz (§4) |
+| VNet | `vnet-govai` 10.50.0.0/16 | `snet-aca` 10.50.0.0/23 (delegacja `Microsoft.App/environments`), `snet-data` 10.50.2.0/27 (VM baz, NSG `nsg-govai-data`, service endpoint `Microsoft.Storage`) |
 | Container Registry | `govairegistry` | Basic. **[poprawka]** pull przez managed identity (rola AcrPull), bez admin usera |
 | Key Vault | `kv-govai` | tryb RBAC; aplikacje czytają sekrety referencjami KV przez system-assigned identity (jak CRMtree). **[poprawka]** osobne nazwy sekretów per środowisko (`*-int`) — w CRMtree INT dzieli sekrety z PROD |
-| PostgreSQL Flexible | `govai-db` (PROD), `govai-db-int` (INT) | PG 15, Standard_B1ms (Burstable), backup 7 dni (PROD: rozważ 35). **[poprawka]** osobny serwer dla INT — patrz §4 |
-| Redis | `govai-redis` (PROD), `govai-redis-int` | **Azure Cache for Redis Basic C0** (TLS 6380). GovAI używa Redis tylko do pub/sub zdarzeń na żywo (gateway → API → WebSocket) — trwałość niepotrzebna. Redis jako Container App wymagałby ingressu TCP, a ten działa tylko w środowisku z własnym VNet |
-| Storage | (na razie niepotrzebny) | GovAI nie przechowuje plików; raporty PDF generowane w locie |
+| VM danych | `vm-govai-data` (10.50.2.10) | **[zmiana 2026-11-17]** zamiast Azure PostgreSQL Flexible i Azure Cache for Redis: Standard_D2as_v5 (2026-11-17: B2ms i D2s_v3 bez wolnej mocy w Poland Central), Ubuntu 24.04, dyski Standard SSD (dane 64 GB); w kontenerach Postgres 16 + TimescaleDB i Redis 7 osobno dla PROD (5432/6379) i INT (5433/6380) + kontener backupu — §4, `infra/db-vm/README.md` |
+| Storage | `stgovaibkp<6 znaków>` | backupy baz (kontener `backups`, ZRS, retencja 7 dni przez lifecycle), dostęp tylko z `snet-data`, bez kluczy współdzielonych. GovAI nie przechowuje innych plików; raporty PDF generowane w locie |
 
 Kontenery (Container Apps, Single revision mode, jak CRMtree):
 
@@ -95,23 +96,49 @@ potem pierwsze wystawienie: ręczne uruchomienie workflow z `force=true`.
 Kod etapu 5 (Caddy z `caddy-dns/cloudflare`, DNS-01) dotyczy modelu VM / instancji dedykowanych — w Container Apps
 TLS kończy się na ingress Azure.
 
-## 4. Baza danych
+## 4. Baza danych i Redis — VM w prywatnym VNet
 
-- **PG 15 + TimescaleDB** — sprawdzone: `timescaledb` jest na liście dozwolonych rozszerzeń Azure Flexible
-  (także na PG 15, serwer `crmtree-db`). Konfiguracja serwera: `azure.extensions = TIMESCALEDB,UUID-OSSP,PGCRYPTO`,
-  `shared_preload_libraries = timescaledb` (restart). GovAI używa tylko `create_hypertable` (`db/init.sql`).
-- **Osobny serwer dla INT** (`govai-db-int`) zamiast dwóch baz na jednym serwerze jak w CRMtree, bo:
-  1. rola aplikacji `govai_app` (RLS, migracja 015) jest **obiektem całego serwera** — przy wspólnym serwerze INT i PROD
-     miałyby tę samą rolę i hasło;
-  2. CRMtree miał incydent: kopia danych PROD na INT → maile do prawdziwych osób z INT (2026-10-23).
-- **Azure nie daje superużytkownika.** Admin serwera (`govaiadmin`) jest właścicielem tabel i podlega RLS (FORCE) —
-  dlatego `infra/scripts/migrate.sh` ustawia `app.platform=on` (`PGOPTIONS`). Aplikacje: rola `govai_app`
-  (tworzona w migracji 015, hasło ustawiane przez skrypt migracji z `DB_APP_PASSWORD`).
-- `db/init.sql` (dziś montowany do kontenera Postgresa) trzeba uruchomić **raz** przy zakładaniu bazy, potem migracje.
-- Sieć: publiczny dostęp z regułą „Allow Azure services” (jak CRMtree — potrzebne dla Container Apps i runnerów
-  GitHub). Lepiej docelowo: VNet + migracje jako Container Apps Job. Doraźne reguły IP do pracy lokalnej — usuwać po użyciu
-  (w CRMtree zostają śmieci).
-- `max_connections` B1ms = 50 → małe pule: API `max_size` (dziś 20) i gateway (10) **zmniejszyć** przy wielu replikach.
+**Decyzja 2026-11-17 (Adam):** Azure Database for PostgreSQL Flexible jest dla nowej subskrypcji GovAI
+nieosiągalny — Burstable w Poland Central bez wolnej mocy (Microsoft, case 2611060050003896), Germany West
+Central zablokowany dla subskrypcji (restricted). Zamiast PG Flexible i Azure Cache for Redis: **jedna VM
+`vm-govai-data`** w Poland Central z kontenerami (szczegóły, obsługa i runbook: `infra/db-vm/README.md`):
+
+| Usługa | PROD | INT |
+|---|---|---|
+| Postgres 16 + TimescaleDB 2.31 (`timescale/timescaledb:2.31.0-pg16`, jak lokalnie) | `10.50.2.10:5432`, `/data/pg-prod`, 3 GB | `10.50.2.10:5433`, `/data/pg-int`, 1,5 GB |
+| Redis 7 (hasło, bez trwałości — tylko pub/sub gateway → API → WebSocket) | `:6379` | `:6380` |
+
+- Quota startowa subskrypcji: tylko rodziny BS i DSv3 (po 10 rdzeni), ale w Poland Central brak wolnej mocy dla
+  B2ms i D2s_v3 (2026-11-17) → Standard_D2as_v5 (8 GB) po zwiększeniu quoty DASv5 do 4 vCPU (`GOVAI_DATA_VM_SIZE`).
+- **Osobne klastry dla INT i PROD** (osobne kontenery i dane) — z tych samych powodów co wcześniej osobne serwery:
+  rola `govai_app` jest obiektem klastra (inne hasła INT/PROD) i incydent CRMtree (kopia PROD na INT → maile do
+  prawdziwych osób, 2026-10-23).
+- Superużytkownik `govai` (hasło `db-admin-password[-int]`) — tylko migracje i backup; aplikacje jako `govai_app`
+  (RLS; rola z migracji 015, hasło ustawia `migrate.sh` z `DB_APP_PASSWORD`). `app.platform=on` w `migrate.sh`
+  zostaje (nieszkodliwe dla superużytkownika).
+- `db/init.sql` uruchamia `migrate.sh` na świeżej bazie (brak tabeli `agents`), potem migracje.
+- **Sieć:** Postgres/Redis tylko na prywatnym IP; NSG na `snet-data` wpuszcza 5432/5433/6379/6380 wyłącznie
+  z `snet-aca`, resztę blokuje (bez SSH z internetu — administracja przez `az vm run-command` / Bastion Developer).
+  VM ma Standard Public IP **tylko do ruchu wychodzącego** (wygaszanie „default outbound access”; tańsze niż NAT Gateway).
+  TLS: certyfikat samopodpisany, aplikacje `sslmode=require`.
+- **Migracje:** runner GitHub nie ma dostępu do VNet → **Container Apps Job** `govai-migrate[-int]` (obraz
+  `infra/migrate/Dockerfile`, `migrate.sh` w trybie zdalnym, sekrety jako referencje Key Vault) — §6.
+- **INT tylko w godzinach pracy** (pn–pt 09–18 Europe/Warsaw): `int-schedule.yml` zatrzymuje `pg-int`/`redis-int`
+  (po backupie) i skaluje aplikacje `-int` do min. 0 replik, rano odwrotnie.
+- `max_connections` = 100 (domyślne) → pule API/gateway `DB_POOL_MAX=8` na replikę.
+
+### Backup i odtwarzanie
+- **Logiczny (główny):** kontener `govai-backup` na VM, codziennie 02:30 Europe/Warsaw — `pg_dump -Fc` + role
+  (`pg_dumpall --globals-only`, bez haseł) + metadane (sha256, wersje, liczności tabel z tej samej migawki) do konta
+  Storage `stgovaibkp*` (kontener `backups`, `<env>/YYYY/MM/DD/…`, `<env>/latest.json`), managed identity VM.
+  Retencja 7 dni (lifecycle management). INT: backup przy wieczornym zatrzymaniu.
+- **Snapshot VM:** bez Azure Backup VM (decyzja 2026-11-22, koszt) — VM odtwarzana skryptem `datavm`.
+- **Odtwarzanie:** `infra/db-vm/restore.sh <int|prod> [latest|ścieżka] [--test|--yes]` (pre/post_restore TimescaleDB,
+  weryfikacja liczności, podmiana bazy z zachowaniem poprzedniej). Ten sam mechanizm działa on-prem (`BACKUP_TARGET=local`).
+- **Monitoring:** `backup-check.yml` (codziennie: PROD < 26 h, INT w dni robocze) i `restore-test.yml` (niedziela:
+  pełne odtworzenie PROD do bazy tymczasowej i porównanie). **RPO 24 h, RTO ~30 min.**
+- Rollback bazy przez PITR (jak w PG Flexible) **nie jest dostępny** — punkt przywracania = ostatni backup dobowy
+  (lub snapshot VM).
 
 ## 5. Sekrety i konfiguracja
 
@@ -122,16 +149,21 @@ Key Vault `kv-govai`, referencje `keyvaultref:https://kv-govai.vault.azure.net/s
 |---|---|---|
 | `jwt-secret` | `JWT_SECRET` | api, gateway |
 | `db-app-password` | `DB_APP_PASSWORD` → składany w `DATABASE_URL` | api, gateway |
-| `db-admin-password` | (tylko CI — migracje) | — |
+| `db-admin-password` | `POSTGRES_PASSWORD` superużytkownika `govai` (VM danych) | VM (`govai-data.sh`), backup |
+| `redis-password` | hasło Redisa (VM danych) | VM |
+| `database-url` | `DATABASE_URL` = `postgresql://govai_app:<pw>@10.50.2.10:5432/govai?sslmode=require` (INT: `:5433`) | api, gateway |
+| `database-admin-url` | `DATABASE_ADMIN_URL` (superużytkownik, ten sam host/port) | job `govai-migrate[-int]` |
+| `redis-url` | `REDIS_URL` = `redis://:<pw>@10.50.2.10:6379/0` (INT: `:6380`) | api, gateway |
 | `provider-keys-secret` | `PROVIDER_KEYS_SECRET` | api, gateway |
 | `anthropic-api-key` | `ANTHROPIC_API_KEY` | api, gateway |
 | `deepseek-api-key` | `DEEPSEEK_API_KEY` | gateway |
 
-`DATABASE_URL` aplikacje dziś biorą w całości — w Container Apps najprościej trzymać **cały URL** jako sekret
-(`database-url`, z hasłem `govai_app`) albo dodać składanie z `DB_HOST/DB_USER/DB_APP_PASSWORD` w `config.py`.
+Wszystkie hasła i URL-e generuje `infra/aca/bootstrap.sh secrets <int|prod>` (bez wypisywania wartości; URL-e
+wskazujące inny host — np. pozostałość po PG Flexible — są nadpisywane). VM danych pobiera hasła z Key Vault
+przy starcie usługi (managed identity), nigdy przez custom data.
 
 Zwykłe zmienne: `ALLOWED_ORIGINS=https://app.govai.pl`, `TENANT_BASE_DOMAINS=govai.pl` (INT: `int.govai.pl`),
-`REDIS_URL=rediss://:<klucz>@govai-redis.redis.cache.windows.net:6380` (klucz jako sekret KV `redis-url`), `GATEWAY_URL` (api → gateway, wewnętrzny FQDN), `LOG_LEVEL`.
+`GATEWAY_URL` (api → gateway, wewnętrzny FQDN), `LOG_LEVEL`.
 Frontend: bez zmiennych (adresy względne wkompilowane w obraz — jeden obraz dla INT i PROD, jak CRMtree).
 
 ## 6. CI/CD (GitHub Actions)
@@ -146,12 +178,22 @@ Jak CRMtree (`deploy-int.yml` na push `develop`, `deploy.yml` na push `master`),
    subskrypcja) obsługuje tylko deploy na VM do czasu przełączenia. **[poprawka]** CRMtree używa sekretu klienta service principala.
 2. Build i push 4 obrazów (`edge`, `frontend`, `api`, `gateway`) z tagami
    `int-<run_number>` / `<run_number>` (jak CRMtree) + etykieta z SHA commita.
-3. **Migracje przed aktualizacją aplikacji** (jak CRMtree): runner pobiera hasło admina z KV i uruchamia migracje
-   `psql` na właściwym serwerze. `infra/scripts/migrate.sh` dziś używa `docker compose exec` — dodać tryb
-   „zdalny” (`psql "$DATABASE_ADMIN_URL"`). Migracje muszą być wstecznie zgodne (stary kod chwilę działa na nowym schemacie).
+3. **Migracje przed aktualizacją aplikacji** (jak CRMtree), ale baza jest w prywatnym VNet, więc nie z runnera:
+   CI buduje obraz `govai-migrate` (`infra/migrate/Dockerfile`: klient psql 16 + `db/` + `migrate.sh`),
+   ustawia go w Container Apps Job `govai-migrate[-int]` (`az containerapp job update --image`), uruchamia
+   (`job start`) i czeka na wynik (`job execution show`; `Failed` = nieudany deploy). Job ma
+   `DATABASE_ADMIN_URL` i `DB_APP_PASSWORD` jako referencje Key Vault. Migracje muszą być wstecznie zgodne
+   (stary kod chwilę działa na nowym schemacie). Deploy INT poza godzinami pracy uruchamia bazy INT na czas
+   migracji i smoke testu. CI buduje też `govai-backup` i po udanym deployu przesuwa tag `govai-backup:<int|prod>`.
 4. `az containerapp update --image …` dla każdej aplikacji; potem smoke test `/health` przez `app.<domena>`.
 5. GitHub Environments: `int` (bez zatwierdzeń), `prod` (wymagane zatwierdzenie Adama).
-6. Rollback: `az containerapp update --image <poprzedni tag>` (ACR trzyma numerowane tagi); bazy — PITR.
+6. Rollback: `az containerapp update --image <poprzedni tag>` (ACR trzyma numerowane tagi); bazy — odtworzenie
+   z backupu dobowego (`infra/db-vm/restore.sh`, §4).
+7. Workflowy harmonogramowe (działają tylko z gałęzi domyślnej): `int-schedule.yml` (INT w godzinach pracy,
+   zmienna `ACA_INT_ENABLED`), `backup-check.yml` i `restore-test.yml` (zmienna `DATAVM_ENABLED`), `renew-certs.yml`.
+   Logują się środowiskiem `prod` (środowisko `int` do przełączenia trzyma sekrety starej subskrypcji); gdy `prod`
+   dostanie wymagane zatwierdzenia, harmonogramy czekałyby na akceptację — wtedy środowisko GitHub `ops`
+   (federated credential `gh-env-ops` z `bootstrap.sh github`) i zmienna repo `OPS_ENVIRONMENT=ops`.
 
 **Realizacja:** `deploy-aca-int.yml` (push `develop`) i `deploy-aca-prod.yml` (push `master`) wołają wspólny
 `_deploy-aca.yml`. Automatyczny deploy po push jest wyłączony do przełączenia — włączają go zmienne repo
@@ -167,14 +209,14 @@ Obecne `ci.yml` (i18n, build obrazów, testy izolacji na pełnym stosie docker c
 1. Dostępy (Adam): Kacper w GitHub (write) i Azure (Contributor na `rg-govai-prod`, Key Vault Secrets Officer),
    Cloudflare (strefa `govai.pl`).
 2. DNS `govai.pl` → Cloudflare (Adam) + token `cloudflare-api-token` w `kv-govai`; certyfikaty: `renew-certs.yml` (§3).
-3. Zasoby wspólne: `rg-govai-prod`, Log Analytics, `govai-env`, `govairegistry`, `kv-govai` (skrypt `az` w repo,
-   np. `infra/aca/bootstrap.sh` — do napisania; CRMtree nie ma IaC, ale GovAI ma Bicep dla VM — warto dopisać
-   `infra/aca/*.bicep`).
-4. INT na Container Apps: `govai-db-int` (+ init.sql + migracje), aplikacje `-int`, domeny `*.int.govai.pl`,
+3. Zasoby wspólne i sieć — `infra/aca/bootstrap.sh` (kroki w nagłówku skryptu): `base` (RG `rg-govai`, Log Analytics,
+   `govaicr`, `kv-govai`), `network` (VNet, NSG, `govai-env` w VNet), `backup` (konto Storage), `secrets prod|int`,
+   `datavm` (VM baz), `github`, `apps int|prod` (aplikacje + job migracji).
+4. INT na Container Apps: baza INT na `vm-govai-data` (init.sql + migracje przez job `govai-migrate-int`), aplikacje `-int`, domeny `*.int.govai.pl`,
    `deploy-int.yml`. Test: logowanie, `govai-demo`, testy izolacji przeciw INT (opcjonalnie).
 5. Przełączenie publicznego `govai.pl` z VM na `govai-edge` (PROD) — dopiero gdy PROD działa; do tego czasu
    landing może zostać na VM.
-6. PROD: `govai-db`, aplikacje, domeny, `deploy.yml` (gałąź `master`), organizacja **Gessel** (`gessel.govai.pl`)
+6. PROD: baza PROD na `vm-govai-data`, aplikacje, domeny, `deploy.yml` (gałąź `master`), organizacja **Gessel** (`gessel.govai.pl`)
    z panelu super-admina, zmiana hasła admina platformy.
 7. Wygaszenie VM INT (`rg-govai-int`) po migracji; Bicep VM zostaje jako szablon instancji dedykowanej.
 

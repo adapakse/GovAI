@@ -1,0 +1,43 @@
+# Cotygodniowy test odtworzenia: najnowszy backup PROD odtwarzany na VM vm-govai-data do tymczasowej
+# bazy govai_restore_test w kontenerze PROD (sha256, role, pg_restore z TimescaleDB), porównanie
+# liczności tabel z metadanymi backupu, usunięcie bazy. Niezgodność = nieudany run (mail z GitHub).
+# Logowanie: jak int-schedule.yml (vars.OPS_ENVIRONMENT, domyślnie „prod”).
+name: Restore test
+
+on:
+  schedule:
+    - cron: '0 4 * * 0'   # niedziela 05:00/06:00 Warsaw — po backupie 02:30
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: govai-datavm
+  cancel-in-progress: false
+
+jobs:
+  restore-test:
+    # Harmonogram dopiero po utworzeniu VM danych (zmienna repo DATAVM_ENABLED=true); ręcznie — zawsze.
+    if: github.event_name == 'workflow_dispatch' || vars.DATAVM_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    environment: ${{ vars.OPS_ENVIRONMENT || 'prod' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Odtworzenie najnowszego backupu PROD do govai_restore_test
+        run: |
+          set -euo pipefail
+          out=$(bash infra/db-vm/vm-run.sh 'bash /opt/govai-data/restore.sh prod latest --test') \
+            || { printf '%s\n' "$out"; echo "::error::Test odtworzenia nieudany"; exit 1; }
+          printf '%s\n' "$out"
+          grep -q 'GOVAI_RESTORE_OK mode=test' <<<"$out" || { echo "::error::Brak potwierdzenia testu odtworzenia"; exit 1; }
+          grep 'GOVAI_RESTORE_OK' <<<"$out" | sed 's/^/### /' >> "$GITHUB_STEP_SUMMARY"
