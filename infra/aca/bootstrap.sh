@@ -346,7 +346,7 @@ step_datavm() {
 
   build_bundle "$tmp"
   local created=0
-  log "VM $DATA_VM ($DATA_VM_SIZE, Ubuntu 24.04, dysk danych 64 GB Premium SSD)"
+  log "VM $DATA_VM ($DATA_VM_SIZE, Ubuntu 24.04, dyski Standard SSD, dane 64 GB)"
   if $AZ vm show -g "$RG" -n "$DATA_VM" --output none 2>/dev/null; then
     echo "  $DATA_VM — istnieje"
   else

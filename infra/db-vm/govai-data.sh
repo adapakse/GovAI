@@ -91,9 +91,11 @@ cmd_certs() {
         -keyout "$d/server.key" -out "$d/server.crt" 2>/dev/null
       log "Certyfikat TLS Postgres $e wygenerowany"
     fi
-    chown 70:70 "$d/server.key" "$d/server.crt"
-    chmod 600 "$d/server.key"; chmod 644 "$d/server.crt"
+    # Postgres w kontenerze działa jako uid 70 — musi przejść przez katalogi (mkdir z umask 077 daje 700 root).
+    chown 70:70 "$d" "$d/server.key" "$d/server.crt"
+    chmod 700 "$d"; chmod 600 "$d/server.key"; chmod 644 "$d/server.crt"
   done
+  chmod 755 "$DATA_DIR/ssl"
 }
 
 # docker login do ACR tokenem managed identity (wymiana tokenu AAD na refresh token ACR).
