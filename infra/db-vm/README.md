@@ -38,7 +38,7 @@ bash infra/aca/bootstrap.sh base
 bash infra/aca/bootstrap.sh network        # VNet 10.50.0.0/16, snet-aca /23, snet-data /27, NSG, govai-env w VNet
 bash infra/aca/bootstrap.sh backup         # konto Storage stgovaibkp<6 znaków>, kontener backups, retencja 7 dni
 bash infra/aca/bootstrap.sh secrets prod   # i: secrets int
-bash infra/aca/bootstrap.sh datavm         # obrazy → IP publiczny/NIC → VM (cloud-init) → role → start usług → Azure Backup VM
+bash infra/aca/bootstrap.sh datavm         # obrazy → IP publiczny/NIC → VM (cloud-init) → role → start usług
 ```
 Pliki trafiają na VM jako pakiet tar.gz (ten katalog + `vm.env` bez sekretów): przy tworzeniu przez
 cloud-init (`write_files`), później przez `az vm run-command` przy każdym `bootstrap.sh datavm`. VM nie
@@ -109,15 +109,15 @@ na plik), `local` (`BACKUP_LOCAL_DIR`, retencja `BACKUP_RETENTION_DAYS` przez us
 **Retencja 7 dni:** Azure — lifecycle management konta (usuwa bloby `prod/`, `int/` starsze niż 7 dni,
 zadanie Azure działa raz dziennie, więc faktycznie 7–8 dni); local — w kontenerze po każdym backupie.
 
-**Snapshot VM (zapasowy):** Azure Backup, magazyn `rsv-govai`, polityka `pol-govai-data-daily` (Enhanced,
-codziennie 23:30 UTC, retencja 7 dni) — dyski OS i danych; spójność na poziomie awarii (Postgres odtwarza się z WAL).
+**Snapshot VM:** świadomie bez Azure Backup VM (decyzja 2026-11-22, koszt) — VM jest odtwarzalna skryptem
+(`bootstrap.sh datavm`), a dane z backupu logicznego.
 
 **Monitoring:** `.github/workflows/backup-check.yml` (codziennie ~08:00: PROD < 26 h, INT wt–pt < 26 h,
 pn < 74 h) i `restore-test.yml` (niedziela: odtworzenie najnowszego PROD do `govai_restore_test`, porównanie,
 usunięcie). Oba po włączeniu zmiennej repo `DATAVM_ENABLED=true`; nieudany run = mail z GitHub Actions.
 
-**RPO 24 h** (backup dobowy; snapshot VM to druga, niezależna kopia). **RTO ~30 min** (odtworzenie bazy
-z backupu logicznego; utrata VM: nowa VM z `bootstrap.sh datavm` lub odtworzenie z Azure Backup + restore).
+**RPO 24 h** (backup dobowy). **RTO ~30 min** dla bazy (odtworzenie z backupu logicznego), **~1 h** przy utracie
+VM (nowa VM z `bootstrap.sh datavm` + restore).
 
 ## Odtwarzanie (runbook)
 
@@ -140,7 +140,7 @@ Przy niezgodności liczności baza `govai` nie jest ruszana.
    ```
    Po sprawdzeniu aplikacji: `DROP DATABASE govai_pre_restore_<ts>;` (`docker exec govai-pg-prod psql -U govai -d postgres`).
    `vm-run.sh` pokazuje tylko ostatnie ~4 KB wyjścia — przy problemach uruchom `restore.sh` przez Bastion.
-2. **Utrata VM / dysku:** (a) Azure Backup → „Restore VM” (stan z ostatniego snapshotu), albo (b) usuń VM
+2. **Utrata VM / dysku:** usuń VM
    i uruchom `bootstrap.sh datavm` (pusty dysk, nowe klastry z haseł w KV), potem dla każdego środowiska
    `restore.sh <env> latest --yes` i deploy (migracje ustawią hasło `govai_app`).
 3. **Kopia PROD → INT** (`restore.sh int latest --from prod --yes`) — technicznie działa (hasło `govai_app`

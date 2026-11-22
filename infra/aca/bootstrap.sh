@@ -7,7 +7,7 @@
 #   bash infra/aca/bootstrap.sh network      # VNet, podsieci, NSG, środowisko Container Apps govai-env w VNet
 #   bash infra/aca/bootstrap.sh backup       # konto Storage na backupy (kontener backups, retencja 7 dni)
 #   bash infra/aca/bootstrap.sh secrets prod # hasła baz/Redis + sekrety aplikacji w Key Vault (int: secrets int)
-#   bash infra/aca/bootstrap.sh datavm       # VM z Postgres+TimescaleDB i Redis (PROD+INT), role, Azure Backup VM
+#   bash infra/aca/bootstrap.sh datavm       # VM z Postgres+TimescaleDB i Redis (PROD+INT), role, pliki na VM
 #   bash infra/aca/bootstrap.sh github       # tożsamość OIDC dla GitHub Actions + role
 #   bash infra/aca/bootstrap.sh apps int     # Container Apps + job migracji (obrazy startowe; CI podmienia)
 #
@@ -37,7 +37,8 @@ NSG_DATA=nsg-govai-data
 DATA_IP=10.50.2.10
 # VM danych (quota subskrypcji: tylko rodziny BS i DSv3) — rozmiar nadpisywalny, np. Standard_D2s_v3
 DATA_VM=vm-govai-data
-DATA_VM_SIZE="${GOVAI_DATA_VM_SIZE:-Standard_B2ms}"
+# B2ms i D2s_v3 bez wolnej mocy w Poland Central (2026-11-17) — D2as_v5 (wymaga quoty DASv5 >= 2 vCPU).
+DATA_VM_SIZE="${GOVAI_DATA_VM_SIZE:-Standard_D2as_v5}"
 DATA_PIP=pip-govai-data
 DATA_NIC=nic-govai-data
 PG_IMAGE_TAG=2.31.0-pg16            # timescale/timescaledb — ten sam w infra/db-vm/docker-compose.yml
@@ -46,8 +47,6 @@ REDIS_IMAGE_TAG=7.4-alpine
 STG="stgovaibkp$(printf '%s' "$SUB" | sha256sum | cut -c1-6)"   # deterministyczna, globalnie unikalna nazwa
 BKP_CONTAINER=backups
 BKP_RETENTION_DAYS=7
-RSV=rsv-govai
-RSV_POLICY=pol-govai-data-daily
 
 # Osobny katalog konfiguracji az dla GovAI (tylko konto adamgmanka@gmail.com) — wspólnego ~/.azure
 # używają równolegle sesje innych projektów, więc nie wolno w nim przełączać subskrypcji.
@@ -99,6 +98,8 @@ step_base() {
   log "Log Analytics $LOGS"
   $AZ monitor log-analytics workspace show -g "$RG" -n "$LOGS" --output none 2>/dev/null \
     || $AZ monitor log-analytics workspace create -g "$RG" -n "$LOGS" -l "$LOC" --retention-time 30 --output none
+  # Dzienny limit ingestu logów (oszczędność; przy przekroczeniu reszta logów z danego dnia przepada).
+  $AZ monitor log-analytics workspace update -g "$RG" -n "$LOGS" --quota "${GOVAI_LOGS_DAILY_GB:-0.2}" --output none
 
   log "Rejestr obrazów $ACR (Basic, bez admin usera — pull przez managed identity)"
   $AZ acr show -n "$ACR" --output none 2>/dev/null \
@@ -351,7 +352,7 @@ step_datavm() {
   else
     cat > "$tmp/cloud-init.yaml" <<EOF
 #cloud-config
-# GovAI vm-govai-data — bez sekretów: hasła pobiera govai-data.sh z Key Vault (managed identity).
+# GovAI vm-govai-data - no secrets here: passwords are fetched by govai-data.sh from Key Vault (managed identity).
 write_files:
   - path: /opt/govai-data/bundle.tgz
     encoding: b64
@@ -367,10 +368,10 @@ EOF
     $AZ vm create -g "$RG" -n "$DATA_VM" -l "$LOC" --image Ubuntu2404 --size "$DATA_VM_SIZE" \
       --nics "$DATA_NIC" --admin-username govaiadmin --authentication-type ssh \
       --ssh-key-values "$(winpath "$tmp/id.pub")" --assign-identity '[system]' \
-      --os-disk-name osdisk-govai-data --os-disk-size-gb 30 --storage-sku Premium_LRS \
+      --os-disk-name osdisk-govai-data --os-disk-size-gb 30 --storage-sku StandardSSD_LRS \
       --data-disk-sizes-gb 64 --data-disk-caching ReadOnly \
       --custom-data "$(winpath "$tmp/cloud-init.yaml")" --tags project=govai role=data --output none \
-      || { echo "  Tworzenie VM nieudane — przy braku mocy/quoty: GOVAI_DATA_VM_SIZE=Standard_D2s_v3" >&2; exit 1; }
+      || { echo "  Tworzenie VM nieudane — przy braku mocy/quoty spróbuj innego rozmiaru: GOVAI_DATA_VM_SIZE=Standard_D2s_v5 (quota DSv5)" >&2; exit 1; }
     $AZ vm boot-diagnostics enable -g "$RG" -n "$DATA_VM" --output none   # konsola szeregowa / log cloud-init
     created=1
     echo "  $DATA_VM — utworzona"
@@ -400,49 +401,8 @@ EOF
   } > "$tmp/sync.sh"
   bash "$REPO/infra/db-vm/vm-run.sh" @"$tmp/sync.sh" | tail -n 25
 
-  log "Azure Backup VM: magazyn $RSV, polityka $RSV_POLICY (codziennie, retencja 7 dni)"
-  $AZ backup vault show -g "$RG" -n "$RSV" --output none 2>/dev/null \
-    || $AZ backup vault create -g "$RG" -n "$RSV" -l "$LOC" --output none
-  # Redundancję da się zmienić tylko przed pierwszą ochroną elementu — później błąd ignorujemy.
-  $AZ backup vault backup-properties set -g "$RG" -n "$RSV" --backup-storage-redundancy LocallyRedundant \
-    --output none 2>/dev/null || true
-  if ! $AZ backup policy show -g "$RG" --vault-name "$RSV" -n "$RSV_POLICY" --output none 2>/dev/null; then
-    # Polityka Enhanced (V2) — wymagana dla VM Trusted Launch (domyślny typ bezpieczeństwa Ubuntu 24.04).
-    cat > "$tmp/policy.json" <<'EOF'
-{
-  "name": "pol-govai-data-daily",
-  "properties": {
-    "backupManagementType": "AzureIaasVM",
-    "policyType": "V2",
-    "instantRpRetentionRangeInDays": 2,
-    "schedulePolicy": {
-      "schedulePolicyType": "SimpleSchedulePolicyV2",
-      "scheduleRunFrequency": "Daily",
-      "dailySchedule": { "scheduleRunTimes": ["2026-01-01T23:30:00+00:00"] }
-    },
-    "retentionPolicy": {
-      "retentionPolicyType": "LongTermRetentionPolicy",
-      "dailySchedule": {
-        "retentionTimes": ["2026-01-01T23:30:00+00:00"],
-        "retentionDuration": { "count": 7, "durationType": "Days" }
-      }
-    },
-    "timeZone": "UTC"
-  }
-}
-EOF
-    $AZ backup policy create -g "$RG" --vault-name "$RSV" -n "$RSV_POLICY" --backup-management-type AzureIaasVM \
-      --policy @"$(winpath "$tmp/policy.json")" --output none
-  fi
-  local protected
-  protected=$($AZ backup item list -g "$RG" --vault-name "$RSV" --backup-management-type AzureIaasVM \
-    --query "length([?properties.friendlyName=='$DATA_VM'])" -o tsv)
-  if [ "$protected" = 0 ]; then
-    $AZ backup protection enable-for-vm -g "$RG" --vault-name "$RSV" --vm "$DATA_VM" --policy-name "$RSV_POLICY" --output none
-    echo "  ochrona $DATA_VM — włączona"
-  else
-    echo "  ochrona $DATA_VM — już włączona"
-  fi
+  # Azure Backup całej VM świadomie pominięty (decyzja 2026-11-22, oszczędność ~11 EUR/mies.):
+  # dane chroni codzienny zrzut baz do Blob (govai-backup), a VM odtwarza ten krok (datavm).
 }
 
 # ── github ───────────────────────────────────────────────────────────────────
@@ -485,14 +445,14 @@ step_apps() {
   local domain base_hosts
   if [ "$env" = prod ]; then domain=govai.pl; base_hosts="govai.pl www.govai.pl"; else domain=int.govai.pl; base_hosts="int.govai.pl"; fi
 
-  create_app() {   # create_app <nazwa> <port> <external|internal> <min> <max>
-    local name="$1" port="$2" ingress="$3" min="$4" max="$5"
+  create_app() {   # create_app <nazwa> <port> <external|internal> <min> <max> <cpu> <pamięć>
+    local name="$1" port="$2" ingress="$3" min="$4" max="$5" cpu="$6" mem="$7"
     if $AZ containerapp show -g "$RG" -n "$name" --output none 2>/dev/null; then
       echo "  $name — istnieje"; allow_http "$name" "$ingress"; return
     fi
     $AZ containerapp create -g "$RG" -n "$name" --environment "$ENV_NAME" --image "$placeholder" \
       --target-port "$port" --ingress "$ingress" --min-replicas "$min" --max-replicas "$max" \
-      --cpu 0.5 --memory 1.0Gi --system-assigned --output none
+      --cpu "$cpu" --memory "$mem" --system-assigned --output none
     local pid; pid=$($AZ containerapp show -g "$RG" -n "$name" --query identity.principalId -o tsv)
     role "$pid" AcrPull "$acr_id"
     role "$pid" "Key Vault Secrets User" "$kv_id"
@@ -528,10 +488,12 @@ step_apps() {
   }
 
   log "Container Apps ($env) w $ENV_NAME"
-  create_app "govai-api$sfx"      8000 internal 1 3
-  create_app "govai-gateway$sfx"  8001 internal 1 3
-  create_app "govai-frontend$sfx" 3000 internal "$([ "$env" = prod ] && echo 1 || echo 0)" 3
-  create_app "govai-edge$sfx"     80   external 1 3
+  # Rozmiary wg zmierzonego zużycia (2026-11-22: api ~90 MB, frontend ~60 MB, edge ~25 MB,
+  # gateway ~380 MB ze spaCy/Presidio) — dozwolone pary ACA: 0.25/0.5Gi, 0.5/1Gi, …
+  create_app "govai-api$sfx"      8000 internal 1 3 0.25 0.5Gi
+  create_app "govai-gateway$sfx"  8001 internal 1 3 0.5  1.0Gi
+  create_app "govai-frontend$sfx" 3000 internal "$([ "$env" = prod ] && echo 1 || echo 0)" 3 0.25 0.5Gi
+  create_app "govai-edge$sfx"     80   external 1 3 0.25 0.5Gi
   create_migrate_job
 
   echo "  Czekam na propagację ról (60 s) przed podpięciem sekretów Key Vault…"

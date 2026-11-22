@@ -38,9 +38,8 @@ region **polandcentral**. Zawsze `az … --subscription "Azure subscription 1"` 
 | VNet | `vnet-govai` 10.50.0.0/16 | `snet-aca` 10.50.0.0/23 (delegacja `Microsoft.App/environments`), `snet-data` 10.50.2.0/27 (VM baz, NSG `nsg-govai-data`, service endpoint `Microsoft.Storage`) |
 | Container Registry | `govairegistry` | Basic. **[poprawka]** pull przez managed identity (rola AcrPull), bez admin usera |
 | Key Vault | `kv-govai` | tryb RBAC; aplikacje czytają sekrety referencjami KV przez system-assigned identity (jak CRMtree). **[poprawka]** osobne nazwy sekretów per środowisko (`*-int`) — w CRMtree INT dzieli sekrety z PROD |
-| VM danych | `vm-govai-data` (10.50.2.10) | **[zmiana 2026-11-17]** zamiast Azure PostgreSQL Flexible i Azure Cache for Redis: Standard_B2ms (zapas: Standard_D2s_v3), Ubuntu 24.04, dysk danych 64 GB Premium SSD; w kontenerach Postgres 16 + TimescaleDB i Redis 7 osobno dla PROD (5432/6379) i INT (5433/6380) + kontener backupu — §4, `infra/db-vm/README.md` |
+| VM danych | `vm-govai-data` (10.50.2.10) | **[zmiana 2026-11-17]** zamiast Azure PostgreSQL Flexible i Azure Cache for Redis: Standard_D2as_v5 (2026-11-17: B2ms i D2s_v3 bez wolnej mocy w Poland Central), Ubuntu 24.04, dyski Standard SSD (dane 64 GB); w kontenerach Postgres 16 + TimescaleDB i Redis 7 osobno dla PROD (5432/6379) i INT (5433/6380) + kontener backupu — §4, `infra/db-vm/README.md` |
 | Storage | `stgovaibkp<6 znaków>` | backupy baz (kontener `backups`, ZRS, retencja 7 dni przez lifecycle), dostęp tylko z `snet-data`, bez kluczy współdzielonych. GovAI nie przechowuje innych plików; raporty PDF generowane w locie |
-| Recovery Services | `rsv-govai` | Azure Backup VM danych (polityka `pol-govai-data-daily`, codziennie, 7 dni) |
 
 Kontenery (Container Apps, Single revision mode, jak CRMtree):
 
@@ -109,8 +108,8 @@ Central zablokowany dla subskrypcji (restricted). Zamiast PG Flexible i Azure Ca
 | Postgres 16 + TimescaleDB 2.31 (`timescale/timescaledb:2.31.0-pg16`, jak lokalnie) | `10.50.2.10:5432`, `/data/pg-prod`, 3 GB | `10.50.2.10:5433`, `/data/pg-int`, 1,5 GB |
 | Redis 7 (hasło, bez trwałości — tylko pub/sub gateway → API → WebSocket) | `:6379` | `:6380` |
 
-- Quota subskrypcji: tylko rodziny BS i DSv3 (po 10 rdzeni) → Standard_B2ms (8 GB), zapas Standard_D2s_v3
-  (`GOVAI_DATA_VM_SIZE`).
+- Quota startowa subskrypcji: tylko rodziny BS i DSv3 (po 10 rdzeni), ale w Poland Central brak wolnej mocy dla
+  B2ms i D2s_v3 (2026-11-17) → Standard_D2as_v5 (8 GB) po zwiększeniu quoty DASv5 do 4 vCPU (`GOVAI_DATA_VM_SIZE`).
 - **Osobne klastry dla INT i PROD** (osobne kontenery i dane) — z tych samych powodów co wcześniej osobne serwery:
   rola `govai_app` jest obiektem klastra (inne hasła INT/PROD) i incydent CRMtree (kopia PROD na INT → maile do
   prawdziwych osób, 2026-10-23).
@@ -133,7 +132,7 @@ Central zablokowany dla subskrypcji (restricted). Zamiast PG Flexible i Azure Ca
   (`pg_dumpall --globals-only`, bez haseł) + metadane (sha256, wersje, liczności tabel z tej samej migawki) do konta
   Storage `stgovaibkp*` (kontener `backups`, `<env>/YYYY/MM/DD/…`, `<env>/latest.json`), managed identity VM.
   Retencja 7 dni (lifecycle management). INT: backup przy wieczornym zatrzymaniu.
-- **Snapshot VM (zapasowy):** Azure Backup `rsv-govai`, codziennie, 7 dni.
+- **Snapshot VM:** bez Azure Backup VM (decyzja 2026-11-22, koszt) — VM odtwarzana skryptem `datavm`.
 - **Odtwarzanie:** `infra/db-vm/restore.sh <int|prod> [latest|ścieżka] [--test|--yes]` (pre/post_restore TimescaleDB,
   weryfikacja liczności, podmiana bazy z zachowaniem poprzedniej). Ten sam mechanizm działa on-prem (`BACKUP_TARGET=local`).
 - **Monitoring:** `backup-check.yml` (codziennie: PROD < 26 h, INT w dni robocze) i `restore-test.yml` (niedziela:
@@ -212,7 +211,7 @@ Obecne `ci.yml` (i18n, build obrazów, testy izolacji na pełnym stosie docker c
 2. DNS `govai.pl` → Cloudflare (Adam) + token `cloudflare-api-token` w `kv-govai`; certyfikaty: `renew-certs.yml` (§3).
 3. Zasoby wspólne i sieć — `infra/aca/bootstrap.sh` (kroki w nagłówku skryptu): `base` (RG `rg-govai`, Log Analytics,
    `govaicr`, `kv-govai`), `network` (VNet, NSG, `govai-env` w VNet), `backup` (konto Storage), `secrets prod|int`,
-   `datavm` (VM baz + Azure Backup), `github`, `apps int|prod` (aplikacje + job migracji).
+   `datavm` (VM baz), `github`, `apps int|prod` (aplikacje + job migracji).
 4. INT na Container Apps: baza INT na `vm-govai-data` (init.sql + migracje przez job `govai-migrate-int`), aplikacje `-int`, domeny `*.int.govai.pl`,
    `deploy-int.yml`. Test: logowanie, `govai-demo`, testy izolacji przeciw INT (opcjonalnie).
 5. Przełączenie publicznego `govai.pl` z VM na `govai-edge` (PROD) — dopiero gdy PROD działa; do tego czasu
