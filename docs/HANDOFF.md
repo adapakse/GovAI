@@ -62,10 +62,13 @@ względem CRMtree: **`docs/azure-environments-plan.md`**. Model VM zostaje jako 
    - `infra/scripts/migrate.sh` — tryb zdalny (psql na Azure Postgres zamiast `docker compose exec`);
    - `DATABASE_URL`/Redis z sekretów KV (`config.py`), mniejsze pule połączeń (B1ms ma 50 połączeń);
    - probe HTTP `/health` (api, gateway).
-7. INT na Container Apps: `govai-db-int` (PG 15 + TimescaleDB, `init.sql` + migracje), `govai-redis-int`, aplikacje `-int`,
+   > **Zmiana 2026-11-17:** Azure PG Flexible / Azure Cache for Redis niedostępne dla subskrypcji — bazy i Redis
+   > (PROD + INT) w kontenerach na VM `vm-govai-data` w prywatnym VNet, migracje przez Container Apps Job,
+   > backup do Storage + test odtworzenia: `infra/db-vm/README.md`, `docs/azure-environments-plan.md` §4.
+7. INT na Container Apps: baza i Redis INT na `vm-govai-data` (Postgres 16 + TimescaleDB, `init.sql` + migracje przez job `govai-migrate-int`), aplikacje `-int`,
    domeny `app.int.govai.pl`, `*.int.govai.pl` (Cloudflare DNS-only + Let's Encrypt odnawiany przez `renew-certs.yml`), workflow `deploy-int.yml` (push `develop`).
-8. PROD: `govai-db`, `govai-redis`, aplikacje, domeny `govai.pl`, `app.govai.pl`, `*.govai.pl`, workflow `deploy.yml`
-   (push `master`, GitHub Environment `prod` z zatwierdzeniem Adama), backup bazy (rozważ 35 dni).
+8. PROD: baza i Redis PROD na `vm-govai-data`, aplikacje, domeny `govai.pl`, `app.govai.pl`, `*.govai.pl`, workflow `deploy.yml`
+   (push `master`, GitHub Environment `prod` z zatwierdzeniem Adama), backup bazy (dobowy, 7 dni, RPO 24 h — `infra/db-vm/README.md`).
 9. Przełączenie `govai.pl` z VM na PROD; organizacja **Gessel** z panelu super-admina; hasło admina platformy PROD.
 10. Wygaszenie VM INT po migracji.
 
@@ -100,8 +103,8 @@ względem CRMtree: **`docs/azure-environments-plan.md`**. Model VM zostaje jako 
 - Sekrety przekazywać przez Key Vault, nigdy w czacie / repo.
 
 ## 7. Pułapki (już raz kosztowały czas)
-- **Superużytkownik omija RLS** — aplikacja musi łączyć się jako `govai_app`. Na Azure Postgres admin nie jest superużytkownikiem,
-  ale jest właścicielem tabel i podlega RLS (FORCE) → migracje z `app.platform=on` (już w `migrate.sh`).
+- **Superużytkownik omija RLS** — aplikacja musi łączyć się jako `govai_app`. Migracje i backup działają jako superużytkownik
+  `govai` (lokalnie i na VM danych); `app.platform=on` w `migrate.sh` zostaje dla serwerów bez superużytkownika.
 - Klucze obce nie podlegają RLS → złożone FK `(tenant_id, …)` / kontrola w API.
 - JSONB: bez `json.dumps()`; migracje idempotentne; zero ręcznych zmian schematu.
 - Obrazy bez bind mountów — po zmianie kodu `--build`.
