@@ -25,7 +25,7 @@
     "unit": "žetoni"
   },
   "i18n.default_locale": {
-    "description": "Jezik vmesnika, poročil in sporočil za uporabnike, ki niso izbrali svojega. Kode: pl, en, de, it, es, fr, ro, ru, sl, hr.",
+    "description": "Jezik vmesnika, poročil in sporočil za uporabnike, ki niso izbrali svojega. Kode: pl, en, de, it, es, fr, ro, ru, sl, hr, pt.",
     "label": "Privzeti jezik"
   },
   "intervals.policy_refresh_seconds": {

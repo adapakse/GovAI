@@ -1,0 +1,5 @@
+{
+  "errors": {
+    "call_not_found": "Chamada '{call_id}' não encontrada no registo de auditoria"
+  }
+}

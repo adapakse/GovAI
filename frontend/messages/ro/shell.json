@@ -3,6 +3,7 @@
     "back": "Înapoi",
     "message": "Acționați ca administrator al platformei în organizația <b>{tenant}</b>"
   },
+  "changePassword": "Schimbă parola",
   "logout": "Deconectare",
   "meta": {
     "description": "Conformitate cu EU AI Act | Gateway de securitate | Supraveghere umană",

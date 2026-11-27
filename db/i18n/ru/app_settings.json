@@ -25,7 +25,7 @@
     "unit": "токены"
   },
   "i18n.default_locale": {
-    "description": "Язык интерфейса, отчётов и сообщений для пользователей, не выбравших собственный язык. Коды: pl, en, de, it, es, fr, ro, ru, sl, hr.",
+    "description": "Язык интерфейса, отчётов и сообщений для пользователей, не выбравших собственный язык. Коды: pl, en, de, it, es, fr, ro, ru, sl, hr, pt.",
     "label": "Язык по умолчанию"
   },
   "intervals.policy_refresh_seconds": {

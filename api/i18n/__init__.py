@@ -11,7 +11,7 @@ a gdy go brak — z domyślnego języka instancji (app_settings i18n.default_loc
 Kod wywołuje po prostu t("errors.agent_not_found", agent_id=...).
 
 Trzymaj LOCALES w synchronizacji z frontend/i18n/locales.ts, gateway/i18n/__init__.py
-i CHECK users.locale w db/migrations/012_i18n.sql.
+i CHECK users.locale w db/migrations/017_locale_pt.sql.
 """
 from __future__ import annotations
 
@@ -24,13 +24,14 @@ from typing import Any, Optional
 
 logger = logging.getLogger(__name__)
 
-LOCALES: tuple[str, ...] = ("pl", "en", "de", "it", "es", "fr", "ro", "ru", "sl", "hr")
+LOCALES: tuple[str, ...] = ("pl", "en", "de", "it", "es", "fr", "ro", "ru", "sl", "hr", "pt")
 DEFAULT_LOCALE = "pl"
 
 # Nazwy języków po angielsku — do promptów LLM ("Respond in {language}").
 LANGUAGE_NAMES_EN: dict[str, str] = {
     "pl": "Polish", "en": "English", "de": "German", "it": "Italian", "es": "Spanish",
     "fr": "French", "ro": "Romanian", "ru": "Russian", "sl": "Slovenian", "hr": "Croatian",
+    "pt": "European Portuguese",
 }
 
 _LOCALES_DIR = Path(__file__).parent / "locales"

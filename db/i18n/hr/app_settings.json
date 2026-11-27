@@ -25,7 +25,7 @@
     "unit": "tokeni"
   },
   "i18n.default_locale": {
-    "description": "Jezik sučelja, izvješća i poruka za korisnike koji nisu odabrali vlastiti jezik. Kodovi: pl, en, de, it, es, fr, ro, ru, sl, hr.",
+    "description": "Jezik sučelja, izvješća i poruka za korisnike koji nisu odabrali vlastiti jezik. Kodovi: pl, en, de, it, es, fr, ro, ru, sl, hr, pt.",
     "label": "Zadani jezik"
   },
   "intervals.policy_refresh_seconds": {

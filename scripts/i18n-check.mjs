@@ -16,7 +16,7 @@ import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const LOCALES = ['pl', 'en', 'de', 'it', 'es', 'fr', 'ro', 'ru', 'sl', 'hr'];
+const LOCALES = ['pl', 'en', 'de', 'it', 'es', 'fr', 'ro', 'ru', 'sl', 'hr', 'pt'];
 const SOURCE = 'pl';
 const FIX = process.argv.includes('--fix');
 
@@ -24,8 +24,7 @@ const CATALOGS = [
   { root: 'frontend/messages', icu: true },
   { root: 'api/i18n/locales', icu: false },
   { root: 'gateway/i18n/locales', icu: false },
-  // Landing page ma dodatkowo portugalski (aplikacja — nie).
-  { root: 'website/i18n', icu: false, extraLocales: ['pt'] },
+  { root: 'website/i18n', icu: false },
   { root: 'db/i18n', icu: false },
 ];
 

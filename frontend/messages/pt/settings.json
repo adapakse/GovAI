@@ -1,0 +1,71 @@
+{
+  "categories": {
+    "budget": {
+      "desc": "Limites predefinidos e limiares de alerta de custos para novos agentes.",
+      "title": "Orçamentos"
+    },
+    "compliance": {
+      "desc": "Prazos das lacunas de conformidade e limites da narrativa dos relatórios.",
+      "title": "Conformidade"
+    },
+    "i18n": {
+      "desc": "Idioma predefinido da interface, dos relatórios e das mensagens da instância.",
+      "title": "Idioma"
+    },
+    "intervals": {
+      "desc": "Frequência das tarefas em segundo plano (atualização de políticas, monitor de TTL).",
+      "title": "Intervalos"
+    },
+    "models": {
+      "desc": "Modelos predefinidos e parâmetros das chamadas LLM.",
+      "title": "Modelos predefinidos"
+    },
+    "oversight": {
+      "desc": "Limiares e limites da fila de supervisão humana (Art. 14.º do EU AI Act).",
+      "title": "Supervisão"
+    },
+    "pagination": {
+      "desc": "Tamanhos predefinidos e máximos das listas e intervalos de dias/horas.",
+      "title": "Paginação e janelas temporais"
+    },
+    "pricing": {
+      "desc": "Tarifas dos modelos e taxa de câmbio utilizadas para calcular o custo das chamadas.",
+      "title": "Preços e custos"
+    },
+    "security": {
+      "desc": "Tokens, hashing de palavras-passe e limiares de deteção de PII.",
+      "title": "Segurança"
+    }
+  },
+  "history": {
+    "empty": "Nenhuma alteração registada.",
+    "loading": "A carregar histórico...",
+    "unknownUser": "desconhecido"
+  },
+  "loading": "A carregar...",
+  "noResults": "Nenhuma definição corresponde a “{query}”.",
+  "readOnly": "Modo só de leitura — a edição das definições requer a função <b>it_admin</b>. A sua função: <b>{role}</b>.",
+  "reload": {
+    "button": "⟳ Recarregar a cache agora",
+    "done": "Cache recarregada.",
+    "error": "Erro: {error}",
+    "running": "A recarregar..."
+  },
+  "row": {
+    "defaultValue": "predefinição: {value}",
+    "hideHistory": "ocultar histórico",
+    "invalidJson": "JSON inválido",
+    "lastChange": "última alteração: {user} · {date}",
+    "locked": "bloqueado",
+    "overriddenHint": "A sua organização substituiu o valor predefinido da plataforma.",
+    "platformParam": "Parâmetro da plataforma",
+    "platformParamHint": "Parâmetro técnico comum a todas as organizações — só o administrador da plataforma GovAI o pode alterar.",
+    "range": "intervalo: {range}",
+    "save": "✓ Guardar",
+    "showHistory": "histórico",
+    "unit": "unidade: {unit}"
+  },
+  "searchPlaceholder": "Pesquisar definições (nome, chave, descrição)...",
+  "subtitle": "Configuração operacional sem alterações ao código. As alterações produzem efeito imediatamente (o gateway/API atualizam os valores dentro de 60 s).",
+  "title": "Definições do sistema"
+}

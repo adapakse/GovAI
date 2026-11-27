@@ -1,0 +1,98 @@
+{
+  "apiKeys": {
+    "add": "+ Nova chave de API",
+    "anyAgent": "qualquer agente",
+    "columns": {
+      "agent": "Agente",
+      "expires": "Válida até",
+      "lastUsed": "Última utilização",
+      "name": "Nome",
+      "prefix": "Prefixo",
+      "status": "Estado"
+    },
+    "createdAt": "criada em {date}",
+    "empty": "Sem chaves de API",
+    "form": {
+      "agent": "Agente",
+      "agentHint": "A chave funcionará apenas para o agente selecionado.",
+      "anyAgent": "— não atribuída (qualquer agente da organização) —",
+      "anyAgentHint": "Uma chave não atribuída funciona para qualquer agente da organização indicado no cabeçalho X-Agent-ID. Recomenda-se atribuí-la a um agente.",
+      "cancel": "Cancelar",
+      "expiry": "Validade",
+      "expiryDays": "{days} dias",
+      "name": "Nome",
+      "namePlaceholder": "p. ex. Assistente de contratos — produção",
+      "noExpiry": "sem prazo de validade",
+      "save": "Criar chave",
+      "saving": "A criar...",
+      "title": "Nova chave de API"
+    },
+    "loading": "A carregar...",
+    "neverUsed": "nunca utilizada",
+    "noAccess": "A gestão de chaves de API está disponível para as funções Sócio e Administrador de TI.",
+    "noExpiry": "sem prazo de validade",
+    "revoke": "Revogar",
+    "revokeConfirm": {
+      "confirm": "Revogar chave",
+      "message": "Revogar a chave “{name}”? Os agentes que utilizam esta chave perderão imediatamente o acesso ao gateway.",
+      "title": "Revogar chave de API"
+    },
+    "secret": {
+      "description": "Chave “{name}” — configure-a no agente como cabeçalho X-API-Key.",
+      "label": "Chave de API",
+      "title": "Chave de API criada"
+    },
+    "showRevoked": "Mostrar revogadas ({count})",
+    "state": {
+      "active": "Ativa",
+      "expired": "Expirada",
+      "revoked": "Revogada"
+    },
+    "subtitle": "Chaves utilizadas pelos agentes para se autenticarem no gateway GovAI (cabeçalho X-API-Key).",
+    "title": "Chaves de API"
+  },
+  "users": {
+    "add": "+ Adicionar utilizador",
+    "columns": {
+      "lastLogin": "Último início de sessão",
+      "role": "Função",
+      "status": "Estado",
+      "user": "Utilizador"
+    },
+    "empty": "Sem utilizadores",
+    "form": {
+      "cancel": "Cancelar",
+      "email": "Endereço de e-mail",
+      "fullName": "Nome completo",
+      "passwordHint": "Será gerada automaticamente uma palavra-passe temporária — o utilizador irá alterá-la no primeiro início de sessão.",
+      "role": "Função",
+      "save": "Criar conta",
+      "saving": "A criar...",
+      "title": "Novo utilizador"
+    },
+    "loading": "A carregar...",
+    "never": "nunca",
+    "noAccess": "A gestão de utilizadores está disponível para as funções Sócio e Administrador de TI.",
+    "resetConfirm": {
+      "confirm": "Repor palavra-passe",
+      "message": "Emitir uma nova palavra-passe temporária para {name} ({email})? As sessões atuais serão terminadas e terá de definir a sua própria palavra-passe no próximo início de sessão.",
+      "title": "Repor palavra-passe"
+    },
+    "resetPassword": "Repor palavra-passe",
+    "searchPlaceholder": "Pesquisar por nome, e-mail, função...",
+    "secret": {
+      "createdTitle": "Conta criada",
+      "description": "Palavra-passe temporária para {email}. O utilizador irá alterá-la no primeiro início de sessão.",
+      "label": "Palavra-passe temporária",
+      "resetTitle": "Nova palavra-passe temporária"
+    },
+    "status": {
+      "active": "Ativo",
+      "pending": "Pendente",
+      "suspended": "Bloqueado"
+    },
+    "subtitle": "Contas na organização {tenant}",
+    "title": "Utilizadores",
+    "you": "(eu)"
+  }
+}

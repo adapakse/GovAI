@@ -1,0 +1,96 @@
+{
+  "agentStatus": {
+    "active": "Ativo",
+    "quarantined": "Em quarentena",
+    "retired": "Desativado",
+    "suspended": "Suspenso"
+  },
+  "components": {
+    "liveFeed": {
+      "connected": "Ligado",
+      "disconnected": "Desligado",
+      "events": {
+        "auditBlocked": "BLOQUEADO",
+        "auditError": "ERRO",
+        "auditNewCall": "CHAMADA",
+        "oversightEscalated": "ESCALAMENTO",
+        "oversightPending": "SUPERVISÃO"
+      },
+      "title": "Eventos em tempo real",
+      "waiting": "A aguardar eventos..."
+    },
+    "oversightModal": {
+      "actions": {
+        "approved": "✓ Aprovar",
+        "escalated": "↑ Escalar",
+        "rejected": "✕ Rejeitar"
+      },
+      "agentDecision": "Decisão do agente",
+      "cancel": "Cancelar",
+      "commentOptional": "Comentário opcional...",
+      "commentRequired": "É obrigatório um comentário ao rejeitar ou escalar.",
+      "decisionType": "Tipo de decisão:",
+      "justificationRequired": "Justificação (obrigatória)",
+      "rubberStampWarning": "⚠ O tempo de revisão é medido a partir do momento em que esta janela é aberta. Uma decisão tomada em menos de 10 segundos será assinalada como supervisão meramente formal (rubber-stamp).",
+      "save": "Guardar decisão",
+      "saveError": "Erro ao guardar a decisão",
+      "saved": "Guardado: {action}",
+      "saving": "A guardar...",
+      "submitted": "Submetido:",
+      "taskId": "ID da tarefa: {id}",
+      "timeLeft": "Tempo restante",
+      "timer": "{mins}m {secs}s",
+      "yourDecision": "A sua decisão"
+    },
+    "searchBox": {
+      "clear": "Limpar",
+      "placeholder": "Pesquisar..."
+    }
+  },
+  "language": {
+    "instanceDefault": "Predefinição da instância ({language})",
+    "label": "Idioma"
+  },
+  "oversightStatus": {
+    "approved": "Aprovada",
+    "escalated": "Escalada",
+    "pending": "Pendente",
+    "rejected": "Rejeitada"
+  },
+  "platform": {
+    "badge": "Plataforma",
+    "rowHint": "Esta entrada é gerida pela GovAI — é partilhada por todas as organizações e só de leitura."
+  },
+  "policyResult": {
+    "allowed": "Permitido",
+    "blocked": "Bloqueado",
+    "error": "Erro",
+    "oversight_required": "Requer supervisão",
+    "short": {
+      "allowed": "OK",
+      "blocked": "BLOQUEADO",
+      "error": "ERRO",
+      "oversight_required": "SUPERVISÃO"
+    }
+  },
+  "risk": {
+    "high": "Elevado",
+    "limited": "Limitado",
+    "minimal": "Mínimo",
+    "short": {
+      "high": "ELEVADO",
+      "limited": "LIMITADO",
+      "minimal": "MÍNIMO",
+      "unacceptable": "INACEITÁVEL"
+    },
+    "unacceptable": "Inaceitável"
+  },
+  "secretModal": {
+    "cancel": "Cancelar",
+    "close": "Fechar",
+    "copied": "Copiado",
+    "copy": "Copiar",
+    "done": "Já guardei — fechar",
+    "warning": "Este valor é apresentado apenas uma vez. Copie-o agora e transmita-o através de um canal seguro — não poderá ser recuperado depois de fechar esta janela."
+  }
+}

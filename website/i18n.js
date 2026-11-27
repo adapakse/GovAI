@@ -33,8 +33,6 @@
     { code: 'ru', name: 'Русский' },
     { code: 'sl', name: 'Slovenščina' },
     { code: 'hr', name: 'Hrvatski' },
-    // Tylko landing page — aplikacja nie obsługuje portugalskiego (link "Zaloguj się"
-    // dopisuje ?lang=pt, aplikacja go ignoruje i wybiera język z przeglądarki).
     { code: 'pt', name: 'Português' }
   ];
 

@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '@/components/AuthProvider';
@@ -95,7 +96,13 @@ export default function ChangePasswordPage() {
           </button>
         </form>
 
-        <div className="mt-6 pt-5 border-t border-blue/30 text-xs">
+        <div className="mt-6 pt-5 border-t border-blue/30 text-xs flex items-center justify-between">
+          {/* Zwykła zmiana hasła (z menu użytkownika) — można wrócić; hasło tymczasowe trzeba zmienić */}
+          {user && !user.must_change_password ? (
+            <Link href="/dashboard" className="text-mgray/50 hover:text-white transition-colors">
+              {t('back')}
+            </Link>
+          ) : <span />}
           <button onClick={logout} className="text-mgray/50 hover:text-govred transition-colors">
             {t('logout')}
           </button>

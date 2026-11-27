@@ -1,9 +1,9 @@
 // Jedno źródło prawdy dla języków frontendu.
 // Trzymaj w synchronizacji z: api/i18n/__init__.py (LOCALES),
-// gateway/i18n/__init__.py (LOCALES), db/migrations/012_i18n.sql (CHECK users.locale)
+// gateway/i18n/__init__.py (LOCALES), db/migrations/017_locale_pt.sql (CHECK users.locale)
 // i website/i18n.js (LANGS).
 
-export const LOCALES = ['pl', 'en', 'de', 'it', 'es', 'fr', 'ro', 'ru', 'sl', 'hr'] as const;
+export const LOCALES = ['pl', 'en', 'de', 'it', 'es', 'fr', 'ro', 'ru', 'sl', 'hr', 'pt'] as const;
 export type Locale = (typeof LOCALES)[number];
 
 export const DEFAULT_LOCALE: Locale = 'pl';
@@ -24,6 +24,7 @@ export const LOCALE_NAMES: Record<Locale, string> = {
   ru: 'Русский',
   sl: 'Slovenščina',
   hr: 'Hrvatski',
+  pt: 'Português',
 };
 
 // Locale dla Intl/toLocaleString — 'en' jako en-GB (dzień przed miesiącem, zegar 24h).
@@ -38,6 +39,7 @@ export const INTL_LOCALE: Record<Locale, string> = {
   ru: 'ru-RU',
   sl: 'sl-SI',
   hr: 'hr-HR',
+  pt: 'pt-PT',
 };
 
 // Przestrzenie nazw komunikatów: messages/<locale>/<namespace>.json.

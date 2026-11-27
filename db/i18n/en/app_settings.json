@@ -25,7 +25,7 @@
     "unit": "tokens"
   },
   "i18n.default_locale": {
-    "description": "Language of the interface, reports and messages for users who have not chosen their own. Codes: pl, en, de, it, es, fr, ro, ru, sl, hr.",
+    "description": "Language of the interface, reports and messages for users who have not chosen their own. Codes: pl, en, de, it, es, fr, ro, ru, sl, hr, pt.",
     "label": "Default language"
   },
   "intervals.policy_refresh_seconds": {

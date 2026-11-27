@@ -1,0 +1,124 @@
+{
+  "audit": {
+    "actions": {
+      "tenant_create": "Organização criada",
+      "tenant_delete": "Organização eliminada",
+      "tenant_enter": "Entrada na organização",
+      "tenant_update": "Organização alterada",
+      "user_reset_password": "Reposição da palavra-passe do utilizador"
+    },
+    "columns": {
+      "action": "Ação",
+      "actor": "Quem",
+      "details": "Detalhes",
+      "tenant": "Organização",
+      "time": "Hora"
+    },
+    "empty": "Sem entradas",
+    "limit": "Entradas:",
+    "loading": "A carregar...",
+    "noAccess": "O registo da plataforma está disponível apenas para o administrador da plataforma.",
+    "searchPlaceholder": "Pesquisar por pessoa, ação, organização...",
+    "subtitle": "Operações dos administradores da plataforma: criação e alteração de organizações, reposição de palavras-passe, entrada no contexto de organizações.",
+    "title": "Registo da plataforma"
+  },
+  "tenants": {
+    "actingExpired": "A sessão no contexto da organização expirou (60 minutos) — regressou ao painel da plataforma. Entre novamente na organização para continuar.",
+    "actions": {
+      "activate": "Ativar",
+      "delete": "Eliminar",
+      "deleteDemo": "A organização de demonstração não pode ser eliminada",
+      "deleteOwn": "Não pode eliminar a sua própria organização",
+      "enter": "Entrar",
+      "enterSuspended": "A organização não está ativa",
+      "suspend": "Suspender",
+      "users": "Utilizadores"
+    },
+    "add": "+ Nova organização",
+    "columns": {
+      "agents": "Agentes",
+      "created": "Criada em",
+      "status": "Estado",
+      "tenant": "Organização",
+      "users": "Utilizadores"
+    },
+    "created": {
+      "description": "Primeiro administrador: {email}. Subdomínio da organização: {slug}. Transmita a palavra-passe temporária ao administrador — este irá alterá-la no primeiro início de sessão.",
+      "label": "Palavra-passe temporária do administrador",
+      "title": "Organização {name} criada"
+    },
+    "delete": {
+      "cancel": "Cancelar",
+      "confirm": "Eliminar organização",
+      "message": "A organização será eliminada (eliminação lógica — os dados permanecem na base de dados, mas ninguém terá acesso a eles). Os utilizadores não poderão iniciar sessão e as chaves de API deixarão de funcionar.",
+      "title": "Eliminar a organização {name}",
+      "typeSlug": "Para confirmar, introduza o slug da organização: <code>{slug}</code>"
+    },
+    "demo": "demo",
+    "empty": "Sem organizações",
+    "form": {
+      "adminEmail": "Endereço de e-mail",
+      "adminFullName": "Nome completo",
+      "adminHint": "O administrador recebe a função de Sócio e uma palavra-passe temporária a alterar no primeiro início de sessão. A organização recebe uma cópia das políticas-modelo.",
+      "adminSection": "Primeiro administrador",
+      "cancel": "Cancelar",
+      "locale": "Idioma predefinido",
+      "localePlatform": "— predefinição da plataforma —",
+      "name": "Nome",
+      "namePlaceholder": "p. ex. Nowak & Associados, Sociedade de Advogados",
+      "save": "Criar organização",
+      "saving": "A criar...",
+      "slug": "Slug (endereço)",
+      "slugErrors": {
+        "chars": "Só são permitidas letras minúsculas (a–z), algarismos e hífenes.",
+        "edges": "O slug não pode começar nem terminar com um hífen.",
+        "length": "O slug pode ter no máximo 63 caracteres.",
+        "reserved": "Este slug está reservado para a plataforma.",
+        "taken": "Este slug já está a ser utilizado."
+      },
+      "slugHint": "Letras minúsculas, algarismos e hífenes — o subdomínio da organização no endereço da plataforma.",
+      "slugPreview": "Subdomínio da organização: {slug}",
+      "title": "Nova organização"
+    },
+    "loading": "A carregar...",
+    "noAccess": "O painel de organizações está disponível apenas para o administrador da plataforma.",
+    "own": "(a sua organização)",
+    "searchPlaceholder": "Pesquisar por nome ou slug...",
+    "showDeleted": "Mostrar eliminadas ({count})",
+    "state": {
+      "active": "Ativa",
+      "deleted": "Eliminada",
+      "suspended": "Suspensa"
+    },
+    "subtitle": "Organizações (clientes) da plataforma GovAI — criação, suspensão e entrada no contexto de uma organização.",
+    "suspendConfirm": {
+      "confirm": "Suspender",
+      "message": "Suspender a organização {name}? Os seus utilizadores não poderão iniciar sessão e o gateway rejeitará as chamadas dos seus agentes até à reativação.",
+      "title": "Suspender organização"
+    },
+    "title": "Organizações",
+    "users": {
+      "columns": {
+        "lastLogin": "Último início de sessão",
+        "role": "Função",
+        "status": "Estado",
+        "user": "Utilizador"
+      },
+      "empty": "Sem utilizadores",
+      "loading": "A carregar...",
+      "never": "nunca",
+      "resetConfirm": {
+        "confirm": "Repor palavra-passe",
+        "message": "Emitir uma nova palavra-passe temporária para {name} ({email})? As sessões atuais serão terminadas.",
+        "title": "Repor palavra-passe"
+      },
+      "resetPassword": "Repor palavra-passe",
+      "secret": {
+        "description": "Palavra-passe temporária para {email}. O utilizador irá alterá-la no primeiro início de sessão.",
+        "label": "Palavra-passe temporária",
+        "title": "Nova palavra-passe temporária"
+      },
+      "title": "Utilizadores da organização {name}"
+    }
+  }
+}

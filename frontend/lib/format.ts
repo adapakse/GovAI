@@ -2,13 +2,13 @@
 
 import { useLocale } from 'next-intl';
 import type { Locale as DateFnsLocale } from 'date-fns';
-import { de, enGB, es, fr, hr, it, pl, ro, ru, sl } from 'date-fns/locale';
+import { de, enGB, es, fr, hr, it, pl, pt, ro, ru, sl } from 'date-fns/locale';
 import { INTL_LOCALE, type Locale } from '@/i18n/locales';
 
 // Formatowanie dat i liczb w języku aktywnym w UI. Zamiast toLocaleString('pl-PL')
 // używaj: const fmt = useFormat(); fmt.dateTime(iso), fmt.number(n) itd.
 
-const DATE_FNS: Record<Locale, DateFnsLocale> = { pl, en: enGB, de, it, es, fr, ro, ru, sl, hr };
+const DATE_FNS: Record<Locale, DateFnsLocale> = { pl, en: enGB, de, it, es, fr, ro, ru, sl, hr, pt };
 
 export function useIntlLocale(): string {
   return INTL_LOCALE[useLocale() as Locale];
