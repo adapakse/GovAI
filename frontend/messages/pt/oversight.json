@@ -1,0 +1,20 @@
+{
+  "allApproved": "Todas aprovadas",
+  "empty": {
+    "subtitle": "Todas as decisões foram revistas.",
+    "title": "Sem tarefas pendentes"
+  },
+  "header": {
+    "subtitle": "As decisões de agentes de risco elevado requerem aprovação · atualizado a cada 10 s",
+    "title": "Supervisão humana"
+  },
+  "info": {
+    "text": "O tempo de revisão de cada tarefa é medido. Uma aprovação em menos de 10 segundos após abrir o cartão gera um alerta e é registada no registo de auditoria (art. 14.º do EU AI Act).",
+    "title": "Proteção contra a supervisão meramente formal (rubber-stamp):"
+  },
+  "loading": "A carregar as tarefas de supervisão...",
+  "pendingCount": "{count} pendentes",
+  "refresh": "Atualizar",
+  "review": "Rever",
+  "timer": "{mins}m {secs}s"
+}

@@ -25,7 +25,7 @@
     "unit": "Tokens"
   },
   "i18n.default_locale": {
-    "description": "Sprache der Benutzeroberfläche, der Berichte und der Meldungen für Benutzer, die keine eigene Sprache gewählt haben. Codes: pl, en, de, it, es, fr, ro, ru, sl, hr.",
+    "description": "Sprache der Benutzeroberfläche, der Berichte und der Meldungen für Benutzer, die keine eigene Sprache gewählt haben. Codes: pl, en, de, it, es, fr, ro, ru, sl, hr, pt.",
     "label": "Standardsprache"
   },
   "intervals.policy_refresh_seconds": {

@@ -1,0 +1,74 @@
+{
+  "high|Art. 10": {
+    "text": "Os conjuntos de dados de treino, validação e teste devem cumprir critérios de qualidade — pertinência, representatividade, ausência de erros e completude. É exigida a documentação dos conjuntos de dados.",
+    "title": "Dados e governação de dados"
+  },
+  "high|Art. 11": {
+    "text": "É exigida documentação técnica completa, em conformidade com o anexo IV do EU AI Act, antes da colocação do sistema no mercado ou da sua colocação em serviço. A documentação deve ser mantida atualizada ao longo de todo o ciclo de vida do sistema.",
+    "title": "Documentação técnica"
+  },
+  "high|Art. 13": {
+    "text": "O sistema de IA deve garantir a transparência do seu funcionamento. Os utilizadores devem ser informados de que estão a interagir com um sistema de IA e compreender o seu funcionamento na medida necessária para a supervisão.",
+    "title": "Transparência e prestação de informações"
+  },
+  "high|Art. 14": {
+    "text": "Existem medidas que permitem às pessoas singulares compreender, acompanhar e intervir no funcionamento do sistema de IA. Deve ser possível interromper ou reverter qualquer decisão tomada pelo sistema.",
+    "title": "Supervisão humana"
+  },
+  "high|Art. 15": {
+    "text": "O sistema deve alcançar um nível adequado de exatidão ao longo de todo o seu ciclo de vida. São exigidos testes de resistência a erros, ataques e entradas inesperadas.",
+    "title": "Exatidão e solidez"
+  },
+  "high|Art. 17": {
+    "text": "O prestador cria um sistema de gestão da qualidade que inclui políticas, procedimentos e instruções destinados a garantir a conformidade com o EU AI Act.",
+    "title": "Sistema de gestão da qualidade"
+  },
+  "high|Art. 26 ust. 2": {
+    "text": "O responsável pela implantação de um sistema de IA de risco elevado deve atribuir a supervisão humana a pessoas singulares que disponham da competência, formação e autoridade necessárias, bem como do apoio necessário.",
+    "title": "Supervisão humana atribuída a uma pessoa competente"
+  },
+  "high|Art. 26 ust. 5": {
+    "text": "O responsável pela implantação deve controlar o funcionamento do sistema com base nas instruções de utilização e informar o prestador e, se for caso disso, a autoridade de fiscalização do mercado de qualquer risco identificado ou incidente grave.",
+    "title": "Controlo do funcionamento e informação do prestador"
+  },
+  "high|Art. 26 ust. 6": {
+    "text": "O responsável pela implantação deve conservar os registos gerados automaticamente pelo sistema durante um período adequado à finalidade prevista do sistema, de, pelo menos, seis meses, salvo disposição em contrário no direito da União ou nacional aplicável.",
+    "title": "Conservação dos registos gerados automaticamente"
+  },
+  "high|Art. 26 ust. 8": {
+    "text": "O responsável pela implantação que seja uma autoridade pública deve cumprir as obrigações de registo a que se refere o art. 49.º e, antes de colocar o sistema em serviço, verificar se este está registado na base de dados da UE.",
+    "title": "Verificação do registo na base de dados da UE"
+  },
+  "high|Art. 27": {
+    "text": "Antes de implantar um sistema de IA de risco elevado referido no anexo III, ponto 5, alíneas b) ou c) (avaliação da capacidade de endividamento, risco em seguros), ou quando o responsável pela implantação for um organismo de direito público ou uma entidade privada que presta serviços públicos, o responsável pela implantação deve realizar uma avaliação de impacto sobre os direitos fundamentais: descrição dos processos em que o sistema será utilizado, período e frequência de utilização, categorias de pessoas afetadas, riscos de danos para essas pessoas, bem como medidas de supervisão humana e mecanismos de apresentação de queixas.",
+    "title": "Avaliação de impacto sobre os direitos fundamentais (FRIA)"
+  },
+  "high|Art. 43": {
+    "text": "Os sistemas de IA de risco elevado enumerados no anexo III devem ser sujeitos a uma avaliação da conformidade (controlo interno ou com a participação de um organismo notificado) antes da sua colocação no mercado ou colocação em serviço.",
+    "title": "Avaliação da conformidade"
+  },
+  "high|Art. 49": {
+    "text": "Os sistemas de IA de risco elevado devem ser registados na base de dados da UE antes da sua colocação no mercado ou colocação em serviço.",
+    "title": "Registo na base de dados da UE"
+  },
+  "high|Art. 9": {
+    "text": "Um agente de risco elevado exige um sistema de gestão de riscos documentado ao longo de todo o seu ciclo de vida. São exigidas a identificação, a análise e a avaliação dos riscos, bem como a adoção de medidas de gestão de riscos.",
+    "title": "Sistema de gestão de riscos"
+  },
+  "limited|Art. 50 ust. 1": {
+    "text": "Os sistemas destinados a interagir com pessoas singulares devem informar o utilizador, de forma clara, distinguível e atempada, de que está a interagir com um sistema automatizado, salvo se tal for óbvio.",
+    "title": "Obrigação de divulgar a utilização de IA"
+  },
+  "limited|Art. 50 ust. 4": {
+    "text": "Os conteúdos de texto, áudio e vídeo gerados por IA devem ser marcados num formato legível por máquina como gerados artificialmente.",
+    "title": "Marcação de conteúdos gerados por IA"
+  },
+  "minimal|Preambuła 46": {
+    "text": "Não se aplicam requisitos legais obrigatórios aos sistemas de risco mínimo. Recomenda-se a aplicação voluntária de códigos de conduta e dos princípios gerais de uma IA de confiança (transparência, equidade, segurança).",
+    "title": "Códigos de conduta voluntários"
+  },
+  "unacceptable|Art. 5": {
+    "text": "As práticas de IA enumeradas no art. 5.º são estritamente proibidas na UE. Deve verificar-se que o sistema não se enquadra em nenhuma das categorias proibidas (manipulação subliminar, classificação social, identificação biométrica em tempo real).",
+    "title": "Proibição absoluta"
+  }
+}

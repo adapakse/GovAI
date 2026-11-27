@@ -25,7 +25,7 @@
     "unit": "tokeny"
   },
   "i18n.default_locale": {
-    "description": "Język interfejsu, raportów i komunikatów dla użytkowników, którzy nie wybrali własnego. Kody: pl, en, de, it, es, fr, ro, ru, sl, hr.",
+    "description": "Język interfejsu, raportów i komunikatów dla użytkowników, którzy nie wybrali własnego. Kody: pl, en, de, it, es, fr, ro, ru, sl, hr, pt.",
     "label": "Domyślny język"
   },
   "intervals.policy_refresh_seconds": {

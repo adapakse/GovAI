@@ -1,0 +1,14 @@
+{
+  "errors": {
+    "above_max": "O valor {value} está acima do máximo de {max}",
+    "below_min": "O valor {value} está abaixo do mínimo de {min}",
+    "expected_bool": "Era esperado um valor booleano",
+    "expected_json": "Era esperado um objeto ou uma lista JSON",
+    "expected_string": "Era esperado um valor de texto",
+    "invalid_locale": "Idioma não suportado. Permitidos: {allowed}",
+    "invalid_value": "Valor inválido: {error}",
+    "not_editable": "O parâmetro '{key}' não é editável",
+    "not_found": "O parâmetro '{key}' não existe",
+    "platform_only": "'{key}' é um parâmetro técnico da plataforma — só um administrador do GovAI o pode alterar."
+  }
+}

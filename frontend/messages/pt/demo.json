@@ -1,0 +1,104 @@
+{
+  "chat": {
+    "awaitingOversight": "⏳ Remetido para supervisão humana (art. 14.º do EU AI Act)\nOversight ID: {id}",
+    "blocked": "🚫 Bloqueado: {reason}",
+    "clear": "Limpar",
+    "connectionError": "Erro de ligação: {error}",
+    "defaultBlockReason": "Política de segurança GovAI",
+    "emptyHint": "Escreva uma mensagem abaixo — será processada pelo GovAI Gateway (PII scan → políticas → {model})",
+    "pipeline": "Chat livre · GovAI Gateway → PII scan → políticas → {model}",
+    "placeholder": "Escreva uma mensagem ao agente...",
+    "sectionTitle": "Chat livre — chamada direta através do Gateway",
+    "send": "Enviar ▶"
+  },
+  "expected": {
+    "allowed": "Permitido",
+    "allowed_with_pii": "Permitido + PII",
+    "blocked": "Bloqueado",
+    "oversight_required": "Requer supervisão"
+  },
+  "fleet": {
+    "button": "▦ Gerar frota (50 agentes)",
+    "count": "{count, plural, one {# agente da frota} other {# agentes da frota}}",
+    "desc": "Adiciona 50 agentes distribuídos por departamentos, com lacunas de conformidade deliberadas (risco elevado sem supervisão, revisões em atraso, práticas proibidas do art. 5.º). Mostra que, em escala, gerir manualmente a conformidade com o AI Act é inviável.",
+    "seededAgents": "{count, plural, one {Gerado # agente} other {Gerados # agentes}}.",
+    "title": "Frota de demonstração (escala)"
+  },
+  "links": {
+    "audit": "→ Registo",
+    "auditLog": "→ Registo de auditoria",
+    "oversight": "→ Supervisão",
+    "oversightQueue": "→ Fila de supervisão"
+  },
+  "loading": "⏳ A carregar...",
+  "noAgents": "Sem agentes ativos.",
+  "noResults": "Nenhum agente corresponde a «{query}».",
+  "notDemoTenant": {
+    "body": "A sua organização trabalha com dados reais — os cenários de teste, a geração de dados de exemplo e a reposição do registo estão aqui desativados.",
+    "title": "O simulador só está disponível na organização de demonstração"
+  },
+  "playbook": {
+    "collapse": "▲ recolher",
+    "expand": "▼ expandir",
+    "go": "Ir →",
+    "intro": "Conduza a apresentação passo a passo.",
+    "steps": {
+      "1": {
+        "desc": "Clique em \"Gerar 30 dias de dados\" — o gerador cria ~500 entradas de auditoria e ~23 itens na fila de supervisão.",
+        "title": "Gerar a base de dados histórica"
+      },
+      "2": {
+        "desc": "Aceda ao Painel. Verá o total de chamadas, bloqueios, PII, custos e o gráfico de 24h.",
+        "title": "Consultar o Painel — dados históricos"
+      },
+      "3": {
+        "desc": "Clique em \"Executar ▶\" junto ao cenário \"Pedido de informação sobre seguros\" (Agente 1).",
+        "title": "Executar um cenário — positivo"
+      },
+      "4": {
+        "desc": "Clique em \"Cliente indica PESEL e número de conta\". O Presidio mascara os dados antes de serem enviados ao modelo.",
+        "title": "Executar um cenário com PII"
+      },
+      "5": {
+        "desc": "Tentativa de mutação financeira → G-001. Ataque de prompt injection → G-002. Visível no Registo de auditoria.",
+        "title": "Acionar os bloqueios G-001 e G-002"
+      },
+      "6": {
+        "desc": "O Agente 2 requer supervisão — a chamada vai para a fila. Aceda à Supervisão e aprove-a.",
+        "title": "Fila de supervisão (art. 14.º)"
+      },
+      "7": {
+        "desc": "Selecione o agente DeepSeek e escreva qualquer mensagem. O GovAI interceta o tráfego, procura PII e verifica as políticas — exatamente como para o Claude.",
+        "title": "Testar o DeepSeek através do GovAI"
+      }
+    },
+    "title": "📋 Guia da demonstração — 7 passos"
+  },
+  "result": {
+    "blockedByPolicy": "Bloqueado pela política.",
+    "expected": "→ esperado: {label}",
+    "gatewayResponse": "Resposta do gateway:",
+    "match": "✓ conforme esperado",
+    "mismatch": "≠ inesperado",
+    "run": "Executar ▶",
+    "running": "⏳ A chamar...",
+    "sentToOversight": "Decisão remetida para supervisão.\nOversight ID: {id}\n\n{message}",
+    "task": "tarefa: {id}..."
+  },
+  "searchPlaceholder": "Procurar um agente — nome, modelo, fornecedor (p. ex. bielik, ollama), equipa...",
+  "seed": {
+    "button": "▦ Gerar 30 dias de dados",
+    "counts": "{audit} entradas de auditoria · {oversight} supervisão",
+    "desc": "O gerador cria ~500 entradas de auditoria e 23 itens na fila.",
+    "refresh": "↻ Atualizar",
+    "reset": "✕ Repor dados",
+    "resetConfirm": "Eliminar TODOS os dados de demonstração (auditoria, supervisão, frota de agentes)?",
+    "resetDone": "Eliminadas {audit} entradas de auditoria, {oversight} itens de supervisão e {fleet} agentes da frota.",
+    "seededEntries": "{count, plural, one {Gerada # entrada} other {Geradas # entradas}}.",
+    "statusEmpty": "○ Vazio",
+    "statusSeeded": "● Gerado",
+    "title": "Dados de demonstração (30 dias de histórico)"
+  },
+  "subtitle": "Cada chamada passa pelo GovAI Gateway → PII scan → Policy engine → modelo de IA. Os resultados são visíveis no Registo de auditoria e na fila de Supervisão.",
+  "title": "Simulador de Agentes de IA"
+}

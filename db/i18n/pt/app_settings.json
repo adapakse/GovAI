@@ -1,0 +1,159 @@
+{
+  "budget.default_alert_threshold_eur": {
+    "description": "Limiar de alerta de custos para novos agentes (0 = desativado).",
+    "label": "Limiar de alerta predefinido",
+    "unit": "EUR"
+  },
+  "budget.default_monthly_eur": {
+    "description": "Orçamento atribuído a novos agentes (0 = sem limite).",
+    "label": "Orçamento mensal predefinido",
+    "unit": "EUR"
+  },
+  "compliance.deadline_days": {
+    "description": "Número de dias para corrigir cada lacuna de conformidade de risco elevado (chave = campo de controlo).",
+    "label": "Prazos das lacunas de conformidade (dias)",
+    "unit": "dias"
+  },
+  "compliance.enterprise_report_max_tokens": {
+    "description": "Limite de tokens para a narrativa do relatório da organização.",
+    "label": "Relatório da organização — máx. tokens",
+    "unit": "tokens"
+  },
+  "compliance.report_max_tokens": {
+    "description": "Limite de tokens para a narrativa do relatório de conformidade do agente.",
+    "label": "Relatório do agente — máx. tokens",
+    "unit": "tokens"
+  },
+  "i18n.default_locale": {
+    "description": "Idioma da interface, dos relatórios e das mensagens para os utilizadores que não escolheram o seu. Códigos: pl, en, de, it, es, fr, ro, ru, sl, hr, pt.",
+    "label": "Idioma predefinido"
+  },
+  "intervals.policy_refresh_seconds": {
+    "description": "Frequência (em segundos) com que o gateway recarrega as regras das políticas a partir da base de dados.",
+    "label": "Atualização das políticas",
+    "unit": "segundos"
+  },
+  "intervals.ttl_monitor_seconds": {
+    "description": "Frequência (em segundos) com que o monitor escala as tarefas de supervisão em atraso.",
+    "label": "Monitor de TTL da supervisão",
+    "unit": "segundos"
+  },
+  "models.classifier_model": {
+    "description": "Modelo utilizado para avaliar o nível de risco de um agente.",
+    "label": "Modelo classificador do AI Act"
+  },
+  "models.default_agent_model": {
+    "description": "Modelo atribuído aos agentes recém-registados.",
+    "label": "Modelo predefinido do agente"
+  },
+  "models.default_max_tokens": {
+    "description": "Limite de tokens de saída quando o cliente não o especifica.",
+    "label": "Limite de tokens predefinido",
+    "unit": "tokens"
+  },
+  "models.default_temperature": {
+    "description": "Temperatura do LLM quando o cliente não a especifica.",
+    "label": "Temperatura predefinida",
+    "unit": "0–2"
+  },
+  "oversight.history_limit": {
+    "description": "Limite rígido do número de itens do histórico de supervisão.",
+    "label": "Histórico de supervisão — limite de linhas",
+    "unit": "linhas"
+  },
+  "oversight.history_max_days": {
+    "description": "Intervalo máximo de dias para GET /oversight/history.",
+    "label": "Histórico de supervisão — máx. dias",
+    "unit": "dias"
+  },
+  "oversight.min_review_seconds": {
+    "description": "Uma revisão de supervisão mais curta do que este número de segundos é assinalada como aprovação automática (rubber-stamping).",
+    "label": "Tempo mín. de revisão",
+    "unit": "segundos"
+  },
+  "oversight.ttl_seconds": {
+    "description": "Tempo até uma tarefa na fila de supervisão ser escalada.",
+    "label": "TTL da tarefa de supervisão",
+    "unit": "segundos"
+  },
+  "pagination.audit_default_limit": {
+    "description": "Número predefinido de entradas em GET /audit.",
+    "label": "Auditoria — limite predefinido",
+    "unit": "linhas"
+  },
+  "pagination.audit_max_limit": {
+    "description": "Número máximo de entradas numa única consulta de auditoria.",
+    "label": "Auditoria — limite máx.",
+    "unit": "linhas"
+  },
+  "pagination.dashboard_recent_blocks": {
+    "description": "Número de bloqueios recentes apresentados nos alertas do painel.",
+    "label": "Painel — bloqueios recentes",
+    "unit": "itens"
+  },
+  "pagination.dashboard_top_agents": {
+    "description": "Número de agentes mais ativos apresentados no painel.",
+    "label": "Painel — agentes mais ativos",
+    "unit": "itens"
+  },
+  "pagination.default_window_days": {
+    "description": "Intervalo predefinido de dias para o registo de auditoria e o painel.",
+    "label": "Janela predefinida (dias)",
+    "unit": "dias"
+  },
+  "pagination.stats_default_days": {
+    "description": "Intervalo predefinido para GET /agents/{id}/stats.",
+    "label": "Estatísticas do agente — dias predefinidos",
+    "unit": "dias"
+  },
+  "pagination.stats_max_days": {
+    "description": "Intervalo máximo para as estatísticas do agente.",
+    "label": "Estatísticas do agente — máx. dias",
+    "unit": "dias"
+  },
+  "pagination.timeline_default_hours": {
+    "description": "Janela predefinida do gráfico de cronologia.",
+    "label": "Cronologia — horas predefinidas",
+    "unit": "horas"
+  },
+  "pagination.timeline_max_hours": {
+    "description": "Intervalo máximo do gráfico de cronologia.",
+    "label": "Cronologia — máx. horas",
+    "unit": "horas"
+  },
+  "pricing.default_rate": {
+    "description": "Tarifa [entrada, saída] para modelos que não constam do mapa.",
+    "label": "Tarifa predefinida (USD/1k tok.)",
+    "unit": "USD/1k"
+  },
+  "pricing.model_rates": {
+    "description": "Mapa modelo → [entrada, saída] em USD por 1000 tokens. Os modelos que não constam da lista utilizam a tarifa predefinida.",
+    "label": "Tarifas dos modelos (USD/1k tok.)",
+    "unit": "USD/1k"
+  },
+  "pricing.usd_to_eur": {
+    "description": "Multiplicador para converter os custos dos modelos de USD para EUR.",
+    "label": "Taxa USD→EUR",
+    "unit": "multiplicador"
+  },
+  "security.access_token_expire_minutes": {
+    "description": "Tempo de vida do token de acesso JWT.",
+    "label": "Validade do token de acesso",
+    "unit": "minutos"
+  },
+  "security.bcrypt_rounds": {
+    "description": "Custo do hashing das palavras-passe (mais alto = mais lento, mais seguro).",
+    "label": "Rondas bcrypt",
+    "unit": "rondas"
+  },
+  "security.pii_confidence_threshold": {
+    "description": "Nível mínimo de confiança do Presidio para que uma deteção de PII seja aceite.",
+    "label": "Limiar de confiança PII",
+    "unit": "0–1"
+  },
+  "security.refresh_token_expire_days": {
+    "description": "Tempo de vida do token de atualização.",
+    "label": "Validade do token de atualização",
+    "unit": "dias"
+  }
+}

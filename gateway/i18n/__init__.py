@@ -4,7 +4,7 @@ Tłumaczenia tekstów zwracanych przez bramkę (błędy HTTP, powody blokad w au
 Odpowiednik api/i18n/__init__.py — bramka to osobny obraz Dockera i nie importuje
 kodu z api/, więc logika jest skopiowana. Trzymaj obie wersje (LOCALES, t, match_locale)
 w synchronizacji, a także z frontend/i18n/locales.ts i CHECK users.locale
-w db/migrations/012_i18n.sql.
+w db/migrations/017_locale_pt.sql.
 
 Pliki: gateway/i18n/locales/<locale>/<namespace>.json — zagnieżdżony JSON, parametry
 w pojedynczych klamrach ({name}, str.format). Polski jest językiem źródłowym
@@ -22,13 +22,14 @@ from typing import Any, Optional
 
 logger = logging.getLogger(__name__)
 
-LOCALES: tuple[str, ...] = ("pl", "en", "de", "it", "es", "fr", "ro", "ru", "sl", "hr")
+LOCALES: tuple[str, ...] = ("pl", "en", "de", "it", "es", "fr", "ro", "ru", "sl", "hr", "pt")
 DEFAULT_LOCALE = "pl"
 
 # Nazwy języków po angielsku — do promptów LLM ("Respond in {language}").
 LANGUAGE_NAMES_EN: dict[str, str] = {
     "pl": "Polish", "en": "English", "de": "German", "it": "Italian", "es": "Spanish",
     "fr": "French", "ro": "Romanian", "ru": "Russian", "sl": "Slovenian", "hr": "Croatian",
+    "pt": "European Portuguese",
 }
 
 _LOCALES_DIR = Path(__file__).parent / "locales"

@@ -1,0 +1,8 @@
+{
+  "agent_inactive": "O agente tem o estado '{status}' — chamada rejeitada antes do processamento",
+  "llm_error": "Erro do modelo de linguagem ({provider}): {error}",
+  "no_eligible_provider": "Nenhum fornecedor de modelos consegue servir o modelo '{model}' do agente com o nível de sensibilidade dos dados exigido '{sensitivity}'. Ou nenhum fornecedor ativo suporta este nível de sensibilidade, ou nenhum dos fornecedores elegíveis inclui este modelo na sua lista (o gateway, deliberadamente, não substitui o modelo por outro sem aviso). Contacte o seu administrador — ative um fornecedor que suporte este modelo e este nível de sensibilidade, ou reduza a sensibilidade dos dados do pedido.",
+  "policy_custom": "{reason}",
+  "policy_default": "Bloqueado pela política de segurança",
+  "unknown_agent": "agent_id desconhecido: {agent_id} — não consta do registo do GovAI"
+}

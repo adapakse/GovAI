@@ -25,7 +25,7 @@
     "unit": "tokens"
   },
   "i18n.default_locale": {
-    "description": "Idioma de la interfaz, los informes y los mensajes para los usuarios que no han elegido uno propio. Códigos: pl, en, de, it, es, fr, ro, ru, sl, hr.",
+    "description": "Idioma de la interfaz, los informes y los mensajes para los usuarios que no han elegido uno propio. Códigos: pl, en, de, it, es, fr, ro, ru, sl, hr, pt.",
     "label": "Idioma predeterminado"
   },
   "intervals.policy_refresh_seconds": {

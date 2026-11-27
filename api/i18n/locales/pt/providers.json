@@ -1,0 +1,12 @@
+{
+  "errors": {
+    "invalid_sensitivity": "max_data_sensitivity inválido. Permitidos: {allowed}",
+    "invalid_type": "provider_type desconhecido. Permitidos: {allowed}",
+    "key_and_key_env": "Uma chave própria (api_key) não pode ser combinada com uma chave da plataforma (api_key_env).",
+    "key_encryption_unavailable": "Não é possível guardar chaves próprias — a encriptação não está configurada (PROVIDER_KEYS_SECRET).",
+    "key_env_not_allowed": "Variável de chave não permitida. Permitidas: {allowed}.",
+    "key_env_with_base_url": "Uma chave da plataforma (api_key_env) não pode ser combinada com um base_url personalizado.",
+    "not_found": "Fornecedor não encontrado",
+    "platform_read_only": "Os fornecedores da plataforma são só de leitura. Adicione um fornecedor próprio da organização."
+  }
+}

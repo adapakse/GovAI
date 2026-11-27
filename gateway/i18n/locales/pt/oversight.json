@@ -1,0 +1,5 @@
+{
+  "agentDecision": "O agente '{agent}' está a processar um pedido e aguarda a aprovação de um revisor. Conteúdo do pedido (truncado): {content}...",
+  "awaitingMessage": "A chamada do agente '{agent}' foi suspensa — é necessária a aprovação de um revisor nos termos do EU AI Act.",
+  "decisionType": "Chamada de agente {risk}"
+}

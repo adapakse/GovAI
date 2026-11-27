@@ -3,11 +3,17 @@
 //
 //   node scripts/gen-db-i18n.mjs              — wartości już w bazie wygrywają (domyślnie)
 //   node scripts/gen-db-i18n.mjs --overwrite  — tłumaczenia z plików wygrywają z bazą
+//   node scripts/gen-db-i18n.mjs --locales pt --out 018_i18n_content_pt.sql
+//        — tylko wybrane języki, do nowej migracji (np. po dodaniu języka)
 //
 // Źródło: db/i18n/<locale>/<tabela>.json. Polski (pl) to treść kolumn bazowych
 // i wyznacza listę wierszy; pozostałe języki trafiają do kolumn *_i18n jako
 // {"en": "...", "de": "...", ...}. Wynik: db/migrations/013_i18n_content.sql
-// (idempotentny — deploy uruchamia wszystkie migracje przy każdym deployu).
+// albo plik z --out (idempotentny).
+//
+// Uwaga: migrate.sh stosuje każdą migrację raz (rejestr schema_migrations) —
+// zmiana 013 nie dotrze do istniejących instancji. Nowy język albo poprawki
+// tłumaczeń generuj do nowego pliku: --locales <kody> --out <NNN_nazwa>.sql.
 //
 // UPDATE scala JSON z bazą operatorem ||. Domyślnie wartości już zapisane w
 // bazie wygrywają — tłumaczenie poprawione przez admina w UI nie zostanie
@@ -26,10 +32,25 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = join(ROOT, 'db', 'i18n');
-const OUT = join(ROOT, 'db', 'migrations', '013_i18n_content.sql');
-const LOCALES = ['pl', 'en', 'de', 'it', 'es', 'fr', 'ro', 'ru', 'sl', 'hr'];
+const LOCALES = ['pl', 'en', 'de', 'it', 'es', 'fr', 'ro', 'ru', 'sl', 'hr', 'pt'];
 const SOURCE = 'pl';
 const KEEP_EXISTING = !process.argv.includes('--overwrite');
+
+function argValue(name) {
+  const i = process.argv.indexOf(name);
+  if (i < 0) return null;
+  const value = process.argv[i + 1];
+  if (!value || value.startsWith('--')) throw new Error(`${name}: brak wartości`);
+  return value;
+}
+
+const OUT_NAME = argValue('--out') ?? '013_i18n_content.sql';
+if (!/^\d{3}_[\w-]+\.sql$/.test(OUT_NAME)) throw new Error(`--out: oczekiwano NNN_nazwa.sql, jest ${OUT_NAME}`);
+const OUT = join(ROOT, 'db', 'migrations', OUT_NAME);
+const ONLY = argValue('--locales')?.split(',').map((l) => l.trim()).filter(Boolean) ?? null;
+for (const l of ONLY ?? []) {
+  if (!LOCALES.includes(l) || l === SOURCE) throw new Error(`--locales: nieobsługiwany język ${l}`);
+}
 
 // Tabele: plik źródłowy, pola tekstowe → kolumna JSONB, budowa warunku WHERE.
 const TABLES = [
@@ -65,14 +86,15 @@ function readJson(file) {
 }
 
 const otherLocales = LOCALES.filter(
-  (l) => l !== SOURCE && existsSync(join(SRC, l)) && readdirSync(join(SRC, l)).some((f) => f.endsWith('.json')),
+  (l) => l !== SOURCE && (!ONLY || ONLY.includes(l)) && existsSync(join(SRC, l)) && readdirSync(join(SRC, l)).some((f) => f.endsWith('.json')),
 );
 
 const lines = [
   '-- GovAI — Tłumaczenia treści katalogowych (ai_act_requirements, app_settings, providers)',
   '--',
   '-- PLIK GENEROWANY — NIE EDYTUJ RĘCZNIE. Źródło: db/i18n/<locale>/*.json,',
-  '-- generator: node scripts/gen-db-i18n.mjs' + (KEEP_EXISTING ? '' : ' --overwrite'),
+  '-- generator: node scripts/gen-db-i18n.mjs' + (KEEP_EXISTING ? '' : ' --overwrite')
+    + (ONLY ? ` --locales ${ONLY.join(',')}` : '') + (OUT_NAME !== '013_i18n_content.sql' ? ` --out ${OUT_NAME}` : ''),
   '--',
   '-- Kolumna bazowa (polski) nie jest zmieniana; uzupełniane są kolumny *_i18n.',
   KEEP_EXISTING

@@ -1,0 +1,10 @@
+{
+  "alerts": {
+    "rubber_stamp": "Supervisão meramente formal — revisão inferior a {seconds} segundos. Evento registado."
+  },
+  "errors": {
+    "already_reviewed": "Tarefa já revista — estado: {status}",
+    "cannot_start_review": "A tarefa tem o estado '{status}' — não é possível iniciar a revisão",
+    "task_not_found": "A tarefa de supervisão não existe"
+  }
+}

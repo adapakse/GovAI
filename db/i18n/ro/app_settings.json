@@ -25,7 +25,7 @@
     "unit": "tokenuri"
   },
   "i18n.default_locale": {
-    "description": "Limba interfeței, a rapoartelor și a mesajelor pentru utilizatorii care nu și-au ales propria limbă. Coduri: pl, en, de, it, es, fr, ro, ru, sl, hr.",
+    "description": "Limba interfeței, a rapoartelor și a mesajelor pentru utilizatorii care nu și-au ales propria limbă. Coduri: pl, en, de, it, es, fr, ro, ru, sl, hr, pt.",
     "label": "Limba implicită"
   },
   "intervals.policy_refresh_seconds": {
