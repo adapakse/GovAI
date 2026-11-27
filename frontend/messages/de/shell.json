@@ -3,6 +3,7 @@
     "back": "Zurück",
     "message": "Sie handeln als Plattformadministrator in der Organisation <b>{tenant}</b>"
   },
+  "changePassword": "Passwort ändern",
   "logout": "Abmelden",
   "meta": {
     "description": "Konformität mit dem EU AI Act | Sicherheits-Gateway | Menschliche Aufsicht",

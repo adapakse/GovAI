@@ -188,6 +188,15 @@ export default function Sidebar() {
             <LanguagePicker mode="user" />
           </div>
         )}
+        {/* Wszystkie konta mają lokalne hasło (brak SSO/LDAP) — link dla każdego zalogowanego */}
+        {user && (
+          <Link
+            href="/change-password"
+            className="block mb-1.5 text-mgray/50 hover:text-white transition-colors"
+          >
+            {t('changePassword')}
+          </Link>
+        )}
         <button
           onClick={logout}
           className="text-mgray/50 hover:text-govred transition-colors"

@@ -3,6 +3,7 @@
     "back": "Go back",
     "message": "You are acting as platform administrator in organisation <b>{tenant}</b>"
   },
+  "changePassword": "Change password",
   "logout": "Sign out",
   "meta": {
     "description": "EU AI Act Compliance | Security Gateway | Human Oversight",

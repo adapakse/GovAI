@@ -3,6 +3,7 @@
     "back": "Natrag",
     "message": "Djelujete kao administrator platforme u organizaciji <b>{tenant}</b>"
   },
+  "changePassword": "Promijeni lozinku",
   "logout": "Odjava",
   "meta": {
     "description": "Usklađenost s EU AI Actom | Sigurnosni pristupnik | Ljudski nadzor",

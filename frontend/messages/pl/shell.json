@@ -3,6 +3,7 @@
     "back": "Wróć",
     "message": "Działasz jako administrator platformy w organizacji <b>{tenant}</b>"
   },
+  "changePassword": "Zmień hasło",
   "logout": "Wyloguj",
   "meta": {
     "description": "Zgodność z EU AI Act | Bramka Bezpieczeństwa | Nadzór Człowieka",

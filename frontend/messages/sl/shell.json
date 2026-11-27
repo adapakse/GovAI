@@ -3,6 +3,7 @@
     "back": "Nazaj",
     "message": "Delujete kot skrbnik platforme v organizaciji <b>{tenant}</b>"
   },
+  "changePassword": "Spremeni geslo",
   "logout": "Odjava",
   "meta": {
     "description": "Skladnost z EU AI Act | Varnostni prehod | Človeški nadzor",

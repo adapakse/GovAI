@@ -3,6 +3,7 @@
     "back": "Torna indietro",
     "message": "Stai operando come amministratore della piattaforma nell’organizzazione <b>{tenant}</b>"
   },
+  "changePassword": "Cambia password",
   "logout": "Esci",
   "meta": {
     "description": "Conformità all'EU AI Act | Gateway di sicurezza | Sorveglianza umana",

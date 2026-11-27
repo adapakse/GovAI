@@ -3,6 +3,7 @@
     "back": "Revenir",
     "message": "Vous agissez en tant qu’administrateur de la plateforme dans l’organisation <b>{tenant}</b>"
   },
+  "changePassword": "Changer le mot de passe",
   "logout": "Se déconnecter",
   "meta": {
     "description": "Conformité à l’EU AI Act | Passerelle de sécurité | Contrôle humain",
