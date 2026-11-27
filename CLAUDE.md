@@ -56,9 +56,9 @@ izolowane przez Row Level Security) + opcjonalnie instancje dedykowane.
   własne klucze organizacji tylko zaszyfrowane (`secret_box.py`, AES-GCM, `PROVIDER_KEYS_SECRET`) i nigdy w odpowiedziach API.
 - Hasło startowe admina z `002_auth.sql` jest publiczne — każde środowisko musi je zmienić po instalacji.
 
-### i18n (10 języków + pt na landingu)
+### i18n (11 języków)
 - Teksty UI/API/gateway/landing tylko przez klucze tłumaczeń; nowy klucz we **wszystkich** językach
-  (pl, en, de, it, es, fr, ro, ru, sl, hr; landing dodatkowo pt). `node scripts/i18n-check.mjs --fix` musi dać OK (jest w CI).
+  (pl, en, de, it, es, fr, ro, ru, sl, hr, pt — portugalski europejski). `node scripts/i18n-check.mjs --fix` musi dać OK (jest w CI).
 - Opis mechanizmu: `docs/i18n.md`. Pliki JSON edytuj skryptem Node (JSON.parse/stringify), nie ręcznie.
 
 ## Lokalnie

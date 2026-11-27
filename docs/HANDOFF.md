@@ -11,7 +11,7 @@ GovAI = platforma nadzoru i zgodności agentów AI z **EU AI Act** dla kancelari
 - **bramka bezpieczeństwa** (OpenAI-compatible `/gateway/v1/chat/completions`): skan PII (Presidio + spaCy),
   silnik polityk (słowa kluczowe → blokada / nadzór), routing do dostawcy wg wrażliwości danych, budżety;
 - **nadzór człowieka** (kolejka do akceptacji, art. 14), **niezmienny dziennik audytowy**, raporty PDF;
-- panel w 10 językach, landing `govai.pl` (+ blog, polityka prywatności) w 11 językach.
+- panel i landing `govai.pl` (+ blog, polityka prywatności) w 11 językach (z pt).
 
 Pierwszy klient SaaS: **Gessel** (kancelaria) → organizacja `gessel`, adres docelowy `gessel.govai.pl` na PROD.
 
@@ -19,7 +19,7 @@ Pierwszy klient SaaS: **Gessel** (kancelaria) → organizacja `gessel`, adres do
 
 | Obszar | Stan | Gdzie |
 |---|---|---|
-| Wielojęzyczność (pl, en, de, it, es, fr, ro, ru, sl, hr; landing + pt) | **na INT** | `docs/i18n.md` |
+| Wielojęzyczność (pl, en, de, it, es, fr, ro, ru, sl, hr, pt) | **na INT** (pt w aplikacji: gałąź `feature/pt-locale-change-password`) | `docs/i18n.md` |
 | Multitenancy etap 0 — bezpieczeństwo (WS z tokenem, klucz API ↔ agent, biała lista kluczy providerów, rejestr migracji) | **na INT** (PR #7) | |
 | Multitenancy etapy 1–3 — organizacje, **RLS**, rola `govai_app`, API i gateway per organizacja, 194 testy izolacji w CI | **na INT** (PR #8) | `docs/multitenancy-plan.md` |
 | Multitenancy etap 4 — panel super-admina (`/platform/*`: organizacje, wejście w organizację, dziennik platformy), hasła tymczasowe + wymuszona zmiana, UI użytkowników i kluczy API, szyfrowane własne klucze LLM organizacji, gateway sprawdza użytkownika | **gotowe, NIESCALONE — PR #9** (CI zielone, 224 testy) | PR #9 |
